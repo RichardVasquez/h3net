@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.SqlServer.Server;
+using h3net.API;
 
 namespace h3net.API
 {
@@ -17,12 +14,17 @@ namespace h3net.API
     {
         public double lat;
         public double lon;
+
+        public static bool geoAlmostEqual(GeoCoord v1, GeoCoord v2)
+        {
+            return false;
+        }
     }
 
-    public unsafe struct GeoBoundary
+    public struct GeoBoundary
     {
         public int numVerts;
-        GeoCoord* verts;
+        public List<GeoCoord> verts;
     }
 
     public struct GeoFence
@@ -76,7 +78,7 @@ namespace h3net.API
         {
         }
 
-        public unsafe void h3ToGeoBoundary(ulong h3,  GeoBoundary* gp)
+        public void h3ToGeoBoundary(ulong h3,  GeoBoundary gp)
         {
         }
 
@@ -224,7 +226,7 @@ namespace h3net.API
             return 0;
         }
 
-        public int h3IsPentagon(ulong h)
+        public static  int h3IsPentagon(ulong h)
         {
             return 0;
         }
@@ -259,7 +261,7 @@ namespace h3net.API
         {
         }
 
-        public void getH3UnidirectionalEdgeBoundary(ulong edge, GeoBoundary* gb)
+        public void getH3UnidirectionalEdgeBoundary(ulong edge, GeoBoundary gb)
         {
         }
 
@@ -389,53 +391,45 @@ namespace h3net.API
         }
     }
 
-    public struct VertexNode
+    public class VertexNode
     {
         public GeoCoord from;
         public GeoCoord to;
-        public unsafe VertexNode* next;
-    }
-
-    public struct VertexGraph
-    {
-        public unsafe VertexNode** buckets;
-        public int numBuckets;
-        public int size;
-        public int res;
+        public  VertexNode next;
     }
 
 
     public class H3VertexGraph
     {
-        public unsafe void initVertexGraph(VertexGraph* graph, int numBuckets, int res)
+        public  void initVertexGraph(VertexGraph graph, int numBuckets, int res)
         {
         }
 
-        public unsafe void destroyVertexGraph(VertexGraph* graph)
+        public  void destroyVertexGraph(VertexGraph graph)
         {
         }
 
-        public unsafe VertexNode* addVertexNode(VertexGraph* graph, GeoCoord* fromVtx, GeoCoord* toVtx)
+        public  VertexNode addVertexNode(VertexGraph graph, GeoCoord fromVtx, GeoCoord toVtx)
         {
             return null;
         }
 
-        public unsafe int removeVertexNode(VertexGraph* graph, VertexNode* node)
+        public  int removeVertexNode(VertexGraph graph, VertexNode node)
         {
             return 0;
         }
 
-        public unsafe VertexNode* findNodeForEdge(VertexGraph* graph, GeoCoord* fromVtx, GeoCoord* toVtx)
+        public  VertexNode findNodeForEdge(VertexGraph graph, GeoCoord fromVtx, GeoCoord toVtx)
         {
             return null;
         }
 
-        public unsafe VertexNode* findNodeForVertex(VertexGraph* graph, GeoCoord* fromVtx)
+        public  VertexNode findNodeForVertex(VertexGraph graph, GeoCoord fromVtx)
         {
             return null;
         }
 
-        public unsafe VertexNode* firstVertexNode(VertexGraph* graph)
+        public  VertexNode firstVertexNode(VertexGraph graph)
         {
             return null;
         }
@@ -446,25 +440,19 @@ namespace h3net.API
             return 0;
         }
 
-        public unsafe void _initVertexNode(VertexNode* node, GeoCoord* fromVtx, GeoCoord* toVtx)
+        public unsafe void _initVertexNode(VertexNode node, GeoCoord* fromVtx, GeoCoord* toVtx)
         {
         }
-    }
-
-    public struct Vec2d
-    {
-        public double x;
-        public double y;
     }
 
     public class H3Vec2D
     {
-        public unsafe double _v2dMag(Vec2d* v)
+        public unsafe double _v2dMag(ref Vec2d v)
         {
             return 0.0;
         }
 
-        public unsafe void _v2dIntersect(Vec2d* p0, Vec2d* p1, Vec2d* p2, Vec2d* p3, Vec2d* inter)
+        public static  void _v2dIntersect(ref Vec2d p0, ref Vec2d p1, ref Vec2d p2, ref Vec2d p3, ref Vec2d inter)
         {
         }
 
@@ -486,20 +474,6 @@ namespace h3net.API
         INVALID_DIGIT = 7,
         NUM_DIGITS = INVALID_DIGIT
     }
-
-    public struct CoordIJK
-    {
-        public int i;
-        public int j;
-        public int k;
-
-        public CoordIJK(int a, int b, int c)
-        {
-            i = a;
-            j = b;
-            k = c;
-        }
-    }
     public class H3CoordIJK
     {
         public readonly CoordIJK[] UNIT_VECS = {
@@ -512,81 +486,81 @@ namespace h3net.API
             new CoordIJK(1, 1, 0)
         };
 
-        public unsafe void _setIJK(CoordIJK* ijk, int i, int j, int k)
+        public void _setIJK(CoordIJK ijk, int i, int j, int k)
         {
         }
 
-        public unsafe void _hex2dToCoordIJK(Vec2d* v, CoordIJK* h)
+        public unsafe void _hex2dToCoordIJK(Vec2d* v, CoordIJK h)
         {
         }
 
-        public unsafe void _ijkToHex2d(CoordIJK* h, Vec2d* v)
+        public unsafe void _ijkToHex2d(CoordIJK h, Vec2d* v)
         {
         }
 
-        public unsafe int _ijkMatches(CoordIJK* c1, CoordIJK* c2)
+        public unsafe int _ijkMatches(CoordIJK c1, CoordIJK c2)
         {
             return 0;
         }
 
-        public unsafe void _ijkAdd(CoordIJK* h1, CoordIJK* h2, CoordIJK* sum)
+        public unsafe void _ijkAdd(CoordIJK h1, CoordIJK h2, CoordIJK sum)
         {
         }
 
-        public unsafe void _ijkSub(CoordIJK* h1, CoordIJK* h2, CoordIJK* diff)
+        public unsafe void _ijkSub(CoordIJK h1, CoordIJK h2, CoordIJK diff)
         {
         }
 
-        public unsafe void _ijkScale(CoordIJK* c, int factor)
+        public unsafe void _ijkScale(CoordIJK c, int factor)
         {
         }
 
-        public unsafe void _ijkNormalize(CoordIJK* c)
+        public unsafe void _ijkNormalize(CoordIJK c)
         {
         }
 
-        public unsafe Direction _unitIjkToDigit(CoordIJK* ijk)
+        public unsafe Direction _unitIjkToDigit(CoordIJK ijk)
         {
             return Direction.INVALID_DIGIT;
         }
 
-        public unsafe void _upAp7(CoordIJK* ijk)
+        public unsafe void _upAp7(CoordIJK ijk)
         {
         }
 
-        public unsafe void _upAp7r(CoordIJK* ijk)
+        public unsafe void _upAp7r(CoordIJK ijk)
         {
         }
 
-        public unsafe void _downAp7(CoordIJK* ijk)
+        public unsafe void _downAp7(CoordIJK ijk)
         {
         }
 
-        public unsafe void _downAp7r(CoordIJK* ijk)
+        public unsafe void _downAp7r(CoordIJK ijk)
         {
         }
 
-        public unsafe void _downAp3(CoordIJK* ijk)
+        public unsafe void _downAp3(CoordIJK ijk)
         {
         }
 
-        public unsafe void _downAp3r(CoordIJK* ijk)
+        public unsafe void _downAp3r(CoordIJK ijk)
         {
         }
 
-        public unsafe void _neighbor(CoordIJK* ijk, Direction digit)
+        public unsafe void _neighbor(CoordIJK ijk, Direction digit)
         {
         }
 
-        public unsafe void _ijkRotate60ccw(CoordIJK* ijk)
+        public unsafe void _ijkRotate60ccw(CoordIJK ijk)
         {
         }
 
-        public unsafe void _ijkRotate60cw(CoordIJK* ijk)
+        public unsafe void _ijkRotate60cw(CoordIJK ijk)
         {
         }
 
-        public Direction _rotate60ccw(Direction digit)
+        public static Direction _rotate60ccw(Direction digit)
         {
             return Direction.INVALID_DIGIT;
         }
@@ -596,17 +570,26 @@ namespace h3net.API
             return Direction.INVALID_DIGIT;
         }
 
-        public unsafe int ijkDistance(CoordIJK* a, CoordIJK* b)
+        public unsafe int ijkDistance(CoordIJK a, CoordIJK b)
         {
             return 0;
         }
 
     }
 
-    public struct FaceIJK
+    public class FaceIJK
     {
         public int face;
         public CoordIJK coord;
+
+        public FaceIJK()
+        {
+        }
+        public FaceIJK(int f, CoordIJK cijk)
+        {
+            face = f;
+            coord = cijk;
+        }
     }
 
     public struct FaceOrientIJK
@@ -614,46 +597,6 @@ namespace h3net.API
         private int face;
         public CoordIJK translate;
         public int ccwRot60;
-    }
-
-    public class H3Faceijk
-    {
-        public GeoCoord[] faceCenterGeo = new GeoCoord[H3Constants.NUM_ICOSA_FACES];
-        public const int INVALID = -1;
-        public const int CENTER = 0;
-        public const int IJ = 1;
-        public const int KI = 2;
-        public const int JK = 3;
-
-        public unsafe void _geoToFaceIjk(GeoCoord* g, int res, FaceIJK* h)
-        {
-        }
-
-        public unsafe void _geoToHex2d(GeoCoord* g, int res, int* face, Vec2d* v)
-        {
-        }
-        public unsafe void _faceIjkToGeo(FaceIJK* h, int res, GeoCoord* g)
-        {
-        }
-
-        public unsafe void _faceIjkToGeoBoundary(FaceIJK* h, int res, int isPentagon,
-            GeoBoundary* g)
-        {
-        }
-
-        public unsafe void _faceIjkPentToGeoBoundary(FaceIJK* h, int res, GeoBoundary* g)
-        {
-        }
-
-        public unsafe void _hex2dToGeo(Vec2d* v, int face, int res, int substrate, GeoCoord* g)
-        {
-        }
-
-        public unsafe int _adjustOverageClassII(FaceIJK* fijk, int res, int pentLeading4,
-            int substrate)
-        {
-            return 0;
-        }
     }
 
     public class h3LinkedGeo
@@ -811,79 +754,26 @@ namespace h3net.API
 //	        bool isClockwiseGeofence(const Geofence* geofence);
     }
 
-    public class H3Algos
-    {
-        // neighbor along the ijk coordinate system of the current face, rotated
-        public unsafe ulong h3NeighborRotations(ulong origin, Direction dir, int* rotations)
-        {
-            return 0;
-        }
-
-// k-ring implementation
-        public unsafe void _kRingInternal(ulong origin, int k, ulong* out_ring, int* distances,
-            int maxIdx, int curK)
-        {
-        }
-
-// Create a vertex graph from a set of hexagons
-        public unsafe void h3SetToVertexGraph( ulong* h3Set,  int numHexes, VertexGraph* out_graph) {
-        }
-
-// Create a LinkedGeoPolygon from a vertex graph
-        public unsafe void _vertexGraphToLinkedGeo(VertexGraph* graph, LinkedGeoPolygon* out_polygon)
-        {
-        }
-    }
 
     public struct BaseCellData
     {
         public FaceIJK homeFijk;
         public int isPentagon;
         public int[] cwOffsetPent;// [2]
-    }
 
-    public class H3baseCells
-    {
-        public const int INVALID_BASE_CELL = 127;
-        public const int MAX_FACE_COORD = 2;
-        public static int[,] baseCellNeighbors = new int[H3Constants.NUM_BASE_CELLS, 7];
-        public static int[,] baseCellNeighbor60CCWRots = new int[H3Constants.NUM_BASE_CELLS, 7];
-        public static BaseCellData[] baseCellData = new BaseCellData[H3Constants.NUM_BASE_CELLS];
-
-
-        public int _isBaseCellPentagon(int baseCell)
+        public BaseCellData(FaceIJK ijk, int isPenta, int[] offset) : this()
         {
-            return 0;}
-
-        public unsafe int _faceIjkToBaseCell(FaceIJK* h)
-        {
-            return 0;
+            homeFijk = ijk;
+            isPentagon = isPenta;
+            cwOffsetPent = offset;
         }
 
-        public unsafe int _faceIjkToBaseCellCCWrot60( FaceIJK* h)
+        public BaseCellData(int face, int faceI, int faceJ, int faceK, int isPenta, int offset1, int offset2) : this()
         {
-            return 0;
+            homeFijk = new FaceIJK(face, new CoordIJK(faceI, faceJ, faceK));
+            isPentagon = isPenta;
+            cwOffsetPent = new[] {offset1, offset2};
         }
-
-        public unsafe void _baseCellToFaceIjk(int baseCell, FaceIJK* h)
-        {
-        }
-
-        public bool _baseCellIsCwOffset(int baseCell, int testFace)
-        {
-            return false;
-        }
-
-        public int _getBaseCellNeighbor(int baseCell, Direction dir)
-        {
-            return 0;
-        }
-
-        public Direction _getBaseCellDirection(int originBaseCell, int destinationBaseCell)
-        {
-            return new Direction();
-        }
-
     }
 
     public class h3Index
@@ -966,12 +856,12 @@ namespace h3net.API
 
 // Internal functions
 
-        public unsafe ulong _faceIjkToH3(FaceIJK* fijk, int res)
+        public  ulong _faceIjkToH3(FaceIJK fijk, int res)
         {
             return 0;
         }
 
-        public Direction _h3LeadingNonZeroDigit(ulong h)
+        public static Direction _h3LeadingNonZeroDigit(ulong h)
         {
             return Direction.INVALID_DIGIT;
         }
@@ -991,7 +881,7 @@ namespace h3net.API
             return 0;
         }
 
-        public unsafe int h3ToIjk(ulong origin, ulong h3, CoordIJK* out_coord)
+        public unsafe int h3ToIjk(ulong origin, ulong h3, CoordIJK out_coord)
         {
             return 0;
         }
@@ -1005,11 +895,29 @@ namespace h3net.API
             return 0;
         }
     }
+
+    public struct Vec3d
+    {
+        public double x;
+        public double y;
+        public double z;
+    }
+
+    public class h3Vec3d
+    {
+        public unsafe void _geoToVec3d( GeoCoord* geo, Vec3d* point)
+        {
+        }
+
+        public unsafe double _pointSquareDist(Vec3d* p1, Vec3d* p2)
+        {
+            return 0.0;
+        }
+    }
 }
 
 
 /*
 polygonAlgos.h *** Fucking special case regarding C macros
-stackAlloc.h
-vec3d.h
+stackAlloc.h // Pretty much should just create an array (or maybe another ienumerable) of the proper type
  */

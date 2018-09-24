@@ -41,7 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\CoordIJK.cs" />
     <Compile Include="API\GeoCoord.cs" />
+    <Compile Include="API\BaseCells.cs" />
+    <Compile Include="API\Algos.cs" />
+    <Compile Include="API\H3Faceijk.cs" />
+    <Compile Include="API\H3Index.cs" />
+    <Compile Include="API\Vec2d.cs" />
+    <Compile Include="API\VertexGraph.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
