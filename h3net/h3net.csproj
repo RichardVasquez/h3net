@@ -41,14 +41,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Api.cs" />
+    <Compile Include="API\BaseCellData.cs" />
+    <Compile Include="API\BBox.cs" />
     <Compile Include="API\CoordIJK.cs" />
+    <Compile Include="API\Direction.cs" />
+    <Compile Include="API\FaceOrientIJK.cs" />
+    <Compile Include="API\GeoBoundary.cs" />
     <Compile Include="API\GeoCoord.cs" />
     <Compile Include="API\BaseCells.cs" />
     <Compile Include="API\Algos.cs" />
-    <Compile Include="API\H3Faceijk.cs" />
+    <Compile Include="API\GeoFence.cs" />
+    <Compile Include="API\GeoMultiPolygon.cs" />
+    <Compile Include="API\GeoPolygon.cs" />
+    <Compile Include="API\H3Bbox.cs" />
+    <Compile Include="API\Constants.cs" />
+    <Compile Include="API\H3CoordIJK.cs" />
+    <Compile Include="API\FaceIJK.cs" />
     <Compile Include="API\H3Index.cs" />
+    <Compile Include="API\LinkedGeo.cs" />
+    <Compile Include="API\MathExtensions.cs" />
+    <Compile Include="API\Polygon.cs" />
+    <Compile Include="API\H3Vec2D.cs" />
+    <Compile Include="API\h3Vec3d.cs" />
+    <Compile Include="API\H3VertexGraph.cs" />
+    <Compile Include="API\LinkedGeoCoord.cs" />
+    <Compile Include="API\LinkedGeoLoop.cs" />
+    <Compile Include="API\LinkedGeoPolygon.cs" />
     <Compile Include="API\Vec2d.cs" />
+    <Compile Include="API\Vec3d.cs" />
     <Compile Include="API\VertexGraph.cs" />
+    <Compile Include="API\VertexNode.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

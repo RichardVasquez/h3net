@@ -1,923 +1,380 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using h3net.API;
+using System.Linq;
 
 namespace h3net.API
 {
-    public static class Constants
-    {
-        public const int MAX_CELL_BNDRY_VERTS = 10;
-    }
+    /*
+     * Copyright 2018, Richard Vasquez
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *         http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     *
+     * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+     * C version licensed under the Apache License, Version 2.0 (the "License");
+     * C Source code available at: https://github.com/uber/h3
+     *
+     */
 
-    public struct GeoCoord
+    /** @file GeoCoord.cs
+     * @brief   Functions for working with lat/lon coordinates.
+     */
+    public class GeoCoord
     {
         public double lat;
         public double lon;
 
+        /**
+         * Normalizes radians to a value between 0.0 and two PI.
+         *
+         * @param rads The input radians value.
+         * @return The normalized radians value.
+         */
+        double _posAngleRads(double rads)
+        {
+            var tmp = rads < 0.0
+                ? rads + Constants.M_2PI
+                : rads;
+            if (rads >= Constants.M_2PI)
+            {
+                tmp -= Constants.M_2PI;
+            }
+
+            return tmp;
+        }
+
+        /**
+         * Determines if the components of two spherical coordinates are within some
+         * threshold distance of each other.
+         *
+         * @param p1 The first spherical coordinates.
+         * @param p2 The second spherical coordinates.
+         * @param threshold The threshold distance.
+         * @return Whether or not the two coordinates are within the threshold distance
+         *         of each other.
+         */
+        public static bool geoAlmostEqualThreshold(GeoCoord p1, GeoCoord p2, double threshold)
+        {
+            return Math.Abs(p1.lat - p2.lat) < threshold &&
+                   Math.Abs(p1.lon - p2.lon) < threshold;
+        }
+
+        /**
+        * Determines if the components of two spherical coordinates are within our
+        * standard epsilon distance of each other.
+        *
+        * @param p1 The first spherical coordinates.
+        * @param p2 The second spherical coordinates.
+        * @return Whether or not the two coordinates are within the epsilon distance
+        *         of each other.
+        */
         public static bool geoAlmostEqual(GeoCoord v1, GeoCoord v2)
         {
-            return false;
+            return geoAlmostEqualThreshold(v1, v2, Constants.EPSILON_RAD);
         }
-    }
 
-    public struct GeoBoundary
-    {
-        public int numVerts;
-        public List<GeoCoord> verts;
-    }
-
-    public struct GeoFence
-    {
-        public int numVerts;
-        public unsafe GeoCoord* verts;
-
-    }
-
-    public struct GeoPolygon
-    {
-        private GeoFence geofence;
-        private int numHoles;
-        private unsafe GeoFence* holes;
-    }
-
-    public struct GeoMultiPolygon
-    {
-        private int numPolygons;
-        private unsafe GeoPolygon* polygons;
-    }
-
-    public struct LinkedGeoCoord
-    {
-        private GeoCoord vertex;
-        private unsafe LinkedGeoCoord* next;
-    }
-
-    public struct LinkedGeoLoop
-    {
-        private unsafe LinkedGeoCoord* first;
-        private unsafe LinkedGeoCoord* last;
-        private unsafe LinkedGeoLoop* next;
-    }
-
-    public struct LinkedGeoPolygon
-    {
-        private unsafe LinkedGeoLoop* first;
-        private unsafe LinkedGeoLoop* last;
-        private unsafe LinkedGeoPolygon* next;
-    }
-
-    public unsafe class Api
-    {
-        public ulong geoToH3(GeoCoord* g, int res)
+        /**
+         * Set the components of spherical coordinates in decimal degrees.
+         *
+         * @param p The spherical coodinates.
+         * @param latDegs The desired latitidue in decimal degrees.
+         * @param lonDegs The desired longitude in decimal degrees.
+         */
+        public void setGeoDegs(ref GeoCoord p, double latDegs, double lonDegs)
         {
-            return 0;
+            _setGeoRads(ref p, degsToRads(latDegs), degsToRads(lonDegs));
+
         }
 
-        public void h3ToGeo(ulong h3, GeoCoord* g)
+        /**
+        * Set the components of spherical coordinates in radians.
+        *
+        * @param p The spherical coodinates.
+        * @param latRads The desired latitidue in decimal radians.
+        * @param lonRads The desired longitude in decimal radians.
+        */
+        public void _setGeoRads(ref GeoCoord p, double latRads, double lonRads)
         {
+            p.lat = latRads;
+            p.lon = lonRads;
         }
 
-        public void h3ToGeoBoundary(ulong h3,  GeoBoundary gp)
-        {
-        }
-
-        public int maxKringSize(int k)
-        {
-            return 0;
-        }
-
-        public int hexRange(ulong origin, int k, ulong* outhex)
-        {
-            return 0;
-        }
-
-        public int hexRangeDistances(ulong origin, int k, ulong* outindex, int* distances)
-        {
-            return 0;
-        }
-
-        public int hexRanges(ulong* h3set, int length, int k, ulong* outhex)
-        {
-            return 0;
-        }
-
-        public void kRing(ulong* origin, int k, ulong* outhex)
-        {
-
-        }
-
-        public void kRingDistances(ulong origin, int k, ulong* outhex, int* distances)
-        {
-
-        }
-
-        public int hexRing(ulong origin, int k, ulong* outhex)
-        {
-            return 0;
-        }
-
-        public int maxPolyfillSize(GeoPolygon* geoPolygon, int res)
-        {
-            return 0;
-        }
-
-        public void polyfill(GeoPolygon* geoPolygon, int res, ulong* outhex)
-        {
-        }
-
-        public void h3SetToLinkedGeo(ulong* h3Set, int numHexes, LinkedGeoPolygon* outhex)
-        {
-        }
-
-        public void destroyLinkedPolygon(LinkedGeoPolygon* polygon)
-        {
-        }
-
+        /**
+         * Convert from decimal degrees to radians.
+         *
+         * @param degrees The decimal degrees.
+         * @return The corresponding radians.
+         */
         public double degsToRads(double degrees)
         {
-            return 0.0;
+            return degrees * Constants.M_PI_180;
         }
 
+        /**
+         * Convert from radians to decimal degrees.
+         *
+         * @param radians The radians.
+         * @return The corresponding decimal degrees.
+         */
         public double radsToDegs(double radians)
         {
-            return 0.0;}
-
-        public double hexAreaKm2(int res)
-        {
-            return 0.0;}
-
-        public double hexAreaM2(int res)
-        {
-            return 0.0;
+            return radians * Constants.M_180_PI;
         }
 
-        public double edgeLengthKm(int res)
-        {
-            return 0.0;
-        }
-
-        public double edgeLengthM(int res)
-        {
-            return 0.0;}
-
-        public long numHexagons(int res)
-        {
-            return 0;
-        }
-        public int h3GetResolution(ulong h)
-        {
-            return 0;
-        }
-
-        public int h3GetBaseCell(ulong h)
-        {
-            return 0;
-        }
-
-        public ulong stringToH3(char* instr)
-        {
-            return 0;
-        }
-
-        public void h3ToString(ulong h, char* str, UIntPtr sz)
-        {
-        }
-
-        public int h3IsValid(ulong h)
-        {
-            return 0;
-
-        }
-
-        public ulong h3ToParent(ulong h, int parentRes)
-        {
-            return 0;
-
-        }
-
-        public int maxH3ToChildrenSize(ulong h, int childRes)
-        {
-            return 0;
-
-        }
-
-        public void h3ToChildren(ulong h, int childRes, ulong* children)
-        {
-        }
-
-        public int compact(ulong *h3Set, ulong *compactedSet, int numHexes)
-        {
-            return 0;
-        }
-
-        public int maxUncompactSize(ulong* compactedSet, int numHexes,int res)
-        {
-            return 0;
-        }
-
-        public int uncompact(ulong* compactedSet, int numHexes, ulong* h3Set, int maxHexes, int res)
-        {
-            return 0;
-        }
-
-        public int h3IsResClassIII(ulong h)
-        {
-            return 0;
-        }
-
-        public static  int h3IsPentagon(ulong h)
-        {
-            return 0;
-        }
-
-        public int h3IndexesAreNeighbors(ulong origin, ulong destination)
-        {
-            return 0;
-        }
-
-        public ulong getH3UnidirectionalEdge(ulong origin, ulong destination)
-        {
-            return 0;
-        }
-
-        public int h3UnidirectionalEdgeIsValid(ulong edge)
-        {
-            return 0;
-        }
-
-        public ulong getOriginH3IndexFromUnidirectionalEdge(ulong edge)
-        {
-            return 0;
-        }
-
-        public ulong getDestinationH3IndexFromUnidirectionalEdge(ulong edge){return 0;}
-
-        public void getH3IndexesFromUnidirectionalEdge(ulong edge, ulong* originDestination)
-        {
-        }
-
-        public void getH3UnidirectionalEdgesFromHexagon(ulong origin, ulong* edges)
-        {
-        }
-
-        public void getH3UnidirectionalEdgeBoundary(ulong edge, GeoBoundary gb)
-        {
-        }
-
-        public int h3Distance(ulong origin, ulong h3)
-        {
-            return 0;
-        }
-    }
-
-
-    public static class H3Constants
-    {
-        public const double M_PI = 3.14159265358979323846;
-        public const double M_PI_2 = 1.5707963267948966;
-        public const double M_2PI = 6.28318530717958647692528676655900576839433;
-        public const double M_PI_180 = 0.0174532925199432957692369076848861271111;
-        public const double M_180_PI = 57.29577951308232087679815481410517033240547;
-        public const double EPSILON = 0.0000000000000001;
-        public const double M_SQRT3_2 = 0.8660254037844386467637231707529361834714;
-        public const double M_SIN60 = M_SQRT3_2;
-        public const double M_AP7_ROT_RADS = 0.333473172251832115336090755351601070065900389;
-        public const double M_SIN_AP7_ROT = 0.3273268353539885718950318;
-        public const double M_COS_AP7_ROT = 0.9449111825230680680167902;
-        public const double EARTH_RADIUS_KM = 6371.007180918475;
-        public const double RES0_U_GNOMONIC = 0.38196601125010500003;
-        public const int MAX_H3_RES = 15;
-        public const int NUM_ICOSA_FACES = 20;
-        public const int NUM_BASE_CELLS = 122;
-        public const int NUM_HEX_VERTS = 6;
-        public const int NUM_PENT_VERTS = 5;
-        public const int H3_HEXAGON_MODE = 1;
-        public const int H3_UNIEDGE_MODE = 2;
-    }
-
-    public class H3GeoCoord
-    {
-        public const double EPSILON_DEG = 0.000000001;
-        public const double EPSILON_RAD = EPSILON_DEG * H3Constants.M_PI_180;
-
-        public unsafe void setGeoDegs(GeoCoord* p, double latDegs, double LonDegs)
-        {
-
-        }
-
+        /**
+         * constrainLat makes sure latitudes are in the proper bounds
+         *
+         * @param lat The original lat value
+         * @return The corrected lat value
+         */
         public double constrainLat(double lat)
         {
-            return 0.0;
-        }
-
-        public double ConstrainLng(double lng)
-        {
-            return 0.0;
-        }
-
-        public unsafe bool geoAlmostEqual(GeoCoord* p1,  GeoCoord* p2)
-        {
-            return false;
-        }
-
-        public unsafe bool geoAlmostEqualThreshold(GeoCoord* p1,  GeoCoord* p2, double threshold)
-        {
-            return false;
-        }
-
-        public double _postAngleRads(double rads)
-        {
-            return 0.0;
-        }
-
-        public unsafe double _setGeoRads(GeoCoord* p, double latRads, double lonRads)
-        {
-            return 0.0;
-        }
-
-        public unsafe double _geoDistRads(GeoCoord* p1, GeoCoord* p2)
-        {
-            return 0.0;
-        }
-
-        public unsafe double _geoDistKm(GeoCoord* p1, GeoCoord* p2)
-        {
-            return 0.0;
-        }
-        public unsafe double _geoAzimuthRads(GeoCoord* p1, GeoCoord* p2)
-        {
-            return 0.0;
-        }
-
-        public unsafe void _geoAzDistanceRads(GeoCoord* p1, double az, double distance, GeoCoord* p2)
-        {
-
-        }
-    }
-
-    public struct BBox
-    {
-        public double north;
-        public double south;
-        public double east;
-        public double west;
-    }
-
-    public class H3Bbox
-    {
-        public unsafe bool bboxIsTransmeridian(BBox* bbox)
-        {
-            return false;
-        }
-
-        public unsafe void bboxCenter(BBox* bbox, GeoCoord* center)
-        {
-        }
-
-        public unsafe bool bboxContains(BBox* bbox, GeoCoord* point)
-        {
-            return false;
-        }
-
-        public unsafe bool bboxEquals(BBox* b1, BBox* b2)
-        {
-            return false;
-        }
-
-        public unsafe int bboxHexRadius(BBox* bbox, int res)
-        {
-            return 0;
-        }
-    }
-
-    public class VertexNode
-    {
-        public GeoCoord from;
-        public GeoCoord to;
-        public  VertexNode next;
-    }
-
-
-    public class H3VertexGraph
-    {
-        public  void initVertexGraph(VertexGraph graph, int numBuckets, int res)
-        {
-        }
-
-        public  void destroyVertexGraph(VertexGraph graph)
-        {
-        }
-
-        public  VertexNode addVertexNode(VertexGraph graph, GeoCoord fromVtx, GeoCoord toVtx)
-        {
-            return null;
-        }
-
-        public  int removeVertexNode(VertexGraph graph, VertexNode node)
-        {
-            return 0;
-        }
-
-        public  VertexNode findNodeForEdge(VertexGraph graph, GeoCoord fromVtx, GeoCoord toVtx)
-        {
-            return null;
-        }
-
-        public  VertexNode findNodeForVertex(VertexGraph graph, GeoCoord fromVtx)
-        {
-            return null;
-        }
-
-        public  VertexNode firstVertexNode(VertexGraph graph)
-        {
-            return null;
-        }
-
-// Internal functions
-        public unsafe uint _hashVertex(GeoCoord* vertex, int res, int numBuckets)
-        {
-            return 0;
-        }
-
-        public unsafe void _initVertexNode(VertexNode node, GeoCoord* fromVtx, GeoCoord* toVtx)
-        {
-        }
-    }
-
-    public class H3Vec2D
-    {
-        public unsafe double _v2dMag(ref Vec2d v)
-        {
-            return 0.0;
-        }
-
-        public static  void _v2dIntersect(ref Vec2d p0, ref Vec2d p1, ref Vec2d p2, ref Vec2d p3, ref Vec2d inter)
-        {
-        }
-
-        public unsafe bool _v2dEquals(Vec2d* p0, Vec2d* p1)
-        {
-            return false;
-        }
-    }
-
-    public enum Direction
-    {
-        CENTER_DIGIT = 0,
-        K_AXES_DIGIT = 1,
-        J_AXES_DIGIT = 2,
-        JK_AXES_DIGIT = J_AXES_DIGIT|K_AXES_DIGIT,
-        I_AXES_DIGIT = 4,
-        IK_AXES_DIGIT = I_AXES_DIGIT|K_AXES_DIGIT,
-        IJ_AXES_DIGIT = I_AXES_DIGIT|J_AXES_DIGIT,
-        INVALID_DIGIT = 7,
-        NUM_DIGITS = INVALID_DIGIT
-    }
-    public class H3CoordIJK
-    {
-        public readonly CoordIJK[] UNIT_VECS = {
-            new CoordIJK(0, 0, 0),
-            new CoordIJK(0, 0, 1),
-            new CoordIJK(0, 1, 0),
-            new CoordIJK(0, 1, 1),
-            new CoordIJK(1, 0, 0),
-            new CoordIJK(1, 0, 1),
-            new CoordIJK(1, 1, 0)
-        };
-
-        public void _setIJK(CoordIJK ijk, int i, int j, int k)
-        {
-        }
-
-        public unsafe void _hex2dToCoordIJK(Vec2d* v, CoordIJK h)
-        {
-        }
-
-        public unsafe void _ijkToHex2d(CoordIJK h, Vec2d* v)
-        {
-        }
-
-        public unsafe int _ijkMatches(CoordIJK c1, CoordIJK c2)
-        {
-            return 0;
-        }
-
-        public unsafe void _ijkAdd(CoordIJK h1, CoordIJK h2, CoordIJK sum)
-        {
-        }
-
-        public unsafe void _ijkSub(CoordIJK h1, CoordIJK h2, CoordIJK diff)
-        {
-        }
-
-        public unsafe void _ijkScale(CoordIJK c, int factor)
-        {
-        }
-
-        public unsafe void _ijkNormalize(CoordIJK c)
-        {
-        }
-
-        public unsafe Direction _unitIjkToDigit(CoordIJK ijk)
-        {
-            return Direction.INVALID_DIGIT;
-        }
-
-        public unsafe void _upAp7(CoordIJK ijk)
-        {
-        }
-
-        public unsafe void _upAp7r(CoordIJK ijk)
-        {
-        }
-
-        public unsafe void _downAp7(CoordIJK ijk)
-        {
-        }
-
-        public unsafe void _downAp7r(CoordIJK ijk)
-        {
-        }
-
-        public unsafe void _downAp3(CoordIJK ijk)
-        {
-        }
-
-        public unsafe void _downAp3r(CoordIJK ijk)
-        {
-        }
-
-        public unsafe void _neighbor(CoordIJK ijk, Direction digit)
-        {
-        }
-
-        public unsafe void _ijkRotate60ccw(CoordIJK ijk)
-        {
-        }
-
-        public unsafe void _ijkRotate60cw(CoordIJK ijk)
-        {
-        }
-
-        public static Direction _rotate60ccw(Direction digit)
-        {
-            return Direction.INVALID_DIGIT;
-        }
-
-        public Direction _rotate60cw(Direction digit)
-        {
-            return Direction.INVALID_DIGIT;
-        }
-
-        public unsafe int ijkDistance(CoordIJK a, CoordIJK b)
-        {
-            return 0;
-        }
-
-    }
-
-    public class FaceIJK
-    {
-        public int face;
-        public CoordIJK coord;
-
-        public FaceIJK()
-        {
-        }
-        public FaceIJK(int f, CoordIJK cijk)
-        {
-            face = f;
-            coord = cijk;
-        }
-    }
-
-    public struct FaceOrientIJK
-    {
-        private int face;
-        public CoordIJK translate;
-        public int ccwRot60;
-    }
-
-    public class h3LinkedGeo
-    {
-        public const int NORMALIZATION_SUCCESS = 0;
-        public const int NORMALIZATION_ERR_MULTIPLE_POLYGONS = 1;
-        public const int NORMALIZATION_ERR_UNASSIGNED_HOLES = 2;
-
-// Macros for use with polygonAlgos.h
-///** Macro: Init iteration vars for LinkedGeoLoop */
-//#define INIT_ITERATION_LINKED_LOOP       \
-//        LinkedGeoCoord* currentCoord = NULL; \
-//        LinkedGeoCoord* nextCoord = NULL
-//
-///** Macro: Get the next coord in a linked loop, wrapping if needed */
-//#define GET_NEXT_COORD(loop, coordToCheck) \
-//        coordToCheck == NULL ? loop->first : currentCoord->next
-//
-///** Macro: Increment LinkedGeoLoop iteration, or break if done. */
-//#define ITERATE_LINKED_LOOP(loop, vertexA, vertexB)       \
-//            currentCoord = GET_NEXT_COORD(loop, currentCoord);    \
-//            if (currentCoord == NULL) break;                      \
-//        vertexA = currentCoord->vertex;                       \
-//        nextCoord = GET_NEXT_COORD(loop, currentCoord->next); \
-//        vertexB = nextCoord->vertex
-//
-        ///** Macro: Whether a LinkedGeoLoop is empty */
-//#define IS_EMPTY_LINKED_LOOP(loop) loop->first == NULL
-//         */
-
-        public unsafe int normalizeMultiPolygon(LinkedGeoPolygon* root)
-        {
-            return 0;
-        }
-        public unsafe LinkedGeoPolygon* addNewLinkedPolygon(LinkedGeoPolygon* polygon)
-        {
-            return null;
-        }
-
-        public unsafe LinkedGeoLoop* addNewLinkedLoop(LinkedGeoPolygon* polygon)
-        {
-            return null;
-        }
-
-        public unsafe LinkedGeoLoop* addLinkedLoop(LinkedGeoPolygon* polygon, LinkedGeoLoop* loop)
-        {
-            return null;
-        }
-
-        public unsafe LinkedGeoCoord* addLinkedCoord(LinkedGeoLoop* loop, GeoCoord* vertex)
-        {
-            return null;
-        }
-
-        public unsafe int countLinkedPolygons(LinkedGeoPolygon* polygon)
-        {
-            return 0;
-        }
-
-        public unsafe int countLinkedLoops(LinkedGeoPolygon* polygon)
-        {
-            return 0;
-        }
-
-        public unsafe int countLinkedCoords(LinkedGeoLoop* loop)
-        {
-            return 0;
-        }
-
-        public unsafe void destroyLinkedGeoLoop(LinkedGeoLoop* loop)
-        {
-        }
-
-// The following functions are created via macro in polygonAlgos.h,
-// so their signatures are documented here:
-
-/**
- * Create a bounding box from a LinkedGeoLoop
- * @param geofence Input Geofence
- * @param bbox     Output bbox
- */
-//        void bboxFromLinkedGeoLoop(const LinkedGeoLoop* loop, BBox* bbox);
-
-/**
- * Take a given LinkedGeoLoop data structure and check if it
- * contains a given geo coordinate.
- * @param loop          The linked loop
- * @param bbox          The bbox for the loop
- * @param coord         The coordinate to check
- * @return              Whether the point is contained
- */
-//        bool pointInsideLinkedGeoLoop(const LinkedGeoLoop* loop, const BBox* bbox,
-//        const GeoCoord* coord);
-
-/**
- * Whether the winding order of a given LinkedGeoLoop is clockwise
- * @param loop  The loop to check
- * @return      Whether the loop is clockwise
- */
- //       bool isClockwiseLinkedGeoLoop(const LinkedGeoLoop* loop);
-
-
-    }
-
-    public class H3Polygon
-    {
-        public const int loopIndex = -1;
-
-        public unsafe void bboxesFromGeoPolygon(GeoPolygon* polygon, BBox* bboxes)
-        {
-        }
-
-        public unsafe bool pointInsidePolygon(GeoPolygon* geoPolygon, BBox* bboxes,
-            GeoCoord* coord)
-        {
-            return false;
-        }
-
-//	        // Macros for use with polygonAlgos.h
-//	/** Macro: Init iteration vars for Geofence */
-//	#define INIT_ITERATION_GEOFENCE int loopIndex = -1
-//	
-//	/** Macro: Increment Geofence loop iteration, or break if done. */
-//	#define ITERATE_GEOFENCE(geofence, vertexA, vertexB) \
-//	        if (++loopIndex >= geofence->numVerts) break;    \
-//	        vertexA = geofence->verts[loopIndex];            \
-//	        vertexB = geofence->verts[(loopIndex + 1) % geofence->numVerts]
-//	
-//	// The following functions are created via macro in polygonAlgos.h,
-//	// so their signatures are documented here:
-//	
-//	/**
-//	 * Create a bounding box from a Geofence
-//	 * @param geofence Input Geofence
-//	 * @param bbox     Output bbox
-//	 */
-//	        void bboxFromGeofence(const Geofence* loop, BBox* bbox);
-//	
-//	/**
-//	 * Take a given Geofence data structure and check if it
-//	 * contains a given geo coordinate.
-//	 * @param loop          The geofence
-//	 * @param bbox          The bbox for the loop
-//	 * @param coord         The coordinate to check
-//	 * @return              Whether the point is contained
-//	 */
-//	        bool pointInsideGeofence(const Geofence* loop, const BBox* bbox,
-//	        const GeoCoord* coord);
-//	
-//	/**
-//	 * Whether the winding order of a given Geofence is clockwise
-//	 * @param loop  The loop to check
-//	 * @return      Whether the loop is clockwise
-//	 */
-//	        bool isClockwiseGeofence(const Geofence* geofence);
-    }
-
-
-    public struct BaseCellData
-    {
-        public FaceIJK homeFijk;
-        public int isPentagon;
-        public int[] cwOffsetPent;// [2]
-
-        public BaseCellData(FaceIJK ijk, int isPenta, int[] offset) : this()
-        {
-            homeFijk = ijk;
-            isPentagon = isPenta;
-            cwOffsetPent = offset;
-        }
-
-        public BaseCellData(int face, int faceI, int faceJ, int faceK, int isPenta, int offset1, int offset2) : this()
-        {
-            homeFijk = new FaceIJK(face, new CoordIJK(faceI, faceJ, faceK));
-            isPentagon = isPenta;
-            cwOffsetPent = new[] {offset1, offset2};
-        }
-    }
-
-    public class h3Index
-    {
-        public static int H3_NUM_BITS = 64;
-        public static int H3_MAX_OFFSET = 63;
-        public static int H3_MODE_OFFSET = 59;
-        public static int H3_BC_OFFSET = 45;
-        public static int H3_RES_OFFSET = 52;
-        public static int H3_RESERVED_OFFSET = 56;
-        public static int H3_PER_DIGIT_OFFSET = 3;
-        public static ulong H3_MODE_MASK = (ulong)15 << H3_MODE_OFFSET;
-        public static ulong H3_MODE_MASK_NEGATIVE = ~H3_MODE_MASK;
-        public static ulong H3_BC_MASK = (ulong) 127 << H3_BC_OFFSET;
-        public static ulong H3_BC_MASK_NEGATIVE = ~H3_BC_MASK;
-        public static ulong H3_RES_MASK = (ulong) 15 << H3_RES_OFFSET;
-        public static ulong H3_RES_MASK_NEGATIVE = ~H3_RES_MASK;
-        public static ulong H3_RESERVED_MASK = (ulong) 7 << H3_RESERVED_OFFSET;
-        public static ulong H3_RESERVED_MASK_NEGATIVE = ~H3_RESERVED_MASK;
-        public static ulong H3_DIGIT_MASK = 7;
-        public static ulong H3_DIGIT_MASK_NEGATIVE = ~H3_DIGIT_MASK;
-        public static ulong H3_INIT = 35184372088831;
-        public static ulong H3_INVALID_INDEX = 0;
-
-        // Should set value of h3
-        public static void H3_SET_MODE(ref ulong h3, ulong v)
-        {
-            h3 = h3 & H3_MODE_MASK_NEGATIVE | (v << H3_MODE_OFFSET);
-        }
-
-        public static int H3_GET_BASE_CELL(ulong h3)
-        {
-            return (int)((h3 & H3_BC_MASK) >> H3_BC_OFFSET);
-        }
-
-        public static void H3_SET_BASE_CELL(ref ulong h3, ulong bc)
-        {
-            h3 = (h3 & H3_BC_MASK_NEGATIVE) | (bc << H3_BC_OFFSET);
-        }
-
-        public static int H3_GET_RESOLUTION(ulong h3)
-        {
-            return (int) ((h3 & H3_RES_MASK) >> H3_RES_OFFSET);
-        }
-
-        public static void H3_SET_RESOLUTION(ref ulong h3, ulong res)
-        {
-            h3 = (h3 & H3_RES_MASK_NEGATIVE) | (res << H3_RES_OFFSET);
-        }
-
-        public static Direction H3_GET_INDEX_DIGIT(ulong h3, int res)
-        {
-            return (Direction) ((h3 >> ((H3Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK);
-        }
-
-        public static void H3_SET_RESERVED_BITS(ref ulong h3, ulong v)
-        {
-            h3 = (h3 & H3_RESERVED_MASK_NEGATIVE) | (v << H3_RESERVED_OFFSET);
-        }
-
-        public static int H3_GET_RESERVED_BITS(ulong h3)
-        {
-            return (int) ((h3 & H3_RESERVED_MASK) >> H3_RESERVED_OFFSET);
-        }
-
-        public static void H3_SET_INDEX_DIGIT(ref ulong h3, int res, ulong digit)
-        {
-            h3 = (h3 & ~(H3_DIGIT_MASK << ((H3Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)))
-                 | (digit << ((H3Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET));
-        }
-
-        public unsafe void setH3Index(ulong* h, int res, int baseCell, Direction initDigit)
-        {
-        }
-
-        public int isResClassIII(int res)
-        {
-            return 0;
-        }
-
-// Internal functions
-
-        public  ulong _faceIjkToH3(FaceIJK fijk, int res)
-        {
-            return 0;
-        }
-
-        public static Direction _h3LeadingNonZeroDigit(ulong h)
-        {
-            return Direction.INVALID_DIGIT;
-        }
-
-        public ulong _h3RotatePent60ccw(ulong h)
-        {
-            return 0;
-        }
-
-        public ulong _h3Rotate60ccw(ulong h)
-        {
-            return 0;
-        }
-
-        public ulong _h3Rotate60cw(ulong h)
-        {
-            return 0;
-        }
-
-        public unsafe int h3ToIjk(ulong origin, ulong h3, CoordIJK out_coord)
-        {
-            return 0;
-        }
-
-    }
-
-    public class H3MathExtensions
-    {
-        public int _ipow(int nbase, int exp)
-        {
-            return 0;
-        }
-    }
-
-    public struct Vec3d
-    {
-        public double x;
-        public double y;
-        public double z;
-    }
-
-    public class h3Vec3d
-    {
-        public unsafe void _geoToVec3d( GeoCoord* geo, Vec3d* point)
-        {
-        }
-
-        public unsafe double _pointSquareDist(Vec3d* p1, Vec3d* p2)
-        {
-            return 0.0;
+            while (lat > Constants.M_PI_2)
+            {
+                lat -= Constants.M_PI;
+            }
+
+            return lat;
+        }
+
+        /**
+         * constrainLng makes sure longitudes are in the proper bounds
+         *
+         * @param lng The origin lng value
+         * @return The corrected lng value
+         */
+        public static double constrainLng(double lng)
+        {
+            while (lng > Constants.M_PI)
+            {
+                lng = lng - (2 * Constants.M_PI);
+            }
+
+            while (lng < -Constants.M_PI)
+            {
+                lng = lng + (2 * Constants.M_PI);
+            }
+
+            return lng;
+        }
+
+        /**
+         * Find the great circle distance in radians between two spherical coordinates.
+         *
+         * @param p1 The first spherical coordinates.
+         * @param p2 The second spherical coordinates.
+         * @return The great circle distance in radians between p1 and p2.
+         */
+        public static double _geoDistRads(GeoCoord p1, GeoCoord p2)
+        {
+            // use spherical triangle with p1 at A, p2 at B, and north pole at C
+            double bigC = Math.Abs(p2.lon - p1.lon);
+            if (bigC > Constants.M_PI) // assume we want the complement
+            {
+                // note that in this case they can't both be negative
+                double lon1 = p1.lon;
+                if (lon1 < 0.0) lon1 += 2.0 * Constants.M_PI;
+                double lon2 = p2.lon;
+                if (lon2 < 0.0) lon2 += 2.0 * Constants.M_PI;
+
+                bigC = Math.Abs(lon2 - lon1);
+            }
+
+            double b = Constants.M_PI_2 - p1.lat;
+            double a = Constants.M_PI_2 - p2.lat;
+
+            // use law of cosines to find c
+            double cosc = Math.Cos(a) * Math.Cos(b) + Math.Sin(a) * Math.Sin(b) * Math.Cos(bigC);
+            if (cosc > 1.0)
+            {
+                cosc = 1.0;
+            }
+
+            if (cosc < -1.0)
+            {
+                cosc = -1.0;
+            }
+
+            return Math.Acos(cosc);
+        }
+
+        /**
+         * Find the great circle distance in kilometers between two spherical
+         * coordinates.
+         *
+         * @param p1 The first spherical coordinates.
+         * @param p2 The second spherical coordinates.
+         * @return The distance in kilometers between p1 and p2.
+         */
+        public static  double _geoDistKm(GeoCoord p1, IEnumerable<GeoCoord> p2)
+        {
+            return Constants.EARTH_RADIUS_KM * _geoDistRads(p1, p2.First( ));
+        }
+
+        /**
+         * Determines the azimuth to p2 from p1 in radians.
+         *
+         * @param p1 The first spherical coordinates.
+         * @param p2 The second spherical coordinates.
+         * @return The azimuth in radians from p1 to p2.
+         */
+        public  double _geoAzimuthRads(GeoCoord p1, GeoCoord p2)
+        {
+            return
+                Math.Atan2(
+                    Math.Cos(p2.lat) * Math.Sin( p2.lon - p1.lon),
+                    Math.Cos(p1.lat) * Math.Sin(p2.lat) - 
+                    Math.Sin(p1.lat) * Math.Cos(p2.lat) * Math.Cos(p2.lon - p1.lon)
+                );
+        }
+
+        /**
+         * Computes the point on the sphere a specified azimuth and distance from
+         * another point.
+         *
+         * @param p1 The first spherical coordinates.
+         * @param az The desired azimuth from p1.
+         * @param distance The desired distance from p1, must be non-negative.
+         * @param p2 The spherical coordinates at the desired azimuth and distance from
+         * p1.
+         */
+        public  void _geoAzDistanceRads(ref GeoCoord p1, double az, double distance, ref GeoCoord p2)
+        {
+            if (distance < Constants.EPSILON) {
+                p2 = p1;
+                return;
+            }
+
+            double sinlat, sinlon, coslon;
+
+            az = _posAngleRads(az);
+
+            // check for due north/south azimuth
+            if (az < Constants.EPSILON || Math.Abs(az - Constants.M_PI) <Constants. EPSILON) {
+                if (az < Constants.EPSILON)  // due north
+                    p2.lat = p1.lat + distance;
+                else  // due south
+                    p2.lat = p1.lat - distance;
+
+                if (Math.Abs(p2.lat - Constants.M_PI_2) < Constants.EPSILON)  // north pole
+                {
+                    p2.lat = Constants.M_PI_2;
+                    p2.lon = 0.0;
+                } else if (Math.Abs(p2.lat + Constants.M_PI_2) < Constants.EPSILON)  // south pole
+                {
+                    p2.lat = -Constants.M_PI_2;
+                    p2.lon = 0.0;
+                } else
+                    p2.lon = constrainLng(p1.lon);
+            } else  // not due north or south
+            {
+                sinlat = Math.Sin(p1.lat) * Math.Cos(distance) +
+                         Math.Cos(p1.lat) * Math.Sin(distance) * Math.Cos(az);
+                if (sinlat > 1.0) sinlat = 1.0;
+                if (sinlat < -1.0) sinlat = -1.0;
+                p2.lat =Math.Asin(sinlat);
+                if (Math.Abs(p2.lat - Constants.M_PI_2) < Constants.EPSILON)  // north pole
+                {
+                    p2.lat = Constants.M_PI_2;
+                    p2.lon = 0.0;
+                } else if (Math.Abs(p2.lat + Constants.M_PI_2) < Constants.EPSILON)  // south pole
+                {
+                    p2.lat = -Constants.M_PI_2;
+                    p2.lon = 0.0;
+                } else {
+                    sinlon = Math.Sin(az) * Math.Sin(distance) / Math.Cos(p2.lat);
+                    coslon = (Math.Cos(distance) - Math.Sin(p1.lat) * Math.Sin(p2.lat)) /
+                             Math.Cos(p1.lat) / Math.Cos(p2.lat);
+                    if (sinlon > 1.0) {sinlon = 1.0;}
+                    if (sinlon < -1.0) {sinlon = -1.0;}
+                    if (coslon > 1.0) {sinlon = 1.0;}
+                    if (coslon < -1.0) {sinlon = -1.0;}
+                    p2.lon = constrainLng(p1.lon + Math.Atan2(sinlon, coslon));
+                }
+            }
+        }
+
+        /*
+         * The following functions provide meta information about the H3 hexagons at
+         * each zoom level. Since there are only 16 total levels, these are current
+         * handled with hardwired static values, but it may be worthwhile to put these
+         * static values into another file that can be autogenerated by source code in
+         * the future.
+         */
+        public static double hexAreaKm2(int res)
+        {
+            double[] areas = {
+                4250546.848, 607220.9782, 86745.85403, 12392.26486,
+                1770.323552, 252.9033645, 36.1290521,  5.1612932,
+                0.7373276,   0.1053325,   0.0150475,   0.0021496,
+                0.0003071,   0.0000439,   0.0000063,   0.0000009};
+            return areas[res];
+        }
+
+        public static double hexAreaM2(int res)
+        {
+            double[] areas = {
+                4.25055E+12, 6.07221E+11, 86745854035, 12392264862,
+                1770323552,  252903364.5, 36129052.1,  5161293.2,
+                737327.6,    105332.5,    15047.5,     2149.6,
+                307.1,       43.9,        6.3,         0.9};
+            return areas[res];
+        }
+
+        public static double edgeLengthKm(int res)
+        {
+            double[] lens = {
+                1107.712591, 418.6760055, 158.2446558, 59.81085794,
+                22.6063794,  8.544408276, 3.229482772, 1.220629759,
+                0.461354684, 0.174375668, 0.065907807, 0.024910561,
+                0.009415526, 0.003559893, 0.001348575, 0.000509713
+
+            };
+            return lens[res];
+        }
+
+        public static double edgeLengthM(int res)
+        {
+            double[] lens = {
+                1107712.591, 418676.0055, 158244.6558, 59810.85794,
+                22606.3794,  8544.408276, 3229.482772, 1220.629759,
+                461.3546837, 174.3756681, 65.90780749, 24.9105614,
+                9.415526211, 3.559893033, 1.348574562, 0.509713273
+            };
+            return lens[res];
+        }
+
+        /** @brief Number of unique valid H3Indexes at given resolution. */
+        public static long numHexagons(int res) {
+            long[] nums =
+            {
+                122L,
+                842L,
+                5882L,
+                41162L,
+                288122L,
+                2016842L,
+                14117882L,
+                98825162L,
+                691776122L,
+                4842432842L,
+                33897029882L,
+                237279209162L,
+                1660954464122L,
+                11626681248842L,
+                81386768741882L,
+                569707381193162L
+            };
+            return nums[res];
         }
     }
 }
-
-
-/*
-polygonAlgos.h *** Fucking special case regarding C macros
-stackAlloc.h // Pretty much should just create an array (or maybe another ienumerable) of the proper type
- */
