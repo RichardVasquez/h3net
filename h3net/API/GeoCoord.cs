@@ -33,13 +33,19 @@ namespace h3net.API
         public double lat;
         public double lon;
 
+        public GeoCoord(double _lat, double _lon)
+        {
+            lat = _lat;
+            lon = _lon;
+        }
+
         /**
          * Normalizes radians to a value between 0.0 and two PI.
          *
          * @param rads The input radians value.
          * @return The normalized radians value.
          */
-        double _posAngleRads(double rads)
+        public static double _posAngleRads(double rads)
         {
             var tmp = rads < 0.0
                 ? rads + Constants.M_2PI
@@ -136,7 +142,7 @@ namespace h3net.API
          * @param lat The original lat value
          * @return The corrected lat value
          */
-        public double constrainLat(double lat)
+        public static double constrainLat(double lat)
         {
             while (lat > Constants.M_PI_2)
             {
@@ -227,7 +233,7 @@ namespace h3net.API
          * @param p2 The second spherical coordinates.
          * @return The azimuth in radians from p1 to p2.
          */
-        public  double _geoAzimuthRads(GeoCoord p1, GeoCoord p2)
+        public static double _geoAzimuthRads(GeoCoord p1, GeoCoord p2)
         {
             return
                 Math.Atan2(
@@ -247,7 +253,7 @@ namespace h3net.API
          * @param p2 The spherical coordinates at the desired azimuth and distance from
          * p1.
          */
-        public  void _geoAzDistanceRads(ref GeoCoord p1, double az, double distance, ref GeoCoord p2)
+        public static void _geoAzDistanceRads(ref GeoCoord p1, double az, double distance, ref GeoCoord p2)
         {
             if (distance < Constants.EPSILON) {
                 p2 = p1;
