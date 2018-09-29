@@ -39,6 +39,10 @@ namespace h3net.API
             lon = _lon;
         }
 
+        public GeoCoord()
+        {
+        }
+
         /**
          * Normalizes radians to a value between 0.0 and two PI.
          *

@@ -58,9 +58,6 @@
     <Compile Include="API\LinkedGeo.cs" />
     <Compile Include="API\MathExtensions.cs" />
     <Compile Include="API\Polygon.cs" />
-    <Compile Include="API\LinkedGeoCoord.cs" />
-    <Compile Include="API\LinkedGeoLoop.cs" />
-    <Compile Include="API\LinkedGeoPolygon.cs" />
     <Compile Include="API\Vec2d.cs" />
     <Compile Include="API\Vec3d.cs" />
     <Compile Include="API\VertexGraph.cs" />
