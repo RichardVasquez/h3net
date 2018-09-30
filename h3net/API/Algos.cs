@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace h3net.API
 {
@@ -176,9 +177,13 @@ namespace h3net.API
          *
          * @param k k value, k >= 0.
          */
-        public int maxKringSize(int k)
+        public static int maxKringSize(int k)
         {
-            return 3 * k * (k + 1) + 1;
+            int result = 1;
+            for (int i = 0; i < k; i++) {
+                result = result + 6 * (i + 1);
+            }
+            return result;
         }
 
         /**
@@ -194,11 +199,11 @@ namespace h3net.API
          * @param k k >= 0
          * @param out Zero-filled array which must be of size maxKringSize(k).
          */
-        public void kRing(H3Index origin, int k, ref List<H3Index> out_hex)
+        public static void kRing(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             int maxIdx = maxKringSize(k);
             var distances = new List<int>(maxIdx);
-            kRingDistances(origin, k, ref out_hex, ref distances);
+            Algos.kRingDistances(origin, k, ref out_hex, ref distances);
         }
 
         /**
@@ -215,7 +220,7 @@ namespace h3net.API
          * @param out Zero-filled array which must be of size maxKringSize(k).
          * @param distances Zero-filled array which must be of size maxKringSize(k).
          */
-        public void kRingDistances(H3Index origin, int k, ref List<H3Index> out_hex, ref List<int> distances)
+        public static void kRingDistances(H3Index origin, int k, ref List<H3Index> out_hex, ref List<int> distances)
         {
             int maxIdx = maxKringSize(k);
             // Optimistically try the faster hexRange algorithm first
@@ -244,7 +249,7 @@ namespace h3net.API
          * @param maxIdx Size of out and scratch arrays (must be maxKringSize(k))
          * @param curK Current distance from the origin.
          */
-        public void _kRingInternal(H3Index origin, int k, ref List<H3Index> out_hex, ref List<int> distances,
+        public static void _kRingInternal(H3Index origin, int k, ref List<H3Index> out_hex, ref List<int> distances,
             int maxIdx, int curK)
         {
             if (origin == 0) return;
@@ -300,13 +305,13 @@ namespace h3net.API
          * @return H3Index of the specified neighbor or 0 if deleted k-subsequence
          *         distortion is encountered.
          */
-        public ulong h3NeighborRotations(H3Index origin, Direction dir, ref int rotations)
+        public static ulong h3NeighborRotations(H3Index origin, Direction dir, ref int rotations)
         {
             H3Index out_hex = origin;
 
             for (int i = 0; i < rotations; i++)
             {
-                dir = H3CoordIJK._rotate60ccw(dir);
+                dir = CoordIJK._rotate60ccw(dir);
             }
 
             int newRotations = 0;
@@ -515,7 +520,7 @@ namespace h3net.API
          * @param distances Null or array which must be of size maxKringSize(k).
          * @return 0 if no pentagon or pentagonal distortion area was encountered.
          */
-        public int hexRangeDistances(H3Index origin, int k, ref List<H3Index> out_size, ref List<int> distances)
+        public static int hexRangeDistances(H3Index origin, int k, ref List<H3Index> out_size, ref List<int> distances)
         {
             // Return codes:
             // 1 Pentagon was encountered
@@ -524,6 +529,11 @@ namespace h3net.API
             // k-subsequence is the problem, but for compatibility reasons we fail on
             // the pentagon.
 
+            for (int m = 0; m < out_size.Capacity; m++)
+            {
+                out_size.Add(0);
+                distances.Add(0);
+            }
             // k must be >= 0, so origin is always needed
             int idx = 0;
             out_size[idx] = origin;
@@ -847,7 +857,7 @@ namespace h3net.API
             GeoBoundary vertices = new GeoBoundary();
             GeoCoord fromVtx;
             GeoCoord toVtx;
-            VertexNode edge;
+            VertexGraph.VertexNode edge;
             if (numHexes < 1)
             {
                 // We still need to init the graph, or calls to destroyVertexGraph will
@@ -897,11 +907,11 @@ namespace h3net.API
          * @param graph Input graph
          * @param out   Output polygon
          */
-        public void _vertexGraphToLinkedGeo(ref VertexGraph graph, ref LinkedGeoPolygon out_polygon)
+        public void _vertexGraphToLinkedGeo(ref VertexGraph graph, ref LinkedGeo.LinkedGeoPolygon out_polygon)
         {
-            out_polygon = new LinkedGeoPolygon();
-            LinkedGeoLoop loop;
-            VertexNode edge;
+            out_polygon = new LinkedGeo.LinkedGeoPolygon();
+            LinkedGeo.LinkedGeoLoop loop;
+            VertexGraph.VertexNode edge;
             GeoCoord nextVtx;
             // Find the next unused entry point
             while ((edge = VertexGraph.firstVertexNode(ref graph)) != null)
@@ -938,7 +948,7 @@ namespace h3net.API
          * @param out      Output polygon
          */
         public void h3SetToLinkedGeo(ref List<H3Index> h3Set, int numHexes,
-            ref LinkedGeoPolygon out_polygons)
+            ref LinkedGeo.LinkedGeoPolygon out_polygons)
         {
             VertexGraph graph = new VertexGraph(0, 0);
             h3SetToVertexGraph(ref h3Set, numHexes, ref graph);

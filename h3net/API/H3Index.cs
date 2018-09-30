@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace h3net.API
 {
+    [DebuggerDisplay("{value}")]
     public class H3Index
     {
         /** The number of bits in an H3 index. */
@@ -298,22 +300,27 @@ namespace h3net.API
          *
          * @return H3Index of the parent, or 0 if you actually asked for a child
          */
-        H3Index h3ToParent(H3Index h, int parentRes)
+        static H3Index h3ToParent(H3Index h, int parentRes)
         {
             int childRes = H3_GET_RESOLUTION(h);
             if (parentRes > childRes)
             {
                 return H3_INVALID_INDEX;
-            } else if (parentRes == childRes)
+            }
+
+            if (parentRes == childRes)
             {
                 return h;
-            } else if (parentRes < 0 || parentRes > Constants.MAX_H3_RES)
+            }
+
+            if (parentRes < 0 || parentRes > Constants.MAX_H3_RES)
             {
                 return H3_INVALID_INDEX;
             }
 
-            H3_SET_RESOLUTION(ref h, parentRes);
-            H3Index parentH = h;
+            H3Index htemp = h;
+            H3_SET_RESOLUTION(ref htemp, parentRes);
+            H3Index parentH = htemp;
 
             for (int i = parentRes + 1; i <= childRes; i++) {
                 H3_SET_INDEX_DIGIT(ref parentH, i, H3_DIGIT_MASK);
@@ -331,7 +338,7 @@ namespace h3net.API
          * @return int count of maximum number of children (equal for hexagons, less for
          * pentagons
          */
-        int maxH3ToChildrenSize(H3Index h, int childRes)
+        static int maxH3ToChildrenSize(H3Index h, int childRes)
         {
             int parentRes = H3_GET_RESOLUTION(h);
             if (parentRes > childRes) 
@@ -351,7 +358,7 @@ namespace h3net.API
          *
          * @return The new H3Index for the child
          */
-        public H3Index makeDirectChild(H3Index h, int cellNumber)
+        public static H3Index makeDirectChild(H3Index h, int cellNumber)
         {
             int childRes = H3_GET_RESOLUTION(h) + 1;
             H3_SET_RESOLUTION(ref h, childRes);
@@ -369,21 +376,27 @@ namespace h3net.API
          * @param childRes int the child level to produce
          * @param children H3Index* the memory to store the resulting addresses in
          */
-        void h3ToChildren(H3Index h, int childRes,ref  List<H3Index> children)
+        static void h3ToChildren(H3Index h, int childRes,ref  List<H3Index> children)
         {
             int parentRes = H3_GET_RESOLUTION(h);
             if (parentRes > childRes)
             {
                 return;
-            } else if (parentRes == childRes)
+            }
+
+            if (parentRes == childRes)
             {
-                children[0]= h;
+                children.Add(h);
                 return;
             }
+
             int bufferSize = maxH3ToChildrenSize(h, childRes);
             int bufferChildStep = (bufferSize / 7);
             int isAPentagon = h3IsPentagon(h);
-
+            for (int k = 0; k < bufferSize; k++)
+            {
+                children.Add(0);
+            }
             int childIndex = 0;
 
             for (int i = 0; i < 7; i++)
@@ -398,7 +411,7 @@ namespace h3net.API
                     }
                 } else {
                     //  Got to slice, then graft
-                    var new_children = children.GetRange(childIndex, children.Count - childIndex);
+                    var new_children = children.GetRange(childIndex, bufferSize - childIndex);
                     h3ToChildren(makeDirectChild(h, i), childRes, ref new_children);
                     childIndex += bufferChildStep;
                 }
@@ -420,7 +433,7 @@ namespace h3net.API
          *
          *
          */
-        int compact(ref List<H3Index> h3Set, ref List<H3Index> compactedSet, int numHexes)
+        public static int compact(ref List<H3Index> h3Set, ref List<H3Index> compactedSet, int numHexes)
         {
             //  Maximum resolution.  We're out.
             int res = H3_GET_RESOLUTION(h3Set[0]);
@@ -431,9 +444,11 @@ namespace h3net.API
                 return 0;
             }
 
+            var realCompacted = new List<ulong>();
+
             //  Create a scratch list
             List<H3Index> scratchList = new List<H3Index>(numHexes);
-            Dictionary<H3Index, List<H3Index>> generation = new Dictionary<H3Index, List<H3Index>>();
+            Dictionary<ulong, List<ulong>> generation = new Dictionary<ulong, List<ulong>>();
             //  These are ones we haven't processed.
             List<H3Index> remainingHexes = new List<H3Index>(h3Set);
 
@@ -448,11 +463,12 @@ namespace h3net.API
                 foreach (var hex in remainingHexes)
                 {
                     H3Index parent = h3ToParent(hex, parentRes);
-                    if (!generation.ContainsKey(parent))
+                    Debug.WriteLine("{0}\t{1}", hex.value, parent.value);
+                    if (!generation.ContainsKey(parent.value))
                     {
-                        generation[parent] = new List<H3Index>();
+                        generation[parent.value] = new List<ulong>();
                     }
-                    generation[parent].Add(hex);
+                    generation[parent].Add(hex.value);
                 }
                 // Only possible on duplicate input
                 var errorTest = generation.Where(hex => hex.Value.Count > 7);
@@ -462,12 +478,15 @@ namespace h3net.API
                 }
 
                 var orphans = generation.Where(hex => hex.Value.Count != 7);
-                compactedSet.AddRange(orphans.SelectMany(valuePair => valuePair.Value));
+                realCompacted.AddRange(orphans.SelectMany(valuePair => valuePair.Value));
 
                 var nextgen = generation.Where(hex => hex.Value.Count == 7);
-                remainingHexes = new List<H3Index>(nextgen.Select(keyValuePair => keyValuePair.Key));
+                remainingHexes = nextgen.Select(valuePair => new H3Index(valuePair.Key)).ToList();
+                generation.Clear();
             }
 
+            compactedSet.Capacity = numHexes;
+            compactedSet = realCompacted.Select(number => new H3Index(number)).ToList();
             return 0;
         }
 
@@ -482,7 +501,7 @@ namespace h3net.API
          * @return An error code if output array is too small or any hexagon is
          * smaller than the output resolution.
          */
-        int uncompact(ref List<H3Index> compactedSet, int numHexes,
+        public static int uncompact(ref List<H3Index> compactedSet, int numHexes,
             ref List<H3Index> h3Set, int maxHexes, int res)
         {
             //  Let's deal with the resolution issue first.
@@ -518,7 +537,7 @@ namespace h3net.API
          * @return The number of hexagons to allocate memory for, or a negative
          * number if an error occurs.
          */
-        int maxUncompactSize(ref List<H3Index> compactedSet, int numHexes, int res) {
+        public static int maxUncompactSize(ref List<H3Index> compactedSet, int numHexes, int res) {
             int maxNumHexagons = 0;
             for (int i = 0; i < numHexes; i++) {
                 if (compactedSet[i] == 0) continue;
@@ -876,14 +895,15 @@ namespace h3net.API
             // a pentagon base cell with a leading 4 digit requires special handling
             bool pentLeading4 =
                 (BaseCells._isBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == Direction.I_AXES_DIGIT);
-            if (FaceIJK._adjustOverageClassII(ref fijk, res, pentLeading4, 0) > 0)
+            if (FaceIJK._adjustOverageClassII(ref fijk, res, pentLeading4 ? 1 : 0, 0) > 0)
             {
                 // if the base cell is a pentagon we have the potential for secondary
                 // overages
-                if (BaseCells._isBaseCellPentagon(baseCell)) 
+                if (BaseCells._isBaseCellPentagon(baseCell))
                 {
-                    while (true) {
-                        if (FaceIJK ._adjustOverageClassII(ref fijk, res, 0, 0) > 0)
+                    while (true)
+                    {
+                        if (FaceIJK._adjustOverageClassII(ref fijk, res, 0, 0) > 0)
                         {
                             break;
                         }
@@ -894,7 +914,7 @@ namespace h3net.API
                 {
                     CoordIJK._upAp7r(ref fijk.coord);
                 }
-            } 
+            }
             else if (res != H3_GET_RESOLUTION(h))
             {
                 fijk.coord = origIJK;

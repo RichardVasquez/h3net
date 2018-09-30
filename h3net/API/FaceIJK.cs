@@ -432,10 +432,10 @@ namespace h3net.API
 
             // determine the icosahedron face
             face = 0;
-            double sqd = Vec3d._pointSquareDist(ref faceCenterPoint[0], ref v3d);
+            double sqd = Vec3d._pointSquareDist(faceCenterPoint[0],  v3d);
             for (int f = 1; f < Constants.NUM_ICOSA_FACES; f++)
             {
-                double sqdT = Vec3d._pointSquareDist(ref faceCenterPoint[f], ref v3d);
+                double sqdT = Vec3d._pointSquareDist( faceCenterPoint[f],  v3d);
                 if (sqdT < sqd)
                 {
                     face = f;
