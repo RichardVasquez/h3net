@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -55,6 +56,62 @@ namespace h3net.API
         public H3Index(ulong val) 
         {
             value = val;
+        }
+
+        public H3Index()
+        {
+            value = 0;
+        }
+
+        public static bool operator ==(H3Index h1, int i2)
+        {
+            return h1 != null && h1.value == (ulong)i2;
+        }
+
+        public static bool operator !=(H3Index h1, int i2)
+        {
+            return !(h1==i2);
+        }
+
+        public static bool operator ==(int i1, H3Index h2)
+        {
+            return h2 != null && h2.value == (ulong)i1;
+        }
+
+        public static bool operator !=(int i1, H3Index h2)
+        {
+            return !(i1==h2);
+        }
+
+
+        public static bool operator ==(H3Index h1, H3Index h2)
+        {
+            return (h1 != null && h2 != null) && (h1.value == h2.value);
+        }
+
+        public static bool operator !=(H3Index h1, H3Index h2)
+        {
+            return !(h1 == h2);
+        }
+
+        public static bool operator ==(H3Index u1, ulong u2)
+        {
+            return u1 != null && u1.value == u2;
+        }
+
+        public static bool operator !=(H3Index  u1, ulong u2)
+        {
+            return !(u1 == u2);
+        }
+
+        public static bool operator ==(ulong u1, H3Index h2)
+        {
+            return h2 != null && h2.value == u1;
+        }
+
+        public static bool operator !=(ulong  u1, H3Index h2)
+        {
+            return !(u1 == h2);
         }
 
         public static implicit operator H3Index(ulong u)
@@ -278,7 +335,7 @@ namespace h3net.API
          * @param baseCell The H3 base cell to initialize the index to.
          * @param initDigit The H3 digit (0-7) to initialize all of the index digits to.
          */
-        public void setH3Index(ref H3Index hp, int res, int baseCell, Direction initDigit)
+        public static void setH3Index(ref H3Index hp, int res, int baseCell, Direction initDigit)
         {
             H3Index h = H3_INIT;
             H3_SET_MODE(ref h, Constants.H3_HEXAGON_MODE);
@@ -390,32 +447,65 @@ namespace h3net.API
                 return;
             }
 
-            int bufferSize = maxH3ToChildrenSize(h, childRes);
-            int bufferChildStep = (bufferSize / 7);
-            int isAPentagon = h3IsPentagon(h);
-            for (int k = 0; k < bufferSize; k++)
-            {
-                children.Add(0);
-            }
-            int childIndex = 0;
+            List<H3Index> current = new List<H3Index> {h};
+            List<H3Index> realChildren = new List<H3Index>();
+            int goalRes = childRes;
+            int currentRes = parentRes;
 
-            for (int i = 0; i < 7; i++)
+            while (currentRes < goalRes)
             {
-                if ((isAPentagon>0) && i == (int)Direction.K_AXES_DIGIT)
+                realChildren.Clear();
+                foreach (var index in current)
                 {
-                    int nextChild = childIndex + bufferChildStep;
-                    while (childIndex < nextChild)
+                    int isPentagon = h3IsPentagon(index);
+                    for (int m = 0; m < 7; m++)
                     {
-                        children[childIndex] = H3_INVALID_INDEX;
-                        childIndex++;
+                        if (isPentagon > 0 && m == (int) Direction.K_AXES_DIGIT)
+                        {
+                            realChildren.Add(H3_INVALID_INDEX);
+                            break;
+                        }
+
+                        var child = makeDirectChild(index, m);
+                        realChildren.Add(child);
                     }
-                } else {
-                    //  Got to slice, then graft
-                    var new_children = children.GetRange(childIndex, bufferSize - childIndex);
-                    h3ToChildren(makeDirectChild(h, i), childRes, ref new_children);
-                    childIndex += bufferChildStep;
                 }
+                current = new List<H3Index>(realChildren);
+                currentRes++;
             }
+
+            children = new List<H3Index>(current);
+
+            //int bufferSize = maxH3ToChildrenSize(h, childRes);
+            //int bufferChildStep = (bufferSize / 7);
+            //int isAPentagon = h3IsPentagon(h);
+            //for (int k = 0; k < bufferSize; k++)
+            //{
+            //    children.Add(0);
+            //}
+            //int childIndex = 0;
+
+            //for (int i = 0; i < 7; i++)
+            //{
+            //    if ((isAPentagon>0) && i == (int)Direction.K_AXES_DIGIT)
+            //    {
+            //        int nextChild = childIndex + bufferChildStep;
+            //        while (childIndex < nextChild)
+            //        {
+            //            children[childIndex] = H3_INVALID_INDEX;
+            //            childIndex++;
+            //        }
+            //    } else {
+            //        //  Got to slice, then graft
+            //        var new_children = children.GetRange(childIndex, bufferSize - childIndex);
+            //        h3ToChildren(makeDirectChild(h, i), childRes, ref new_children);
+            //        for (int m = 0; m < bufferSize - childIndex; m++)
+            //        {
+            //            children[m + childIndex] = new_children[m];
+            //        }
+            //        childIndex += bufferChildStep;
+            //    }
+            //}
         }
 
         /**
@@ -450,7 +540,7 @@ namespace h3net.API
             List<H3Index> scratchList = new List<H3Index>(numHexes);
             Dictionary<ulong, List<ulong>> generation = new Dictionary<ulong, List<ulong>>();
             //  These are ones we haven't processed.
-            List<H3Index> remainingHexes = new List<H3Index>(h3Set);
+            List<H3Index> remainingHexes = new List<H3Index>(h3Set.Take(numHexes));
 
             //  Loop through until we've removed the stragglers at each resolution
             //  and eventually have gotten the biggest sized hexes possible stored away
@@ -463,10 +553,14 @@ namespace h3net.API
                 foreach (var hex in remainingHexes)
                 {
                     H3Index parent = h3ToParent(hex, parentRes);
-                    Debug.WriteLine("{0}\t{1}", hex.value, parent.value);
                     if (!generation.ContainsKey(parent.value))
                     {
                         generation[parent.value] = new List<ulong>();
+                    }
+
+                    if (generation[parent].Contains(hex.value))
+                    {
+                        return -1;  //  We have duplicate hexes that we're trying to compact
                     }
                     generation[parent].Add(hex.value);
                 }
@@ -520,7 +614,6 @@ namespace h3net.API
                 }
 
                 List<H3Index> allDescendants = new List<H3Index>(maxH3ToChildrenSize(index, res));
-
                 h3ToChildren(index, res, ref allDescendants);
                 h3Set.AddRange(allDescendants);
             }
@@ -537,27 +630,38 @@ namespace h3net.API
          * @return The number of hexagons to allocate memory for, or a negative
          * number if an error occurs.
          */
-        public static int maxUncompactSize(ref List<H3Index> compactedSet, int numHexes, int res) {
+        public static int maxUncompactSize(ref List<H3Index> compactedSet, int numHexes, int res)
+        {
             int maxNumHexagons = 0;
-            for (int i = 0; i < numHexes; i++) {
-                if (compactedSet[i] == 0) continue;
+            for (int i = 0; i < numHexes; i++)
+            {
+                if (compactedSet[i] == 0)
+                {
+                    continue;
+                }
+
                 int currentRes = H3_GET_RESOLUTION(compactedSet[i]);
-                if (currentRes > res) {
+                if (currentRes > res)
+                {
                     // Nonsensical. Abort.
                     return -1;
                 }
-                if (currentRes == res) {
+
+                if (currentRes == res)
+                {
                     maxNumHexagons++;
-                } else {
+                }
+                else
+                {
                     // Bigger hexagon to reduce in size
-                    int numHexesToGen =
-                        maxH3ToChildrenSize(compactedSet[i], res);
+                    int numHexesToGen = maxH3ToChildrenSize(compactedSet[i], res);
                     maxNumHexagons += numHexesToGen;
                 }
             }
+
             return maxNumHexagons;
         }
- 
+
         /**
          * h3IsPentagon takes an H3Index and determines if it is actually a
          * pentagon.
