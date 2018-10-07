@@ -1,7 +1,7 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace h3net.API
@@ -37,6 +37,7 @@ namespace h3net.API
         public static ulong H3_RES_MASK_NEGATIVE = ~H3_RES_MASK;
         /** 1's in the 3 reserved bits, 0's everywhere else. */
         public static ulong H3_RESERVED_MASK = (ulong) 7 << H3_RESERVED_OFFSET;
+
         /** 0's in the 3 reserved bits, 1's everywhere else. */
         public static ulong H3_RESERVED_MASK_NEGATIVE = ~H3_RESERVED_MASK;
         /** 1's in the 3 bits of res 15 digit bits, 0's everywhere else. */
@@ -63,9 +64,42 @@ namespace h3net.API
             value = 0;
         }
 
+        protected bool Equals(H3Index other)
+        {
+            return value == other.value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((H3Index) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return value.GetHashCode();
+        }
+
         public static bool operator ==(H3Index h1, int i2)
         {
-            return h1 != null && h1.value == (ulong)i2;
+            if (ReferenceEquals(h1, null))
+            {
+                return false;
+            }
+            return h1.value == (ulong)i2;
         }
 
         public static bool operator !=(H3Index h1, int i2)
@@ -75,7 +109,11 @@ namespace h3net.API
 
         public static bool operator ==(int i1, H3Index h2)
         {
-            return h2 != null && h2.value == (ulong)i1;
+            if (ReferenceEquals(h2, null))
+            {
+                return false;
+            }
+            return h2.value == (ulong)i1;
         }
 
         public static bool operator !=(int i1, H3Index h2)
@@ -86,7 +124,12 @@ namespace h3net.API
 
         public static bool operator ==(H3Index h1, H3Index h2)
         {
-            return (h1 != null && h2 != null) && (h1.value == h2.value);
+            if (ReferenceEquals(h1, null) || ReferenceEquals(h2,null))
+            {
+                return false;
+            }
+
+            return h1.value == h2.value;
         }
 
         public static bool operator !=(H3Index h1, H3Index h2)
@@ -94,9 +137,14 @@ namespace h3net.API
             return !(h1 == h2);
         }
 
-        public static bool operator ==(H3Index u1, ulong u2)
+        public static bool operator ==(H3Index h1, ulong u2)
         {
-            return u1 != null && u1.value == u2;
+            if (ReferenceEquals(h1, null))
+            {
+                return false;
+            }
+
+            return h1.value == u2;
         }
 
         public static bool operator !=(H3Index  u1, ulong u2)
@@ -106,7 +154,12 @@ namespace h3net.API
 
         public static bool operator ==(ulong u1, H3Index h2)
         {
-            return h2 != null && h2.value == u1;
+            if (ReferenceEquals(h2, null))
+            {
+                return false;
+            }
+
+            return h2.value == u1;
         }
 
         public static bool operator !=(ulong  u1, H3Index h2)
@@ -254,12 +307,18 @@ namespace h3net.API
          * @param str The string representation of an H3 index.
          * @return The H3 index corresponding to the string argument, or 0 if invalid.
          */
-        H3Index stringToH3(string str) {
+        public static H3Index stringToH3(string str) {
             H3Index h = H3_INVALID_INDEX;
-            // If failed, h will be unmodified and we should return 0 anyways.
-            if (ulong.TryParse(str, out ulong ul))
+            // A small risk, but for the most part, we're dealing with hex numbers, so let's use that
+            // as our default.
+            if (ulong.TryParse(str, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out ulong ul1))
             {
-                return new H3Index(ul);
+                return new H3Index(ul1);
+            }
+            // If failed, h will be unmodified and we should return 0 anyways.
+            if (ulong.TryParse(str, out ulong ul2))
+            {
+                return new H3Index(ul2);
             }
 
             return 0;
@@ -475,37 +534,6 @@ namespace h3net.API
             }
 
             children = new List<H3Index>(current);
-
-            //int bufferSize = maxH3ToChildrenSize(h, childRes);
-            //int bufferChildStep = (bufferSize / 7);
-            //int isAPentagon = h3IsPentagon(h);
-            //for (int k = 0; k < bufferSize; k++)
-            //{
-            //    children.Add(0);
-            //}
-            //int childIndex = 0;
-
-            //for (int i = 0; i < 7; i++)
-            //{
-            //    if ((isAPentagon>0) && i == (int)Direction.K_AXES_DIGIT)
-            //    {
-            //        int nextChild = childIndex + bufferChildStep;
-            //        while (childIndex < nextChild)
-            //        {
-            //            children[childIndex] = H3_INVALID_INDEX;
-            //            childIndex++;
-            //        }
-            //    } else {
-            //        //  Got to slice, then graft
-            //        var new_children = children.GetRange(childIndex, bufferSize - childIndex);
-            //        h3ToChildren(makeDirectChild(h, i), childRes, ref new_children);
-            //        for (int m = 0; m < bufferSize - childIndex; m++)
-            //        {
-            //            children[m + childIndex] = new_children[m];
-            //        }
-            //        childIndex += bufferChildStep;
-            //    }
-            //}
         }
 
         /**
@@ -672,7 +700,7 @@ namespace h3net.API
         {
             var test = 
                 BaseCells._isBaseCellPentagon(H3_GET_BASE_CELL(h)) &&
-                _h3LeadingNonZeroDigit(h) != 0;
+                _h3LeadingNonZeroDigit(h) == 0;
             return test ? 1 : 0;
         }
 
@@ -780,22 +808,6 @@ namespace h3net.API
 
             return h;
         }
-        //H3Index _h3Rotate60ccw(H3Index h) {
-        //    for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
-        //        Direction oldDigit = H3_GET_INDEX_DIGIT(h, r);
-        //        H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIJK._rotate60ccw(oldDigit));
-        //    }
-
-        //    return h;
-        //}
-
-        //H3Index _h3Rotate60cw(H3Index h) {
-        //    for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
-        //        H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIJK._rotate60cw(H3_GET_INDEX_DIGIT(h, r)));
-        //    }
-
-        //    return h;
-        //}
 
         /**
          * Convert an FaceIJK address to the corresponding H3Index.
@@ -936,7 +948,7 @@ namespace h3net.API
           */
         static int _h3ToFaceIjkWithInitializedFijk(H3Index h, ref FaceIJK fijk)
         {
-            CoordIJK ijk = fijk.coord;
+            CoordIJK ijk = new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k);
             int res = H3_GET_RESOLUTION(h);
 
             // center base cell hierarchy is entirely on this face
@@ -958,6 +970,9 @@ namespace h3net.API
                 CoordIJK._neighbor(ref ijk, H3_GET_INDEX_DIGIT(h, r));
             }
 
+            fijk.coord.i = ijk.i;
+            fijk.coord.j = ijk.j;
+            fijk.coord.k = ijk.k;
             return possibleOverage;
         }
 
@@ -977,7 +992,15 @@ namespace h3net.API
             }
 
             // start with the "home" face and ijk+ coordinates for the base cell of c
-            fijk = BaseCells.baseCellData[baseCell].homeFijk;
+            fijk = new FaceIJK(
+                               BaseCells.baseCellData[baseCell].homeFijk.face,
+                               new CoordIJK(
+                                            BaseCells.baseCellData[baseCell].homeFijk.coord.i,
+                                            BaseCells.baseCellData[baseCell].homeFijk.coord.j,
+                                            BaseCells.baseCellData[baseCell].homeFijk.coord.k
+                                           )
+                              );
+            //fijk = BaseCells.baseCellData[baseCell].homeFijk;
             if (_h3ToFaceIjkWithInitializedFijk(h, ref fijk) == 0)
             {
                 return; // no overage is possible; h lies on this face
@@ -985,7 +1008,7 @@ namespace h3net.API
 
             // if we're here we have the potential for an "overage"; i.e., it is
             // possible that c lies on an adjacent face
-            CoordIJK origIJK = fijk.coord;
+            CoordIJK origIJK = new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k);
 
             // if we're in Class III, drop into the next finer Class II grid
             int res = H3_GET_RESOLUTION(h);
@@ -1007,7 +1030,7 @@ namespace h3net.API
                 {
                     while (true)
                     {
-                        if (FaceIJK._adjustOverageClassII(ref fijk, res, 0, 0) > 0)
+                        if (FaceIJK._adjustOverageClassII(ref fijk, res, 0, 0) == 0)
                         {
                             break;
                         }
@@ -1021,7 +1044,7 @@ namespace h3net.API
             }
             else if (res != H3_GET_RESOLUTION(h))
             {
-                fijk.coord = origIJK;
+                fijk.coord = new CoordIJK(origIJK.i, origIJK.j, origIJK.k);
             }
         }
 

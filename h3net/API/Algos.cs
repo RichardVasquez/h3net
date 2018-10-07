@@ -855,8 +855,8 @@ namespace h3net.API
             ref VertexGraph graph)
         {
             GeoBoundary vertices = new GeoBoundary();
-            GeoCoord fromVtx;
-            GeoCoord toVtx;
+            GeoCoord fromVtx = new GeoCoord();
+            GeoCoord toVtx = new GeoCoord();
             VertexGraph.VertexNode edge;
             if (numHexes < 1)
             {

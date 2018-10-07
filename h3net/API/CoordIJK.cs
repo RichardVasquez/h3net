@@ -302,7 +302,7 @@ namespace h3net.API
             int j = ijk.j - ijk.k;
 
             ijk.i = (int) Math.Round(((2 * i + j) / 7.0d), MidpointRounding.AwayFromZero);
-            ijk.j = (int)Math.Round(((3 * i + j) / 7.0d), MidpointRounding.AwayFromZero);
+            ijk.j = (int)Math.Round(((3 * j - i) / 7.0d), MidpointRounding.AwayFromZero);
             ijk.k = 0;
             _ijkNormalize(ref ijk);
         }

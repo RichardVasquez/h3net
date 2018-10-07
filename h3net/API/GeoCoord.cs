@@ -99,7 +99,7 @@ namespace h3net.API
          * @param latDegs The desired latitidue in decimal degrees.
          * @param lonDegs The desired longitude in decimal degrees.
          */
-        public void setGeoDegs(ref GeoCoord p, double latDegs, double lonDegs)
+        public static void setGeoDegs(ref GeoCoord p, double latDegs, double lonDegs)
         {
             _setGeoRads(ref p, degsToRads(latDegs), degsToRads(lonDegs));
 
@@ -112,7 +112,7 @@ namespace h3net.API
         * @param latRads The desired latitidue in decimal radians.
         * @param lonRads The desired longitude in decimal radians.
         */
-        public void _setGeoRads(ref GeoCoord p, double latRads, double lonRads)
+        public static void _setGeoRads(ref GeoCoord p, double latRads, double lonRads)
         {
             p.lat = latRads;
             p.lon = lonRads;
@@ -124,7 +124,7 @@ namespace h3net.API
          * @param degrees The decimal degrees.
          * @return The corresponding radians.
          */
-        public double degsToRads(double degrees)
+        public static double degsToRads(double degrees)
         {
             return degrees * Constants.M_PI_180;
         }
@@ -135,7 +135,7 @@ namespace h3net.API
          * @param radians The radians.
          * @return The corresponding decimal degrees.
          */
-        public double radsToDegs(double radians)
+        public static double radsToDegs(double radians)
         {
             return radians * Constants.M_180_PI;
         }

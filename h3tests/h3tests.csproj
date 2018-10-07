@@ -49,6 +49,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestBBox.cs" />
     <Compile Include="TestCompact.cs" />
+    <Compile Include="TestGeoCoord.cs" />
+    <Compile Include="TestH3Api.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

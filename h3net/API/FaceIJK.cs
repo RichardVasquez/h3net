@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace h3net.API
@@ -29,6 +30,8 @@ namespace h3net.API
 
         public FaceIJK()
         {
+            face = 0;
+            coord = new CoordIJK(0,0,0);
         }
 
         public FaceIJK(int f, CoordIJK cijk)
@@ -598,7 +601,7 @@ namespace h3net.API
             // adjust the center point to be in an aperture 33r substrate grid
             // these should be composed for speed
             FaceIJK centerIJK = new FaceIJK();
-            centerIJK.face=h.face;
+            centerIJK.face = h.face;
             centerIJK.coord = new CoordIJK(h.coord.i, h.coord.j,h.coord.k);
             CoordIJK._downAp3(ref centerIJK.coord);
             CoordIJK._downAp3r(ref centerIJK.coord);
@@ -618,6 +621,7 @@ namespace h3net.API
             FaceIJK[] fijkVerts = new FaceIJK[Constants.NUM_PENT_VERTS];
             for (int v = 0; v < Constants.NUM_PENT_VERTS; v++)
             {
+                fijkVerts[v] = new FaceIJK();
                 fijkVerts[v].face = centerIJK.face;
                 CoordIJK ._ijkAdd(centerIJK.coord, verts[v], ref fijkVerts[v].coord);
                 CoordIJK ._ijkNormalize(ref fijkVerts[v].coord);
@@ -627,6 +631,10 @@ namespace h3net.API
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
             g.numVerts = 0;
+            for (int i = 0; i < g.verts.Count; i++)
+            {
+                g.verts[i] = new GeoCoord();
+            }
             FaceIJK lastFijk= new FaceIJK();
             for (int vert = 0; vert < Constants.NUM_PENT_VERTS + 1; vert++)
             {
@@ -663,13 +671,25 @@ namespace h3net.API
                     int currentToLastDir = adjacentFaceDir[tmpFijk.face,lastFijk.face];
 
                      FaceOrientIJK fijkOrient =
-                        faceNeighbors[tmpFijk.face,currentToLastDir];
+                        new FaceOrientIJK(
+                                          faceNeighbors[tmpFijk.face,currentToLastDir].face,
+                                          faceNeighbors[tmpFijk.face,currentToLastDir].translate.i,
+                                          faceNeighbors[tmpFijk.face,currentToLastDir].translate.j,
+                                          faceNeighbors[tmpFijk.face,currentToLastDir].translate.k,
+                                          faceNeighbors[tmpFijk.face,currentToLastDir].ccwRot60
+                                          );
+
+//                        faceNeighbors[tmpFijk.face,currentToLastDir];
 
                     tmpFijk.face = fijkOrient.face;
-                    CoordIJK ijk = tmpFijk.coord;
+                    //CoordIJK ijk = tmpFijk.coord;
+                    CoordIJK ijk = new CoordIJK(tmpFijk.coord.i,tmpFijk.coord.j,tmpFijk.coord.k);
 
                     // rotate and translate for adjacent face
-                    for (int i = 0; i < fijkOrient.ccwRot60; i++){CoordIJK._ijkRotate60ccw(ref ijk);}
+                    for (int i = 0; i < fijkOrient.ccwRot60; i++)
+                    {
+                        CoordIJK._ijkRotate60ccw(ref ijk);
+                    }
 
                     CoordIJK transVec = fijkOrient.translate;
                     CoordIJK ._ijkScale(ref transVec, unitScaleByCIIres[adjRes] * 3);
@@ -791,7 +811,7 @@ namespace h3net.API
 
             // adjust the center point to be in an aperture 33r substrate grid
             // these should be composed for speed
-            FaceIJK centerIJK = h;
+            FaceIJK centerIJK = new FaceIJK(h.face, new CoordIJK(h.coord.i, h.coord.j, h.coord.k));
             CoordIJK._downAp3(ref centerIJK.coord);
             CoordIJK._downAp3r(ref centerIJK.coord);
 
@@ -810,6 +830,7 @@ namespace h3net.API
             FaceIJK[] fijkVerts = new FaceIJK[Constants.NUM_HEX_VERTS];
             for (int v = 0; v < Constants.NUM_HEX_VERTS; v++)
             {
+                fijkVerts[v] = new FaceIJK();
                 fijkVerts[v].face = centerIJK.face;
                 CoordIJK._ijkAdd(centerIJK.coord, verts[v], ref fijkVerts[v].coord);
                 CoordIJK._ijkNormalize(ref fijkVerts[v].coord);
@@ -825,7 +846,11 @@ namespace h3net.API
             {
                 int v = vert % Constants.NUM_HEX_VERTS;
 
-                FaceIJK fijk = fijkVerts[v];
+                FaceIJK fijk = new FaceIJK
+                    (
+                     fijkVerts[v].face,
+                     new CoordIJK(fijkVerts[v].coord.i, fijkVerts[v].coord.j, fijkVerts[v].coord.k)
+                    );
 
                 int pentLeading4 = 0;
                 int overage = _adjustOverageClassII(ref fijk, adjRes, pentLeading4, 1);
@@ -897,6 +922,7 @@ namespace h3net.API
                         _hex2dToGeo(ref inter, centerIJK.face, adjRes, 1, ref temp_verts);
                         g.verts[g.numVerts] = temp_verts;
                         g.numVerts++;
+                        Debug.WriteLine("!IsIntersection {0}", g.numVerts);
                     }
                 }
 
@@ -911,6 +937,7 @@ namespace h3net.API
                     _hex2dToGeo(ref vec, fijk.face, adjRes, 1, ref temp_verts);
                     g.verts[g.numVerts] = temp_verts;
                     g.numVerts++;
+                    Debug.WriteLine("regular conversion {0}", g.numVerts);
                 }
 
                 lastFace = fijk.face;
@@ -935,7 +962,7 @@ namespace h3net.API
         {
             int overage = 0;
 
-            CoordIJK ijk = fijk.coord;
+            CoordIJK ijk = new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k);
 
             // get the maximum dimension value; scale if a substrate grid
             int maxDim = maxDimByCIIres[res];
@@ -957,11 +984,23 @@ namespace h3net.API
                 if (ijk.k > 0) {
                     if (ijk.j > 0) // jk "quadrant"
                     {
-                        fijkOrient = faceNeighbors[fijk.face,JK];
+                        //fijkOrient = faceNeighbors[fijk.face,JK];
+                        fijkOrient = new FaceOrientIJK(
+                                     faceNeighbors[fijk.face,JK].face,
+                                     faceNeighbors[fijk.face,JK].translate.i,
+                                     faceNeighbors[fijk.face,JK].translate.j,
+                                     faceNeighbors[fijk.face,JK].translate.k,
+                                     faceNeighbors[fijk.face,JK].ccwRot60);
                     }
                     else  // ik "quadrant"
                     {
-                        fijkOrient = faceNeighbors[fijk.face,KI];
+                        //fijkOrient = faceNeighbors[fijk.face,KI];
+                        fijkOrient = new FaceOrientIJK(
+                                                       faceNeighbors[fijk.face,KI].face,
+                                                       faceNeighbors[fijk.face,KI].translate.i,
+                                                       faceNeighbors[fijk.face,KI].translate.j,
+                                                       faceNeighbors[fijk.face,KI].translate.k,
+                                                       faceNeighbors[fijk.face,KI].ccwRot60);
 
                         // adjust for the pentagonal missing sequence
                         if (pentLeading4!=0)
@@ -980,7 +1019,14 @@ namespace h3net.API
                 }
                 else // ij "quadrant"
                 {
-                    fijkOrient = faceNeighbors[fijk.face,IJ];
+//                    fijkOrient = faceNeighbors[fijk.face,IJ];
+                    fijkOrient = new FaceOrientIJK(
+                                                   faceNeighbors[fijk.face,IJ].face,
+                                                   faceNeighbors[fijk.face,IJ].translate.i,
+                                                   faceNeighbors[fijk.face,IJ].translate.j,
+                                                   faceNeighbors[fijk.face,IJ].translate.k,
+                                                   faceNeighbors[fijk.face,IJ].ccwRot60);
+
                 }
 
                 fijk.face = fijkOrient.face;
@@ -991,7 +1037,13 @@ namespace h3net.API
                     CoordIJK ._ijkRotate60ccw(ref ijk);
                 }
 
-                CoordIJK transVec = fijkOrient.translate;
+//                CoordIJK transVec = fijkOrient.translate;
+                CoordIJK transVec = new CoordIJK
+                    (
+                     fijkOrient.translate.i,
+                     fijkOrient.translate.j,
+                     fijkOrient.translate.k
+                    );
                 int unitScale = unitScaleByCIIres[res];
                 if (substrate!=0)
                 {
@@ -1008,87 +1060,9 @@ namespace h3net.API
                 }
             }
 
+            fijk.coord = ijk;
             return overage;
         }
 
-        /**
-         * Adjusts a FaceIJK address in place so that the resulting cell address is
-         * relative to the correct icosahedral face.
-         *
-         * @param fijk The FaceIJK address of the cell.
-         * @param res The H3 resolution of the cell.
-         * @param pentLeading4 Whether or not the cell is a pentagon with a leading
-         *        digit 4.
-         * @param substrate Whether or not the cell is in a substrate grid.
-         * @return 0 if on original face (no overage); 1 if on face edge (only occurs
-         *         on substrate grids); 2 if overage on new face interior
-         */
-        //public static int _adjustOverageClassII(ref FaceIJK fijk, int res, int pentLeading4,
-        //                          int substrate)
-        //{
-        //    int overage = 0;
-
-        //    CoordIJK* ijk = &fijk->coord;
-
-        //    // get the maximum dimension value; scale if a substrate grid
-        //    int maxDim = maxDimByCIIres[res];
-        //    if (substrate) maxDim *= 3;
-
-        //    // check for overage
-        //    if (substrate && ijk->i + ijk->j + ijk->k == maxDim)  // on edge
-        //        overage = 1;
-        //    else if (ijk->i + ijk->j + ijk->k > maxDim)  // overage
-        //    {
-        //        overage = 2;
-
-        //        const FaceOrientIJK* fijkOrient;
-        //        if (ijk->k > 0) {
-        //            if (ijk->j > 0)  // jk "quadrant"
-        //                fijkOrient = &faceNeighbors[fijk->face][JK];
-        //            else  // ik "quadrant"
-        //            {
-        //                fijkOrient = &faceNeighbors[fijk->face][KI];
-
-        //                // adjust for the pentagonal missing sequence
-        //                if (pentLeading4) {
-        //                    // translate origin to center of pentagon
-        //                    CoordIJK origin;
-        //                    _setIJK(&origin, maxDim, 0, 0);
-        //                    CoordIJK tmp;
-        //                    _ijkSub(ijk, &origin, &tmp);
-        //                    // rotate to adjust for the missing sequence
-        //                    _ijkRotate60cw(&tmp);
-        //                    // translate the origin back to the center of the triangle
-        //                    _ijkAdd(&tmp, &origin, ijk);
-        //                }
-        //            }
-        //        } else  // ij "quadrant"
-        //            fijkOrient = &faceNeighbors[fijk->face][IJ];
-
-        //        fijk->face = fijkOrient->face;
-
-        //        // rotate and translate for adjacent face
-        //        for (int i = 0; i < fijkOrient->ccwRot60; i++) _ijkRotate60ccw(ijk);
-
-        //        CoordIJK transVec = fijkOrient->translate;
-        //        int unitScale = unitScaleByCIIres[res];
-        //        if (substrate) unitScale *= 3;
-        //        _ijkScale(&transVec, unitScale);
-        //        _ijkAdd(ijk, &transVec, ijk);
-        //        _ijkNormalize(ijk);
-
-        //        // overage points on pentagon boundaries can end up on edges
-        //        if (substrate && ijk->i + ijk->j + ijk->k == maxDim)  // on edge
-        //            overage = 1;
-        //    }
-
-        //    return overage;
-        //}
-
-        /**
-         * Calculates the magnitude of a 2D cartesian vector.
-         * @param v The 2D cartesian vector.
-         * @return The magnitude of the vector.
-         */
     }
 }
