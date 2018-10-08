@@ -413,10 +413,10 @@ namespace h3net.API
         {
             // first convert to hex2d
             Vec2d v = new Vec2d();
-            _geoToHex2d(g, res, h.face, ref v);
+            _geoToHex2d(g, res, ref h.face, ref v);
 
             // then convert to ijk+
-            CoordIJK._hex2dToCoordIJK(ref v, h.coord);
+            CoordIJK._hex2dToCoordIJK(ref v, ref h.coord);
         }
 
         /**
@@ -428,7 +428,7 @@ namespace h3net.API
          * @param face The icosahedral face containing the spherical coordinates.
          * @param v The 2D hex coordinates of the cell containing the point.
          */
-        public static void _geoToHex2d(GeoCoord g, int res, int face, ref Vec2d v)
+        public static void _geoToHex2d(GeoCoord g, int res, ref int face, ref Vec2d v)
         {
             Vec3d v3d = new Vec3d();
             Vec3d._geoToVec3d(g, ref v3d);

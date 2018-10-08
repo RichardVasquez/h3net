@@ -54,7 +54,7 @@ namespace h3net.API
          * @param v The 2D cartesian coordinate vector.
          * @param h The ijk+ coordinates of the containing hex.
          */
-        public static void _hex2dToCoordIJK(ref Vec2d v, CoordIJK h)
+        public static void _hex2dToCoordIJK(ref Vec2d v, ref CoordIJK h)
         {
             double a1, a2;
             double x1, x2;

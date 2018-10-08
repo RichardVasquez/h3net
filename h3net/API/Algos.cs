@@ -851,7 +851,7 @@ namespace h3net.API
          * @param numHexes Number of hexagons in the set
          * @param graph    Output graph
          */
-        void h3SetToVertexGraph(ref List<H3Index> h3Set, int numHexes,
+        static void h3SetToVertexGraph(ref List<H3Index> h3Set, int numHexes,
             ref VertexGraph graph)
         {
             GeoBoundary vertices = new GeoBoundary();
@@ -880,8 +880,11 @@ namespace h3net.API
                 // iterate through every edge
                 for (int j = 0; j < vertices.numVerts; j++)
                 {
-                    fromVtx = vertices.verts[j];
-                    toVtx = vertices.verts[(j + 1) % vertices.numVerts];
+                    fromVtx = new GeoCoord(vertices.verts[j].lat, vertices.verts[j].lon);
+                    //fromVtx = vertices.verts[j];
+                    int idx = (j + 1) % vertices.numVerts;
+                    toVtx = new GeoCoord(vertices.verts[idx].lat, vertices.verts[idx].lon);
+                    //toVtx = vertices.verts[(j + 1) % vertices.numVerts];
                     // If we've seen this edge already, it will be reversed
                     edge = VertexGraph.findNodeForEdge(ref graph, toVtx, fromVtx);
                     if (edge != null)
@@ -907,7 +910,7 @@ namespace h3net.API
          * @param graph Input graph
          * @param out   Output polygon
          */
-        public void _vertexGraphToLinkedGeo(ref VertexGraph graph, ref LinkedGeo.LinkedGeoPolygon out_polygon)
+        public static void _vertexGraphToLinkedGeo(ref VertexGraph graph, ref LinkedGeo.LinkedGeoPolygon out_polygon)
         {
             out_polygon = new LinkedGeo.LinkedGeoPolygon();
             LinkedGeo.LinkedGeoLoop loop;
@@ -947,12 +950,12 @@ namespace h3net.API
          * @param numHexes Number of hexagons in set
          * @param out      Output polygon
          */
-        public void h3SetToLinkedGeo(ref List<H3Index> h3Set, int numHexes,
+        public static void h3SetToLinkedGeo(ref List<H3Index> h3Set, int numHexes,
             ref LinkedGeo.LinkedGeoPolygon out_polygons)
         {
             VertexGraph graph = new VertexGraph(0, 0);
-            h3SetToVertexGraph(ref h3Set, numHexes, ref graph);
-            _vertexGraphToLinkedGeo(ref graph, ref out_polygons);
+            Algos.h3SetToVertexGraph(ref h3Set, numHexes, ref graph);
+            Algos._vertexGraphToLinkedGeo(ref graph, ref out_polygons);
             // TODO: The return value, possibly indicating an error, is discarded here -
             // we should use this when we update the API to return a value
             LinkedGeo.normalizeMultiPolygon(ref out_polygons);

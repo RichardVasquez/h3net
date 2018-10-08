@@ -233,11 +233,11 @@ namespace h3tests
             int childrenSz = H3Index.maxUncompactSize(ref penta, 1, 2);
             List<H3Index> children = new List<H3Index>();
             int uncompactResult =H3Index.uncompact(ref penta, 1, ref children, childrenSz, 2);
-            Assert.True(uncompactResult == 0);//, "uncompact pentagon succeeds");
+            Assert.True(uncompactResult == 0, "uncompact pentagon succeeds");
 
             List<H3Index> result = new List<H3Index>();
             int compactResult = H3Index.compact(ref children, ref result, childrenSz);
-            Assert.True(compactResult == 0);//, "compact pentagon succeeds");
+            Assert.True(compactResult == 0, "compact pentagon succeeds");
 
             int found = 0;
             for (int i = 0; i < result.Count; i++)

@@ -56,9 +56,9 @@ namespace h3net.API
             //  double pointers.
             numBuckets = num;
             buckets = new List<List<VertexNode>>(num);
-            for (var i = 0; i < buckets.Count; i++)
+            for (var i = 0; i < numBuckets; i++)
             {
-                buckets[i] = new List<VertexNode>();
+                buckets.Add(new List<VertexNode>());
             }
             size = 0;
             res = re;
@@ -143,8 +143,8 @@ namespace h3net.API
                 }
                 // Add the new node to the end of the list
                 graph.buckets[index].Add(node);
-                graph.size++;
             }
+            graph.size++;
             return node;
         }
 

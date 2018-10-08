@@ -52,7 +52,7 @@ namespace h3net.API
         public static ulong H3_INVALID_INDEX = 0;
 
         /** Where the actual index is stored. */
-        private ulong value;
+        public ulong value;
 
         public H3Index(ulong val) 
         {
@@ -300,7 +300,7 @@ namespace h3net.API
          * @param h The H3 index.
          * @return The base cell of the H3 index argument.
          */
-        int h3GetBaseCell(H3Index h) { return H3_GET_BASE_CELL(h); }
+        public static int h3GetBaseCell(H3Index h) { return H3_GET_BASE_CELL(h); }
 
         /**
          * Converts a string representation of an H3 index into an H3 index.
@@ -330,7 +330,7 @@ namespace h3net.API
          * @param str The string representation of the H3 index.
          * @param sz Size of the buffer `str`
          */
-        void h3ToString(H3Index h, ref string str, int sz) {
+        public static void h3ToString(H3Index h, ref string str, int sz) {
             // An unsigned 64 bit integer will be expressed in at most
             // 16 digits plus 1 for the null terminator.
             if (sz < 17) {
@@ -338,7 +338,7 @@ namespace h3net.API
                 return;
             }
 
-            str = h.ToString();
+            str = ((ulong) h).ToString("X").ToLower();
         }
 
 
@@ -347,7 +347,7 @@ namespace h3net.API
          * @param h The H3 index to validate.
          * @return 1 if the H3 index if valid, and 0 if it is not.
          */
-        int h3IsValid(H3Index h)
+        public static int h3IsValid(H3Index h)
         {
             if (H3_GET_MODE(ref h) != Constants.H3_HEXAGON_MODE)
             {
@@ -522,11 +522,12 @@ namespace h3net.API
                         if (isPentagon > 0 && m == (int) Direction.K_AXES_DIGIT)
                         {
                             realChildren.Add(H3_INVALID_INDEX);
-                            break;
                         }
-
-                        var child = makeDirectChild(index, m);
-                        realChildren.Add(child);
+                        else
+                        {
+                            var child = makeDirectChild(index, m);
+                            realChildren.Add(child);
+                        }
                     }
                 }
                 current = new List<H3Index>(realChildren);
@@ -599,11 +600,28 @@ namespace h3net.API
                     return -2;
                 }
 
-                var orphans = generation.Where(hex => hex.Value.Count != 7);
+                remainingHexes.Clear();
+                var pentagons = generation.Where(parent => H3Index.h3IsPentagon(parent.Key) == 1);
+                var pentaParents = pentagons.Select(keyValuePair => keyValuePair.Key)
+                                            .Select(dummy => (H3Index) dummy).ToList();
+                foreach (var pentaParent in pentaParents)
+                {
+                    if (generation[pentaParent].Count == 6)
+                    {
+                        remainingHexes.Add(pentaParent);
+                    }
+                    else
+                    {
+                        realCompacted.AddRange(generation[pentaParent]);
+                    }
+                    generation.Remove(pentaParent);
+                }
+
+                var orphans = generation.Where(hex => hex.Key!= 0 && hex.Value.Count >0 && hex.Value.Count < 7);
                 realCompacted.AddRange(orphans.SelectMany(valuePair => valuePair.Value));
 
                 var nextgen = generation.Where(hex => hex.Value.Count == 7);
-                remainingHexes = nextgen.Select(valuePair => new H3Index(valuePair.Key)).ToList();
+                remainingHexes.AddRange(nextgen.Select(valuePair => new H3Index(valuePair.Key)).ToList());
                 generation.Clear();
             }
 
@@ -689,6 +707,16 @@ namespace h3net.API
 
             return maxNumHexagons;
         }
+
+        /**
+         * h3IsResClassIII takes a hexagon ID and determines if it is in a
+         * Class III resolution (rotated versus the icosahedron and subject
+         * to shape distortion adding extra points on icosahedron edges, making
+         * them not true hexagons).
+         * @param h The H3Index to check.
+         * @return Returns 1 if the hexagon is class III, otherwise 0.
+         */
+        public static int h3IsResClassIII(H3Index h) { return H3_GET_RESOLUTION(h) % 2; }
 
         /**
          * h3IsPentagon takes an H3Index and determines if it is actually a
@@ -815,7 +843,7 @@ namespace h3net.API
          * @param res The cell resolution.
          * @return The encoded H3Index (or 0 on failure).
          */
-        static H3Index _faceIjkToH3(ref FaceIJK fijk, int res)
+        public static H3Index _faceIjkToH3(ref FaceIJK fijk, int res)
         {
             // initialize the index
             H3Index h = H3_INIT;
@@ -839,13 +867,15 @@ namespace h3net.API
             // we need to find the correct base cell FaceIJK for this H3 index;
             // start with the passed in face and resolution res ijk coordinates
             // in that face's coordinate system
-            FaceIJK fijkBC = new FaceIJK(fijk.face, fijk.coord);
+            //FaceIJK fijkBC = new FaceIJK(fijk.face, fijk.coord);
+            FaceIJK fijkBC = new FaceIJK(fijk.face, new CoordIJK(fijk.coord.i,fijk.coord.j,fijk.coord.k));
 
             // build the H3Index from finest res up
             // adjust r for the fact that the res 0 base cell offsets the index array
             CoordIJK ijk = fijkBC.coord;
             for (int r = res - 1; r >= 0; r--) {
-                CoordIJK lastIJK = ijk;
+                //CoordIJK lastIJK = ijk;
+                CoordIJK lastIJK = new CoordIJK(ijk.i,ijk.j,ijk.k);
                 CoordIJK lastCenter=new CoordIJK();
                 if (isResClassIII(r + 1)) {
                     // rotate ccw

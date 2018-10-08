@@ -51,6 +51,8 @@
     <Compile Include="TestCompact.cs" />
     <Compile Include="TestGeoCoord.cs" />
     <Compile Include="TestH3Api.cs" />
+    <Compile Include="TestH3Index.cs" />
+    <Compile Include="TestH3SetToLinkedGeo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
