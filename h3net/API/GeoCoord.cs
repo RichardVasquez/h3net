@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace h3net.API
@@ -28,6 +29,7 @@ namespace h3net.API
     /** @file GeoCoord.cs
      * @brief   Functions for working with lat/lon coordinates.
      */
+    [DebuggerDisplay("Lat: {lat} Lon: {lon}")]
     public class GeoCoord
     {
         public double lat;

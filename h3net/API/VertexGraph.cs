@@ -169,6 +169,7 @@ namespace h3net.API
                 return 1;
             }
             currentBucket.RemoveAt(nodeIndex);
+            graph.size--;
             return 0;
         }
 

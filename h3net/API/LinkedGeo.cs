@@ -73,16 +73,16 @@ namespace h3net.API
                 }
             
             a= currentCoord.vertex;
-            nextCoord = currentCoord.next == null ? loop.first : currentCoord.next.next;
+            nextCoord = currentCoord.next == null ? loop.first : currentCoord.next;
             b = nextCoord.vertex;
 
 
                 // Ray casting algo requires the second point to always be higher
                 // than the first, so swap if needed
                 if (a.lat > b.lat) {
-                    GeoCoord tmp = a;
-                    a = b;
-                    b = tmp;
+                    GeoCoord tmp = new GeoCoord( a.lat,a.lon);
+                    a = new GeoCoord(b.lat, b.lon);
+                    b = new GeoCoord(tmp.lat,tmp.lon);
                 }
 
                 // If we're totally above or below the latitude ranges, the test
@@ -96,7 +96,7 @@ namespace h3net.API
 
                 // Rays are cast in the longitudinal direction, in case a point
                 // exactly matches, to decide tiebreakers, bias westerly
-                if (aLng == lng || bLng == lng) {
+                if (Math.Abs(aLng - lng) < Constants.EPSILON || Math.Abs(bLng - lng) < Constants.EPSILON) {
                     lng -= Constants.DBL_EPSILON;
                 }
 
@@ -162,7 +162,7 @@ namespace h3net.API
                 }
 
                 coord = currentCoord.vertex;
-                nextCoord = currentCoord.next == null ? loop.first : currentCoord.next.next;
+                nextCoord = currentCoord.next == null ? loop.first : currentCoord.next;
                 next = nextCoord.vertex;
 
 
@@ -202,15 +202,20 @@ namespace h3net.API
             LinkedGeoCoord currentCoord = null; 
             LinkedGeoCoord nextCoord = null;
 
-            while (true) {
-                currentCoord = currentCoord == null ? loop.first : currentCoord.next;
+            while (true)
+            {
+                currentCoord = currentCoord == null
+                                   ? loop.first
+                                   : currentCoord.next;
                 if (currentCoord == null)
                 {
                     break;
                 }
             
                 a= currentCoord.vertex;
-                nextCoord = currentCoord.next == null ? loop.first : currentCoord.next.next;
+                nextCoord = currentCoord.next == null
+                                ? loop.first
+                                : currentCoord.next;
                 b = nextCoord.vertex;
                 // If we identify a transmeridian arc (> 180 degrees longitude),
                 // start over with the transmeridian flag set
@@ -374,13 +379,14 @@ namespace h3net.API
          * @param  polygon Starting polygon
          * @return         Count
          */
-        public  int countLinkedPolygons(ref LinkedGeoPolygon polygon)
+        public static int countLinkedPolygons(ref LinkedGeoPolygon polygon)
         {
+            var polyIndex = polygon;
             int count = 0;
-            while (polygon != null)
+            while (polyIndex != null)
             {
                 count++;
-                polygon = polygon.next;
+                polyIndex = polyIndex.next;
             }
             return count;
         }
@@ -500,24 +506,30 @@ namespace h3net.API
             // Initialize arrays for candidate loops and their bounding boxes
             List<LinkedGeoPolygon> candidates = new List<LinkedGeoPolygon>(polygonCount);
             List<BBox> candidateBBoxes = new List<BBox>(polygonCount);
+            for (var k = 0; k < polygonCount; k++)
+            {
+                candidates.Add(new LinkedGeoPolygon());
+                candidateBBoxes.Add(new BBox());
+            }
 
             // Find all polygons that contain the loop
             int candidateCount = 0;
             int index = 0;
-            while (polygon != null) {
+            var polygonReference = polygon;
+            while (polygonReference != null) {
                 // We are guaranteed not to overlap, so just test the first point
                 var bb = bboxes[index];
                 if (
                     pointInsideLinkedGeoLoop(
-                        ref polygon.first, ref bb, ref loop.first.vertex
+                        ref polygonReference.first, ref bb, ref loop.first.vertex
                     )
                 )
                 {
-                    candidates[candidateCount] = polygon;
+                    candidates[candidateCount] = polygonReference;
                     candidateBBoxes[candidateCount] = bboxes[index];
                     candidateCount++;
                 }
-                polygon = polygon.next;
+                polygonReference = polygonReference.next;
                 index++;
             }
 
@@ -573,8 +585,16 @@ namespace h3net.API
             // this array will never be full, as there will always be fewer
             // inner loops than outer loops.
             List<LinkedGeoLoop> innerLoops = new List<LinkedGeoLoop>(loopCount);
+            for (var k = 0; k < loopCount; k++)
+            {
+                innerLoops.Add(new LinkedGeoLoop());
+            }
             // Create an array to hold the bounding boxes for the outer loops
             List<BBox> bboxes = new List<BBox>(loopCount);
+            for (var k = 0; k < loopCount; k++)
+            {
+                bboxes.Add(new BBox());
+            }
 
             // Get the first loop and unlink it from root
             LinkedGeoLoop loop = root.first;

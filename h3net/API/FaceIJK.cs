@@ -663,7 +663,7 @@ namespace h3net.API
                 {
                     // find hex2d of the two vertexes on the last face
 
-                    FaceIJK tmpFijk = fijk;
+                    FaceIJK tmpFijk = new FaceIJK(fijk.face, new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k));
 
                     Vec2d orig2d0 = new Vec2d();
                     CoordIJK ._ijkToHex2d(lastFijk.coord, ref orig2d0);

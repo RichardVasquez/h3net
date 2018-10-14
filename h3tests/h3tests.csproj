@@ -53,6 +53,7 @@
     <Compile Include="TestH3Api.cs" />
     <Compile Include="TestH3Index.cs" />
     <Compile Include="TestH3SetToLinkedGeo.cs" />
+    <Compile Include="TestH3SetToVertexGraph.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

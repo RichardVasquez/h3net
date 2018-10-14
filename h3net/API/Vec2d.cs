@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace h3net.API
 {
+    [DebuggerDisplay("X: {x} Y: {y}")]
     public class Vec2d
     {
         public double x;
