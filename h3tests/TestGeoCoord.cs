@@ -16,7 +16,6 @@ namespace h3tests
     public class TestGeoCoord
     {
 
-
         void testDecreasingFunction(Func<int, double>function, string message)
         {
             double last = 0;

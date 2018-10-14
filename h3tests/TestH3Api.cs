@@ -8,44 +8,47 @@ namespace h3tests
     [TestFixture]
     public class TestH3Api
     {
-    [Test]
-    public void geoToH3_res()
-    {
-        GeoCoord anywhere = new GeoCoord(0, 0);
+        [Test]
+        public void geoToH3_res()
+        {
+            GeoCoord anywhere = new GeoCoord(0, 0);
 
-        Assert.True(H3Index.geoToH3(ref anywhere, -1) == 0, "resolution below 0 is invalid");
-        Assert.True(H3Index.geoToH3(ref anywhere, 16) == 0, "resolution above 15 is invalid");
-    }
-
-    [Test]
-    public void geoToH3_coord()
-    {
-        GeoCoord invalidLat = new GeoCoord(Double.NaN, 0);
-        GeoCoord invalidLon = new GeoCoord(0, Double.NaN);
-        GeoCoord invalidLatLon = new GeoCoord(Double.PositiveInfinity, Double.NegativeInfinity);
-
-        Assert.True(H3Index.geoToH3(ref invalidLat, 1) == 0, "invalid latitude is rejected");
-        Assert.True(H3Index.geoToH3(ref invalidLon, 1) == 0, "invalid longitude is rejected");
-        Assert.True(H3Index.geoToH3(ref invalidLatLon, 1) == 0, "coordinates with infinity are rejected");
-    }
-
-    [Test]
-public void h3ToGeoBoundary_classIIIEdgeVertex()
-{
-        // Bug test for https://github.com/uber/h3/issues/45
-        string[] hexes = {
-            "894cc5349b7ffff", "894cc534d97ffff", "894cc53682bffff",
-            "894cc536b17ffff", "894cc53688bffff", "894cead92cbffff",
-            "894cc536537ffff", "894cc5acbabffff", "894cc536597ffff"};
-        int numHexes = hexes.Length;
-        H3Index h3;
-        GeoBoundary b = new GeoBoundary();
-        for (int i = 0; i < numHexes; i++) {
-            h3 = H3Index.stringToH3(hexes[i]);
-            H3Index.h3ToGeoBoundary(h3, ref b);
-            Assert.True(b.numVerts == 7, "got expected vertex count");
+            Assert.True(H3Index.geoToH3(ref anywhere, -1) == 0, "resolution below 0 is invalid");
+            Assert.True(H3Index.geoToH3(ref anywhere, 16) == 0, "resolution above 15 is invalid");
         }
-    }
+
+        [Test]
+        public void geoToH3_coord()
+        {
+            GeoCoord invalidLat = new GeoCoord(Double.NaN, 0);
+            GeoCoord invalidLon = new GeoCoord(0, Double.NaN);
+            GeoCoord invalidLatLon = new GeoCoord(Double.PositiveInfinity, Double.NegativeInfinity);
+
+            Assert.True(H3Index.geoToH3(ref invalidLat, 1) == 0, "invalid latitude is rejected");
+            Assert.True(H3Index.geoToH3(ref invalidLon, 1) == 0, "invalid longitude is rejected");
+            Assert.True(H3Index.geoToH3(ref invalidLatLon, 1) == 0, "coordinates with infinity are rejected");
+        }
+
+        [Test]
+        public void h3ToGeoBoundary_classIIIEdgeVertex()
+        {
+            // Bug test for https://github.com/uber/h3/issues/45
+            string[] hexes =
+            {
+                "894cc5349b7ffff", "894cc534d97ffff", "894cc53682bffff",
+                "894cc536b17ffff", "894cc53688bffff", "894cead92cbffff",
+                "894cc536537ffff", "894cc5acbabffff", "894cc536597ffff"
+            };
+            int numHexes = hexes.Length;
+            H3Index h3;
+            GeoBoundary b = new GeoBoundary();
+            for (int i = 0; i < numHexes; i++)
+            {
+                h3 = H3Index.stringToH3(hexes[i]);
+                H3Index.h3ToGeoBoundary(h3, ref b);
+                Assert.True(b.numVerts == 7, "got expected vertex count");
+            }
+        }
 
         [Test]
         public void h3ToGeoBoundary_classIIIEdgeVertex_exact()
@@ -90,15 +93,16 @@ public void h3ToGeoBoundary_classIIIEdgeVertex()
         {
             // Generate cell boundary for the h3 index
             GeoBoundary b2 = new GeoBoundary();
-            H3Index .h3ToGeoBoundary(h3, ref b2);
+            H3Index.h3ToGeoBoundary(h3, ref b2);
             Assert.True(b1.numVerts == b2.numVerts, "expected cell boundary count");
             for (int v = 0; v < b1.numVerts; v++)
             {
-                Assert.True(
+                Assert.True
+                    (
                      GeoCoord.geoAlmostEqual(b1.verts[v], b2.verts[v]),
                      "got expected vertex"
                     );
             }
         }
-    }    
+    }
 }

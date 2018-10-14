@@ -50,11 +50,11 @@
     <Compile Include="API\BaseCells.cs" />
     <Compile Include="API\Algos.cs" />
     <Compile Include="API\GeoFence.cs" />
-    <Compile Include="API\GeoMultiPolygon.cs" />
     <Compile Include="API\GeoPolygon.cs" />
     <Compile Include="API\Constants.cs" />
     <Compile Include="API\FaceIJK.cs" />
     <Compile Include="API\H3Index.cs" />
+    <Compile Include="API\H3UniEdge.cs" />
     <Compile Include="API\LinkedGeo.cs" />
     <Compile Include="API\MathExtensions.cs" />
     <Compile Include="API\Polygon.cs" />

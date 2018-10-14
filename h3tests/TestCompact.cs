@@ -25,7 +25,9 @@ namespace h3tests
             int expectedCompactCount = 73;
 
             // Generate a set of hexagons to compact
-            List<H3Index> sunnyvaleExpanded = new List<H3Index>(hexCount);
+            List<H3Index> sunnyvaleExpanded =
+                new ulong[hexCount].Select(cell => new H3Index(cell)).ToList();
+                
             Algos.kRing(sunnyvale, k, ref sunnyvaleExpanded);
 
             List<H3Index> compressed = new List<H3Index>(hexCount);

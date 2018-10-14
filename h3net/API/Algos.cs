@@ -230,7 +230,7 @@ namespace h3net.API
                 // Fast algo failed, fall back to slower, correct algo
                 // and also wipe out array because contents untrustworthy
                 distances.Clear();
-                distances = new List<int>(out_hex.Count);
+                distances = new int[out_hex.Count].ToList();
                 _kRingInternal(origin, k, ref out_hex, ref distances, maxIdx, 0);
             }
         }
@@ -256,7 +256,7 @@ namespace h3net.API
 
             // Put origin in the output array. out is used as a hash set.
             ulong origin1 = (ulong) origin;
-            int off = (int) origin1 % maxIdx;
+            int off = (int)( origin1 % (ulong)maxIdx);
             while (out_hex[off] != 0 && out_hex[off] != origin)
             {
                 off = (off + 1) % maxIdx;
@@ -529,9 +529,9 @@ namespace h3net.API
             // k-subsequence is the problem, but for compatibility reasons we fail on
             // the pentagon.
 
-            for (int m = 0; m < out_size.Capacity; m++)
+            for (int m = 0; m < out_size.Count; m++)
             {
-                out_size.Add(0);
+                //out_size.Add(0);
                 distances.Add(0);
             }
             // k must be >= 0, so origin is always needed
@@ -662,7 +662,7 @@ namespace h3net.API
          * @param out Array which must be of size 6 * k (or 1 if k == 0)
          * @return 0 if no pentagonal distortion was encountered.
          */
-        int hexRing(H3Index origin, int k, ref List<H3Index> out_hex)
+        public static int hexRing(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             // Short-circuit on 'identity' ring
             if (k == 0)
@@ -851,7 +851,7 @@ namespace h3net.API
          * @param numHexes Number of hexagons in the set
          * @param graph    Output graph
          */
-        static void h3SetToVertexGraph(ref List<H3Index> h3Set, int numHexes,
+        public static void h3SetToVertexGraph(ref List<H3Index> h3Set, int numHexes,
             ref VertexGraph graph)
         {
             GeoBoundary vertices = new GeoBoundary();

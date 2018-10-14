@@ -290,7 +290,7 @@ namespace h3net.API
          * @param h The H3 index.
          * @return The resolution of the H3 index argument.
          */
-        public int h3GetResolution(H3Index h)
+        public static int h3GetResolution(H3Index h)
         {
             return H3_GET_RESOLUTION(h);
         }
@@ -416,7 +416,7 @@ namespace h3net.API
          *
          * @return H3Index of the parent, or 0 if you actually asked for a child
          */
-        static H3Index h3ToParent(H3Index h, int parentRes)
+        public static H3Index h3ToParent(H3Index h, int parentRes)
         {
             int childRes = H3_GET_RESOLUTION(h);
             if (parentRes > childRes)
@@ -454,7 +454,7 @@ namespace h3net.API
          * @return int count of maximum number of children (equal for hexagons, less for
          * pentagons
          */
-        static int maxH3ToChildrenSize(H3Index h, int childRes)
+        public static int maxH3ToChildrenSize(H3Index h, int childRes)
         {
             int parentRes = H3_GET_RESOLUTION(h);
             if (parentRes > childRes) 
@@ -492,8 +492,9 @@ namespace h3net.API
          * @param childRes int the child level to produce
          * @param children H3Index* the memory to store the resulting addresses in
          */
-        static void h3ToChildren(H3Index h, int childRes,ref  List<H3Index> children)
+        public static void h3ToChildren(H3Index h, int childRes,ref  List<H3Index> children)
         {
+            children = new List<H3Index>();
             int parentRes = H3_GET_RESOLUTION(h);
             if (parentRes > childRes)
             {
@@ -530,7 +531,7 @@ namespace h3net.API
                         }
                     }
                 }
-                current = new List<H3Index>(realChildren);
+                current = new List<H3Index>(realChildren.Where(c=>c.value!=0));
                 currentRes++;
             }
 
