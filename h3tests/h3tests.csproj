@@ -58,6 +58,8 @@
     <Compile Include="TestH3ToGeo.cs" />
     <Compile Include="TestH3ToParent.cs" />
     <Compile Include="TestH3UniEdge.cs" />
+    <Compile Include="TestHexRanges.cs" />
+    <Compile Include="TestHexRing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

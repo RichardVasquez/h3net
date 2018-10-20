@@ -494,7 +494,7 @@ namespace h3net.API
          * @param out Array which must be of size maxKringSize(k).
          * @return 0 if no pentagon or pentagonal distortion area was encountered.
          */
-        int hexRange(H3Index origin, int k, ref List<H3Index> out_hex)
+        public static int hexRange(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             //  Can't pass in a 0 as a null pointer, so we'll
             //  check against an empty list.
@@ -629,7 +629,7 @@ namespace h3net.API
          *            The memory block should be equal to maxKringSize(k) * length
          * @return 0 if no pentagon is encountered. Cannot trust output otherwise
          */
-        public int hexRanges(ref List<H3Index> h3Set, int length, int k, List<H3Index> out_index)
+        public static int hexRanges(ref List<H3Index> h3Set, int length, int k, List<H3Index> out_index)
         {
             //List<H3Index> segment = new List<H3Index>();
             int segmentSize = maxKringSize(k);

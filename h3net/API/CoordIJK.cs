@@ -259,7 +259,7 @@ namespace h3net.API
          */
         public static Direction _unitIjkToDigit(ref  CoordIJK ijk)
         {
-            CoordIJK c = new CoordIJK(ijk.i, ijk.j, ijk.j);
+            CoordIJK c = new CoordIJK(ijk.i, ijk.j, ijk.k);
             _ijkNormalize(ref c);
 
             Direction digit = Direction.INVALID_DIGIT;
