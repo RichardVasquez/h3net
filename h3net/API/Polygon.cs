@@ -22,7 +22,7 @@ namespace h3net.API
          * @param loop     Loop of coordinates
          * @param bbox     Output bbox
          */
-        public static void bboxFromGeofence(ref GeoFence loop, ref BBox bbox)
+        public static void bboxFromGeofence(ref Geofence loop, ref BBox bbox)
         {
             // Early exit if there are no vertices
             if (loop.numVerts == 0) {
@@ -83,7 +83,7 @@ namespace h3net.API
          * @param coord The coordinate to check
          * @return      Whether the point is contained
          */
-        public static bool pointInsideGeoFence(ref GeoFence loop, ref BBox bbox, ref GeoCoord coord)
+        public static bool pointInsideGeofence(ref Geofence loop, ref BBox bbox, ref GeoCoord coord)
         {
             // fail fast if we're outside the bounding box
             if (!BBox .bboxContains(bbox, coord)) {
@@ -156,7 +156,7 @@ namespace h3net.API
          * @param isTransmeridian   Whether the loop crosses the antimeridian
          * @return                  Whether the loop is clockwise
          */
-        public static bool isClockwiseNormalizedGeoFence(GeoFence loop, bool isTransmeridian)
+        public static bool isClockwiseNormalizedGeofence(Geofence loop, bool isTransmeridian)
         {
             double sum = 0;
             GeoCoord a;
@@ -174,7 +174,7 @@ namespace h3net.API
                 // If we identify a transmeridian arc (> 180 degrees longitude),
                 // start over with the transmeridian flag set
                 if (!isTransmeridian && Math.Abs(a.lon - b.lon) > Constants.M_PI) {
-                    return isClockwiseNormalizedGeoFence(loop, true);
+                    return isClockwiseNormalizedGeofence(loop, true);
                 }
                 sum += (NORMALIZE_LON(b.lon, isTransmeridian) -
                         NORMALIZE_LON(a.lon, isTransmeridian)) *
@@ -190,9 +190,9 @@ namespace h3net.API
          * @param loop  The loop to check
          * @return      Whether the loop is clockwise
          */
-        public static bool isClockwiseGeoFence(GeoFence loop)
+        public static bool isClockwiseGeofence(Geofence loop)
         {
-            return isClockwiseNormalizedGeoFence( loop, false);
+            return isClockwiseNormalizedGeofence( loop, false);
         }
 
         /**
@@ -203,7 +203,7 @@ namespace h3net.API
         public static void bboxesFromGeoPolygon(GeoPolygon polygon,ref List<BBox> bboxes)
         {
             var bbox0 = bboxes[0];
-            bboxFromGeofence(ref polygon.geofence, ref bbox0);
+            bboxFromGeofence(ref polygon.Geofence, ref bbox0);
             bboxes[0] = bbox0;
             for (int i = 0; i < polygon.numHoles; i++)
             {
@@ -219,22 +219,22 @@ namespace h3net.API
          * pointInsidePolygon takes a given GeoPolygon data structure and
          * checks if it contains a given geo coordinate.
          *
-         * @param geoPolygon The geofence and holes defining the relevant area
-         * @param bboxes     The bboxes for the main geofence and each of its holes
+         * @param geoPolygon The Geofence and holes defining the relevant area
+         * @param bboxes     The bboxes for the main Geofence and each of its holes
          * @param coord      The coordinate to check
          * @return           Whether the point is contained
          */
         public static bool pointInsidePolygon(GeoPolygon geoPolygon, List<BBox> bboxes, GeoCoord coord)
         {
-            // Start with contains state of primary geofence
+            // Start with contains state of primary Geofence
             var tempBox = bboxes[0];
-            bool contains = pointInsideGeoFence(
-                ref geoPolygon.geofence,
+            bool contains = pointInsideGeofence(
+                ref geoPolygon.Geofence,
                 ref tempBox, ref coord);
             bboxes[0] = tempBox;
 
-            // If the point is contained in the primary geofence, but there are holes in
-            // the geofence iterate through all holes and return false if the point is
+            // If the point is contained in the primary Geofence, but there are holes in
+            // the Geofence iterate through all holes and return false if the point is
             // contained in any hole
             if (contains && geoPolygon.numHoles > 0)
             {
@@ -242,7 +242,7 @@ namespace h3net.API
                 {
                     var hole = geoPolygon.holes[i];
                     var box = bboxes[i + 1];
-                    var isInside = pointInsideGeoFence(ref hole, ref box, ref coord);
+                    var isInside = pointInsideGeofence(ref hole, ref box, ref coord);
                     geoPolygon.holes[i] = hole;
                     bboxes[i + 1] = box;
 

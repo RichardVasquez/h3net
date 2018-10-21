@@ -27,11 +27,11 @@ namespace h3tests
     [TestFixture]
     public class TestBBox
     {
-        public void assertBBox(GeoFence geoFence, BBox expected, GeoCoord inside, GeoCoord outside)
+        public void assertBBox(Geofence Geofence, BBox expected, GeoCoord inside, GeoCoord outside)
         {
             BBox result = new BBox();
 
-            Polygon.bboxFromGeofence(ref geoFence, ref result);
+            Polygon.bboxFromGeofence(ref Geofence, ref result);
             Assert.True(BBox.bboxEquals(result, expected));
             Assert.True(BBox.bboxContains(result, inside));
             Assert.False(BBox.bboxContains(result, outside));
@@ -48,11 +48,11 @@ namespace h3tests
                 new GeoCoord(1.0, 0.2)
             };
 
-            GeoFence geoFence = new GeoFence {numVerts = 4, verts = testVerts};
+            Geofence Geofence = new Geofence {numVerts = 4, verts = testVerts};
             BBox expected = new BBox {north = 1.1, south = 0.7, east = 0.7, west = 0.2};
             GeoCoord inside = new GeoCoord(0.9, 0.4);
             GeoCoord outside = new GeoCoord(0.0, 0.0);
-            assertBBox(geoFence, expected, inside, outside);
+            assertBBox(Geofence, expected, inside, outside);
         }
 
         [Test]
@@ -65,11 +65,11 @@ namespace h3tests
                 new GeoCoord(-0.2, 0.8),
                 new GeoCoord(-0.1, 0.6)
             };
-            GeoFence geofence = new GeoFence {numVerts = 4, verts = testVerts};
+            Geofence Geofence = new Geofence {numVerts = 4, verts = testVerts};
             BBox expected = new BBox {north = -0.1, south = -0.4, east = 0.9, west = 0.6};
             GeoCoord inside = new GeoCoord(-0.3, 0.8);
             GeoCoord outside = new GeoCoord(0.0, 0.0);
-            assertBBox(geofence, expected, inside, outside);
+            assertBBox(Geofence, expected, inside, outside);
         }
 
         [Test]
@@ -77,11 +77,11 @@ namespace h3tests
         {
             GeoCoord[] testVerts =
                 {new GeoCoord(0.7, -1.4), new GeoCoord(0.8, -0.9), new GeoCoord(1.0, -0.8), new GeoCoord(1.1, -1.3)};
-            GeoFence geofence = new GeoFence {numVerts = 4, verts = testVerts};
+            Geofence Geofence = new Geofence {numVerts = 4, verts = testVerts};
             BBox expected = new BBox {north = 1.1, south = 0.7, east = -0.8, west = -1.4};
             GeoCoord inside = new GeoCoord(0.9, -1.0);
             GeoCoord outside = new GeoCoord(0.0, 0.0);
-            assertBBox(geofence, expected, inside, outside);
+            assertBBox(Geofence, expected, inside, outside);
         }
 
         [Test]
@@ -94,11 +94,11 @@ namespace h3tests
                 new GeoCoord(-0.1, -1.2),
                 new GeoCoord(-0.2, -1.4)
             };
-            GeoFence geofence = new GeoFence {numVerts = 4, verts = testVerts};
+            Geofence Geofence = new Geofence {numVerts = 4, verts = testVerts};
             BBox expected = new BBox {north = -0.1, south = -0.4, east = -1.1, west = -1.4};
             GeoCoord inside = new GeoCoord(-0.3, -1.2);
             GeoCoord outside = new GeoCoord(0.0, 0.0);
-            assertBBox(geofence, expected, inside, outside);
+            assertBBox(Geofence, expected, inside, outside);
         }
 
         [Test]
@@ -111,11 +111,11 @@ namespace h3tests
                 new GeoCoord(-0.4, 0.4),
                 new GeoCoord(-0.4, -0.4)
             };
-            GeoFence geofence = new GeoFence {numVerts = 4, verts = testVerts};
+            Geofence Geofence = new Geofence {numVerts = 4, verts = testVerts};
             BBox expected = new BBox {north = 0.4, south = -0.4, east = 0.4, west = -0.4};
             GeoCoord inside = new GeoCoord(-0.1, -0.1);
             GeoCoord outside = new GeoCoord(1.0, -1.0);
-            assertBBox(geofence, expected, inside, outside);
+            assertBBox(Geofence, expected, inside, outside);
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace h3tests
                 new GeoCoord(-0.4, -Constants.M_PI + 0.1),
                 new GeoCoord(-0.4, Constants.M_PI - 0.1)
             };
-            GeoFence geofence = new GeoFence {numVerts = 4, verts = testVerts};
+            Geofence Geofence = new Geofence {numVerts = 4, verts = testVerts};
             BBox expected = new BBox
                             {
                                 north = 0.4, south = -0.4, east = -Constants.M_PI + 0.1,
@@ -136,7 +136,7 @@ namespace h3tests
                             };
             GeoCoord insideOnMeridian = new GeoCoord(-0.1, Constants.M_PI);
             GeoCoord outside = new GeoCoord(1.0, Constants.M_PI - 0.5);
-            assertBBox(geofence, expected, insideOnMeridian, outside);
+            assertBBox(Geofence, expected, insideOnMeridian, outside);
 
             GeoCoord westInside = new GeoCoord(0.1, Constants.M_PI - 0.05);
             Assert.True(BBox.bboxContains(expected, westInside));
@@ -159,11 +159,11 @@ namespace h3tests
                 new GeoCoord(Constants.M_PI_2, 0.8),
                 new GeoCoord(Constants.M_PI_2, 0.1)
             };
-            GeoFence geofence = new GeoFence {numVerts = 4, verts = testVerts};
+            Geofence Geofence = new Geofence {numVerts = 4, verts = testVerts};
             BBox expected = new BBox {north = Constants.M_PI_2, south = Constants.M_PI_2 - 0.1, east = 0.8, west = 0.1};
             GeoCoord inside = new GeoCoord(Constants.M_PI_2 - 0.01, 0.4);
             GeoCoord outside = new GeoCoord(Constants.M_PI_2, 0.9);
-            assertBBox(geofence, expected, inside, outside);
+            assertBBox(Geofence, expected, inside, outside);
         }
 
         [Test]
@@ -176,7 +176,7 @@ namespace h3tests
                 new GeoCoord(-Constants.M_PI_2, 0.8),
                 new GeoCoord(-Constants.M_PI_2, 0.1)
             };
-            GeoFence geofence = new GeoFence {numVerts = 4, verts = testVerts};
+            Geofence Geofence = new Geofence {numVerts = 4, verts = testVerts};
             BBox expected = new BBox
                             {
                                 north = -Constants.M_PI_2 + 0.1, south = -Constants.M_PI_2, east = 0.8,
@@ -184,7 +184,7 @@ namespace h3tests
                             };
             GeoCoord inside = new GeoCoord(-Constants.M_PI_2 + 0.01, 0.4);
             GeoCoord outside = new GeoCoord(-Constants.M_PI_2, 0.9);
-            assertBBox(geofence, expected, inside, outside);
+            assertBBox(Geofence, expected, inside, outside);
         }
 
         [Test]

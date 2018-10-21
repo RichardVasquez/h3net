@@ -22,7 +22,7 @@ namespace h3net.API
         {
             public  LinkedGeoLoop first;
             public  LinkedGeoLoop last;
-            public  LinkedGeoPolygon next;
+            public LinkedGeoPolygon next;
         }
 
         public const int NORMALIZATION_SUCCESS = 0;
@@ -305,16 +305,16 @@ namespace h3net.API
         public static LinkedGeoCoord addLinkedCoord(ref LinkedGeoLoop loop, ref GeoCoord vertex)
         {
             LinkedGeoCoord coord = new LinkedGeoCoord();
-            coord.vertex = vertex;
+            coord.vertex = new GeoCoord(vertex.lat, vertex.lon);
             coord.next = null;
 
             LinkedGeoCoord last = loop.last;
+            
             if (last == null) {
                 if (loop.first != null)
                 {
                     throw new Exception("assert(loop->first == NULL);");
                 }
-                
                 loop.first = coord;
             } else {
                 last.next = coord;

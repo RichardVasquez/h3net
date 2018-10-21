@@ -1,11 +1,11 @@
 ﻿namespace h3net.API
 {
-    public class GeoFence
+    public class Geofence
     {
         public int numVerts;
         public GeoCoord[] verts;
 
-        public GeoFence()
+        public Geofence()
         {
             verts = new[]
             {

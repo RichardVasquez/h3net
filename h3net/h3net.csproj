@@ -49,7 +49,7 @@
     <Compile Include="API\GeoCoord.cs" />
     <Compile Include="API\BaseCells.cs" />
     <Compile Include="API\Algos.cs" />
-    <Compile Include="API\GeoFence.cs" />
+    <Compile Include="API\Geofence.cs" />
     <Compile Include="API\GeoPolygon.cs" />
     <Compile Include="API\Constants.cs" />
     <Compile Include="API\FaceIJK.cs" />

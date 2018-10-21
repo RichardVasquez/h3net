@@ -4,8 +4,8 @@ namespace h3net.API
 {
     public class GeoPolygon
     {
-        public GeoFence geofence;
+        public Geofence Geofence;
         public int numHoles;
-        public List<GeoFence> holes;
+        public List<Geofence> holes;
     }
 }

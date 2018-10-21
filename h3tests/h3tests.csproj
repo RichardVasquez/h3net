@@ -60,6 +60,9 @@
     <Compile Include="TestH3UniEdge.cs" />
     <Compile Include="TestHexRanges.cs" />
     <Compile Include="TestHexRing.cs" />
+    <Compile Include="TestLinkedGeo.cs" />
+    <Compile Include="TestMaxH3ToChildrenSize.cs" />
+    <Compile Include="TestPolyfill.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

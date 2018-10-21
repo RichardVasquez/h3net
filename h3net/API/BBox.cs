@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace h3net.API
 {
@@ -8,6 +10,85 @@ namespace h3net.API
         public double south;
         public double east;
         public double west;
+
+        /**
+         * Create a bounding box from a simple polygon defined as an array of vertices.
+         * Known limitations:
+         * - Does not support polygons with two adjacent points > 180 degrees of
+         *   longitude apart. These will be interpreted as crossing the antimeridian.
+         * - Does not currently support polygons containing a pole.
+         * @param verts    Array of vertices
+         * @param numVerts Number of vertices
+         * @param bbox     Output bbox
+         */
+        void bboxFromVertices(List<GeoCoord> verts, int numVerts, ref BBox bbox) 
+        {
+            // Early exit if there are no vertices
+            if (numVerts == 0) {
+                bbox.north = 0;
+                bbox.south = 0;
+                bbox.east = 0;
+                bbox.west = 0;
+                return;
+            }
+            double lat;
+            double lon;
+
+            bbox.south = double.MaxValue;
+            bbox.west = double.MaxValue;
+            bbox.north = -double.MaxValue;
+            bbox.east = -double.MaxValue;
+            bool isTransmeridian = false;
+
+            for (int i = 0; i < numVerts; i++) {
+                lat = verts[i].lat;
+                lon = verts[i].lon;
+                if (lat < bbox.south) bbox.south = lat;
+                if (lon < bbox.west) bbox.west = lon;
+                if (lat > bbox.north) bbox.north = lat;
+                if (lon > bbox.east) bbox.east = lon;
+                // check for arcs > 180 degrees longitude, flagging as transmeridian
+                if (Math.Abs( lon - verts[(i + 1) % numVerts].lon) > Constants.M_PI)
+                {
+                    isTransmeridian = true;
+                }
+            }
+            // Swap east and west if transmeridian
+            if (isTransmeridian)
+            {
+                double tmp = bbox.east;
+                bbox.east = bbox.west;
+                bbox.west = tmp;
+            }
+        }
+
+        /**
+         * Create a bounding box from a Geofence
+         * @param Geofence Input Geofence
+         * @param bbox     Output bbox
+         */
+        void bboxFromGeofence(Geofence Geofence, ref BBox bbox) {
+            bboxFromVertices(Geofence.verts.ToList() , Geofence.numVerts, ref bbox);
+        }
+
+        /**
+         * Create a bounding box from a GeoPolygon
+         * @param polygon Input GeoPolygon
+         * @param bboxes  Output bboxes, one for the outer loop and one for each hole
+         */
+        void bboxesFromGeoPolygon(GeoPolygon polygon, ref List<BBox> bboxes)
+        {
+            var bb = bboxes[0];
+            bboxFromGeofence(polygon.Geofence, ref bb);
+            bboxes[0] = bb;
+            for (int i = 0; i < polygon.numHoles; i++)
+            {
+                bb = bboxes[i + 1];
+                bboxFromGeofence(polygon.holes[i], ref bb);
+                bboxes[i + 1] = bb;
+            }
+        }
+
         /**
         * Whether the given bounding box crosses the antimeridian
         * @param  bbox Bounding box to inspect

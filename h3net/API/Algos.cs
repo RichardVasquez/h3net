@@ -757,11 +757,11 @@ namespace h3net.API
          * @param res Hexagon resolution (0-15)
          * @return number of hexagons to allocate for
          */
-        int maxPolyfillSize(ref GeoPolygon geoPolygon, int res)
+        public static int maxPolyfillSize(ref GeoPolygon geoPolygon, int res)
         {
             // Get the bounding box for the GeoJSON-like struct
             BBox bbox = new BBox();
-            Polygon.bboxFromGeofence(ref geoPolygon.geofence, ref bbox);
+            Polygon.bboxFromGeofence(ref geoPolygon.Geofence, ref bbox);
             int minK = BBox.bboxHexRadius(bbox, res);
 
             // The total number of hexagons to allocate can now be determined by
@@ -776,13 +776,13 @@ namespace h3net.API
          *
          * The current implementation is very primitive and slow, but correct,
          * performing a point-in-poly operation on every hexagon in a k-ring defined
-         * around the given geofence.
+         * around the given Geofence.
          *
-         * @param geoPolygon The geofence and holes defining the relevant area
+         * @param geoPolygon The Geofence and holes defining the relevant area
          * @param res The Hexagon resolution (0-15)
          * @param out The slab of zeroed memory to write to. Assumed to be big enough.
          */
-        void polyfill(GeoPolygon geoPolygon, int res, List<H3Index> out_hex) {
+        public static void polyfill(GeoPolygon geoPolygon, int res, List<H3Index> out_hex) {
             // One of the goals of the polyfill algorithm is that two adjacent polygons
             // with zero overlap have zero overlapping hexagons. That the hexagons are
             // uniquely assigned. There are a few approaches to take here, such as
@@ -801,10 +801,11 @@ namespace h3net.API
             // This first part is identical to the maxPolyfillSize above.
 
             // Get the bounding boxes for the polygon and any holes
-            List<BBox> bboxes = new List<BBox>(geoPolygon.numHoles+1);
-            for (int i = 0; i <= geoPolygon.numHoles; i++)
+            int cnt = geoPolygon.numHoles + 1;
+            List<BBox> bboxes = new List<BBox>();
+            for (int i = 0; i < cnt; i++)
             {
-                bboxes[i]=new BBox();
+                bboxes.Add(new BBox());
             }
 
             Polygon.bboxesFromGeoPolygon(geoPolygon, ref bboxes);
