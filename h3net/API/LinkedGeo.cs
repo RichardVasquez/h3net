@@ -236,7 +236,7 @@ namespace h3net.API
          * @param loop  The loop to check
          * @return      Whether the loop is clockwise
          */
-        static bool isClockwiseLinkedGeoLoop(LinkedGeoLoop loop) {
+        public static bool isClockwiseLinkedGeoLoop(LinkedGeoLoop loop) {
             return isClockwiseNormalizedLinkedGeoLoop(loop, false);
         }
 

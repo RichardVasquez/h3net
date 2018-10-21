@@ -51,8 +51,15 @@ namespace h3net.API
                 {
                     break;
                 }
-                coord = loop.verts[loopIndex];
-                next = loop.verts[(loopIndex + 1) % loop.numVerts];
+
+                coord = new GeoCoord(loop.verts[loopIndex].lat, loop.verts[loopIndex].lon);
+                next = new GeoCoord
+                    (
+                     loop.verts[(loopIndex + 1) % loop.numVerts].lat,
+                     loop.verts[(loopIndex + 1) % loop.numVerts].lon
+                    );
+
+
 
                 lat = coord.lat;
                 lon = coord.lon;
@@ -103,8 +110,15 @@ namespace h3net.API
             while (true) {
 
                 if (++loopIndex >= loop.numVerts){ break;}
-                a = loop.verts[loopIndex];            
-                b = loop.verts[(loopIndex + 1) % loop.numVerts];
+                a = new GeoCoord(loop.verts[loopIndex].lat, loop.verts[loopIndex].lon);
+                b = new GeoCoord
+                    (
+                     loop.verts[(loopIndex + 1) % loop.numVerts].lat,
+                     loop.verts[(loopIndex + 1) % loop.numVerts].lon
+                    );
+
+
+                //b = loop.verts[(loopIndex + 1) % loop.numVerts];
 
                 // Ray casting algo requires the second point to always be higher
                 // than the first, so swap if needed
@@ -125,7 +139,7 @@ namespace h3net.API
 
                 // Rays are cast in the longitudinal direction, in case a point
                 // exactly matches, to decide tiebreakers, bias westerly
-                if (aLng == lng || bLng == lng)
+                if (Math.Abs(aLng - lng) < Constants.DBL_EPSILON || Math.Abs(bLng - lng) < Constants.DBL_EPSILON)
                 {
                     lng -= Constants.DBL_EPSILON;
                 }
@@ -165,10 +179,16 @@ namespace h3net.API
             int loopIndex = -1;
 
             while (true) {
-                if (++loopIndex >= loop.numVerts){ break;    }
-                a = loop.verts[loopIndex];            
-                b = loop.verts[(loopIndex + 1) % loop.numVerts];
-
+                if (++loopIndex >= loop.numVerts)
+                {
+                    break;
+                }
+                a = new GeoCoord(loop.verts[loopIndex].lat, loop.verts[loopIndex].lon);
+                b = new GeoCoord
+                    (
+                     loop.verts[(loopIndex + 1) % loop.numVerts].lat,
+                     loop.verts[(loopIndex + 1) % loop.numVerts].lon
+                    );
 
 
                 // If we identify a transmeridian arc (> 180 degrees longitude),

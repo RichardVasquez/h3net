@@ -21,7 +21,7 @@ namespace h3net.API
          * @param numVerts Number of vertices
          * @param bbox     Output bbox
          */
-        void bboxFromVertices(List<GeoCoord> verts, int numVerts, ref BBox bbox) 
+        static void bboxFromVertices(List<GeoCoord> verts, int numVerts, ref BBox bbox) 
         {
             // Early exit if there are no vertices
             if (numVerts == 0) {
@@ -67,7 +67,7 @@ namespace h3net.API
          * @param Geofence Input Geofence
          * @param bbox     Output bbox
          */
-        void bboxFromGeofence(Geofence Geofence, ref BBox bbox) {
+        public static void bboxFromGeofence(Geofence Geofence, ref BBox bbox) {
             bboxFromVertices(Geofence.verts.ToList() , Geofence.numVerts, ref bbox);
         }
 

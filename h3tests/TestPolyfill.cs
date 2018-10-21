@@ -295,7 +295,7 @@ namespace h3tests
                     new GeoCoord(0.1, Constants.M_PI - 0.00001),
                     new GeoCoord(0.05, Constants.M_PI - 0.2),
                     new GeoCoord(-0.1, Constants.M_PI - 0.00001),
-                    new GeoCoord(0.1, -Constants.M_PI + 0.00001),
+                    new GeoCoord(-0.1, -Constants.M_PI + 0.00001),
                     new GeoCoord(-0.05, -Constants.M_PI + 0.2)
                 };
             Geofence Geofence = new Geofence {numVerts = 6, verts = verts.ToArray() };
@@ -308,7 +308,7 @@ namespace h3tests
             int actualNumHexagons = countActualHexagons(hexagons, numHexagons);
 
             Assert.True(actualNumHexagons == 1204,
-                     "got expected polyfill size (complex transmeridian)");
+                     $"{actualNumHexagons}/1204 got expected polyfill size (complex transmeridian)");
 
         }
 

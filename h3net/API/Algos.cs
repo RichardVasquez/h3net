@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace h3net.API
@@ -231,6 +232,7 @@ namespace h3net.API
                 // and also wipe out array because contents untrustworthy
                 distances.Clear();
                 distances = new int[out_hex.Count].ToList();
+                out_hex = new ulong[distances.Count].Select(cell => new H3Index(cell)).ToList();
                 _kRingInternal(origin, k, ref out_hex, ref distances, maxIdx, 0);
             }
         }
@@ -249,24 +251,35 @@ namespace h3net.API
          * @param maxIdx Size of out and scratch arrays (must be maxKringSize(k))
          * @param curK Current distance from the origin.
          */
+        //  Rewriting to remove recursion.
         public static void _kRingInternal(H3Index origin, int k, ref List<H3Index> out_hex, ref List<int> distances,
             int maxIdx, int curK)
         {
-            if (origin == 0) return;
+            if (origin == 0)
+            {
+                //Debug.WriteLine("Initial origin == 0");
+                return;
+            }
 
             // Put origin in the output array. out is used as a hash set.
-            ulong origin1 = (ulong) origin;
-            int off = (int)( origin1 % (ulong)maxIdx);
+            int off =(int)( origin.value % (ulong)maxIdx);
+            //Debug.WriteLine("Before: Off is {0}", off);
             while (out_hex[off] != 0 && out_hex[off] != origin)
             {
-                off = (off + 1) % maxIdx;
+                off++;
+                if (off >= maxIdx)
+                {
+                    off = 0;
+                }
             }
+            //Debug.WriteLine("After: Off is {0}", off);
 
             // We either got a free slot in the hash set or hit a duplicate
             // We might need to process the duplicate anyways because we got
             // here on a longer path before.
             if (out_hex[off] == origin && distances[off] <= curK)
             {
+                //Debug.WriteLine("hash crash");
                 return;
             }
 
@@ -276,16 +289,16 @@ namespace h3net.API
             // Base case: reached an index k away from the origin.
             if (curK >= k)
             {
+                //Debug.WriteLine("Bailing on curK ({0}) >= k ({1})", curK, k);
                 return;
             }
 
             // Recurse to all neighbors in no particular order.
-            for (int i = 0; i < 6; i++)
-            {
+            for (int i = 0; i < 6; i++) {
                 int rotations = 0;
-                _kRingInternal(
-                    h3NeighborRotations(origin, DIRECTIONS[i], ref rotations),
-                    k, ref out_hex, ref distances, maxIdx, curK + 1);
+                var hNR = h3NeighborRotations(origin, DIRECTIONS[i], ref rotations);
+                //Debug.WriteLine("hnNR = {0}", hNR);
+                _kRingInternal(hNR, k, ref out_hex, ref distances, maxIdx, curK + 1);
             }
 
         }

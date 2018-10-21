@@ -63,6 +63,7 @@
     <Compile Include="TestLinkedGeo.cs" />
     <Compile Include="TestMaxH3ToChildrenSize.cs" />
     <Compile Include="TestPolyfill.cs" />
+    <Compile Include="TestPolygon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
