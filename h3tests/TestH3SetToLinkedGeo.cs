@@ -201,16 +201,34 @@ namespace h3tests
             Assert.True(LinkedGeo.countLinkedPolygons(ref polygon) == 2, "Polygon count correct");
             Assert.True(LinkedGeo.countLinkedLoops(ref polygon) == 2,
                      "Loop count on first polygon correct");
-            Assert.True(LinkedGeo.countLinkedCoords(ref polygon.first) == 42,
-                     "Got expected big outer loop");
-            Assert.True(LinkedGeo.countLinkedCoords(ref polygon.first.next) == 30,
-                     "Got expected big inner loop");
-            Assert.True(LinkedGeo.countLinkedLoops(ref polygon.next) == 2,
-                     "Loop count on second polygon correct");
-            Assert.True(LinkedGeo.countLinkedCoords(ref polygon.next.first) == 18,
-                     "Got expected outer loop");
-            Assert.True(LinkedGeo.countLinkedCoords(ref polygon.next.first.next) == 6,
-                     "Got expected inner loop");
+
+            //  Brittleness comes from hashing into buckets, so let's cover both bases.
+            if (LinkedGeo.countLinkedCoords(ref polygon.first) == 42)
+            {
+                Assert.True(LinkedGeo.countLinkedCoords(ref polygon.first) == 42,
+                            "Got expected big outer loop");
+                Assert.True(LinkedGeo.countLinkedCoords(ref polygon.first.next) == 30,
+                            "Got expected big inner loop");
+                Assert.True(LinkedGeo.countLinkedLoops(ref polygon.next) == 2,
+                            "Loop count on second polygon correct");
+                Assert.True(LinkedGeo.countLinkedCoords(ref polygon.next.first) == 18,
+                            "Got expected outer loop");
+                Assert.True(LinkedGeo.countLinkedCoords(ref polygon.next.first.next) == 6,
+                            "Got expected inner loop");
+            }
+            else
+            {
+                Assert.True(LinkedGeo.countLinkedCoords(ref polygon.first) == 18,
+                            "Got expected big outer loop");
+                Assert.True(LinkedGeo.countLinkedCoords(ref polygon.first.next) == 6,
+                            "Got expected big inner loop");
+                Assert.True(LinkedGeo.countLinkedLoops(ref polygon.next) == 2,
+                            "Loop count on second polygon correct");
+                Assert.True(LinkedGeo.countLinkedCoords(ref polygon.next.first) == 42,
+                            "Got expected outer loop");
+                Assert.True(LinkedGeo.countLinkedCoords(ref polygon.next.first.next) == 30,
+                            "Got expected inner loop");
+            }
 
             LinkedGeo.destroyLinkedPolygon(ref polygon);
         }

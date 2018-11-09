@@ -37,7 +37,7 @@ namespace h3net.API
          * @param v2 The second 3D coordinate.
          * @return The square of the distance between the given points.
          */
-        internal static double _pointSquareDist(Vec3d v1,  Vec3d v2) {
+        public static double _pointSquareDist(Vec3d v1,  Vec3d v2) {
             return _square(v1.x - v2.x) + _square(v1.y - v2.y) +
                    _square(v1.z - v2.z);
         }
@@ -48,7 +48,7 @@ namespace h3net.API
          * @param geo The latitude and longitude of the point.
          * @param v The 3D coordinate of the point.
          */
-        internal static  void _geoToVec3d(GeoCoord geo, ref Vec3d v)
+        public static  void _geoToVec3d(GeoCoord geo, ref Vec3d v)
         {
             double r = Math.Cos(geo.lat);
 

@@ -922,7 +922,7 @@ namespace h3net.API
                         _hex2dToGeo(ref inter, centerIJK.face, adjRes, 1, ref temp_verts);
                         g.verts[g.numVerts] = temp_verts;
                         g.numVerts++;
-                        Debug.WriteLine("!IsIntersection {0}", g.numVerts);
+                        Debug.WriteLine(string.Format( "!IsIntersection {0}", g.numVerts));
                     }
                 }
 
@@ -937,7 +937,6 @@ namespace h3net.API
                     _hex2dToGeo(ref vec, fijk.face, adjRes, 1, ref temp_verts);
                     g.verts[g.numVerts] = temp_verts;
                     g.numVerts++;
-                    Debug.WriteLine("regular conversion {0}", g.numVerts);
                 }
 
                 lastFace = fijk.face;

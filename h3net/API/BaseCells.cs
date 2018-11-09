@@ -24,13 +24,6 @@ namespace h3net.API
             public int isPentagon;
             public int[] cwOffsetPent;// [2]
 
-            public BaseCellData(FaceIJK ijk, int isPenta, int[] offset) : this()
-            {
-                homeFijk = ijk;
-                isPentagon = isPenta;
-                cwOffsetPent = offset;
-            }
-
             public BaseCellData(int face, int faceI, int faceJ, int faceK, int isPenta, int offset1, int offset2) : this()
             {
                 homeFijk = new FaceIJK(face, new CoordIJK(faceI, faceJ, faceK));
@@ -895,12 +888,12 @@ namespace h3net.API
             return faceIjkBaseCells[h.face, h.coord.i, h.coord.j, h.coord.k].ccwRot60;
         }
 
-        /** @brief Find the FaceIJK given a base cell.
-         */
-        public void _baseCellToFaceIjk(int baseCell, ref FaceIJK h)
-        {
-            h = baseCellData[baseCell].homeFijk;
-        }
+        ///** @brief Find the FaceIJK given a base cell.
+        // */
+        //public void _baseCellToFaceIjk(int baseCell, ref FaceIJK h)
+        //{
+        //    h = baseCellData[baseCell].homeFijk;
+        //}
 
         /** @brief Return whether or not the tested face is a cw offset face.
          */

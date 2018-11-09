@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace h3net.API
 {
@@ -30,11 +28,58 @@ namespace h3net.API
      */
     public class VertexGraph
     {
-        public class VertexNode
+        public class VertexNode:IEquatable<VertexNode>
         {
             public GeoCoord from;
             public GeoCoord to;
             public  VertexNode next;
+
+            public bool Equals(VertexNode other)
+            {
+                if (ReferenceEquals(null, other))
+                    return false;
+                if (ReferenceEquals(this, other))
+                    return true;
+                return Equals(@from, other.@from) && Equals(to, other.to) && Equals(next, other.next);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj))
+                    return false;
+                if (ReferenceEquals(this, obj))
+                    return true;
+                if (obj.GetType() != this.GetType())
+                    return false;
+                return Equals((VertexNode) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    var hashCode = (@from != null
+                                        ? @from.GetHashCode()
+                                        : 0);
+                    hashCode = (hashCode * 397) ^ (to != null
+                                                       ? to.GetHashCode()
+                                                       : 0);
+                    hashCode = (hashCode * 397) ^ (next != null
+                                                       ? next.GetHashCode()
+                                                       : 0);
+                    return hashCode;
+                }
+            }
+
+            public static bool operator ==(VertexNode left, VertexNode right)
+            {
+                return Equals(left, right);
+            }
+
+            public static bool operator !=(VertexNode left, VertexNode right)
+            {
+                return !Equals(left, right);
+            }
         }
 
         public List<List<VertexNode>> buckets;
@@ -46,9 +91,9 @@ namespace h3net.API
          * Initialize a new VertexGraph
          * @param graph       Graph to initialize
          * @param  numBuckets Number of buckets to include in the graph
-         * @param  res        Resolution of the hexagons whose vertices we're storing
+         * @param  res        Resolution of the hexagons whose vertices we'res storing
          */
-        public VertexGraph(int num, int re)
+        public VertexGraph(int num, int res)
         {
             //  We're gonna do it a little different here in .NET land,
             //  using a List<> of List<> since we get enumerators, counts,
@@ -61,7 +106,7 @@ namespace h3net.API
                 buckets.Add(new List<VertexNode>());
             }
             size = 0;
-            res = re;
+            this.res = res;
         }
 
         /**
@@ -89,17 +134,45 @@ namespace h3net.API
          * @param  numBuckets Number of buckets in the graph
          * @return            Integer hash
          */
-        private static int _hashVertex(GeoCoord vertex, int res, int numBuckets)
+        public static uint _hashVertex(GeoCoord vertex, int res, int numBuckets)
         {
             // Simple hash: Take the sum of the lat and lon with a precision level
             // determined by the resolution, converted to int, modulo bucket count.
-            return (int) 
-                (
-                    Math.Abs(
-                        (vertex.lat + vertex.lon) * Math.Pow(10, 15 - res)
-                    )
-                    %  numBuckets
-                );
+/*            return (uint)
+                Math.IEEERemainder
+                    (
+                     Math.Abs((vertex.lat + vertex.lon) * Math.Pow(10, 15 - res)),
+                     numBuckets
+                    );
+                    */
+
+            //  I didn't like that one because it caused TestVertexGraph to fail.
+
+            //  Edge cases for stuff close enough to (0,0) to not matter go straight to bucket 0.
+            if (vertex == null)
+            {
+                return 0;
+            }
+            double start_lat = Math.Abs(vertex.lat);
+            double start_lon = Math.Abs(vertex.lon);
+            if (start_lon < Constants.DBL_EPSILON && start_lat < Constants.DBL_EPSILON)
+            {
+                return 0;
+            }
+
+            const int keepShifting = 1000000000;
+            double initial = Math.Abs(vertex.lat + vertex.lon * Math.Pow(10, 15 - res));
+            double start = 0;
+            while (start < keepShifting)
+            {
+                start_lat *= 9973;
+                start_lon *= 911;
+                start += start_lat;
+                start += start_lon;
+            }
+
+            var fraction = Math.IEEERemainder(start, 1);
+            return (uint) (Math.Abs(fraction) * numBuckets);
         }
 
         private static VertexNode _initVertexNode(GeoCoord fromVtx, GeoCoord toVtx)
@@ -123,26 +196,26 @@ namespace h3net.API
             // Determine location
             var index = _hashVertex(fromVtx, graph.res, graph.numBuckets);
             // Check whether there's an existing node in that spot
-            List<VertexNode> currentNode = graph.buckets[index];
+            List<VertexNode> currentNode = graph.buckets[(int)index];
             if (currentNode.Count == 0) {
                 // Set bucket to the new node
-                graph.buckets[index].Add(node);
+                graph.buckets[(int)index].Add(node);
             } else {
                 //  Go through the list to make sure the
-                //  edge doesn't vertexnode doesn't already exist
+                //  edge doesn't already exist
                 //
                 //  NOTE: Later, use a Hashset
-                foreach (var vertexNode in graph.buckets[index])
+                foreach (var vertexNode in graph.buckets[(int)index])
                 {
                     if (GeoCoord.geoAlmostEqual(vertexNode.from, fromVtx) &&
                         GeoCoord.geoAlmostEqual(vertexNode.to, toVtx))
                     {
                         //  already exists, bail.
-                        return node;
+                        return vertexNode;
                     }
                 }
                 // Add the new node to the end of the list
-                graph.buckets[index].Add(node);
+                graph.buckets[(int)index].Add(node);
             }
             graph.size++;
             return node;
@@ -158,8 +231,8 @@ namespace h3net.API
         public static int removeVertexNode(ref VertexGraph graph, ref VertexNode node)
         {
             // Determine location
-            int index = _hashVertex(node.from, graph.res, graph.numBuckets);
-            var currentBucket = graph.buckets[index];
+            uint index = _hashVertex(node.from, graph.res, graph.numBuckets);
+            var currentBucket = graph.buckets[(int)index];
 
             var tnode = node;
             var nodeIndex = currentBucket.FindIndex(t => t.from == tnode.from && t.to == tnode.to);
@@ -185,8 +258,8 @@ namespace h3net.API
             GeoCoord fromVtx,
             GeoCoord toVtx)
         {
-            int index = _hashVertex(fromVtx, graph.res, graph.numBuckets);
-            var currentBucket = graph.buckets[index];
+            uint index = _hashVertex(fromVtx, graph.res, graph.numBuckets);
+            var currentBucket = graph.buckets[(int)index];
 
             var nodeIndex = currentBucket.FindIndex(
                 t => GeoCoord.geoAlmostEqual(t.from, fromVtx) &&

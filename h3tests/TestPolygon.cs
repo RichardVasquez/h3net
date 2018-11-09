@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Linq;
 using h3net.API;
 using NUnit.Framework;
 
@@ -489,233 +490,315 @@ namespace h3tests
             Assert.True(polygon.first == outer, "Got expected outer loop");
             Assert.True(polygon.first.next == inner, "Got expected inner loop");
         }
+
+        [Test]
+        public void normalizeMultiPolygonTwoHoles()
+        {
+            List<GeoCoord> verts =
+                new List<GeoCoord>
+                {
+                    new GeoCoord(0, 0),
+                    new GeoCoord(0, 0.4),
+                    new GeoCoord(0.4, 0.4),
+                    new GeoCoord(0.4, 0)
+                };
+
+            LinkedGeo.LinkedGeoLoop outer = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outer);
+            createLinkedLoop(ref outer, verts, 4);
+
+            List<GeoCoord> verts2 =
+                new List<GeoCoord>
+                {
+                    new GeoCoord(0.1, 0.1),
+                    new GeoCoord(0.2, 0.2),
+                    new GeoCoord(0.1, 0.2)
+                };
+
+            LinkedGeo.LinkedGeoLoop inner1 = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(inner1);
+            createLinkedLoop(ref inner1, verts2, 3);
+
+            List<GeoCoord> verts3 =
+                new List<GeoCoord>
+                {
+                    new GeoCoord(0.2, 0.2),
+                    new GeoCoord(0.3, 0.3),
+                    new GeoCoord(0.2, 0.3)
+                };
+
+            LinkedGeo.LinkedGeoLoop inner2 = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(inner2);
+            createLinkedLoop(ref inner2, verts3, 3);
+
+            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
+            LinkedGeo.addLinkedLoop(ref polygon, ref inner2);
+            LinkedGeo.addLinkedLoop(ref polygon, ref outer);
+            LinkedGeo.addLinkedLoop(ref polygon, ref inner1);
+
+            int result = LinkedGeo.normalizeMultiPolygon(ref polygon);
+
+            Assert.True(result == LinkedGeo.NORMALIZATION_SUCCESS, "No error code returned");
+
+            Assert.True
+                (
+                 LinkedGeo.countLinkedPolygons(ref polygon) == 1,
+                 "Polygon count correct for 2 holes"
+                );
+            Assert.True(polygon.first == outer, "Got expected outer loop");
+            Assert.True
+                (
+                 LinkedGeo.countLinkedLoops(ref polygon) == 3,
+                 "Loop count on first polygon correct"
+                );
+        }
+
+        [Test]
+        public void normalizeMultiPolygonTwoDonuts()
+        {
+            GeoCoord[] verts =
+            {
+                new GeoCoord(0, 0),
+                new GeoCoord(0, 3),
+                new GeoCoord(3, 3),
+                new GeoCoord(3, 0)
+            };
+            LinkedGeo.LinkedGeoLoop outer = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outer);
+            createLinkedLoop(ref outer, verts.ToList(), 4);
+
+            GeoCoord[] verts2 =
+            {
+                new GeoCoord(1, 1),
+                new GeoCoord(2, 2),
+                new GeoCoord(1, 2)
+            };
+            LinkedGeo.LinkedGeoLoop inner = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(inner);
+            createLinkedLoop(ref inner, verts2.ToList(), 3);
+
+            GeoCoord[] verts3 =
+            {
+                new GeoCoord(0, 0),
+                new GeoCoord(0, -3),
+                new GeoCoord(-3, -3),
+                new GeoCoord(-3, 0)
+            };
+            LinkedGeo.LinkedGeoLoop outer2 = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outer2);
+            createLinkedLoop(ref outer2, verts3.ToList(), 4);
+
+            GeoCoord[] verts4 =
+            {
+                new GeoCoord(-1, -1),
+                new GeoCoord(-2, -2),
+                new GeoCoord(-1, -2)
+            };
+            LinkedGeo.LinkedGeoLoop inner2 = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(inner2);
+            createLinkedLoop(ref inner2, verts4.ToList(), 3);
+
+            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
+            LinkedGeo.addLinkedLoop(ref polygon, ref inner2);
+            LinkedGeo.addLinkedLoop(ref polygon, ref inner);
+            LinkedGeo.addLinkedLoop(ref polygon, ref outer);
+            LinkedGeo.addLinkedLoop(ref polygon, ref outer2);
+
+            int result = LinkedGeo.normalizeMultiPolygon(ref polygon);
+
+            Assert.True(result == LinkedGeo.NORMALIZATION_SUCCESS, "No error code returned");
+
+            Assert.True(LinkedGeo.countLinkedPolygons(ref polygon) == 2, "Polygon count correct");
+            Assert.True
+                (
+                 LinkedGeo.countLinkedLoops(ref polygon) == 2,
+                 "Loop count on first polygon correct"
+                );
+            Assert.True
+                (
+                 LinkedGeo.countLinkedCoords(ref polygon.first) == 4,
+                 "Got expected outer loop"
+                );
+            Assert.True
+                (
+                 LinkedGeo.countLinkedCoords(ref polygon.first.next) == 3,
+                 "Got expected inner loop"
+                );
+            Assert.True
+                (
+                 LinkedGeo.countLinkedLoops(ref polygon.next) == 2,
+                 "Loop count on second polygon correct"
+                );
+            Assert.True
+                (
+                 LinkedGeo.countLinkedCoords(ref polygon.next.first) == 4,
+                 "Got expected outer loop"
+                );
+            Assert.True
+                (
+                 LinkedGeo.countLinkedCoords(ref polygon.next.first.next) == 3,
+                 "Got expected inner loop"
+                );
+        }
+
+        [Test]
+        public void normalizeMultiPolygonNestedDonuts()
+        {
+            GeoCoord[] verts =
+            {
+                new GeoCoord(0.2, 0.2),
+                new GeoCoord(0.2, -0.2),
+                new GeoCoord(-0.2, -0.2),
+                new GeoCoord(-0.2, 0.2)
+            };
+            LinkedGeo.LinkedGeoLoop outer =new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outer);
+            createLinkedLoop(ref outer, verts.ToList(), 4);
+
+            GeoCoord[] verts2 =
+            {
+                new GeoCoord(0.1, 0.1),
+                new GeoCoord(-0.1, 0.1),
+                new GeoCoord(-0.1, -0.1),
+                new GeoCoord(0.1, -0.1)
+            };
+            LinkedGeo.LinkedGeoLoop inner =new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(inner);
+            createLinkedLoop(ref inner, verts2.ToList(), 4);
+
+            GeoCoord[] verts3 =
+            {
+                new GeoCoord(0.6, 0.6),
+                new GeoCoord(0.6, -0.6),
+                new GeoCoord(-0.6, -0.6),
+                new GeoCoord(-0.6, 0.6)
+            };
+            LinkedGeo.LinkedGeoLoop outerBig =new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outerBig);
+            createLinkedLoop(ref outerBig, verts3.ToList(), 4);
+
+            GeoCoord[] verts4 =
+            {
+                new GeoCoord(0.5, 0.5),
+                new GeoCoord(-0.5, 0.5),
+                new GeoCoord(-0.5, -0.5),
+                new GeoCoord(0.5, -0.5)
+            };
+            LinkedGeo.LinkedGeoLoop innerBig =new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(innerBig);
+            createLinkedLoop(ref innerBig, verts4.ToList(), 4);
+
+            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
+            LinkedGeo.addLinkedLoop(ref polygon, ref inner);
+            LinkedGeo.addLinkedLoop(ref polygon, ref outerBig);
+            LinkedGeo.addLinkedLoop(ref polygon, ref innerBig);
+            LinkedGeo.addLinkedLoop(ref polygon, ref outer);
+
+            int result = LinkedGeo.normalizeMultiPolygon(ref polygon);
+
+            Assert.True(result == LinkedGeo.NORMALIZATION_SUCCESS, "No error code returned");
+
+            Assert.True(LinkedGeo.countLinkedPolygons(ref polygon) == 2, "Polygon count correct");
+            Assert.True(LinkedGeo.countLinkedLoops(ref polygon) == 2,
+                     "Loop count on first polygon correct");
+            Assert.True(polygon.first == outerBig, "Got expected outer loop");
+            Assert.True(polygon.first.next == innerBig, "Got expected inner loop");
+            Assert.True(LinkedGeo.countLinkedLoops(ref polygon.next) == 2,
+                     "Loop count on second polygon correct");
+            Assert.True(polygon.next.first == outer, "Got expected outer loop");
+            Assert.True(polygon.next.first.next == inner, "Got expected inner loop");
+        }
+
+        [Test]
+        public void normalizeMultiPolygonNoOuterLoops()
+        {
+            GeoCoord[] verts1 =
+            {
+                new GeoCoord(0, 0),
+                new GeoCoord(1, 1),
+                new GeoCoord(0, 1)
+            };
+
+            LinkedGeo.LinkedGeoLoop outer1 = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outer1);
+            createLinkedLoop(ref outer1, verts1.ToList(), 3);
+
+            GeoCoord[] verts2 =
+            {
+                new GeoCoord(2, 2),
+                new GeoCoord(3, 3),
+                new GeoCoord(2, 3)
+            };
+
+            LinkedGeo.LinkedGeoLoop outer2 = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outer2);
+            createLinkedLoop(ref outer2, verts2.ToList(), 3);
+
+            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
+            LinkedGeo.addLinkedLoop(ref polygon, ref outer1);
+            LinkedGeo.addLinkedLoop(ref polygon, ref outer2);
+
+            int result = LinkedGeo.normalizeMultiPolygon(ref polygon);
+
+            Assert.True
+                (
+                 result == LinkedGeo.NORMALIZATION_ERR_UNASSIGNED_HOLES,
+                 "Expected error code returned"
+                );
+
+            Assert.True(LinkedGeo.countLinkedPolygons(ref polygon) == 1,
+                        "Polygon count correct");
+            Assert.True
+                (
+                 LinkedGeo.countLinkedLoops(ref polygon) == 0,
+                 "Loop count as expected with invalid input"
+                );
+        }
+
+        [Test]
+        public void normalizeMultiPolygonAlreadyNormalized()
+        {
+            GeoCoord[] verts1 =
+            {
+                new GeoCoord(0, 0),
+                new GeoCoord(0, 1),
+                new GeoCoord(1, 1)
+            };
+
+            LinkedGeo.LinkedGeoLoop outer1 = new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outer1);
+            createLinkedLoop(ref outer1, verts1.ToList(), 3);
+
+            GeoCoord[] verts2 =
+            {
+                new GeoCoord(2, 2),
+                new GeoCoord(2, 3),
+                new GeoCoord(3, 3)
+            };
+
+            LinkedGeo.LinkedGeoLoop outer2 =new LinkedGeo.LinkedGeoLoop();
+            Assert.NotNull(outer2);
+            createLinkedLoop(ref outer2, verts2.ToList(), 3);
+
+            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
+            LinkedGeo.addLinkedLoop(ref polygon, ref outer1);
+            LinkedGeo.LinkedGeoPolygon next = LinkedGeo.addNewLinkedPolygon(ref polygon);
+            LinkedGeo.addLinkedLoop(ref next, ref outer2);
+
+            // Should be a no-op
+            int result = LinkedGeo.normalizeMultiPolygon(ref polygon);
+
+            Assert.True(result ==LinkedGeo. NORMALIZATION_ERR_MULTIPLE_POLYGONS,
+                     "Expected error code returned");
+
+            Assert.True(LinkedGeo.countLinkedPolygons(ref polygon) == 2, "Polygon count correct");
+            Assert.True(LinkedGeo.countLinkedLoops(ref polygon) == 1,
+                     "Loop count on first polygon correct");
+            Assert.True(polygon.first == outer1, "Got expected outer loop");
+            Assert.True(LinkedGeo.countLinkedLoops(ref polygon.next) == 1,
+                     "Loop count on second polygon correct");
+            Assert.True(polygon.next.first == outer2, "Got expected outer loop");
+        }
+
     }
 }
-/*
-    TEST(normalizeMultiPolygonOneHole) {
-        GeoCoord verts[] = {{0, 0}, {0, 3}, {3, 3}, {3, 0}};
-
-        LinkedGeoLoop* outer = malloc(sizeof(*outer));
-        assert(outer != NULL);
-        createLinkedLoop(outer, &verts[0], 4);
-
-        GeoCoord verts2[] = {{1, 1}, {2, 2}, {1, 2}};
-
-        LinkedGeoLoop* inner = malloc(sizeof(*inner));
-        assert(inner != NULL);
-        createLinkedLoop(inner, &verts2[0], 3);
-
-        LinkedGeoPolygon polygon = {0};
-        addLinkedLoop(&polygon, inner);
-        addLinkedLoop(&polygon, outer);
-
-        int result = normalizeMultiPolygon(&polygon);
-
-        t_assert(result == NORMALIZATION_SUCCESS, "No error code returned");
-
-        t_assert(countLinkedPolygons(&polygon) == 1, "Polygon count correct");
-        t_assert(countLinkedLoops(&polygon) == 2,
-                 "Loop count on first polygon correct");
-        t_assert(polygon.first == outer, "Got expected outer loop");
-        t_assert(polygon.first->next == inner, "Got expected inner loop");
-
-        H3_EXPORT(destroyLinkedPolygon)(&polygon);
-    }
-
-    TEST(normalizeMultiPolygonTwoHoles) {
-        GeoCoord verts[] = {{0, 0}, {0, 0.4}, {0.4, 0.4}, {0.4, 0}};
-
-        LinkedGeoLoop* outer = malloc(sizeof(*outer));
-        assert(outer != NULL);
-        createLinkedLoop(outer, &verts[0], 4);
-
-        GeoCoord verts2[] = {{0.1, 0.1}, {0.2, 0.2}, {0.1, 0.2}};
-
-        LinkedGeoLoop* inner1 = malloc(sizeof(*inner1));
-        assert(inner1 != NULL);
-        createLinkedLoop(inner1, &verts2[0], 3);
-
-        GeoCoord verts3[] = {{0.2, 0.2}, {0.3, 0.3}, {0.2, 0.3}};
-
-        LinkedGeoLoop* inner2 = malloc(sizeof(*inner2));
-        assert(inner2 != NULL);
-        createLinkedLoop(inner2, &verts3[0], 3);
-
-        LinkedGeoPolygon polygon = {0};
-        addLinkedLoop(&polygon, inner2);
-        addLinkedLoop(&polygon, outer);
-        addLinkedLoop(&polygon, inner1);
-
-        int result = normalizeMultiPolygon(&polygon);
-
-        t_assert(result == NORMALIZATION_SUCCESS, "No error code returned");
-
-        t_assert(countLinkedPolygons(&polygon) == 1,
-                 "Polygon count correct for 2 holes");
-        t_assert(polygon.first == outer, "Got expected outer loop");
-        t_assert(countLinkedLoops(&polygon) == 3,
-                 "Loop count on first polygon correct");
-
-        H3_EXPORT(destroyLinkedPolygon)(&polygon);
-    }
-
-    TEST(normalizeMultiPolygonTwoDonuts) {
-        GeoCoord verts[] = {{0, 0}, {0, 3}, {3, 3}, {3, 0}};
-        LinkedGeoLoop* outer = malloc(sizeof(*outer));
-        assert(outer != NULL);
-        createLinkedLoop(outer, &verts[0], 4);
-
-        GeoCoord verts2[] = {{1, 1}, {2, 2}, {1, 2}};
-        LinkedGeoLoop* inner = malloc(sizeof(*inner));
-        assert(inner != NULL);
-        createLinkedLoop(inner, &verts2[0], 3);
-
-        GeoCoord verts3[] = {{0, 0}, {0, -3}, {-3, -3}, {-3, 0}};
-        LinkedGeoLoop* outer2 = malloc(sizeof(*outer));
-        assert(outer2 != NULL);
-        createLinkedLoop(outer2, &verts3[0], 4);
-
-        GeoCoord verts4[] = {{-1, -1}, {-2, -2}, {-1, -2}};
-        LinkedGeoLoop* inner2 = malloc(sizeof(*inner));
-        assert(inner2 != NULL);
-        createLinkedLoop(inner2, &verts4[0], 3);
-
-        LinkedGeoPolygon polygon = {0};
-        addLinkedLoop(&polygon, inner2);
-        addLinkedLoop(&polygon, inner);
-        addLinkedLoop(&polygon, outer);
-        addLinkedLoop(&polygon, outer2);
-
-        int result = normalizeMultiPolygon(&polygon);
-
-        t_assert(result == NORMALIZATION_SUCCESS, "No error code returned");
-
-        t_assert(countLinkedPolygons(&polygon) == 2, "Polygon count correct");
-        t_assert(countLinkedLoops(&polygon) == 2,
-                 "Loop count on first polygon correct");
-        t_assert(countLinkedCoords(polygon.first) == 4,
-                 "Got expected outer loop");
-        t_assert(countLinkedCoords(polygon.first->next) == 3,
-                 "Got expected inner loop");
-        t_assert(countLinkedLoops(polygon.next) == 2,
-                 "Loop count on second polygon correct");
-        t_assert(countLinkedCoords(polygon.next->first) == 4,
-                 "Got expected outer loop");
-        t_assert(countLinkedCoords(polygon.next->first->next) == 3,
-                 "Got expected inner loop");
-
-        H3_EXPORT(destroyLinkedPolygon)(&polygon);
-    }
-
-    TEST(normalizeMultiPolygonNestedDonuts) {
-        GeoCoord verts[] = {{0.2, 0.2}, {0.2, -0.2}, {-0.2, -0.2}, {-0.2, 0.2}};
-        LinkedGeoLoop* outer = malloc(sizeof(*outer));
-        assert(outer != NULL);
-        createLinkedLoop(outer, &verts[0], 4);
-
-        GeoCoord verts2[] = {
-            {0.1, 0.1}, {-0.1, 0.1}, {-0.1, -0.1}, {0.1, -0.1}};
-        LinkedGeoLoop* inner = malloc(sizeof(*inner));
-        assert(inner != NULL);
-        createLinkedLoop(inner, &verts2[0], 4);
-
-        GeoCoord verts3[] = {
-            {0.6, 0.6}, {0.6, -0.6}, {-0.6, -0.6}, {-0.6, 0.6}};
-        LinkedGeoLoop* outerBig = malloc(sizeof(*outerBig));
-        assert(outerBig != NULL);
-        createLinkedLoop(outerBig, &verts3[0], 4);
-
-        GeoCoord verts4[] = {
-            {0.5, 0.5}, {-0.5, 0.5}, {-0.5, -0.5}, {0.5, -0.5}};
-        LinkedGeoLoop* innerBig = malloc(sizeof(*innerBig));
-        assert(innerBig != NULL);
-        createLinkedLoop(innerBig, &verts4[0], 4);
-
-        LinkedGeoPolygon polygon = {0};
-        addLinkedLoop(&polygon, inner);
-        addLinkedLoop(&polygon, outerBig);
-        addLinkedLoop(&polygon, innerBig);
-        addLinkedLoop(&polygon, outer);
-
-        int result = normalizeMultiPolygon(&polygon);
-
-        t_assert(result == NORMALIZATION_SUCCESS, "No error code returned");
-
-        t_assert(countLinkedPolygons(&polygon) == 2, "Polygon count correct");
-        t_assert(countLinkedLoops(&polygon) == 2,
-                 "Loop count on first polygon correct");
-        t_assert(polygon.first == outerBig, "Got expected outer loop");
-        t_assert(polygon.first->next == innerBig, "Got expected inner loop");
-        t_assert(countLinkedLoops(polygon.next) == 2,
-                 "Loop count on second polygon correct");
-        t_assert(polygon.next->first == outer, "Got expected outer loop");
-        t_assert(polygon.next->first->next == inner, "Got expected inner loop");
-
-        H3_EXPORT(destroyLinkedPolygon)(&polygon);
-    }
-
-    TEST(normalizeMultiPolygonNoOuterLoops) {
-        GeoCoord verts1[] = {{0, 0}, {1, 1}, {0, 1}};
-
-        LinkedGeoLoop* outer1 = malloc(sizeof(*outer1));
-        assert(outer1 != NULL);
-        createLinkedLoop(outer1, &verts1[0], 3);
-
-        GeoCoord verts2[] = {{2, 2}, {3, 3}, {2, 3}};
-
-        LinkedGeoLoop* outer2 = malloc(sizeof(*outer2));
-        assert(outer2 != NULL);
-        createLinkedLoop(outer2, &verts2[0], 3);
-
-        LinkedGeoPolygon polygon = {0};
-        addLinkedLoop(&polygon, outer1);
-        addLinkedLoop(&polygon, outer2);
-
-        int result = normalizeMultiPolygon(&polygon);
-
-        t_assert(result == NORMALIZATION_ERR_UNASSIGNED_HOLES,
-                 "Expected error code returned");
-
-        t_assert(countLinkedPolygons(&polygon) == 1, "Polygon count correct");
-        t_assert(countLinkedLoops(&polygon) == 0,
-                 "Loop count as expected with invalid input");
-
-        H3_EXPORT(destroyLinkedPolygon)(&polygon);
-    }
-
-    TEST(normalizeMultiPolygonAlreadyNormalized) {
-        GeoCoord verts1[] = {{0, 0}, {0, 1}, {1, 1}};
-
-        LinkedGeoLoop* outer1 = malloc(sizeof(*outer1));
-        assert(outer1 != NULL);
-        createLinkedLoop(outer1, &verts1[0], 3);
-
-        GeoCoord verts2[] = {{2, 2}, {2, 3}, {3, 3}};
-
-        LinkedGeoLoop* outer2 = malloc(sizeof(*outer2));
-        assert(outer2 != NULL);
-        createLinkedLoop(outer2, &verts2[0], 3);
-
-        LinkedGeoPolygon polygon = {0};
-        addLinkedLoop(&polygon, outer1);
-        LinkedGeoPolygon* next = addNewLinkedPolygon(&polygon);
-        addLinkedLoop(next, outer2);
-
-        // Should be a no-op
-        int result = normalizeMultiPolygon(&polygon);
-
-        t_assert(result == NORMALIZATION_ERR_MULTIPLE_POLYGONS,
-                 "Expected error code returned");
-
-        t_assert(countLinkedPolygons(&polygon) == 2, "Polygon count correct");
-        t_assert(countLinkedLoops(&polygon) == 1,
-                 "Loop count on first polygon correct");
-        t_assert(polygon.first == outer1, "Got expected outer loop");
-        t_assert(countLinkedLoops(polygon.next) == 1,
-                 "Loop count on second polygon correct");
-        t_assert(polygon.next->first == outer2, "Got expected outer loop");
-
-        H3_EXPORT(destroyLinkedPolygon)(&polygon);
-    }
-
-*/

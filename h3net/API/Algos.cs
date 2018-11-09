@@ -1,21 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace h3net.API
 {
+    /*
+     * Copyright 2018, Richard Vasquez
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *         http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     *
+     * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+     * C version licensed under the Apache License, Version 2.0 (the "License");
+     * C Source code available at: https://github.com/uber/h3
+     *
+     */
+
+    /// <summary>
+    /// Hexagon grid algorithms
+    /// </summary>
     public class Algos
     {
-        /*      _
-         *    _/ \_      Directions used for traversing a        
-         *   / \5/ \     hexagonal ring counterclockwise
-         *   \0/ \4/     around {1, 0, 0}
-         *   / \_/ \
-         *   \1/ \3/
-         *     \2/
-         */
-
+        /// <summary>
+        ///      _
+        ///    _/ \_      Directions used for traversing a        
+        ///   / \5/ \     hexagonal ring counterclockwise
+        ///   \0/ \4/     around {1, 0, 0}
+        ///   / \_/ \
+        ///   \1/ \3/
+        ///     \2/
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly Direction[] DIRECTIONS =
         {
             Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT,
@@ -23,11 +46,12 @@ namespace h3net.API
             Direction.I_AXES_DIGIT, Direction.IJ_AXES_DIGIT
         };
 
-        /**
-         * New digit when traversing along class II grids.
-         *
-         * Current digit -> direction -> new digit.
-         */
+        /// <summary>
+        /// New digit when traversing along class II grids.
+        /// 
+        /// Current digit -&gt; direction -&gt; new digit.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly Direction[,] NEW_DIGIT_II =
         {
             {
@@ -60,11 +84,12 @@ namespace h3net.API
             }
         };
 
-        /**
-         * New traversal direction when traversing along class II grids.
-         *
-         * Current digit -> direction -> new ap7 move (at coarser level).
-         */
+        /// <summary>
+        /// New traversal direction when traversing along class II grids.
+        ///
+        /// Current digit -&gt; direction -&gt; new ap7 move (at coarser level).
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly Direction[,] NEW_ADJUSTMENT_II =
         {
             {
@@ -97,11 +122,12 @@ namespace h3net.API
             }
         };
 
-        /**
-         * New traversal direction when traversing along class III grids.
-         *
-         * Current digit -> direction -> new ap7 move (at coarser level).
-         */
+        /// <summary>
+        /// New traversal direction when traversing along class III grids.
+        ///
+        /// Current digit -&gt; direction -&gt; new ap7 move (at coarser level).
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly Direction[,] NEW_DIGIT_III =
         {
             {
@@ -134,11 +160,12 @@ namespace h3net.API
             }
         };
 
-        /**
-         * New traversal direction when traversing along class III grids.
-         *
-         * Current digit -> direction -> new ap7 move (at coarser level).
-         */
+        /// <summary>
+        /// New traversal direction when traversing along class III grids.
+        /// 
+        /// Current digit -&gt; direction -&gt; new ap7 move (at coarser level).
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly Direction[,] NEW_ADJUSTMENT_III =
         {
             {
@@ -171,13 +198,14 @@ namespace h3net.API
             }
         };
 
-
-        /**
-         * Maximum number of indices that result from the kRing algorithm with the given
-         * k. Formula source and proof: https://oeis.org/A003215
-         *
-         * @param k k value, k >= 0.
-         */
+        /// <summary>
+        /// Maximum number of indices that result from the kRing algorithm with the given
+        /// k. Formula source and proof: https://oeis.org/A003215
+        ///
+        /// <param name="k">Radius value </param>
+        /// <remarks>k &gt;= 0</remarks>
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static int maxKringSize(int k)
         {
             int result = 1;
@@ -187,19 +215,19 @@ namespace h3net.API
             return result;
         }
 
-        /**
-         * k-rings produces indices within k distance of the origin index.
-         *
-         * k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
-         * all neighboring indices, and so on.
-         *
-         * Output is placed in the provided array in no particular order. Elements of
-         * the output array may be left zero, as can happen when crossing a pentagon.
-         *
-         * @param origin Origin location.
-         * @param k k >= 0
-         * @param out Zero-filled array which must be of size maxKringSize(k).
-         */
+        /// <summary>
+        /// k-rings produces indices within k distance of the origin index.
+        ///
+        /// k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
+        /// all neighboring indices, and so on.
+        ///
+        /// Output is placed in the provided array in no particular order. Elements of
+        /// the output array may be left zero, as can happen when crossing a pentagon.
+        /// </summary>
+        /// <param name="origin">Origin location</param>
+        /// <param name="k">k &gt;= 0</param>
+        /// <param name="out_hex">Zero-filled array which must be of size <see cref="maxKringSize"/>(k)</param>
+        /// <!-- Based off 3.1.1 -->
         public static void kRing(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             int maxIdx = maxKringSize(k);
@@ -207,20 +235,20 @@ namespace h3net.API
             Algos.kRingDistances(origin, k, ref out_hex, ref distances);
         }
 
-        /**
-         * k-rings produces indices within k distance of the origin index.
-         *
-         * k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
-         * all neighboring indices, and so on.
-         *
-         * Output is placed in the provided array in no particular order. Elements of
-         * the output array may be left zero, as can happen when crossing a pentagon.
-         *
-         * @param origin Origin location.
-         * @param k k >= 0
-         * @param out Zero-filled array which must be of size maxKringSize(k).
-         * @param distances Zero-filled array which must be of size maxKringSize(k).
-         */
+        /// <summary>
+        /// k-rings produces indices within k distance of the origin index.
+        ///
+        /// k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
+        /// all neighboring indices, and so on.
+        ///
+        /// Output is placed in the provided array in no particular order. Elements of
+        /// the output array may be left zero, as can happen when crossing a pentagon.
+        /// </summary>
+        /// <param name="origin">Origin location</param>
+        /// <param name="k">k &gt;= 0</param>
+        /// <param name="out_hex">Zero-filled array which must be of size <see cref="maxKringSize"/>(k)</param>
+        /// <param name="distances">Zero-filled array which must be of size <see cref="maxKringSize"/>(k)</param>
+        /// <!-- Based off 3.1.1 -->
         public static void kRingDistances(H3Index origin, int k, ref List<H3Index> out_hex, ref List<int> distances)
         {
             int maxIdx = maxKringSize(k);
@@ -237,21 +265,20 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Internal helper function called recursively for kRingDistances.
-         *
-         * Adds the origin index to the output set (treating it as a hash set)
-         * and recurses to its neighbors, if needed.
-         *
-         * @param origin
-         * @param k Maximum distance to move from the origin.
-         * @param out Array treated as a hash set, elements being either H3Index or 0.
-         * @param distances Scratch area, with elements paralleling the out array.
-         * Elements indicate ijk distance from the origin index to the output index.
-         * @param maxIdx Size of out and scratch arrays (must be maxKringSize(k))
-         * @param curK Current distance from the origin.
-         */
-        //  Rewriting to remove recursion.
+        /// <summary>
+        /// Internal helper function called recursively for kRingDistances.
+        ///
+        /// Adds the origin index to the output set (treating it as a hash set)
+        /// and recurses to its neighbors, if needed.
+        /// </summary>
+        /// <param name="origin">Origin index</param>
+        /// <param name="k">Maximum distance to move from the origin.</param>
+        /// <param name="out_hex">Array treated as a hash set, elements being either H3Index or 0</param>
+        /// <param name="distances">Scratch area, with elements paralleling the out array</param>
+        /// <param name="maxIdx">Size of out and scratch arrays (must be <see cref="maxKringSize"/>(k))</param>
+        /// <param name="curK">Current distance from the origin.</param>
+        /// <remarks>Elements of distances indicate ijk distance from the origin index to the output index</remarks>
+        /// <!-- Based off 3.1.1 -->
         public static void _kRingInternal(H3Index origin, int k, ref List<H3Index> out_hex, ref List<int> distances,
             int maxIdx, int curK)
         {
@@ -263,7 +290,6 @@ namespace h3net.API
 
             // Put origin in the output array. out is used as a hash set.
             int off =(int)( origin.value % (ulong)maxIdx);
-            //Debug.WriteLine("Before: Off is {0}", off);
             while (out_hex[off] != 0 && out_hex[off] != origin)
             {
                 off++;
@@ -272,14 +298,12 @@ namespace h3net.API
                     off = 0;
                 }
             }
-            //Debug.WriteLine("After: Off is {0}", off);
 
             // We either got a free slot in the hash set or hit a duplicate
             // We might need to process the duplicate anyways because we got
             // here on a longer path before.
             if (out_hex[off] == origin && distances[off] <= curK)
             {
-                //Debug.WriteLine("hash crash");
                 return;
             }
 
@@ -297,27 +321,27 @@ namespace h3net.API
             for (int i = 0; i < 6; i++) {
                 int rotations = 0;
                 var hNR = h3NeighborRotations(origin, DIRECTIONS[i], ref rotations);
-                //Debug.WriteLine("hnNR = {0}", hNR);
                 _kRingInternal(hNR, k, ref out_hex, ref distances, maxIdx, curK + 1);
             }
 
         }
 
-        /**
-         * Returns the hexagon index neighboring the origin, in the direction dir.
-         *
-         * Implementation note: The only reachable case where this returns 0 is if the
-         * origin is a pentagon and the translation is in the k direction. Thus,
-         * 0 can only be returned if origin is a pentagon.
-         *
-         * @param origin Origin index
-         * @param dir Direction to move in
-         * @param rotations Number of ccw rotations to perform to reorient the
-         *                  translation vector. Will be modified to the new number of
-         *                  rotations to perform (such as when crossing a face edge.)
-         * @return H3Index of the specified neighbor or 0 if deleted k-subsequence
-         *         distortion is encountered.
-         */
+        /// <summary>
+        /// Returns the hexagon index neighboring the origin, in the direction dir.
+        ///
+        /// Implementation note: The only reachable case where this returns 0 is if the
+        /// origin is a pentagon and the translation is in the k direction. Thus,
+        /// 0 can only be returned if origin is a pentagon.
+        /// </summary>
+        /// <param name="origin">Origin index</param>
+        /// <param name="dir">Direction to move in</param>
+        /// <param name="rotations">
+        /// Number of ccw rotations to perform to reorient the translation vector.
+        /// Will be modified to the new number of rotations to perform (such as
+        /// when crossing a face edge.)
+        /// </param>
+        /// <returns>H3Index of the specified neighbor or 0 if deleted k-subsequence distortion is encountered.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static ulong h3NeighborRotations(H3Index origin, Direction dir, ref int rotations)
         {
             H3Index out_hex = origin;
@@ -357,32 +381,30 @@ namespace h3net.API
 
                     break;
                 }
+
+                Direction oldDigit = H3Index.H3_GET_INDEX_DIGIT(out_hex, r + 1);
+                Direction nextDir;
+                if (H3Index.isResClassIII(r + 1))
+                {
+                    H3Index.H3_SET_INDEX_DIGIT(ref out_hex, r + 1, (ulong) NEW_DIGIT_II[(int) oldDigit, (int) dir]);
+                    nextDir = NEW_ADJUSTMENT_II[(int) oldDigit, (int) dir];
+                }
                 else
                 {
-                    Direction oldDigit = H3Index.H3_GET_INDEX_DIGIT(out_hex, r + 1);
-                    Direction nextDir;
-                    if (H3Index.isResClassIII(r + 1))
-                    {
-                        H3Index.H3_SET_INDEX_DIGIT(ref out_hex, r + 1, (ulong) NEW_DIGIT_II[(int) oldDigit, (int) dir]);
-                        nextDir = NEW_ADJUSTMENT_II[(int) oldDigit, (int) dir];
-                    }
-                    else
-                    {
-                        H3Index.H3_SET_INDEX_DIGIT(ref out_hex, r + 1,
-                            (ulong) NEW_DIGIT_III[(int) oldDigit, (int) dir]);
-                        nextDir = NEW_ADJUSTMENT_III[(int) oldDigit, (int) dir];
-                    }
+                    H3Index.H3_SET_INDEX_DIGIT(ref out_hex, r + 1,
+                                               (ulong) NEW_DIGIT_III[(int) oldDigit, (int) dir]);
+                    nextDir = NEW_ADJUSTMENT_III[(int) oldDigit, (int) dir];
+                }
 
-                    if (nextDir != Direction.CENTER_DIGIT)
-                    {
-                        dir = nextDir;
-                        r--;
-                    }
-                    else
-                    {
-                        // No more adjustment to perform
-                        break;
-                    }
+                if (nextDir != Direction.CENTER_DIGIT)
+                {
+                    dir = nextDir;
+                    r--;
+                }
+                else
+                {
+                    // No more adjustment to perform
+                    break;
                 }
             }
 
@@ -401,7 +423,6 @@ namespace h3net.API
                         // We need to rotate out of that case depending
                         // on how we got here.
                         // check for a cw/ccw offset face; default is ccw
-
                         if (BaseCells._baseCellIsCwOffset(
                             newBaseCell, BaseCells.baseCellData[oldBaseCell].homeFijk.face))
                         {
@@ -426,26 +447,25 @@ namespace h3net.API
                             // Undefined: the k direction is deleted from here
                             return H3Index.H3_INVALID_INDEX;
                         }
-                        else if (oldLeadingDigit == Direction.JK_AXES_DIGIT)
-                        {
-                            // Rotate out of the deleted k subsequence
-                            // We also need an additional change to the direction we're
-                            // moving in
-                            out_hex = H3Index._h3Rotate60ccw(ref out_hex);
-                            rotations++;
-                        }
-                        else if (oldLeadingDigit == Direction.IK_AXES_DIGIT)
-                        {
-                            // Rotate out of the deleted k subsequence
-                            // We also need an additional change to the direction we're
-                            // moving in
-                            out_hex = H3Index._h3Rotate60cw(ref out_hex);
-                            rotations += 5;
-                        }
-                        else
-                        {
-                            // Should never occur
-                            return H3Index.H3_INVALID_INDEX; // LCOV_EXCL_LINE
+
+                        switch (oldLeadingDigit) {
+                            case Direction.JK_AXES_DIGIT:
+                                // Rotate out of the deleted k subsequence
+                                // We also need an additional change to the direction we're
+                                // moving in
+                                out_hex = H3Index._h3Rotate60ccw(ref out_hex);
+                                rotations++;
+                                break;
+                            case Direction.IK_AXES_DIGIT:
+                                // Rotate out of the deleted k subsequence
+                                // We also need an additional change to the direction we're
+                                // moving in
+                                out_hex = H3Index._h3Rotate60cw(ref out_hex);
+                                rotations += 5;
+                                break;
+                            default:
+                                // Should never occur
+                                return H3Index.H3_INVALID_INDEX; // LCOV_EXCL_LINE
                         }
                     }
                 }
@@ -487,26 +507,26 @@ namespace h3net.API
             }
 
             rotations = (rotations + newRotations) % 6;
-
             return out_hex;
         }
 
-        /**
-         * hexRange produces indexes within k distance of the origin index.
-         * Output behavior is undefined when one of the indexes returned by this
-         * function is a pentagon or is in the pentagon distortion area.
-         *
-         * k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
-         * all neighboring indexes, and so on.
-         *
-         * Output is placed in the provided array in order of increasing distance from
-         * the origin.
-         *
-         * @param origin Origin location.
-         * @param k k >= 0
-         * @param out Array which must be of size maxKringSize(k).
-         * @return 0 if no pentagon or pentagonal distortion area was encountered.
-         */
+        /// <summary>
+        /// hexRange produces indexes within k distance of the origin index.
+        /// 
+        /// Output behavior is undefined when one of the indexes returned by this
+        /// function is a pentagon or is in the pentagon distortion area.
+        ///
+        /// k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
+        /// all neighboring indexes, and so on.
+        ///
+        /// Output is placed in the provided array in order of increasing distance from
+        /// the origin.
+        /// </summary>
+        /// <param name="origin">Origin location</param>
+        /// <param name="k">k &gt;= 0</param>
+        /// <param name="out_hex">Array which must be of size <see cref="maxKringSize"/>(k)</param>
+        /// <returns>0 if no pentagon or pentagonal distortion area was encountered</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int hexRange(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             //  Can't pass in a 0 as a null pointer, so we'll
@@ -515,24 +535,24 @@ namespace h3net.API
             return hexRangeDistances(origin, k, ref out_hex, ref fake_distance);
         }
 
-        /**
-         * hexRange produces indexes within k distance of the origin index.
-         * Output behavior is undefined when one of the indexes returned by this
-         * function is a pentagon or is in the pentagon distortion area.
-         *
-         * k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
-         * all neighboring indexes, and so on.
-         *
-         * Output is placed in the provided array in order of increasing distance from
-         * the origin. The distances in hexagons is placed in the distances array at
-         * the same offset.
-         *
-         * @param origin Origin location.
-         * @param k k >= 0
-         * @param out Array which must be of size maxKringSize(k).
-         * @param distances Null or array which must be of size maxKringSize(k).
-         * @return 0 if no pentagon or pentagonal distortion area was encountered.
-         */
+        /// <summary>
+        /// hexRange produces indexes within k distance of the origin index. 
+        /// Output behavior is undefined when one of the indexes returned by this
+        /// function is a pentagon or is in the pentagon distortion area.
+        /// 
+        /// k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
+        /// all neighboring indexes, and so on.
+        ///
+        /// Output is placed in the provided array in order of increasing distance from
+        /// the origin. The distances in hexagons is placed in the distances array at
+        /// the same offset.
+        /// </summary>
+        /// <param name="origin">Origin location</param>
+        /// <param name="k">k >= 0</param>
+        /// <param name="out_size">Array which must be of size <see cref="maxKringSize"/>(k)</param>
+        /// <param name="distances">Null or array which must be of size <see cref="maxKringSize"/>(k)</param>
+        /// <returns>0 if no pentagon or pentagonal distortion area was encountered.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int hexRangeDistances(H3Index origin, int k, ref List<H3Index> out_size, ref List<int> distances)
         {
             // Return codes:
@@ -541,7 +561,6 @@ namespace h3net.API
             // Pentagon being encountered is not itself a problem; really the deleted
             // k-subsequence is the problem, but for compatibility reasons we fail on
             // the pentagon.
-
             for (int m = 0; m < out_size.Count; m++)
             {
                 //out_size.Add(0);
@@ -578,9 +597,9 @@ namespace h3net.API
                     origin = h3NeighborRotations(origin, Constants.NEXT_RING_DIRECTION, ref rotations);
                     if (origin == 0)
                     {
-                        // Should not be possible because `origin` would have to be a
+                        // Should not be possible because 'origin' would have to be a
                         // pentagon
-                        return Constants.HEX_RANGE_K_SUBSEQUENCE; // LCOV_EXCL_LINE
+                        return Constants.HEX_RANGE_K_SUBSEQUENCE;
                     }
 
                     if (H3Index.h3IsPentagon(origin) > 0)
@@ -595,7 +614,7 @@ namespace h3net.API
                 {
                     // Should not be possible because `origin` would have to be a
                     // pentagon
-                    return Constants.HEX_RANGE_K_SUBSEQUENCE; // LCOV_EXCL_LINE
+                    return Constants.HEX_RANGE_K_SUBSEQUENCE;
                 }
 
                 out_size[idx] = origin;
@@ -630,18 +649,17 @@ namespace h3net.API
             return Constants.HEX_RANGE_SUCCESS;
         }
 
-        /**
-         * hexRanges takes an array of input hex IDs and a max k-ring and returns an
-         * array of hexagon IDs sorted first by the original hex IDs and then by the
-         * k-ring (0 to max), with no guaranteed sorting within each k-ring group.
-         *
-         * @param h3Set A pointer to an array of H3Indexes
-         * @param length The total number of H3Indexes in h3Set
-         * @param k The number of rings to generate
-         * @param out A pointer to the output memory to dump the new set of H3Indexes to
-         *            The memory block should be equal to maxKringSize(k) * length
-         * @return 0 if no pentagon is encountered. Cannot trust output otherwise
-         */
+        /// <summary>
+        /// hexRanges takes an array of input hex IDs and a max k-ring and returns an
+        /// array of hexagon IDs sorted first by the original hex IDs and then by the
+        /// k-ring (0 to max), with no guaranteed sorting within each k-ring group.
+        /// </summary>
+        /// <param name="h3Set">an array of H3Indexes</param>
+        /// <param name="length">The total number of H3Indexes in h3Set</param>
+        /// <param name="k">The number of rings to generate</param>
+        /// <param name="out_index">contains output set of H3Indexes</param>
+        /// <returns>0 if no pentagon is encountered. Cannot trust output otherwise</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int hexRanges(ref List<H3Index> h3Set, int length, int k, List<H3Index> out_index)
         {
             //List<H3Index> segment = new List<H3Index>();
@@ -667,14 +685,14 @@ namespace h3net.API
             return 0;
         }
 
-        /**
-         * Returns the hollow hexagonal ring centered at origin with sides of length k.
-         *
-         * @param origin Origin location.
-         * @param k k >= 0
-         * @param out Array which must be of size 6 * k (or 1 if k == 0)
-         * @return 0 if no pentagonal distortion was encountered.
-         */
+        /// <summary>
+        /// Returns the hollow hexagonal ring centered at origin with sides of length k.
+        /// </summary>
+        /// <param name="origin">Origin location</param>
+        /// <param name="k">k &gt;= 0</param>
+        /// <param name="out_hex">Array which must be of size 6 * k (or 1 if k == 0)</param>
+        /// <returns>0 if no pentagonal distortion was encountered</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int hexRing(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             // Short-circuit on 'identity' ring
@@ -758,18 +776,18 @@ namespace h3net.API
             }
         }
 
-        /**
-         * maxPolyfillSize returns the number of hexagons to allocate space for when
-         * performing a polyfill on the given GeoJSON-like data structure.
-         *
-         * Currently a laughably padded response, being a k-ring that wholly contains
-         * a bounding box of the GeoJSON, but still less wasted memory than initializing
-         * a Python application? ;)
-         *
-         * @param geoPolygon A GeoJSON-like data structure indicating the poly to fill
-         * @param res Hexagon resolution (0-15)
-         * @return number of hexagons to allocate for
-         */
+        /// <summary>
+        /// maxPolyfillSize returns the number of hexagons to allocate space for when
+        /// performing a polyfill on the given GeoJSON-like data structure.
+        ///
+        /// Currently a laughably padded response, being a k-ring that wholly contains
+        /// a bounding box of the GeoJSON, but still less wasted memory than initializing
+        /// a Python application? ;)
+        /// </summary>
+        /// <param name="geoPolygon">A GeoJSON-like data structure indicating the poly to fill</param>
+        /// <param name="res">Hexagon resolution (0-15)</param>
+        /// <returns>number of hexagons to allocate for</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int maxPolyfillSize(ref GeoPolygon geoPolygon, int res)
         {
             // Get the bounding box for the GeoJSON-like struct
@@ -782,19 +800,19 @@ namespace h3net.API
             return maxKringSize(minK);
         }
 
-        /**
-         * polyfill takes a given GeoJSON-like data structure and preallocated,
-         * zeroed memory, and fills it with the hexagons that are contained by
-         * the GeoJSON-like data structure.
-         *
-         * The current implementation is very primitive and slow, but correct,
-         * performing a point-in-poly operation on every hexagon in a k-ring defined
-         * around the given Geofence.
-         *
-         * @param geoPolygon The Geofence and holes defining the relevant area
-         * @param res The Hexagon resolution (0-15)
-         * @param out The slab of zeroed memory to write to. Assumed to be big enough.
-         */
+        ///<summary>
+        /// polyfill takes a given GeoJSON-like data structure and preallocated,
+        /// zeroed memory, and fills it with the hexagons that are contained by
+        /// the GeoJSON-like data structure.
+        ///
+        ///  The current implementation is very primitive and slow, but correct,
+        /// performing a point-in-poly operation on every hexagon in a k-ring defined
+        /// around the given Geofence.
+        /// </summary>
+        /// <param name="geoPolygon">The Geofence and holes defining the relevant area</param>
+        /// <param name="res"> The Hexagon resolution (0-15)</param>
+        /// <param name="out_hex">The slab of zeroed memory to write to. Assumed to be big enough.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void polyfill(GeoPolygon geoPolygon, int res, List<H3Index> out_hex) {
             // One of the goals of the polyfill algorithm is that two adjacent polygons
             // with zero overlap have zero overlapping hexagons. That the hexagons are
@@ -856,15 +874,17 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Internal: Create a vertex graph from a set of hexagons. It is the
-         * responsibility of the caller to call destroyVertexGraph on the populated
-         * graph, otherwise the memory in the graph nodes will not be freed.
-         * @private
-         * @param h3Set    Set of hexagons
-         * @param numHexes Number of hexagons in the set
-         * @param graph    Output graph
-         */
+
+         /// <summary>
+         /// Internal: Create a vertex graph from a set of hexagons. It is the
+         /// responsibility of the caller to call destroyVertexGraph on the populated
+         /// graph, otherwise the memory in the graph nodes will not be freed.
+         /// </summary>
+         /// 
+         /// <param name="h3Set">Set of hexagons</param>
+         /// <param name="numHexes">Number of hexagons in the set</param>
+         /// <param name="graph">Output graph</param>
+         /// <!-- Based off 3.1.1 -->
         public static void h3SetToVertexGraph(ref List<H3Index> h3Set, int numHexes,
             ref VertexGraph graph)
         {
@@ -889,7 +909,6 @@ namespace h3net.API
             // Iterate through every hexagon
             for (int i = 0; i < numHexes; i++)
             {
-
                 H3Index.h3ToGeoBoundary(h3Set[i], ref vertices);
                 // iterate through every edge
                 for (int j = 0; j < vertices.numVerts; j++)
@@ -916,14 +935,15 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Internal: Create a LinkedGeoPolygon from a vertex graph. It is the
-         * responsibility of the caller to call destroyLinkedPolygon on the populated
-         * linked geo structure, or the memory for that structure will not be freed.
-         * @private
-         * @param graph Input graph
-         * @param out   Output polygon
-         */
+        /// <summary>
+        /// Internal: Create a LinkedGeoPolygon from a vertex graph. It is the
+        /// responsibility of the caller to call destroyLinkedPolygon on the
+        /// populated linked geo structure, or the memory for that structure
+        /// will not be freed.
+        /// </summary>
+        /// <param name="graph">input graph</param>
+        /// <param name="out_polygon">output polygon</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _vertexGraphToLinkedGeo(ref VertexGraph graph, ref LinkedGeo.LinkedGeoPolygon out_polygon)
         {
             out_polygon = new LinkedGeo.LinkedGeoPolygon();
@@ -946,24 +966,20 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Create a LinkedGeoPolygon describing the outline(s) of a set of  hexagons.
-         * Polygon outlines will follow GeoJSON MultiPolygon order: Each polygon will
-         * have one outer loop, which is first in the list, followed by any holes.
-         *
-         * It is the responsibility of the caller to call destroyLinkedPolygon on the
-         * populated linked geo structure, or the memory for that structure will
-         * not be freed.
-         *
-         * It is expected that all hexagons in the set have the same resolution and
-         * that the set contains no duplicates. Behavior is undefined if duplicates
-         * or multiple resolutions are present, and the algorithm may produce
-         * unexpected or invalid output.
-         *
-         * @param h3Set    Set of hexagons
-         * @param numHexes Number of hexagons in set
-         * @param out      Output polygon
-         */
+        /// <summary>
+        /// Create a LinkedGeoPolygon describing the outline(s) of a set of hexagons.
+        /// Polygon outlines will follow GeoJSON MultiPolygon order: Each polygon will
+        /// have one outer loop, which is first in the list, followed by any holes.
+        ///
+        /// It is expected that all hexagons in the set have the same resolution and
+        /// that the set contains no duplicates. Behavior is undefined if duplicates
+        /// or multiple resolutions are present, and the algorithm may produce unexpected
+        /// or invalid output.
+        /// </summary>
+        /// <param name="h3Set">Set of hexagons</param>
+        /// <param name="numHexes">NUmber of hexgons in set</param>
+        /// <param name="out_polygons">output polygon</param>
+        /// <!-- Based off 3.1.1 -->
         public static void h3SetToLinkedGeo(ref List<H3Index> h3Set, int numHexes,
             ref LinkedGeo.LinkedGeoPolygon out_polygons)
         {

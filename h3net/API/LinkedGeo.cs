@@ -634,6 +634,7 @@ namespace h3net.API
                 {
                     var inner2 = innerLoops[i];
                     addLinkedLoop(ref polygon, ref inner2);
+                    innerLoops[i] = inner2;
                 }
                 else
                 {
