@@ -1,4 +1,24 @@
-﻿using System;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -6,52 +26,93 @@ using System.Linq;
 
 namespace h3net.API
 {
+    /// <summary>
+    /// H3Index utility functions
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     [DebuggerDisplay("{value}")]
     public class H3Index
     {
-        /** The number of bits in an H3 index. */
+        /// <summary>
+        /// The number of bits in an H3 index.
+        /// </summary>
         public static int H3_NUM_BITS = 64;
-        /** The bit offset of the max resolution digit in an H3 index. */
+        /// <summary>
+        /// The bit offset of the max resolution digit in an H3 index.
+        /// </summary>
         public static int H3_MAX_OFFSET = 63;
-        /** The bit offset of the mode in an H3 index. */
+        /// <summary>
+        /// The bit offset of the mode in an H3 index.
+        /// </summary>
         public static int H3_MODE_OFFSET = 59;
-        /** The bit offset of the base cell in an H3 index. */
+        /// <summary>
+        /// The bit offset of the base cell in an H3 index.
+        /// </summary>
         public static int H3_BC_OFFSET = 45;
-        /** The bit offset of the resolution in an H3 index. */
+        /// <summary>
+        /// The bit offset of the resolution in an H3 index.
+        /// </summary>
         public static int H3_RES_OFFSET = 52;
-        /** The bit offset of the reserved bits in an H3 index. */
+        /// <summary>
+        /// The bit offset of the reserved bits in an H3 index.
+        /// </summary>
         public static int H3_RESERVED_OFFSET = 56;
-        /** The number of bits in a single H3 resolution digit. */
+        /// <summary>
+        /// The number of bits in a single H3 resolution digit.
+        /// </summary>
         public static int H3_PER_DIGIT_OFFSET = 3;
-        /** 1's in the 4 mode bits, 0's everywhere else. */
+        /// <summary>
+        /// 1's in the 4 mode bits, 0's everywhere else.
+        /// </summary>
         public static ulong H3_MODE_MASK = (ulong)15 << H3_MODE_OFFSET;
-        /** 0's in the 4 mode bits, 1's everywhere else. */
+        /// <summary>
+        /// 0's in the 4 mode bits, 1's everywhere else.
+        /// </summary>
         public static ulong H3_MODE_MASK_NEGATIVE = ~H3_MODE_MASK;
-        /** 1's in the 7 base cell bits, 0's everywhere else. */
+        /// <summary>
+        /// 1's in the 7 base cell bits, 0's everywhere else.
+        /// </summary>
         public static ulong H3_BC_MASK = (ulong) 127 << H3_BC_OFFSET;
-        /** 0's in the 7 base cell bits, 1's everywhere else. */
+        /// <summary>
+        /// 0's in the 7 base cell bits, 1's everywhere else.
+        /// </summary>
         public static ulong H3_BC_MASK_NEGATIVE = ~H3_BC_MASK;
-        /** 1's in the 4 resolution bits, 0's everywhere else. */
+        /// <summary>
+        /// 1's in the 4 resolution bits, 0's everywhere else.
+        /// </summary>
         public static ulong H3_RES_MASK = (ulong) 15 << H3_RES_OFFSET;
-        /** 0's in the 4 resolution bits, 1's everywhere else. */
+        /// <summary>
+        /// 0's in the 4 resolution bits, 1's everywhere else.
+        /// </summary>
         public static ulong H3_RES_MASK_NEGATIVE = ~H3_RES_MASK;
-        /** 1's in the 3 reserved bits, 0's everywhere else. */
+        /// <summary>
+        /// 1's in the 3 reserved bits, 0's everywhere else.
+        /// </summary>
         public static ulong H3_RESERVED_MASK = (ulong) 7 << H3_RESERVED_OFFSET;
 
-        /** 0's in the 3 reserved bits, 1's everywhere else. */
+        /// <summary>
+        /// 0's in the 3 reserved bits, 1's everywhere else.
+        /// </summary>
         public static ulong H3_RESERVED_MASK_NEGATIVE = ~H3_RESERVED_MASK;
-        /** 1's in the 3 bits of res 15 digit bits, 0's everywhere else. */
+        /// <summary>
+        /// 1's in the 3 bits of res 15 digit bits, 0's everywhere else.
+        /// </summary>
         public static ulong H3_DIGIT_MASK = 7;
-        /** 0's in the 7 base cell bits, 1's everywhere else. */
+        /// <summary>
+        /// 0's in the 7 base cell bits, 1's everywhere else.
+        /// </summary>
         public static ulong H3_DIGIT_MASK_NEGATIVE = ~H3_DIGIT_MASK;
-        /** H3 index with mode 0, res 0, base cell 0, and 7 for all index digits. */
+        /// <summary>
+        /// H3 index with mode 0, res 0, base cell 0, and 7 for all index digits.
+        /// </summary>
         public static ulong H3_INIT = 35184372088831;
-        /**
-         * Invalid index used to indicate an error from geoToH3 and related functions.
-         */
+        /// <summary>
+        /// Invalid index used to indicate an error from geoToH3 and related functions.
+        /// </summary>
         public static ulong H3_INVALID_INDEX = 0;
-
-        /** Where the actual index is stored. */
+        /// <summary>
+        /// Where the actual index is stored.
+        /// </summary>
         public ulong value;
 
         public H3Index(ulong val) 
@@ -68,7 +129,6 @@ namespace h3net.API
         {
             return value == other.value;
         }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -204,109 +264,126 @@ namespace h3net.API
             return h3.value;
         }
 
-        /**
-         * Gets the integer mode of h3.
-         */
+        /// <summary>
+        /// Gets the integer mode of h3.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static int H3_GET_MODE(ref H3Index h3)
         {
             return (int) ((h3 & H3_MODE_MASK) >> H3_MODE_OFFSET);
         } 
 
-        /**
-         * Sets the integer mode of h3 to v.
-         */
+        /// <summary>
+        /// Sets the integer mode of h3 to v.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_MODE(ref H3Index h3, ulong v)
         {
             h3 = h3 & H3_MODE_MASK_NEGATIVE | (v << H3_MODE_OFFSET);
         }
 
-        /**
-         * Gets the integer base cell of h3.
-         */
+        /// <summary>
+        /// Gets the integer base cell of h3.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static int H3_GET_BASE_CELL(H3Index h3)
         {
             return (int)((h3 & H3_BC_MASK) >> H3_BC_OFFSET);
         }
 
-        /**
-         * Sets the integer base cell of h3 to bc.
-         */
+        /// <summary>
+        /// Sets the integer base cell of h3 to bc.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_BASE_CELL(ref H3Index h3, int bc)
         {
             h3 = (h3 & H3_BC_MASK_NEGATIVE) | ((ulong)bc << H3_BC_OFFSET);
         }
 
-        /**
-         * Gets the integer resolution of h3.
-         */
+        /// <summary>
+        /// Gets the integer resolution of h3.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static int H3_GET_RESOLUTION(H3Index h3)
         {
             return (int) ((h3 & H3_RES_MASK) >> H3_RES_OFFSET);
         }
 
-        /**
-         * Sets the integer resolution of h3.
-         */
+        /// <summary>
+        /// Sets the integer resolution of h3.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_RESOLUTION(ref H3Index h3, H3Index res)
         {
             h3 = (h3 & H3_RES_MASK_NEGATIVE) | (res << H3_RES_OFFSET);
         }
-        /**
-         * Gets the resolution res integer digit (0-7) of h3.
-         */
+
+        /// <summary>
+        ///     Gets the resolution res integer digit (0-7) of h3.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static Direction H3_GET_INDEX_DIGIT(H3Index h3, int res)
         {
             return (Direction) ((h3 >> ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK);
         }
 
-        /**
-         * Sets a value in the reserved space. Setting to non-zero may produce invalid
-         * indexes.
-         */
+        /// <summary>
+        /// Sets a value in the reserved space. Setting to non-zero may produce
+        /// invalid indexes.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_RESERVED_BITS(ref H3Index h3, ulong v)
         {
             h3 = (h3 & H3_RESERVED_MASK_NEGATIVE) | (v << H3_RESERVED_OFFSET);
         }
 
-        /**
-         * Gets a value in the reserved space. Should always be zero for valid indexes.
-         */
+        /// <summary>
+        /// Gets a value in the reserved space. Should always be zero for valid indexes.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static int H3_GET_RESERVED_BITS(H3Index h3)
         {
             return (int) ((h3 & H3_RESERVED_MASK) >> H3_RESERVED_OFFSET);
         }
 
-        /**
-         * Sets the resolution res digit of h3 to the integer digit (0-7)
-         */
+        /// <summary>
+        /// Sets the resolution res digit of h3 to the integer digit (0-7)
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_INDEX_DIGIT(ref H3Index h3, int res, ulong digit)
         {
             h3 = (h3 & ~(H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)))
                  |  ((ulong)digit << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET));
         }
         
-        /**
-         * Returns the H3 resolution of an H3 index.
-         * @param h The H3 index.
-         * @return The resolution of the H3 index argument.
-         */
+
+        /// <summary>
+        /// Returns the H3 resolution of an H3 index.
+        /// </summary>
+        /// <param name="h">The H3 index</param>
+        /// <returns>The resolution of the H3 index argument</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int h3GetResolution(H3Index h)
         {
             return H3_GET_RESOLUTION(h);
         }
 
-        /**
-         * Returns the H3 base cell number of an H3 index.
-         * @param h The H3 index.
-         * @return The base cell of the H3 index argument.
-         */
+        /// <summary>
+        /// Returns the H3 base cell number of an H3 index.
+        /// </summary>
+        /// <param name="h"> The H3 index.</param>
+         /// <returns>The base cell of the H3 index argument.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int h3GetBaseCell(H3Index h) { return H3_GET_BASE_CELL(h); }
 
-        /**
-         * Converts a string representation of an H3 index into an H3 index.
-         * @param str The string representation of an H3 index.
-         * @return The H3 index corresponding to the string argument, or 0 if invalid.
-         */
+        /// <summary>
+        /// Converts a string representation of an H3 index into an H3 index.
+        /// </summary>
+        /// <param name="str"> The string representation of an H3 index.</param>
+        /// <returns>
+        /// The H3 index corresponding to the string argument, or 0 if invalid.
+        /// </returns>
+        /// <!-- Based off 3.1.1 -->
         public static H3Index stringToH3(string str) {
             H3Index h = H3_INVALID_INDEX;
             // A small risk, but for the most part, we're dealing with hex numbers, so let's use that
@@ -324,29 +401,26 @@ namespace h3net.API
             return 0;
         }
 
-        /**
-         * Converts an H3 index into a string representation.
-         * @param h The H3 index to convert.
-         * @param str The string representation of the H3 index.
-         * @param sz Size of the buffer `str`
-         */
-        public static void h3ToString(H3Index h, ref string str, int sz) {
-            // An unsigned 64 bit integer will be expressed in at most
-            // 16 digits plus 1 for the null terminator.
-            if (sz < 17) {
-                // Buffer is potentially not large enough.
-                return;
-            }
-
+        /// <summary>
+        /// Converts an H3 index into a string representation.
+        /// </summary>
+        /// <param name="h"> The H3 index to convert.</param>
+        /// <param name="str"> The string representation of the H3 index.</param>
+        /// <param name="sz"> Size of the buffer <see cref="str"/></param>
+        /// <!-- Based off 3.1.1 -->
+        public static void h3ToString(H3Index h, ref string str, int sz)
+        {
+            //  We don't care about sz.  We have System.String
             str = ((ulong) h).ToString("X").ToLower();
         }
 
 
-        /**
-         * Returns whether or not an H3 index is valid.
-         * @param h The H3 index to validate.
-         * @return 1 if the H3 index if valid, and 0 if it is not.
-         */
+        /// <summary>
+        /// Returns whether or not an H3 index is valid.
+        /// </summary>
+        /// <param name="h">The H3 index to validate.</param> 
+         /// <returns>1 if the H3 index if valid, and 0 if it is not.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int h3IsValid(H3Index h)
         {
             if (H3_GET_MODE(ref h) != Constants.H3_HEXAGON_MODE)
@@ -387,13 +461,14 @@ namespace h3net.API
             return 1;
         }
 
-        /**
-         * Initializes an H3 index.
-         * @param hp The H3 index to initialize.
-         * @param res The H3 resolution to initialize the index to.
-         * @param baseCell The H3 base cell to initialize the index to.
-         * @param initDigit The H3 digit (0-7) to initialize all of the index digits to.
-         */
+        /// <summary>
+        /// Initializes an H3 index.
+        /// </summary>
+        /// <param name="hp"> The H3 index to initialize.</param>
+        /// <param name="res"> The H3 resolution to initialize the index to.</param>
+        /// <param name="baseCell"> The H3 base cell to initialize the index to.</param>
+        /// <param name="initDigit"> The H3 digit (0-7) to initialize all of the index digits to.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void setH3Index(ref H3Index hp, int res, int baseCell, Direction initDigit)
         {
             H3Index h = H3_INIT;
@@ -408,14 +483,13 @@ namespace h3net.API
             hp = h;
         }
 
-        /**
-         * h3ToParent produces the parent index for a given H3 index
-         *
-         * @param h H3Index to find parent of
-         * @param parentRes The resolution to switch to (parent, grandparent, etc)
-         *
-         * @return H3Index of the parent, or 0 if you actually asked for a child
-         */
+        /// <summary>
+        /// h3ToParent produces the parent index for a given H3 index
+        /// </summary>
+        /// <param name="h">H3Index to find parent of</param> 
+        /// <param name="parentRes"> The resolution to switch to (parent, grandparent, etc)</param> 
+        /// <returns>H3Index of the parent, or 0 if you actually asked for a child</returns>
+        /// <!-- Based off 3.1.1 -->
         public static H3Index h3ToParent(H3Index h, int parentRes)
         {
             int childRes = H3_GET_RESOLUTION(h);
@@ -444,16 +518,17 @@ namespace h3net.API
             return parentH;
         }
 
-        /**
-         * maxH3ToChildrenSize returns the maximum number of children possible for a
-         * given child level.
-         *
-         * @param h H3Index to find the number of children of
-         * @param childRes The resolution of the child level you're interested in
-         *
-         * @return int count of maximum number of children (equal for hexagons, less for
-         * pentagons
-         */
+        /// <summary>
+        /// maxH3ToChildrenSize returns the maximum number of children possible for a
+        /// given child level.
+        /// </summary>
+        /// <param name="h"> H3Index to find the number of children of</param>
+        /// <param name="childRes"> The resolution of the child level you're interested in</param>
+        /// <returns>
+        /// int count of maximum number of children (equal for hexagons, less for
+        /// pentagons
+        /// </returns>
+        /// <!-- Based off 3.1.1 -->
         public static int maxH3ToChildrenSize(H3Index h, int childRes)
         {
             int parentRes = H3_GET_RESOLUTION(h);
@@ -464,16 +539,15 @@ namespace h3net.API
             return MathExtensions._ipow(7, childRes - parentRes);
         }
 
-        /**
-         * makeDirectChild takes an index and immediately returns the immediate child
-         * index based on the specified cell number. Bit operations only, could generate
-         * invalid indexes if not careful (deleted cell under a pentagon).
-         *
-         * @param h H3Index to find the direct child of
-         * @param cellNumber int id of the direct child (0-6)
-         *
-         * @return The new H3Index for the child
-         */
+        /// <summary>
+        /// makeDirectChild takes an index and immediately returns the immediate child
+        /// index based on the specified cell number. Bit operations only, could generate
+        /// invalid indexes if not careful (deleted cell under a pentagon).
+        /// </summary>
+        /// <param name="h"> H3Index to find the direct child of</param>
+        /// <param name="cellNumber"> int id of the direct child (0-6)</param>
+        /// <returns>The new H3Index for the child
+        /// <!-- Based off 3.1.1 -->
         public static H3Index makeDirectChild(H3Index h, int cellNumber)
         {
             int childRes = H3_GET_RESOLUTION(h) + 1;
@@ -483,15 +557,15 @@ namespace h3net.API
             return childH;
         }
 
-        /**
-         * h3ToChildren takes the given hexagon id and generates all of the children
-         * at the specified resolution storing them into the provided memory pointer.
-         * It's assumed that maxH3ToChildrenSize was used to determine the allocation.
-         *
-         * @param h H3Index to find the children of
-         * @param childRes int the child level to produce
-         * @param children H3Index* the memory to store the resulting addresses in
-         */
+        /// <summary>
+        /// h3ToChildren takes the given hexagon id and generates all of the children
+        /// at the specified resolution storing them into the provided memory pointer.
+        /// It's assumed that maxH3ToChildrenSize was used to determine the allocation.
+        /// </summary>
+        /// <param name="h" H3Index to find the children of</param>
+        /// <param name="childRes" int the child level to produce</param>
+        /// <param name="children" H3Index* the memory to store the resulting addresses in</param>
+        /// <!-- Based off 3.1.1 -->
         public static void h3ToChildren(H3Index h, int childRes,ref  List<H3Index> children)
         {
             children = new List<H3Index>();
@@ -538,21 +612,21 @@ namespace h3net.API
             children = new List<H3Index>(current);
         }
 
-        /**
-         * compact takes a set of hexagons all at the same resolution and compresses
-         * them by pruning full child branches to the parent level. This is also done
-         * for all parents recursively to get the minimum number of hex addresses that
-         * perfectly cover the defined space.
-         * @param h3Set Set of hexagons
-         * @param compactedSet The output array of compressed hexagons (preallocated)
-         * @param numHexes The size of the input and output arrays (possible that no
-         * contiguous regions exist in the set at all and no compression possible)
-         * @return an error code on bad input data
-         *
-         * We're going to modify this a little bit using some LINQ.
-         *
-         *
-         */
+        /// <summary>
+        /// compact takes a set of hexagons all at the same resolution and compresses
+        /// them by pruning full child branches to the parent level. This is also done
+        /// for all parents recursively to get the minimum number of hex addresses that
+        /// perfectly cover the defined space.
+        /// </summary>
+        /// <param name="h3Set"> Set of hexagons</param>
+        /// <param name="compactedSet"> The output array of compressed hexagons (pre-allocated)</param>
+        /// <param name="numHexes"> The size of the input and output arrays (possible that no
+        /// contiguous regions exist in the set at all and no compression possible)</param>
+        /// <returns>an error code on bad input data</returns>
+        /// <remarks>
+        /// We're going to modify this a little bit using some LINQ.
+        /// </remarks>
+        /// <!-- Based off 3.1.1 -->
         public static int compact(ref List<H3Index> h3Set, ref List<H3Index> compactedSet, int numHexes)
         {
             //  Maximum resolution.  We're out.
@@ -631,17 +705,20 @@ namespace h3net.API
             return 0;
         }
 
-        /**
-         * uncompact takes a compressed set of hexagons and expands back to the
-         * original set of hexagons.
-         * @param compactedSet Set of hexagons
-         * @param numHexes The number of hexes in the input set
-         * @param h3Set Output array of decompressed hexagons (preallocated)
-         * @param maxHexes The size of the output array to bound check against
-         * @param res The hexagon resolution to decompress to
-         * @return An error code if output array is too small or any hexagon is
-         * smaller than the output resolution.
-         */
+        /// <summary>
+        /// uncompact takes a compressed set of hexagons and expands back to the
+        /// original set of hexagons.
+        /// </summary>
+        /// <param name="compactedSet"> Set of hexagons</param>
+        /// <param name="numHexes"> The number of hexes in the input set</param>
+        /// <param name="h3Set Output"> array of decompressed hexagons (preallocated)</param>
+        /// <param name="maxHexes"> The size of the output array to bound check against</param>
+        /// <param name="res"> The hexagon resolution to decompress to</param>
+        /// <returns>
+        /// An error code if output array is too small or any hexagon is
+        /// smaller than the output resolution.
+        /// </returns>
+        /// <!-- Based off 3.1.1 -->
         public static int uncompact(ref List<H3Index> compactedSet, int numHexes,
             ref List<H3Index> h3Set, int maxHexes, int res)
         {
@@ -668,15 +745,18 @@ namespace h3net.API
         }
 
 
-        /**
-         * maxUncompactSize takes a compacted set of hexagons are provides an
-         * upper-bound estimate of the size of the uncompacted set of hexagons.
-         * @param compactedSet Set of hexagons
-         * @param numHexes The number of hexes in the input set
-         * @param res The hexagon resolution to decompress to
-         * @return The number of hexagons to allocate memory for, or a negative
-         * number if an error occurs.
-         */
+        /// <summary>
+        /// maxUncompactSize takes a compacted set of hexagons are provides an
+        /// upper-bound estimate of the size of the uncompacted set of hexagons.
+        /// </summary>
+        /// <param name="compactedSet"> Set of hexagons</param>
+        /// <param name="numHexes"> The number of hexes in the input set</param>
+        /// <param name="res"> The hexagon resolution to decompress to</param>
+        /// <returns>
+        /// The number of hexagons to allocate memory for, or a negative
+        /// number if an error occurs.
+        /// </returns>
+        /// <!-- Based off 3.1.1 -->
         public static int maxUncompactSize(ref List<H3Index> compactedSet, int numHexes, int res)
         {
             int maxNumHexagons = 0;
@@ -709,22 +789,24 @@ namespace h3net.API
             return maxNumHexagons;
         }
 
-        /**
-         * h3IsResClassIII takes a hexagon ID and determines if it is in a
-         * Class III resolution (rotated versus the icosahedron and subject
-         * to shape distortion adding extra points on icosahedron edges, making
-         * them not true hexagons).
-         * @param h The H3Index to check.
-         * @return Returns 1 if the hexagon is class III, otherwise 0.
-         */
+        /// <summary>
+        /// h3IsResClassIII takes a hexagon ID and determines if it is in a
+        /// Class III resolution (rotated versus the icosahedron and subject
+        /// to shape distortion adding extra points on icosahedron edges, making
+        /// them not true hexagons).
+        /// </summary>
+        /// <param name="h"> The H3Index to check.</param>
+        /// <returns>Returns 1 if the hexagon is class III, otherwise 0.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int h3IsResClassIII(H3Index h) { return H3_GET_RESOLUTION(h) % 2; }
 
-        /**
-         * h3IsPentagon takes an H3Index and determines if it is actually a
-         * pentagon.
-         * @param h The H3Index to check.
-         * @return Returns 1 if it is a pentagon, otherwise 0.
-         */
+        /// <summary>
+        /// h3IsPentagon takes an H3Index and determines if it is actually a
+        /// pentagon.
+        /// </summary>
+        /// <param name="h"> The H3Index to check.</param>
+        /// <returns>Returns 1 if it is a pentagon, otherwise 0.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int h3IsPentagon(H3Index h)
         {
             var test = 
@@ -733,31 +815,34 @@ namespace h3net.API
             return test ? 1 : 0;
         }
 
-        /**
-         * Returns the highest resolution non-zero digit in an H3Index.
-         * @param h The H3Index.
-         * @return The highest resolution non-zero digit in the H3Index.
-         */
+        /// <summary>
+        /// Returns the highest resolution non-zero digit in an H3Index.
+        /// </summary>
+        /// <param name="h"> The H3Index.</param>
+        /// <returns>The highest resolution non-zero digit in the H3Index.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static Direction _h3LeadingNonZeroDigit(ulong h)
         {
-
             for (int r = 1; r <= H3_GET_RESOLUTION(h); r++)
+            {
                 if (H3_GET_INDEX_DIGIT(h, r) > 0)
                 {
                     return H3_GET_INDEX_DIGIT(h, r);
                 }
 
+            }
+
             // if we're here it's all 0's
             return Direction.CENTER_DIGIT;
         }
 
-        /**
-         * Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
-         * @param h The H3Index.
-         */
+        /// <summary>
+        /// Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
+        /// </summary>
+        /// <param name="h">The H3Index.</param> 
+        /// <!-- Based off 3.1.1 -->
         static H3Index _h3RotatePent60ccw(H3Index h) {
             // rotate in place; skips any leading 1 digits (k-axis)
-
             int foundFirstNonZeroDigit = 0;
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
                 // rotate this digit
@@ -780,13 +865,14 @@ namespace h3net.API
             return h;
         }
 
-        /**
-         * Rotate an H3Index 60 degrees clockwise about a pentagonal center.
-         * @param h The H3Index.
-         */
-        H3Index _h3RotatePent60cw(H3Index h) {
+        /// <summary>
+        /// Rotate an H3Index 60 degrees clockwise about a pentagonal center.
+        /// </summary>
+        /// <param name="h"> The H3Index.</param>
+        /// <!-- Based off 3.1.1 -->
+        H3Index _h3RotatePent60cw(H3Index h)
+        {
             // rotate in place; skips any leading 1 digits (k-axis)
-
             int foundFirstNonZeroDigit = 0;
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
                 // rotate this digit
@@ -809,11 +895,11 @@ namespace h3net.API
             return h;
         }
 
-        /**
-         * Rotate an H3Index 60 degrees counter-clockwise.
-         * @param h The H3Index.
-         */
-
+        /// <summary>
+        /// Rotate an H3Index 60 degrees counter-clockwise.
+        /// </summary>
+        /// <param name="h">The H3Index.</param> 
+        /// <!-- Based off 3.1.1 -->
         public static H3Index _h3Rotate60ccw(ref H3Index h)
         {
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
@@ -823,10 +909,11 @@ namespace h3net.API
 
             return h;
         }
-        /**
-         * Rotate an H3Index 60 degrees clockwise.
-         * @param h The H3Index.
-         */
+        /// <summary>
+        /// Rotate an H3Index 60 degrees clockwise.
+        /// </summary>
+        /// <param name="h">The H3Index.</param> 
+        /// <!-- Based off 3.1.1 -->
         public static H3Index _h3Rotate60cw(ref H3Index h)
         {
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++)
@@ -834,16 +921,16 @@ namespace h3net.API
                 Direction oldDigit = H3_GET_INDEX_DIGIT(h, r);
                 H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIJK._rotate60cw(oldDigit));
             }
-
             return h;
         }
 
-        /**
-         * Convert an FaceIJK address to the corresponding H3Index.
-         * @param fijk The FaceIJK address.
-         * @param res The cell resolution.
-         * @return The encoded H3Index (or 0 on failure).
-         */
+        /// <summary>
+        /// Convert an FaceIJK address to the corresponding H3Index.
+        /// </summary>
+        /// <param name="fijk"> The FaceIJK address.</param>
+        /// <param name="res">The cell resolution.</param> 
+        /// <returns>The encoded H3Index (or 0 on failure).</returns>
+        /// <!-- Based off 3.1.1 -->
         public static H3Index _faceIjkToH3(ref FaceIJK fijk, int res)
         {
             // initialize the index
@@ -942,16 +1029,16 @@ namespace h3net.API
             return h;
         }
 
-        /**
-         * Encodes a coordinate on the sphere to the H3 index of the containing cell at
-         * the specified resolution.
-         *
-         * Returns 0 on invalid input.
-         *
-         * @param g The spherical coordinates to encode.
-         * @param res The desired H3 resolution for the encoding.
-         * @return The encoded H3Index (or 0 on failure).
-         */
+        /// <summary>
+        /// Encodes a coordinate on the sphere to the H3 index of the containing cell at
+        /// the specified resolution.
+        ///
+        /// Returns 0 on invalid input.
+        /// </summary>
+        /// <param name="g">The spherical coordinates to encode.</param>
+        /// <param name="res"> The desired H3 resolution for the encoding.</param>
+        /// <returns>The encoded H3Index (or 0 on failure).</returns>
+        /// <!-- Based off 3.1.1 -->
         public static H3Index geoToH3(ref GeoCoord g, int res)
         {
             if (res < 0 || res > Constants. MAX_H3_RES)
@@ -966,17 +1053,20 @@ namespace h3net.API
             }
 
             FaceIJK fijk = new FaceIJK();
-            FaceIJK ._geoToFaceIjk(g, res, ref fijk);
+            FaceIJK._geoToFaceIjk(g, res, ref fijk);
             return _faceIjkToH3(ref fijk, res);
         }
 
-        /**
-          * Convert an H3Index to the FaceIJK address on a specified icosahedral face.
-          * @param h The H3Index.
-          * @param fijk The FaceIJK address, initialized with the desired face
-          *        and normalized base cell coordinates.
-          * @return Returns 1 if the possibility of overage exists, otherwise 0.
-          */
+        /// <summary>
+        /// Convert an H3Index to the FaceIJK address on a specified icosahedral face.
+        /// </summary>
+        /// <param name="h"> The H3Index.</param>
+        /// <param name="fijk">
+        /// The FaceIJK address, initialized with the desired face
+        /// and normalized base cell coordinates.
+        /// </param>
+        /// <returns>Returns 1 if the possibility of overage exists, otherwise 0.</returns>
+        /// <!-- Based off 3.1.1 -->
         static int _h3ToFaceIjkWithInitializedFijk(H3Index h, ref FaceIJK fijk)
         {
             CoordIJK ijk = new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k);
@@ -1008,12 +1098,14 @@ namespace h3net.API
         }
 
 
-        /**
-         * Convert an H3Index to a FaceIJK address.
-         * @param h The H3Index.
-         * @param fijk The corresponding FaceIJK address.
-         */
-        public static void _h3ToFaceIjk(H3Index h, ref FaceIJK fijk) {
+        /// <summary>
+        /// Convert an H3Index to a FaceIJK address.
+        /// </summary>
+        /// <param name="h"> The H3Index.</param>
+        /// <param name="fijk"> The corresponding FaceIJK address.</param>
+        /// <!-- Based off 3.1.1 -->
+        public static void _h3ToFaceIjk(H3Index h, ref FaceIJK fijk)
+        {
             int baseCell = H3_GET_BASE_CELL(h);
             // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
             // to be adjusted (and some of sub-sequence 4 below)
@@ -1079,12 +1171,12 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Determines the spherical coordinates of the center point of an H3 index.
-         *
-         * @param h3 The H3 index.
-         * @param g The spherical coordinates of the H3 cell center.
-         */
+        /// <summary>
+        /// Determines the spherical coordinates of the center point of an H3 index.
+        /// </summary>
+        /// <param name="h3"> The H3 index.</param>
+        /// <param name="g"> The spherical coordinates of the H3 cell center.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void h3ToGeo(H3Index h3, ref GeoCoord g)
         {
             FaceIJK fijk = new FaceIJK();
@@ -1092,12 +1184,12 @@ namespace h3net.API
             FaceIJK. _faceIjkToGeo(fijk, H3_GET_RESOLUTION(h3), ref g);
         }
 
-        /**
-         * Determines the cell boundary in spherical coordinates for an H3 index.
-         *
-         * @param h3 The H3 index.
-         * @param gb The boundary of the H3 cell in spherical coordinates.
-         */
+        /// <summary>
+        /// Determines the cell boundary in spherical coordinates for an H3 index.
+        /// </summary>
+        /// <param name="h3"> The H3 index.</param>
+        /// <param name="gb">The boundary of the H3 cell in spherical coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void h3ToGeoBoundary(H3Index h3, ref GeoBoundary gb) {
             FaceIJK fijk = new FaceIJK();
             _h3ToFaceIjk(h3, ref fijk);
@@ -1107,33 +1199,32 @@ namespace h3net.API
             );
         }
 
-        /**
-          * h3IsResClassIII takes a hexagon ID and determines if it is in a
-          * Class III resolution (rotated versus the icosahedron and subject
-          * to shape distortion adding extra points on icosahedron edges, making
-          * them not true hexagons).
-          * @param h The H3Index to check.
-          * @return Returns 1 if the hexagon is class III, otherwise 0.
-          */
+        /// <summary>
+        /// Returns whether or not a resolution is a Class III grid. Note that odd
+        //  resolutions are Class III and even resolutions are Class II.
+        /// </summary>
+        /// <param name="res">The H3 resolution</param>
+        /// <returns>Returns 1 if the resolution is class III grid, otherwise 0.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool isResClassIII(int res)
         {
             return res % 2 == 1;
         }
 
-        /**
-         * Produces ijk+ coordinates for an index anchored by an origin.
-         *
-         * The coordinate space used by this function may have deleted
-         * regions or warping due to pentagonal distortion.
-         *
-         * Coordinates are only comparable if they come from the same
-         * origin index.
-         *
-         * @param origin An anchoring index for the ijk+ coordinate system.
-         * @param index Index to find the coordinates of
-         * @param out ijk+ coordinates of the index will be placed here on success
-         * @return 0 on success, or another value on failure.
-         */
+        /// <summary>
+        /// Produces ijk+ coordinates for an index anchored by an origin.
+        /// 
+        /// The coordinate space used by this function may have deleted
+        /// regions or warping due to pentagonal distortion.
+        /// 
+        /// Coordinates are only comparable if they come from the same
+        /// origin index.
+        /// </summary>
+        /// <param name="origin"> An anchoring index for the ijk+ coordinate system.</param>
+        /// <param name="h3"> Index to find the coordinates of</param>
+        /// <param name="out_coord"> ijk+ coordinates of the index will be placed here on success</param>
+        /// <returns>0 on success, or another value on failure.</returns>
+        /// <!-- Based off 3.1.1 -->
         int h3ToIjk(H3Index origin, H3Index h3, ref CoordIJK out_coord) {
             if (H3_GET_MODE(ref origin) != Constants.H3_HEXAGON_MODE ||
                 H3_GET_MODE(ref h3) != Constants.H3_HEXAGON_MODE) {
@@ -1337,9 +1428,12 @@ namespace h3net.API
             out_coord = indexFijk.coord;
             return 0;
         }
-// Internal functions
 
-
+        /// <summary>
+        ///  * Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
+        /// </summary>
+        /// <param name="h">The H3Index.</param>
+        /// <!-- Based off 3.1.1 -->
         public static H3Index _h3RotatePent60ccw(ref H3Index h)
         {
             // rotate in place; skips any leading 1 digits (k-axis)
@@ -1365,12 +1459,5 @@ namespace h3net.API
             }
             return h;
         }
-
-
-
-
-
- 
-
     }
 }

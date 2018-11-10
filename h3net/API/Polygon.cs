@@ -1,4 +1,24 @@
-﻿using System;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System;
 using System.Collections.Generic;
 
 namespace h3net.API
@@ -6,6 +26,13 @@ namespace h3net.API
     public class Polygon
     {
 
+        /// <summary>
+        /// Normalize longitude, dealing with transmeridian arcs
+        /// </summary>
+        /// <param name="lon"></param>
+        /// <param name="isTransmeridian"></param>
+        /// <returns>Normalized longitude</returns>
+        /// <!-- Based off 3.1.1 -->
         private static double NORMALIZE_LON(double lon, bool isTransmeridian)
         {
             return isTransmeridian && lon < 0
@@ -13,15 +40,18 @@ namespace h3net.API
                 : lon;
         }
 
-        /**
-         * Create a bounding box from a simple polygon loop.
-         * Known limitations:
-         * - Does not support polygons with two adjacent points > 180 degrees of
-         *   longitude apart. These will be interpreted as crossing the antimeridian.
-         * - Does not currently support polygons containing a pole.
-         * @param loop     Loop of coordinates
-         * @param bbox     Output bbox
-         */
+
+
+        /// <summary>
+        /// Create a bounding box from a simple polygon loop.
+        /// Known limitations:
+        /// - Does not support polygons with two adjacent points > 180 degrees of
+        ///   longitude apart. These will be interpreted as crossing the antimeridian.
+        /// - Does not currently support polygons containing a pole.
+        /// </summary>
+        /// <param name="loop">Loop of coordinates</param>
+        /// <param name="bbox">Output bbox</param>
+        /// <!-- Based off 3.1.1 -->
         public static void bboxFromGeofence(ref Geofence loop, ref BBox bbox)
         {
             // Early exit if there are no vertices
@@ -83,13 +113,14 @@ namespace h3net.API
             }
         }
 
-        /**
-         * pointInside is the core loop of the point-in-poly algorithm
-         * @param loop  The loop to check
-         * @param bbox  The bbox for the loop being tested
-         * @param coord The coordinate to check
-         * @return      Whether the point is contained
-         */
+        /// <summary>
+        /// pointInside is the core loop of the point-in-poly algorithm
+        /// </summary>
+        /// <param name="loop">The loop to check</param>
+        /// <param name="bbox">The bbox for the loop being tested</param>
+        /// <param name="coord">The coordinate to check</param>
+        /// <returns>Whether the point is contained</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool pointInsideGeofence(ref Geofence loop, ref BBox bbox, ref GeoCoord coord)
         {
             // fail fast if we're outside the bounding box
@@ -162,14 +193,14 @@ namespace h3net.API
             return contains;
         }
 
-
-        /**
-         * Whether the winding order of a given loop is clockwise, with normalization
-         * for loops crossing the antimeridian.
-         * @param loop              The loop to check
-         * @param isTransmeridian   Whether the loop crosses the antimeridian
-         * @return                  Whether the loop is clockwise
-         */
+        /// <summary>
+        /// Whether the winding order of a given loop is clockwise, with normalization
+        /// for loops crossing the antimeridian.
+        /// </summary>
+        /// <param name="loop">The loop to check</param>
+        /// <param name="isTransmeridian">Whether the loop crosses the antimeridian</param>
+        /// <returns>Whether the loop is clockwise</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool isClockwiseNormalizedGeofence(Geofence loop, bool isTransmeridian)
         {
             double sum = 0;
@@ -204,22 +235,24 @@ namespace h3net.API
             return sum > 0;
         }
 
-        /**
-         * Whether the winding order of a given loop is clockwise. In GeoJSON,
-         * clockwise loops are always inner loops (holes).
-         * @param loop  The loop to check
-         * @return      Whether the loop is clockwise
-         */
+        /// <summary>
+        /// Whether the winding order of a given loop is clockwise. In GeoJSON,
+        /// clockwise loops are always inner loops (holes).
+        /// </summary>
+        /// <param name="loop">The loop to check</param>
+        /// <returns>Whether the loop is clockwise</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool isClockwiseGeofence(Geofence loop)
         {
             return isClockwiseNormalizedGeofence( loop, false);
         }
 
-        /**
-         * Create a bounding box from a GeoPolygon
-         * @param polygon Input GeoPolygon
-         * @param bboxes  Output bboxes, one for the outer loop and one for each hole
-         */
+        /// <summary>
+        /// Create a bounding box from a GeoPolygon
+        /// </summary>
+        /// <param name="polygon">Input <see cref="GeoPolygon"/></param>
+        /// <param name="bboxes">Output bboxes, one for the outer loop and one for each hole</param>
+        /// <!-- Based off 3.1.1 -->
         public static void bboxesFromGeoPolygon(GeoPolygon polygon,ref List<BBox> bboxes)
         {
             var bbox0 = bboxes[0];
@@ -235,15 +268,15 @@ namespace h3net.API
             }
         }
 
-        /**
-         * pointInsidePolygon takes a given GeoPolygon data structure and
-         * checks if it contains a given geo coordinate.
-         *
-         * @param geoPolygon The Geofence and holes defining the relevant area
-         * @param bboxes     The bboxes for the main Geofence and each of its holes
-         * @param coord      The coordinate to check
-         * @return           Whether the point is contained
-         */
+        /// <summary>
+        /// takes a given GeoPolygon data structure and
+        /// checks if it contains a given geo coordinate.
+        /// </summary>
+        /// <param name="geoPolygon">The Geofence and holes defining the relevant area</param>
+        /// <param name="bboxes">The bboxes for the main Geofence and each of its holes</param>
+        /// <param name="coord">The coordinate to check</param>
+        /// <returns>Whether the point is contained</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool pointInsidePolygon(GeoPolygon geoPolygon, List<BBox> bboxes, GeoCoord coord)
         {
             // Start with contains state of primary Geofence

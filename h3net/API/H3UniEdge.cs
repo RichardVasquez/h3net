@@ -1,19 +1,41 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System.Collections.Generic;
 using System.Linq;
 
 namespace h3net.API
 {
-    /** @file  h3UniEdge.c
-     * @brief H3UniEdge functions for manipulating unidirectional edge indexes.
-     */
+    /// <summary>
+    /// H3UniEdge functions for manipulating unidirectional edge indexes.
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     public class H3UniEdge
     {
-        /**
-         * Returns whether or not the provided H3Indexes are neighbors.
-         * @param origin The origin H3 index.
-         * @param destination The destination H3 index.
-         * @return 1 if the indexes are neighbors, 0 otherwise;
-         */
+        /// <summary>
+        /// Returns whether or not the provided H3Indexes are neighbors.
+        /// </summary>
+        /// <param name="origin">The origin H3 index</param>
+        /// <param name="destination">The destination H3 index</param>
+        /// <returns>1 if the indexes are neighbors, 0 otherwise</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int h3IndexesAreNeighbors(H3Index origin, H3Index destination)
         {
             // Make sure they're hexagon indexes
@@ -76,7 +98,6 @@ namespace h3net.API
             }
 
             // Otherwise, we have to determine the neighbor relationship the "hard" way.
-
             var neighborRing = new ulong[7].Select(cell => new H3Index(cell)).ToList();
             Algos.kRing(origin, 1, ref neighborRing);
             for (int i = 0; i < 7; i++)
@@ -91,13 +112,14 @@ namespace h3net.API
             return 0;
         }
 
-        /**
-         * Returns a unidirectional edge H3 index based on the provided origin and
-         * destination
-         * @param origin The origin H3 hexagon index
-         * @param destination The destination H3 hexagon index
-         * @return The unidirectional edge H3Index, or 0 on failure.
-         */
+        /// <summary>
+        /// Returns a unidirectional edge H3 index based on the provided origin and
+        /// destination
+        /// </summary>
+        /// <param name="origin">The origin H3 hexagon index</param>
+        /// <param name="destination">The destination H3 hexagon index</param>
+        /// <returns>The unidirectional edge H3Index, or 0 on failure.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static H3Index getH3UnidirectionalEdge(H3Index origin, H3Index destination)
         {
             // Short-circuit and return an invalid index value if they are not neighbors
@@ -130,11 +152,12 @@ namespace h3net.API
             return H3Index.H3_INVALID_INDEX; // LCOV_EXCL_LINE
         }
 
-        /**
-         * Returns the origin hexagon from the unidirectional edge H3Index
-         * @param edge The edge H3 index
-         * @return The origin H3 hexagon index
-         */
+        /// <summary>
+        /// Returns the origin hexagon from the unidirectional edge H3Index
+        /// </summary>
+        /// <param name="edge">The edge H3 index</param>
+        /// <returns>The origin H3 hexagon index</returns>
+        /// <!-- Based off 3.1.1 -->
         public static H3Index getOriginH3IndexFromUnidirectionalEdge(H3Index edge)
         {
             if (H3Index.H3_GET_MODE(ref edge) != Constants.H3_UNIEDGE_MODE) {
@@ -146,11 +169,12 @@ namespace h3net.API
             return origin;
         }
 
-        /**
-         * Returns the destination hexagon from the unidirectional edge H3Index
-         * @param edge The edge H3 index
-         * @return The destination H3 hexagon index
-         */
+        /// <summary>
+        /// Returns the destination hexagon from the unidirectional edge H3Index
+        /// </summary>
+        /// <param name="edge">The edge H3 index</param>
+        /// <returns>The destination H3 hexagon index</returns>
+        /// <!-- Based off 3.1.1 -->
         public static H3Index getDestinationH3IndexFromUnidirectionalEdge(H3Index edge)
         {
             if (H3Index.H3_GET_MODE(ref edge) != Constants.H3_UNIEDGE_MODE)
@@ -169,11 +193,12 @@ namespace h3net.API
             return destination;
         }
 
-        /**
-         * Determines if the provided H3Index is a valid unidirectional edge index
-         * @param edge The unidirectional edge H3Index
-         * @return 1 if it is a unidirectional edge H3Index, otherwise 0.
-         */
+        /// <summary>
+        /// Determines if the provided H3Index is a valid unidirectional edge index
+        /// </summary>
+        /// <param name="edge">The unidirectional edge H3Index</param>
+        /// <returns>1 if it is a unidirectional edge H3Index, otherwise 0.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int h3UnidirectionalEdgeIsValid(H3Index edge)
         {
             if (H3Index.H3_GET_MODE(ref edge) != Constants.H3_UNIEDGE_MODE)
@@ -197,12 +222,15 @@ namespace h3net.API
             return H3Index.h3IsValid(origin);
         }
 
-        /**
-         * Returns the origin, destination pair of hexagon IDs for the given edge ID
-         * @param edge The unidirectional edge H3Index
-         * @param originDestination Pointer to memory to store origin and destination
-         * IDs
-         */
+        /// <summary>
+        /// Returns the origin, destination pair of hexagon IDs for the given edge ID
+        /// </summary>
+        /// <param name="edge">The unidirectional edge H3Index</param>
+        /// <param name="originDestination">
+        /// Pointer to memory to store origin and destination IDs
+        /// </param>
+        /// 
+        /// <!-- Based off 3.1.1 -->
         public static void getH3IndexesFromUnidirectionalEdge(H3Index edge,
             ref List<H3Index> originDestination)
         {
@@ -212,11 +240,12 @@ namespace h3net.API
                 getDestinationH3IndexFromUnidirectionalEdge(edge);
         }
 
-        /**
-         * Provides all of the unidirectional edges from the current H3Index.
-         * @param origin The origin hexagon H3Index to find edges for.
-         * @param edges The memory to store all of the edges inside.
-         */
+        /// <summary>
+        /// Provides all of the unidirectional edges from the current H3Index.
+        /// </summary>
+        /// <param name="origin">The origin hexagon H3Index to find edges for.</param>
+        /// <param name="edges">The memory to store all of the edges inside.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void getH3UnidirectionalEdgesFromHexagon(H3Index origin,
             List<H3Index> edges) {
             // Determine if the origin is a pentagon and special treatment needed.
@@ -239,12 +268,13 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Whether the given coordinate has a matching vertex in the given geo boundary.
-         * @param  vertex   Coordinate to check
-         * @param  boundary Geo boundary to look in
-         * @return          Whether a match was found
-         */
+        /// <summary>
+        /// Whether the given coordinate has a matching vertex in the given geo boundary.
+        /// </summary>
+        /// <param name="vertex">Coordinate to check</param>
+        /// <param name="boundary">Geo boundary to look in</param>
+        /// <returns>Whether a match was found</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool _hasMatchingVertex(GeoCoord vertex, GeoBoundary boundary)
         {
             for (int i = 0; i < boundary.numVerts; i++)
@@ -256,11 +286,15 @@ namespace h3net.API
             }
             return false;
         }
-        /**
-         * Provides the coordinates defining the unidirectional edge.
-         * @param edge The unidirectional edge H3Index
-         * @param gb The geoboundary object to store the edge coordinates.
-         */
+
+        /// <summary>
+        /// Provides the coordinates defining the unidirectional edge.
+        /// </summary>
+        /// <param name="edge">The unidirectional edge H3Index</param>
+        /// <param name="gb">
+        /// The geoboundary object to store the edge coordinates.
+        /// </param>
+        /// <!-- Based off 3.1.1 -->
         public static void getH3UnidirectionalEdgeBoundary(H3Index edge, ref GeoBoundary gb)
         {
             // TODO: More efficient solution :)

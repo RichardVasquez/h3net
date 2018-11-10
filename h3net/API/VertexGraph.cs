@@ -1,31 +1,32 @@
-﻿using System;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System;
 using System.Collections.Generic;
 
 namespace h3net.API
 {
-    /*
-     * Copyright 2018, Richard Vasquez
-     *
-     * Licensed under the Apache License, Version 2.0 (the "License");
-     * you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     *
-     *         http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     *
-     * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
-     * C version licensed under the Apache License, Version 2.0 (the "License");
-     * C Source code available at: https://github.com/uber/h3
-     *
-     */
-    /** @file VertexGraph.cs
-     * @brief   Data structure for storing a graph of vertices
-     */
+    /// <summary>
+    /// Data structure for storing a graph of vertices
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     public class VertexGraph
     {
         public class VertexNode:IEquatable<VertexNode>
@@ -61,10 +62,10 @@ namespace h3net.API
                     var hashCode = (@from != null
                                         ? @from.GetHashCode()
                                         : 0);
-                    hashCode = (hashCode * 397) ^ (to != null
+                    hashCode = (hashCode * 433) ^ (to != null
                                                        ? to.GetHashCode()
                                                        : 0);
-                    hashCode = (hashCode * 397) ^ (next != null
+                    hashCode = (hashCode * 263) ^ (next != null
                                                        ? next.GetHashCode()
                                                        : 0);
                     return hashCode;
@@ -87,12 +88,13 @@ namespace h3net.API
         public int size;
         public int res;
 
-        /**
-         * Initialize a new VertexGraph
-         * @param graph       Graph to initialize
-         * @param  numBuckets Number of buckets to include in the graph
-         * @param  res        Resolution of the hexagons whose vertices we'res storing
-         */
+        /// <summary>
+        /// Initialize a new VertexGraph
+        /// </summary>
+        /// <param name="graph">Graph to initialize</param>
+        /// <param name="numBuckets">Number of buckets to include in the graph</param>
+        /// <param name="res">Resolution of the hexagons whose vertices we're storing</param>
+        /// <!-- Based off 3.1.1 -->
         public VertexGraph(int num, int res)
         {
             //  We're gonna do it a little different here in .NET land,
@@ -109,11 +111,12 @@ namespace h3net.API
             this.res = res;
         }
 
-        /**
-         * Destroy a VertexGraph's sub-objects, freeing their memory. The caller is
-         * responsible for freeing memory allocated to the VertexGraph struct itself.
-         * @param graph Graph to destroy
-         */
+        /// <summary>
+        /// Destroy a VertexGraph's sub-objects, freeing their memory. The caller is
+        /// responsible for freeing memory allocated to the VertexGraph struct itself.
+        /// </summary>
+        /// <param name="graph">Graph to destroy</param>
+        /// <!-- Based off 3.1.1 -->
         public  static void destroyVertexGraph(ref VertexGraph graph)
         {
             foreach (var bucket in graph.buckets)
@@ -123,30 +126,33 @@ namespace h3net.API
             graph.buckets.Clear();
         }
 
-        /**
-         * Get an integer hash for a lat/lon point, at a precision determined
-         * by the current hexagon resolution.
-         * TODO: Light testing suggests this might not be sufficient at resolutions
-         * finer than 10. Design a better hash function if performance and collisions
-         * seem to be an issue here.
-         * @param  vertex     Lat/lon vertex to hash
-         * @param  res        Resolution of the hexagon the vertex belongs to
-         * @param  numBuckets Number of buckets in the graph
-         * @return            Integer hash
-         */
+        /// <summary>
+        /// Get an integer hash for a lat/lon point, at a precision determined
+        /// by the current hexagon resolution.
+        /// </summary>
+        /// <remarks>
+        /// Light testing suggests this might not be sufficient at resolutions
+        /// finer than 10. Design a better hash function if performance and
+        /// collisions seem to be an issue here. (Modified in code below)
+        /// </remarks>
+        /// <param name="vertex">Lat/lon vertex to hash</param>
+        /// <param name="res">Resolution of the hexagon the vertex belongs to</param>
+        /// <param name="numBuckets">Number of buckets in the graph</param>
+        /// <returns>Integer hash</returns>
+        /// <!-- Based off 3.1.1 -->
         public static uint _hashVertex(GeoCoord vertex, int res, int numBuckets)
         {
             // Simple hash: Take the sum of the lat and lon with a precision level
             // determined by the resolution, converted to int, modulo bucket count.
-/*            return (uint)
-                Math.IEEERemainder
-                    (
-                     Math.Abs((vertex.lat + vertex.lon) * Math.Pow(10, 15 - res)),
-                     numBuckets
-                    );
-                    */
-
-            //  I didn't like that one because it caused TestVertexGraph to fail.
+            //  return (uint)
+            //    Math.IEEERemainder
+            //        (
+            //         Math.Abs((vertex.lat + vertex.lon) * Math.Pow(10, 15 - res)),
+            //         numBuckets
+            //        );
+            //
+            // I didn't like that one because it caused TestVertexGraph to
+            // fail, so I wrote a new one.
 
             //  Edge cases for stuff close enough to (0,0) to not matter go straight to bucket 0.
             if (vertex == null)
@@ -161,7 +167,6 @@ namespace h3net.API
             }
 
             const int keepShifting = 1000000000;
-            double initial = Math.Abs(vertex.lat + vertex.lon * Math.Pow(10, 15 - res));
             double start = 0;
             while (start < keepShifting)
             {
@@ -175,19 +180,24 @@ namespace h3net.API
             return (uint) (Math.Abs(fraction) * numBuckets);
         }
 
+        /// <summary>
+        /// Initializer for a node
+        /// </summary>
+        /// <param name="fromVtx">Vertex to start from</param>
+        /// <param name="toVtx">Vertex to end at</param>
+        /// <!-- Based off 3.1.1 -->
         private static VertexNode _initVertexNode(GeoCoord fromVtx, GeoCoord toVtx)
         {
             var node = new VertexNode {from = fromVtx, to = toVtx, next = null};
             return node;
         }
 
-        /**
-         * Add a edge to the graph
-         * @param graph   Graph to add node to
-         * @param fromVtx Start vertex
-         * @param toVtx   End vertex
-         * @return        Pointer to the new node
-         */
+        /// <summary>Add an edge to the graph</summary>
+        /// <param name="graph">Graph to add node to</param>
+        /// <param name="fromVtx">Start vertex</param>
+        /// <param name="toVtx">End vertex</param>
+        /// <returns>new node</returns>
+        /// <!-- Based off 3.1.1 -->
         public static VertexNode addVertexNode(ref VertexGraph graph, GeoCoord fromVtx,
         GeoCoord toVtx)
         {
@@ -221,13 +231,14 @@ namespace h3net.API
             return node;
         }
 
-        /**
-         * Remove a node from the graph. The input node will be freed, and should
-         * not be used after removal.
-         * @param graph Graph to mutate
-         * @param node  Node to remove
-         * @return      0 on success, 1 on failure (node not found)
-         */
+        /// <summary>
+        /// Remove a node from the graph.  The input node will be freed, and should
+        /// not be used after removal.
+        /// </summary>
+        /// <param name="graph">Graph to mutate</param>
+        /// <param name="node">Node to remove</param>
+        /// <returns>0 on success, 1 on failure (node not found)</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int removeVertexNode(ref VertexGraph graph, ref VertexNode node)
         {
             // Determine location
@@ -246,13 +257,14 @@ namespace h3net.API
             return 0;
         }
 
-        /**
-         * Find the Vertex node for a given edge, if it exists
-         * @param  graph   Graph to look in
-         * @param  fromVtx Start vertex
-         * @param  toVtx   End vertex, or NULL if we don't care
-         * @return         Pointer to the vertex node, if found
-         */
+        /// <summary>
+        /// Find the <see cref="VertexNode"/> for a given edge, if it exists.
+        /// </summary>
+        /// <param name="graph">Graph to look in</param>
+        /// <param name="fromVtx">Start Vertex</param>
+        /// <param name="ToVtx">End Vertex, or null if we don't care</param>
+        /// <returns>Pointer to the vertex node, if found</returns>
+        /// <!-- Based off 3.1.1 -->
         public static VertexNode findNodeForEdge(
             ref VertexGraph graph,
             GeoCoord fromVtx,
@@ -271,12 +283,13 @@ namespace h3net.API
                 : currentBucket[nodeIndex];
         }
 
-        /**
-         * Find a Vertex node starting at the given vertex
-         * @param  graph   Graph to look in
-         * @param  fromVtx Start vertex
-         * @return         Pointer to the vertex node, if found
-         */
+        /// <summary>
+        /// Find a Vertex node starting at the given vertex
+        /// </summary>
+        /// <param name="graph">Graph to look in</param>
+        /// <param name="fromVtx">Start vertex</param>
+        /// <returns>Vertex node, if found</returns>
+        /// <!-- Based off 3.1.1 -->
         public static VertexNode findNodeForVertex(
             ref VertexGraph graph,
             ref GeoCoord fromVtx)
@@ -284,11 +297,12 @@ namespace h3net.API
             return findNodeForEdge(ref graph, fromVtx, null);
         }
 
-        /**
-         * Get the next vertex node in the graph.
-         * @param  graph Graph to iterate
-         * @return       Vertex node, or NULL if at the end
-         */
+        /// <summary>
+        /// Get the next vertex node in the graph.
+        /// </summary>
+        /// <param name="graph">Graph to iterate</param>
+        /// <returns>Vertex node or null if at the the end</returns>
+        /// <!-- Based off 3.1.1 -->
         public static VertexNode firstVertexNode(ref VertexGraph graph)
         {
             foreach (var bucket in graph.buckets)

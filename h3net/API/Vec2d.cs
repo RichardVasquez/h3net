@@ -1,8 +1,32 @@
-﻿using System;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System;
 using System.Diagnostics;
 
 namespace h3net.API
 {
+    /// <summary>
+    /// 2D floating point vector functions.
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     [DebuggerDisplay("X: {x} Y: {y}")]
     public class Vec2d
     {
@@ -29,6 +53,15 @@ namespace h3net.API
          * @param p3 The second endpoint of the second line.
          * @param inter The intersection point.
          */
+        /// <summary>
+        /// Finds the intersection between two lines. Assumes that the lines intersect
+        /// and that the intersection is not at an endpoint of either line.
+        /// </summary>
+        /// <param name="p0">The first endpoint of the first line</param>
+        /// <param name="p1">The second endpoint of the first line</param>
+        /// <param name="p2">The first endpoint of the second line</param>
+        /// <param name="p3">The first endpoint of the first line</param>
+        /// <param name="inter">The second endpoint of the second line</param>
         public static void _v2dIntersect(Vec2d p0,  Vec2d p1,  Vec2d p2,
          Vec2d p3, ref Vec2d inter)
         {
@@ -43,22 +76,20 @@ namespace h3net.API
             inter.y = p0.y + (t * s1.y);
         }
 
-        /**
-         * Whether two 2D vectors are equal. Does not consider possible false
-         * negatives due to floating-point errors.
-         * @param v1 First vector to compare
-         * @param v2 Second vector to compare
-         * @return Whether the vectors are equal
-         */
+        /// <summary>
+        /// Whether two 2D vectors are equal. Does not consider possible false
+        /// negatives due to floating-point errors.
+        /// </summary>
+        /// <param name="v1">First vector to compare</param>
+        /// <param name="v2">Second vector to compare</param>
+        /// <returns>Whether the vectors are equal</returns>
         public static bool _v2dEquals( Vec2d v1,  Vec2d v2) {
             return Math.Abs(v1.x - v2.x) < Constants.EPSILON && Math.Abs(v1.y - v2.y) < Constants.EPSILON;
         }
 
-        /**
-         * Calculates the magnitude of a 2D cartesian vector.
-         * @param v The 2D cartesian vector.
-         * @return The magnitude of the vector.
-         */
+        /// <summary>Calculates the magnitude of a 2D Cartesian vector</summary>
+        /// <param name="v">The 2d Cartesian vector.</param>
+        /// <returns>The magnitude of the vector</returns>
         public static double _v2dMag(Vec2d v)
         {
             return Math.Sqrt(v.x * v.x + v.y * v.y);

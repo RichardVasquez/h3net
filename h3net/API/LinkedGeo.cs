@@ -1,11 +1,33 @@
-﻿using System;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ */
+using System;
 using System.Collections.Generic;
 
 namespace h3net.API
 {
+    /// <summary>
+    /// Linked data structure for geo data
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     public class LinkedGeo
     {
-
         public class LinkedGeoCoord
         {
             public GeoCoord vertex;
@@ -38,14 +60,15 @@ namespace h3net.API
             return isTransmeridian && lon < 0 ? lon + Constants.M_2PI : lon;
         }
 
-        /**
-         * Take a given LinkedGeoLoop data structure and check if it
-         * contains a given geo coordinate.
-         * @param loop          The linked loop
-         * @param bbox          The bbox for the loop
-         * @param coord         The coordinate to check
-         * @return              Whether the point is contained
-         */
+        /// <summary>
+        /// Take a given LinkedGeoLoop data structure and check if it
+        /// contains a given geo coordinate.
+        /// </summary>
+        /// <param name="loop">The linked loop</param>
+        /// <param name="bbox">The bbox for the loop</param>
+        /// <param name="coord">The coordinate to check</param>
+        /// <returns>Whether the point is contained</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool pointInsideLinkedGeoLoop(ref LinkedGeoLoop loop, ref  BBox bbox, ref GeoCoord coord)
         {
             // fail fast if we're outside the bounding box
@@ -72,10 +95,9 @@ namespace h3net.API
                     break;
                 }
             
-            a= currentCoord.vertex;
-            nextCoord = currentCoord.next == null ? loop.first : currentCoord.next;
-            b = nextCoord.vertex;
-
+                a= currentCoord.vertex;
+                nextCoord = currentCoord.next == null ? loop.first : currentCoord.next;
+                b = nextCoord.vertex;
 
                 // Ray casting algo requires the second point to always be higher
                 // than the first, so swap if needed
@@ -118,16 +140,16 @@ namespace h3net.API
             return contains;
         }
 
-
-        /**
-         * Create a bounding box from a simple polygon loop.
-         * Known limitations:
-         * - Does not support polygons with two adjacent points > 180 degrees of
-         *   longitude apart. These will be interpreted as crossing the antimeridian.
-         * - Does not currently support polygons containing a pole.
-         * @param loop     Loop of coordinates
-         * @param bbox     Output bbox
-         */
+        /// <summary>
+        /// Create a bounding box from a simple polygon loop.
+        /// Known limitations:
+        /// - Does not support polygons with two adjacent points > 180 degrees of
+        ///   longitude apart. These will be interpreted as crossing the antimeridian.
+        /// - Does not currently support polygons containing a pole.
+        /// </summary>
+        /// <param name="loop">Loop of coordinates</param>
+        /// <param name="bbox">bbox</param>
+        /// <!-- Based off 3.1.1 -->
         public static void bboxFromLinkedGeoLoop(ref LinkedGeoLoop loop, ref BBox bbox)
         {
             // Early exit if there are no vertices
@@ -188,11 +210,13 @@ namespace h3net.API
                 bbox.west = minPosLon;
             }
         }
-        /**
-         * Whether the winding order of a given LinkedGeoLoop is clockwise
-         * @param loop  The loop to check
-         * @return      Whether the loop is clockwise
-         */
+
+        /// <summary>
+        /// Whether the winding order of a given LinkedGeoLoop is clockwise
+        /// </summary>
+        /// <param name="loop">The loop to check</param>
+        /// <returns>Whether the loop is clockwise</returns>
+        /// <!-- Based off 3.1.1 -->
         static bool isClockwiseNormalizedLinkedGeoLoop(LinkedGeoLoop loop, bool isTransmeridian)
         {
             double sum = 0;
@@ -230,22 +254,23 @@ namespace h3net.API
             return sum > 0;
         }
 
-        /**
-         * Whether the winding order of a given loop is clockwise. In GeoJSON,
-         * clockwise loops are always inner loops (holes).
-         * @param loop  The loop to check
-         * @return      Whether the loop is clockwise
-         */
+        /// <summary>
+        /// Whether the winding order of a given loop is clockwise. In GeoJSON,
+        /// clockwise loops are always inner loops (holes).
+        /// </summary>
+        /// <param name="loop">The loop to check</param>
+        /// <returns>Whether the loop is clockwise</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool isClockwiseLinkedGeoLoop(LinkedGeoLoop loop) {
             return isClockwiseNormalizedLinkedGeoLoop(loop, false);
         }
 
-
-        /**
-         * Add a linked polygon to the current polygon
-         * @param  polygon Polygon to add link to
-         * @return         Pointer to new polygon
-         */
+        /// <summary>
+        /// Add a linked polygon to the current polygon
+        /// </summary>
+        /// <param name="polygon">Polygon to add link to</param>
+        /// <returns>Pointer to new polygon</returns>
+        /// <!-- Based off 3.1.1 -->
         public static LinkedGeoPolygon addNewLinkedPolygon(ref LinkedGeoPolygon polygon)
         {
             if (polygon.next != null)
@@ -259,11 +284,12 @@ namespace h3net.API
             return next;
         }
 
-        /**
-         * Add a new linked loop to the current polygon
-         * @param  polygon Polygon to add loop to
-         * @return         Pointer to loop
-         */
+        /// <summary>
+        /// Add a new linked loop to the current polygon
+        /// </summary>
+        /// <param name="polygon">Polygon to add loop to</param>
+        /// <returns>Pointer to loop</returns>
+        /// <!-- Based off 3.1.1 -->
         public static LinkedGeoLoop addNewLinkedLoop(ref LinkedGeoPolygon polygon)
         {
             LinkedGeoLoop loop = new LinkedGeoLoop();
@@ -275,11 +301,12 @@ namespace h3net.API
             return addLinkedLoop(ref polygon,ref  loop);
         }
 
-        /**
-         * Add an existing linked loop to the current polygon
-         * @param  polygon Polygon to add loop to
-         * @return         Pointer to loop
-         */
+        /// <summary>
+        /// Add an existing linked loop to the current polygon
+        /// </summary>
+        /// <param name="polygon">Polygon to add loop to</param>
+        /// <returns>Pointer to loop</returns>
+        /// <!-- Based off 3.1.1 -->
         public static  LinkedGeoLoop addLinkedLoop(ref LinkedGeoPolygon polygon, ref LinkedGeoLoop loop)
         {
             LinkedGeoLoop last = polygon.last;
@@ -296,12 +323,13 @@ namespace h3net.API
             return loop;
         }
 
-        /**
-         * Add a new linked coordinate to the current loop
-         * @param  loop   Loop to add coordinate to
-         * @param  vertex Coordinate to add
-         * @return        Pointer to the coordinate
-         */
+        /// <summary>
+        /// Add a new linked coordinate to the current loop
+        /// </summary>
+        /// <param name="loop">Loop to add coordinate to</param>
+        /// <param name="vertex">Coordinate to add</param>
+        /// <returns>Pointer to the coordinate</returns>
+        /// <!-- Based off 3.1.1 -->
         public static LinkedGeoCoord addLinkedCoord(ref LinkedGeoLoop loop, ref GeoCoord vertex)
         {
             LinkedGeoCoord coord = new LinkedGeoCoord();
@@ -323,11 +351,12 @@ namespace h3net.API
             return coord;
         }
 
-        /**
-         * Free all allocated memory for a linked geo loop. The caller is
-         * responsible for freeing memory allocated to input loop struct.
-         * @param loop Loop to free
-         */
+        /// <summary>
+        /// Free all allocated memory for a linked geo loop. The caller is
+        /// responsible for freeing memory allocated to input loop struct.
+        /// </summary>
+        /// <param name="loop">Loop to free</param>
+        /// <!-- Based off 3.1.1 -->
         public static void destroyLinkedGeoLoop(ref LinkedGeoLoop loop)
         {
             LinkedGeoCoord nextCoord;
@@ -340,11 +369,12 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Free all allocated memory for a linked geo structure. The caller is
-         * responsible for freeing memory allocated to input polygon struct.
-         * @param polygon Pointer to the first polygon in the structure
-         */
+        /// <summary>
+        /// Free all allocated memory for a linked geo structure. The caller is
+        /// responsible for freeing memory allocated to input polygon struct.
+        /// </summary>
+        /// <param name="polygon">Pointer to the first polygon in the structure</param>
+        /// <!-- Based off 3.1.1 -->
         public static void destroyLinkedPolygon(ref LinkedGeoPolygon polygon)
         {
             // flag to skip the input polygon
@@ -374,11 +404,12 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Count the number of polygons in a linked list
-         * @param  polygon Starting polygon
-         * @return         Count
-         */
+        /// <summary>
+        /// Count the number of polygons in a linked list
+        /// </summary>
+        /// <param name="polygon">Starting polygon</param>
+        /// <returns>Count</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int countLinkedPolygons(ref LinkedGeoPolygon polygon)
         {
             var polyIndex = polygon;
@@ -391,11 +422,12 @@ namespace h3net.API
             return count;
         }
 
-        /**
-         * Count the number of linked loops in a polygon
-         * @param  polygon Polygon to count loops for
-         * @return         Count
-         */
+        /// <summary>
+        /// Count the number of linked loops in a polygon
+        /// </summary>
+        /// <param name="polygon">Polygon to count loops for</param> 
+        /// <returns>Count</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int countLinkedLoops(ref LinkedGeoPolygon polygon)
         {
             LinkedGeoLoop loop = polygon.first;
@@ -408,11 +440,12 @@ namespace h3net.API
             return count;
         }
 
-        /**
-         * Count the number of coordinates in a loop
-         * @param  loop Loop to count coordinates for
-         * @return      Count
-         */
+        /// <summary>
+        /// Count the number of coordinates in a loop
+        /// </summary>
+        /// <param name="loop"> Loop to count coordinates for</param>
+        /// <returns>Count</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int countLinkedCoords(ref LinkedGeoLoop loop)
         {
             LinkedGeoCoord coord = loop.first;
@@ -425,14 +458,15 @@ namespace h3net.API
             return count;
         }
 
-        /**
-         * Count the number of polygons containing a given loop.
-         * @param  loop         Loop to count containers for
-         * @param  polygons     Polygons to test
-         * @param  bboxes       Bounding boxes for polygons, used in point-in-poly check
-         * @param  polygonCount Number of polygons in the test array
-         * @return              Number of polygons containing the loop
-         */
+        /// <summary>
+        /// Count the number of polygons containing a given loop.
+        /// </summary>
+        /// <param name="loop">Loop to count containers for</param>
+        /// <param name="polygons">Polygons to test</param>
+        /// <param name="bboxes">Bounding boxes for polygons, used in point-in-poly check</param>
+        /// <param name="polygonCount">Number of polygons in the test array</param>
+        /// <returns>Number of polygons containing the loop
+        /// <!-- Based off 3.1.1 -->
         public static int countContainers(
             LinkedGeoLoop loop, List<LinkedGeoPolygon> polygons,
             List<BBox> bboxes, int polygonCount)
@@ -450,13 +484,14 @@ namespace h3net.API
             return containerCount;
         }
 
-        /**
-         * Given a list of nested containers, find the one most deeply nested.
-         * @param  polygons     Polygon containers to check
-         * @param  bboxes       Bounding boxes for polygons, used in point-in-poly check
-         * @param  polygonCount Number of polygons in the list
-         * @return              Deepest container, or null if list is empty
-         */
+        /// <summary>
+        /// Given a list of nested containers, find the one most deeply nested.
+        /// </summary>
+        /// <param name="polygons">Polygon containers to check</param>
+        /// <param name="bboxes">Bounding boxes for polygons, used in point-in-poly check</param>
+        /// <param name="polygonCount">Number of polygons in the list</param>
+        /// <returns>Deepest container, or null if list is empty</returns>
+        /// <!-- Based off 3.1.1 -->
         public static LinkedGeoPolygon findDeepestContainer(
         ref List<LinkedGeoPolygon> polygons, ref List<BBox> bboxes,
         int polygonCount) {
@@ -484,15 +519,16 @@ namespace h3net.API
             return parent;
         }
 
-        /**
-         * Find the polygon to which a given hole should be allocated. Note that this
-         * function will return null if no parent is found.
-         * @param  loop         Inner loop describing a hole
-         * @param  polygon      Head of a linked list of polygons to check
-         * @param  bboxes       Bounding boxes for polygons, used in point-in-poly check
-         * @param  polygonCount Number of polygons to check
-         * @return              Pointer to parent polygon, or null if not found
-         */
+        /// <summary>
+        /// Find the polygon to which a given hole should be allocated. Note that this
+        /// function will return null if no parent is found.
+        /// </summary>
+        /// <param name="loop">Inner loop describing a hole</param>
+        /// <param name="polygon">Head of a linked list of polygons to check</param>
+        /// <param name="bboxes">Bounding boxes for polygons, used in point-in-poly check</param>
+        /// <param name="polygonCount">Number of polygons to check</param>
+        /// <returns>Pointer to parent polygon, or null if not found</returns>
+        /// <!-- Based off 3.1.1 -->
         public static LinkedGeoPolygon findPolygonForHole(
             ref LinkedGeoLoop loop,
             ref LinkedGeoPolygon polygon,
@@ -543,22 +579,19 @@ namespace h3net.API
             return parent;
         }
 
-
-
-
-        /**
-         * Normalize a LinkedGeoPolygon in-place into a structure following GeoJSON
-         * MultiPolygon rules: Each polygon must have exactly one outer loop, which
-         * must be first in the list, followed by any holes. Holes in this algorithm
-         * are identified by winding order (holes are clockwise), which is guaranteed
-         * by the h3SetToVertexGraph algorithm.
-         *
-         * Input to this function is assumed to be a single polygon including all
-         * loops to normalize. It's assumed that a valid arrangement is possible.
-         *
-         * @param root Root polygon including all loops
-         * @return     0 on success, or an error code > 0 for invalid input
-         */
+        /// <summary>
+        /// Normalize a LinkedGeoPolygon in-place into a structure following GeoJSON
+        /// MultiPolygon rules: Each polygon must have exactly one outer loop, which
+        /// must be first in the list, followed by any holes. Holes in this algorithm
+        /// are identified by winding order (holes are clockwise), which is guaranteed
+        /// by the h3SetToVertexGraph algorithm.
+        /// 
+        /// Input to this function is assumed to be a single polygon including all
+        /// loops to normalize. It's assumed that a valid arrangement is possible.
+        /// </summary>
+        /// <param name="root">Root polygon including all loops</param>
+         /// <returns>0 on success, or an error code > 0 for invalid input</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int normalizeMultiPolygon(ref LinkedGeoPolygon root)
         {
             // We assume that the input is a single polygon with loops;
@@ -648,11 +681,6 @@ namespace h3net.API
                     resultCode = NORMALIZATION_ERR_UNASSIGNED_HOLES;
                 }
             }
-
-            // Free allocated memory
-            innerLoops = null;
-            bboxes = null;
-
             return resultCode;
         }
     }
