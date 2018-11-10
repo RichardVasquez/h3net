@@ -1,27 +1,48 @@
 ﻿/*
- * Copyright 2018 Richard Vasquez
+ * Copyright 2018, Richard Vasquez
  *
- * No license specified at this time.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Original application created by Uber Technologies, Inc., using the C language,
- * licensed under Apache License, Version 2.0.
+ *         http://www.apache.org/licenses/LICENSE-2.0
  *
- * Current version being rewritten completely in C#.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * h3 C source code at: https://github.com/uber/h3
- * Apache License 2.0 at: http://www.apache.org/licenses/LICENSE-2.0
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
  */
 namespace h3net.API
 {
-    /** @file BaseCells.cs
-     * @brief   Base cell related lookup tables and access functions.
-     */
+    /// <summary>
+    /// Base cell related lookup tables and access functions.
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     public class BaseCells
     {
+        /// <summary>
+        /// Information on a single base cell
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public struct BaseCellData
         {
+            /// <summary>
+            /// "Home" face and normalized ijk coordinates on that face
+            /// </summary>
             public FaceIJK homeFijk;
+            /// <summary>
+            /// Is this base cell a pentagon?
+            /// </summary>
             public int isPentagon;
+            /// <summary>
+            /// If it's a pentagon, what are its two clockwise offset faces?
+            /// </summary>
             public int[] cwOffsetPent;// [2]
 
             public BaseCellData(int face, int faceI, int faceJ, int faceK, int isPenta, int offset1, int offset2) : this()
@@ -32,13 +53,20 @@ namespace h3net.API
             }
         }
 
-        /** @struct BaseCellOrient
-         *  @brief base cell at a given ijk and required rotations into its system
-         */
+        /// <summary>
+        /// base cell at a given ijk and required rotations into its system
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public struct BaseCellOrient
         {
-            public int baseCell;   //  base cell number
-            public int ccwRot60;   //  number of ccw 60 degree rotations relative to current face
+            /// <summary>
+            /// base cell number
+            /// </summary>
+            public int baseCell;
+            /// <summary>
+            /// number of ccw 60 degree rotations relative to current face
+            /// </summary>
+            public int ccwRot60;
 
             public BaseCellOrient(int b, int c) : this()
             {
@@ -47,11 +75,13 @@ namespace h3net.API
             }
         }
 
-        /** @brief Neighboring base cell ID in each IJK direction.
-         *
-         * For each base cell, for each direction, the neighboring base
-         * cell ID is given. 127 indicates there is no neighbor in that direction.
-         */
+        /// <summary>
+        /// Neighboring base cell ID in each IJK direction.
+        ///
+        /// For each base cell, for each direction, the neighboring base
+        /// cell ID is given. 127 indicates there is no neighbor in that direction.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly int[,] baseCellNeighbors = {
             {0, 1, 5, 2, 4, 3, 8},                          // base cell 0
             {1, 7, 6, 9, 0, 3, 2},                          // base cell 1
@@ -177,12 +207,14 @@ namespace h3net.API
             {121, 116, 120, 119, 117, 113, 118},                // base cell 121
         };
 
-        /** @brief Neighboring base cell rotations in each IJK direction.
-         *
-         * For each base cell, for each direction, the number of 60 degree
-         * CCW rotations to the coordinate system of the neighbor is given.
-         * -1 indicates there is no neighbor in that direction.
-         */
+        /// <summary>
+        /// Neighboring base cell rotations in each IJK direction.
+        ///
+        /// For each base cell, for each direction, the number of 60 degree
+        /// CCW rotations to the coordinate system of the neighbor is given.
+        /// -1 indicates there is no neighbor in that direction.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly int[,] baseCellNeighbor60CCWRots =
         {
             {0, 5, 0, 0, 1, 5, 1},   // base cell 0
@@ -309,19 +341,22 @@ namespace h3net.API
             {0, 0, 1, 0, 1, 5, 1},   // base cell 121
         };
 
-        /** @brief Resolution 0 base cell lookup table for each face.
-         *
-         * Given the face number and a resolution 0 ijk+ coordinate in that face's
-         * face-centered ijk coordinate system, gives the base cell located at that
-         * coordinate and the number of 60 ccw rotations to rotate into that base
-         * cell's orientation.
-         *
-         * Valid lookup coordinates are from (0, 0, 0) to (2, 2, 2).
-         *
-         * This table can be accessed using the functions `_faceIjkToBaseCell` and
-         * `_faceIjkToBaseCellCCWrot60`
-         */
-        public static readonly BaseCellOrient[,,,] faceIjkBaseCells ={
+        /// <summary>
+        /// Resolution 0 base cell lookup table for each face.
+        ///
+        /// Given the face number and a resolution 0 ijk+ coordinate in that face's
+        /// face-centered ijk coordinate system, gives the base cell located at that
+        /// coordinate and the number of 60 ccw rotations to rotate into that base
+        /// cell's orientation.
+        ///
+        /// Valid lookup coordinates are from (0, 0, 0) to (2, 2, 2).
+        ///
+        /// This table can be accessed using the functions <see cref="_faceIjkToBaseCell"/>
+        /// and <see cref="_faceIjkToBaseCellCCWrot60"/>
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
+        public static readonly BaseCellOrient[,,,] faceIjkBaseCells =
+        {
             {// face 0
                 {   // i 0
                     { new BaseCellOrient(16, 0), new BaseCellOrient(18, 0), new BaseCellOrient(24, 0) },  // j 0
@@ -721,13 +756,15 @@ namespace h3net.API
             }
         };
 
-        /** @brief Resolution 0 base cell data table.
-         *
-         * For each base cell, gives the "home" face and ijk+ coordinates on that face,
-         * whether or not the base cell is a pentagon. Additionally, if the base cell
-         * is a pentagon, the two cw offset rotation adjacent faces are given (-1
-         * indicates that no cw offset rotation faces exist for this base cell).
-         */
+        /// <summary>
+        /// Resolution 0 base cell data table.
+        ///
+        /// For each base cell, gives the "home" face and ijk+ coordinates on that face,
+        /// whether or not the base cell is a pentagon. Additionally, if the base cell
+        /// is a pentagon, the two cw offset rotation adjacent faces are given (-1
+        /// indicates that no cw offset rotation faces exist for this base cell).
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly BaseCellData[] baseCellData = {
             new BaseCellData(1, 1 ,0 ,0, 0, 0, 0), // base cell 0
             new BaseCellData(2, 1, 1, 0, 0, 0, 0),	// base cell 1
@@ -854,64 +891,83 @@ namespace h3net.API
         };
 
         public const int INVALID_BASE_CELL = 127;
+        /// <summary>
+        /// Maximum input for any component to face-to-base-cell lookup functions
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public const int MAX_FACE_COORD = 2;
 
-        /** @brief Return whether or not the indicated base cell is a pentagon. */
+        /// <summary>
+        /// Return whether or not the indicated base cell is a pentagon.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static bool _isBaseCellPentagon(int baseCell)
         {
             return baseCellData[baseCell].isPentagon == 1;
         }
 
-        /** @brief Find base cell given FaceIJK.
-         *
-         * Given the face number and a resolution 0 ijk+ coordinate in that face's
-         * face-centered ijk coordinate system, return the base cell located at that
-         * coordinate.
-         *
-         * Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
-         */
+        /// <summary>
+        /// Find base cell given FaceIJK.
+        ///
+        /// Given the face number and a resolution 0 ijk+ coordinate in that face's
+        /// face-centered ijk coordinate system, return the base cell located at that
+        /// coordinate.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static int _faceIjkToBaseCell(FaceIJK h)
         {
             return faceIjkBaseCells[h.face,h.coord.i,h.coord.j,h.coord.k].baseCell;
         }
 
-        /** @brief Find base cell given FaceIJK.
-         *
-         * Given the face number and a resolution 0 ijk+ coordinate in that face's
-         * face-centered ijk coordinate system, return the number of 60' ccw rotations
-         * to rotate into the coordinate system of the base cell at that coordinates.
-         *
-         * Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
-         */
+        /// <summary>
+        /// Find base cell given FaceIJK.
+        ///
+        /// Given the face number and a resolution 0 ijk+ coordinate in that face's
+        /// face-centered ijk coordinate system, return the number of 60' ccw rotations
+        /// to rotate into the coordinate system of the base cell at that coordinates.
+        ///
+        /// Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static int _faceIjkToBaseCellCCWrot60( FaceIJK h)
         {
             return faceIjkBaseCells[h.face, h.coord.i, h.coord.j, h.coord.k].ccwRot60;
         }
 
-        ///** @brief Find the FaceIJK given a base cell.
-        // */
-        //public void _baseCellToFaceIjk(int baseCell, ref FaceIJK h)
-        //{
-        //    h = baseCellData[baseCell].homeFijk;
-        //}
+        /// <summary>
+        /// Find the FaceIJK given a base cell.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
+        // ReSharper disable once UnusedMember.Global
+        public void _baseCellToFaceIjk(int baseCell, ref FaceIJK h)
+        {
+            h = baseCellData[baseCell].homeFijk;
+        }
 
-        /** @brief Return whether or not the tested face is a cw offset face.
-         */
+        /// <summary>
+        /// Return whether or not the tested face is a cw offset face.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static bool _baseCellIsCwOffset(int baseCell, int testFace)
         {
             return baseCellData[baseCell].cwOffsetPent[0] == testFace ||
                    baseCellData[baseCell].cwOffsetPent[1] == testFace;
         }
-        /** @brief Return the neighboring base cell in the given direction.
-         */
+
+        /// <summary>
+        /// Return the neighboring base cell in the given direction.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static int _getBaseCellNeighbor(int baseCell, Direction dir)
         {
             return baseCellNeighbors[baseCell, (int) dir];
         }
 
-        /** @brief Return the direction from the origin base cell to the neighbor.
-         * Returns INVALID_DIGIT if the base cells are not neighbors.
-         */
+        /// <summary>
+        /// Return the direction from the origin base cell to the neighbor.
+        /// </summary>
+        /// <returns>INVALID_DIGIT if the base cells are not neighbors.</returns>
+        /// <!-- Based off 3.1.1 -->
         public static Direction _getBaseCellDirection(int originBaseCell, int neighboringBaseCell)
         {
             for (var dir = Direction.CENTER_DIGIT; dir <Direction.NUM_DIGITS; dir++) 

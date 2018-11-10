@@ -1,9 +1,33 @@
-﻿using System;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace h3net.API
 {
+    /// <summary>
+    /// Geographic bounding box with coordinates defined in radians
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     public class BBox
     {
         public double north;
@@ -11,16 +35,18 @@ namespace h3net.API
         public double east;
         public double west;
 
-        /**
-         * Create a bounding box from a simple polygon defined as an array of vertices.
-         * Known limitations:
-         * - Does not support polygons with two adjacent points > 180 degrees of
-         *   longitude apart. These will be interpreted as crossing the antimeridian.
-         * - Does not currently support polygons containing a pole.
-         * @param verts    Array of vertices
-         * @param numVerts Number of vertices
-         * @param bbox     Output bbox
-         */
+        /// <summary>
+        /// Create a bounding box from a simple polygon defined as an array of vertices.
+        ///
+        /// Known limitations:
+        /// - Does not support polygons with two adjacent points &gt; 180 degrees of
+        ///   longitude apart. These will be interpreted as crossing the antimeridian.
+        /// - Does not currently support polygons containing a pole.
+        /// </summary>
+        /// <param name="verts">Array of vertices</param>
+        /// <param name="numVerts">Number of vertices</param>
+        /// <param name="bbox">Output box</param>
+        /// <!-- Based off 3.1.1 -->
         static void bboxFromVertices(List<GeoCoord> verts, int numVerts, ref BBox bbox) 
         {
             // Early exit if there are no vertices
@@ -62,20 +88,22 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Create a bounding box from a Geofence
-         * @param Geofence Input Geofence
-         * @param bbox     Output bbox
-         */
+        /// <summary>
+        /// Create a bounding box from a Geofence
+        /// </summary>
+        /// <param name="Geofence">Input <see cref="Geofence"/></param>
+        /// <param name="bbox">Output bbox</param>
+        /// <!-- Based off 3.1.1 -->
         public static void bboxFromGeofence(Geofence Geofence, ref BBox bbox) {
             bboxFromVertices(Geofence.verts.ToList() , Geofence.numVerts, ref bbox);
         }
 
-        /**
-         * Create a bounding box from a GeoPolygon
-         * @param polygon Input GeoPolygon
-         * @param bboxes  Output bboxes, one for the outer loop and one for each hole
-         */
+        /// <summary>
+        /// Create a bounding box from a GeoPolygon
+        /// </summary>
+        /// <param name="polygon">Input <see cref="GeoPolygon"/></param>
+        /// <param name="bboxes">Output bboxes, one for the outer loop and one for each hole</param>
+        /// <!-- Based off 3.1.1 -->
         void bboxesFromGeoPolygon(GeoPolygon polygon, ref List<BBox> bboxes)
         {
             var bb = bboxes[0];
@@ -89,21 +117,23 @@ namespace h3net.API
             }
         }
 
-        /**
-        * Whether the given bounding box crosses the antimeridian
-        * @param  bbox Bounding box to inspect
-        * @return      is transmeridian
-        */
+        /// <summary>
+        /// Whether the given bounding box cross the antimeridian
+        /// </summary>
+        /// <param name="bbox">bounding box to inspect</param>
+        /// <returns>true if transmeridian</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool bboxIsTransmeridian(BBox bbox)
         {
             return bbox.east < bbox.west;
         }
 
-        /**
-         * Get the center of a bounding box
-         * @param bbox   Input bounding box
-         * @param center Output center coordinate
-         */
+        /// <summary>
+        /// Gets the center of a bounding box
+        /// </summary>
+        /// <param name="bbox">Input bounding box</param>
+        /// <param name="center">Output center coordinate</param>
+        /// <!-- Based off 3.1.1 -->
         public static void bboxCenter(BBox bbox, ref GeoCoord center)
         {
             center.lat = (bbox.north + bbox.south) / 2.0;
@@ -114,12 +144,13 @@ namespace h3net.API
             center.lon = GeoCoord.constrainLng((east + bbox.west) / 2.0);
         }
 
-        /**
-         * Whether the bounding box contains a given point
-         * @param  bbox  Bounding box
-         * @param  point Point to test
-         * @return       Whether the point is contained
-         */
+        /// <summary>
+        /// Whether the bounding box contains a given point
+        /// </summary>
+        /// <param name="bbox">Bounding box</param>
+        /// <param name="point">Point to test</param>
+        /// <returns>true is point is contained</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool bboxContains(BBox bbox, GeoCoord point)
         {
             return 
@@ -134,12 +165,13 @@ namespace h3net.API
                 );
         }
 
-        /**
-         * Whether two bounding boxes are strictly equal
-         * @param  b1 Bounding box 1
-         * @param  b2 Bounding box 2
-         * @return    Whether the boxes are equal
-         */
+        /// <summary>
+        /// Determines if two bounding boxes are strictly equal
+        /// </summary>
+        /// <param name="b1">Bounding box 1</param>
+        /// <param name="b2">Bounding box 2</param>
+        /// <returns>True if the boxes are equal</returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool bboxEquals(BBox b1, BBox b2)
         {
             return Math.Abs(b1.north - b2.north) < Constants.EPSILON &&
@@ -148,12 +180,12 @@ namespace h3net.API
                    Math.Abs(b1.west - b2.west) < Constants.EPSILON;
         }
 
-        /**
-         * _hexRadiusKm returns the radius of a given hexagon in Km
-         *
-         * @param h3Index the index of the hexagon
-         * @return the radius of the hexagon in Km
-         */
+        /// <summary>
+        /// Returns the radius of a given hexagon in kilometers
+        /// </summary>
+        /// <param name="h3Index">Index of the hexagon</param>
+        /// <returns>radius of hexagon in kilometers</returns>
+        /// <!-- Based off 3.1.1 -->
         static double _hexRadiusKm(H3Index h3Index)
         {
             // There is probably a cheaper way to determine the radius of a
@@ -165,13 +197,14 @@ namespace h3net.API
             return GeoCoord._geoDistKm(h3Center,   h3Boundary.verts);
         }
 
-        /**
-         * Get the radius of the bbox in hexagons - i.e. the radius of a k-ring centered
-         * on the bbox center and covering the entire bbox.
-         * @param  bbox Bounding box to measure
-         * @param  res  Resolution of hexagons to use in measurement
-         * @return      Radius in hexagons
-         */
+        /// <summary>
+        /// Radius of bounding box in hexagons.  i.e., the radius of a k-ring centered
+        /// on the bbox center and covering the entire bbox.
+        /// </summary>
+        /// <param name="bbox">Bounding box to measure</param>
+        /// <param name="res">Resolution of hexagons to use in measurement</param>
+        /// <returns>Radius in hexagons</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int bboxHexRadius(BBox bbox, int res)
         {
             // Determine the center of the bounding box
@@ -201,8 +234,5 @@ namespace h3net.API
             // Rounded *up* to guarantee containment
             return (int)Math.Ceiling(bboxRadiusKm / (1.5 * centerHexRadiusKm));
         }
-
     }
-
-
 }

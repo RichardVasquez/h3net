@@ -27,6 +27,7 @@ namespace h3net.API
     /// <summary>
     /// Hexagon grid algorithms
     /// </summary>
+    /// <!-- Based off 3.1.1 -->
     public class Algos
     {
         /// <summary>

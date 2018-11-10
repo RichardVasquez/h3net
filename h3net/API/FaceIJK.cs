@@ -1,16 +1,54 @@
-﻿using System;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 namespace h3net.API
 {
+    /// <summary>
+    /// Functions for working with icosahedral face-centered hex IJK
+    /// coordinate systems.
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     public class FaceIJK
     {
+        /// <summary>
+        /// Information to transform into an adjacent face IJK system
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public class FaceOrientIJK
         {
+            /// <summary>
+            /// face number
+            /// </summary>
             public int face;
+            /// <summary>
+            /// res 0 translation relative to primary face
+            /// </summary>
             public CoordIJK translate;
+            /// <summary>
+            /// number of 60 degree ccw rotations relative to primary
+            /// </summary>
             public int ccwRot60;
 
             public FaceOrientIJK()
@@ -24,8 +62,13 @@ namespace h3net.API
                 ccwRot60 = c;
             }
         }
-
+        /// <summary>
+        /// face number
+        /// </summary>
         public int face;
+        /// <summary>
+        /// ijk coordinates on that face
+        /// </summary>
         public CoordIJK coord;
 
         public FaceIJK()
@@ -40,16 +83,37 @@ namespace h3net.API
             coord = cijk;
         }
 
+        /// <summary>
+        /// Invalid faceNeighbors table direction
+        /// </summary>
         public const int INVALID = -1;
+        /// <summary>
+        /// Center faceNeighbors table direction
+        /// </summary>
         public const int CENTER = 0;
+        /// <summary>
+        /// IJ quadrant faceNeighbors table direction
+        /// </summary>
         public const int IJ = 1;
+        /// <summary>
+        /// KI quadrant faceNeighbors table direction
+        /// </summary>
         public const int KI = 2;
+        /// <summary>
+        /// JK quadrant faceNeighbors table direction
+        /// </summary>
         public const int JK = 3;
 
-        /** square root of 7 */
+        /// <summary>
+        /// Square root of 7
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static double M_SQRT7 = 2.6457513110645905905016157536392604257102;
 
-        /** @brief icosahedron face centers in lat/lon radians */
+        /// <summary>
+        /// icosahedron face centers in lat/lon radians
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly GeoCoord[] faceCenterGeo =
         {
             new GeoCoord(0.803582649718989942, 1.248397419617396099), // face  0
@@ -74,6 +138,10 @@ namespace h3net.API
             new GeoCoord(-1.054751253523952054, 1.794075294689396615) // face 19
         };
 
+        /// <summary>
+        /// icosahedron face centers in x/y/z on the unit sphere
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly Vec3d[] faceCenterPoint =
         {
             new Vec3d(0.2199307791404606, 0.6583691780274996, 0.7198475378926182), // face  0
@@ -98,9 +166,11 @@ namespace h3net.API
             new Vec3d(-0.1092625278784796, 0.4811951572873210, -0.8697775121287253) // face 19
         };
 
-        /** @brief icosahedron face ijk axes as azimuth in radians from face center to
-         * vertex 0/1/2 respectively
-         */
+        /// <summary>
+        /// icosahedron face ijk axes as azimuth in radians from face center to
+        /// vertex 0/1/2 respectively
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly double[,] faceAxesAzRadsCII =
         {
             {5.619958268523939882, 3.525563166130744542, 1.431168063737548730}, // face  0
@@ -125,7 +195,10 @@ namespace h3net.API
             {2.361378999196363184, 0.266983896803167583, 4.455774101589558636}, // face 19
         };
 
-        /** @brief Definition of which faces neighbor each other. */
+        /// <summary>
+        /// Definition of which faces neighbor each other.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly FaceOrientIJK[,] faceNeighbors =
         {
             {
@@ -270,9 +343,11 @@ namespace h3net.API
             }
         };
 
-        /** @brief direction from the origin face to the destination face, relative to
-         * the origin face's coordinate system, or -1 if not adjacent.
-         */
+        /// <summary>
+        /// direction from the origin face to the destination face, relative to
+        /// the origin face's coordinate system, or -1 if not adjacent.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly int[,] adjacentFaceDir =
         {
             {
@@ -357,7 +432,10 @@ namespace h3net.API
             } // face 19
         };
 
-        /** @brief overage distance table */
+        /// <summary>
+        /// overage distance table
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly int[] maxDimByCIIres =
         {
             2, // res  0
@@ -379,7 +457,10 @@ namespace h3net.API
             11529602 // res 16
         };
 
-        /** @brief unit scale distance table */
+        /// <summary>
+        /// unit scale distance table
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static readonly int[] unitScaleByCIIres =
         {
             1, // res  0
@@ -401,14 +482,14 @@ namespace h3net.API
             5764801 // res 16
         };
 
-        /**
-         * Encodes a coordinate on the sphere to the FaceIJK address of the containing
-         * cell at the specified resolution.
-         *
-         * @param g The spherical coordinates to encode.
-         * @param res The desired H3 resolution for the encoding.
-         * @param h The FaceIJK address of the containing cell at resolution res.
-         */
+        /// <summary>
+        /// Encodes a coordinate on the sphere to the FaceIJK address of the containing
+        /// cell at the specified resolution.
+        /// </summary>
+        /// <param name="g">The spherical coordinates to encode.</param>
+        /// <param name="res">The desired H3 resolution for the encoding.</param>
+        /// <param name="h">The FaceIJK address of the containing cell at resolution res.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _geoToFaceIjk(GeoCoord g, int res, ref FaceIJK h)
         {
             // first convert to hex2d
@@ -419,15 +500,16 @@ namespace h3net.API
             CoordIJK._hex2dToCoordIJK(ref v, ref h.coord);
         }
 
-        /**
-         * Encodes a coordinate on the sphere to the corresponding icosahedral face and
-         * containing 2D hex coordinates relative to that face center.
-         *
-         * @param g The spherical coordinates to encode.
-         * @param res The desired H3 resolution for the encoding.
-         * @param face The icosahedral face containing the spherical coordinates.
-         * @param v The 2D hex coordinates of the cell containing the point.
-         */
+
+        /// <summary>
+        /// Encodes a coordinate on the sphere to the corresponding icosahedral face and
+        /// containing 2D hex coordinates relative to that face center.
+        /// </summary>
+        /// <param name="g">The spherical coordinates to encode.</param>
+        /// <param name="res">The desired H3 resolution for the encoding.</param>
+        /// <param name="face">The icosahedral face containing the spherical coordinates.</param>
+        /// <param name="v">The 2D hex coordinates of the cell containing the point.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _geoToHex2d(GeoCoord g, int res, ref int face, ref Vec2d v)
         {
             Vec3d v3d = new Vec3d();
@@ -481,19 +563,17 @@ namespace h3net.API
             v.y = r * Math.Sin(theta);
         }
 
-
-        /**
-         * Determines the center point in spherical coordinates of a cell given by 2D
-         * hex coordinates on a particular icosahedral face.
-         *
-         * @param v The 2D hex coordinates of the cell.
-         * @param face The icosahedral face upon which the 2D hex coordinate system is
-         *             centered.
-         * @param res The H3 resolution of the cell.
-         * @param substrate Indicates whether or not this grid is actually a substrate
-         *        grid relative to the specified resolution.
-         * @param g The spherical coordinates of the cell center point.
-         */
+        /// <summary>
+        /// Determines the center point in spherical coordinates of a cell given by 2D
+        /// hex coordinates on a particular icosahedral face.
+        /// </summary>
+        /// <param name="v">The 2D hex coordinates of the cell.</param>
+        /// <param name="face">The icosahedral face upon which the 2D hex coordinate system is centered</param>
+        /// <param name="res">The H3 resolution of the cell</param>
+        /// <param name="substrate">Indicates whether or not this grid is actually a substrate
+        /// grid relative to the specified resolution.</param>
+        /// <param name="g">The spherical coordinates of the cell center point.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _hex2dToGeo(ref Vec2d v, int face, int res, int substrate, ref GeoCoord g)
         {
             // calculate (r, theta) in hex2d
@@ -540,14 +620,14 @@ namespace h3net.API
             GeoCoord._geoAzDistanceRads(ref faceCenterGeo[face], theta, r, ref g);
         }
 
-        /**
-         * Determines the center point in spherical coordinates of a cell given by
-         * a FaceIJK address at a specified resolution.
-         *
-         * @param h The FaceIJK address of the cell.
-         * @param res The H3 resolution of the cell.
-         * @param g The spherical coordinates of the cell center point.
-         */
+        /// <summary>
+        /// Determines the center point in spherical coordinates of a cell given by
+        /// a FaceIJK address at a specified resolution.
+        /// </summary>
+        /// <param name="h">The FaceIJK address of the cell.</param>
+        /// <param name="res">The H3 resolution of the cell.</param>
+        /// <param name="g">The spherical coordinates of the cell center point.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _faceIjkToGeo(FaceIJK h, int res, ref GeoCoord g)
         {
             Vec2d v = new Vec2d();
@@ -555,15 +635,14 @@ namespace h3net.API
             _hex2dToGeo(ref v, h.face, res, 0, ref g);
         }
 
-
-        /**
-         * Generates the cell boundary in spherical coordinates for a pentagonal cell
-         * given by a FaceIJK address at a specified resolution.
-         *
-         * @param h The FaceIJK address of the pentagonal cell.
-         * @param res The H3 resolution of the cell.
-         * @param g The spherical coordinates of the cell boundary.
-         */
+        /// <summary>
+        /// Generates the cell boundary in spherical coordinates for a pentagonal cell
+        /// given by a FaceIJK address at a specified resolution.
+        /// </summary>
+        /// <param name="h">The FaceIJK address of the pentagonal cell.</param>
+        /// <param name="res">The H3 resolution of the cell.</param>
+        /// <param name="g">The spherical coordinates of the cell boundary.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _faceIjkPentToGeoBoundary(ref FaceIJK h,  int res, ref GeoBoundary g)
         {
             // the vertexes of an origin-centered pentagon in a Class II resolution on a
@@ -753,15 +832,15 @@ namespace h3net.API
             }
         }
 
-                /**
-         * Generates the cell boundary in spherical coordinates for a cell given by a
-         * FaceIJK address at a specified resolution.
-         *
-         * @param h The FaceIJK address of the cell.
-         * @param res The H3 resolution of the cell.
-         * @param isPentagon Whether or not the cell is a pentagon.
-         * @param g The spherical coordinates of the cell boundary.
-         */
+        /// <summary>
+        /// Generates the cell boundary in spherical coordinates for a cell given by a
+        /// FaceIJK address at a specified resolution.
+        /// </summary>
+        /// <param name="h">The FaceIJK address of the cell.</param>
+        /// <param name="res">The H3 resolution of the cell.</param>
+        /// <param name="isPentagon">Whether or not the cell is a pentagon.</param>
+        /// <param name="g">The spherical coordinates of the cell boundary.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _faceIjkToGeoBoundary(ref FaceIJK h, int res, int isPentagon, ref GeoBoundary g)
         {
             if (isPentagon > 0)
@@ -944,19 +1023,19 @@ namespace h3net.API
             }
         }
     
-
-        /**
-         * Adjusts a FaceIJK address in place so that the resulting cell address is
-         * relative to the correct icosahedral face.
-         *
-         * @param fijk The FaceIJK address of the cell.
-         * @param res The H3 resolution of the cell.
-         * @param pentLeading4 Whether or not the cell is a pentagon with a leading
-         *        digit 4.
-         * @param substrate Whether or not the cell is in a substrate grid.
-         * @return 0 if on original face (no overage); 1 if on face edge (only occurs
-         *         on substrate grids); 2 if overage on new face interior
-         */
+        /// <summary>
+        /// Adjusts a FaceIJK address in place so that the resulting cell address is
+        /// relative to the correct icosahedral face.
+        /// </summary>
+        /// <param name="fijk">The FaceIJK address of the cell.</param>
+        /// <param name="res">The H3 resolution of the cell.</param>
+        /// <param name="pentLeading4">Whether or not the cell is a pentagon with a leading digit 4</param>
+        /// <param name="substrate">Whether or not the cell is in a substrate grid.</param>
+        /// <returns>
+        /// 0 if on original face (no overage); 1 if on face edge (only occurs
+        /// on substrate grids); 2 if overage on new face interior
+        /// </returns>
+        /// <!-- Based off 3.1.1 -->
         public static int _adjustOverageClassII(ref FaceIJK fijk, int res, int pentLeading4, int substrate)
         {
             int overage = 0;
@@ -1062,6 +1141,5 @@ namespace h3net.API
             fijk.coord = ijk;
             return overage;
         }
-
     }
 }

@@ -1,21 +1,42 @@
-﻿using System;
-using System.Runtime.Remoting.Messaging;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System;
 
 namespace h3net.API
 {
+    /// <summary>
+    /// Hex IJK coordinate systems functions including conversions to/from
+    /// lat/lon.
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     public class CoordIJK
     {
         public int i;
         public int j;
         public int k;
-        /**
-         * Sets an IJK coordinate to the specified component values.
-         *
-         * @param ijk The IJK coordinate to set.
-         * @param i The desired i component value.
-         * @param j The desired j component value.
-         * @param k The desired k component value.
-         */
+
+        /// <summary>
+        /// IJK hexagon coordinates
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public CoordIJK(int _i, int _j, int _k)
         {
             i = _i;
@@ -27,8 +48,10 @@ namespace h3net.API
         {
         }
 
-        /** @brief CoordIJK unit vectors corresponding to the 7 H3 digits.
-         */
+        /// <summary>
+        /// CoordIJK unit vectors corresponding to the 7 H3 digits.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         private static readonly CoordIJK[] UNIT_VECS =
         {
             new CoordIJK{i=0, j=0, k=0},  // direction 0
@@ -40,20 +63,28 @@ namespace h3net.API
             new CoordIJK{i=1, j=1, k=0}   // direction 6
         };
 
-
+        /// <summary>
+        /// Sets an IJK coordinate to the specified component values.
+        /// </summary>
+        /// <param name="ijk">The IJK coordinate to set.</param>
+        /// <param name="i">The desired i component value.</param>
+        /// <param name="j">The desired j component value.</param>
+        /// <param name="k">The desired k component value.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _setIJK(ref CoordIJK ijk, int i, int j, int k)
         {
             ijk.i = i;
             ijk.j = j;
             ijk.k = k;
         }
-        /**
-         * Determine the containing hex in ijk+ coordinates for a 2D cartesian
-         * coordinate vector (from DGGRID).
-         *
-         * @param v The 2D cartesian coordinate vector.
-         * @param h The ijk+ coordinates of the containing hex.
-         */
+
+        /// <summary>
+        /// Determine the containing hex in ijk+ coordinates for a 2D cartesian
+        /// coordinate vector (from <a href="http://www.discreteglobalgrids.org/software/">DGGRID</a>).
+        /// </summary>
+        /// <param name="v">The 2D cartesian coordinate vector.</param>
+        /// <param name="h">The ijk+ coordinates of the containing hex.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _hex2dToCoordIJK(ref Vec2d v, ref CoordIJK h)
         {
             double a1, a2;
@@ -126,7 +157,6 @@ namespace h3net.API
             }
 
             // now fold across the axes if necessary
-
             if (v.x < 0.0) {
                 if ((h.j % 2) == 0)  // even
                 {
@@ -148,12 +178,12 @@ namespace h3net.API
             _ijkNormalize(ref h);
         }
 
-        /**
-         * Find the center point in 2D cartesian coordinates of a hex.
-         *
-         * @param h The ijk coordinates of the hex.
-         * @param v The 2D cartesian coordinates of the hex center point.
-         */
+        /// <summary>
+        /// Find the center point in 2D cartesian coordinates of a hex.
+        /// </summary>
+        /// <param name="h">The ijk coordinates of the hex.</param>
+        /// <param name="v">The 2D cartesian coordinates of the hex center point.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _ijkToHex2d(CoordIJK h, ref Vec2d v) {
             int i = h.i - h.k;
             int j = h.j - h.k;
@@ -162,25 +192,25 @@ namespace h3net.API
             v.y = j * Constants.M_SQRT3_2;
         }
 
-        /**
-         * Returns whether or not two ijk coordinates contain exactly the same
-         * component values.
-         *
-         * @param c1 The first set of ijk coordinates.
-         * @param c2 The second set of ijk coordinates.
-         * @return 1 if the two addresses match, 0 if they do not.
-         */
+        /// <summary>
+        /// Returns whether or not two ijk coordinates contain exactly the same
+        /// component values.
+        /// </summary>
+        /// <param name="c1">The first set of ijk coordinates.</param>
+        /// <param name="c2">The second set of ijk coordinates.</param>
+        /// <returns>1 if the two address match, 0 if they do not</returns>
+        /// <!-- Based off 3.1.1 -->
         public static int _ijkMatches(CoordIJK c1, CoordIJK c2) {
             return (c1.i == c2.i && c1.j == c2.j && c1.k == c2.k) ? 1: 0;
         }
 
-        /**
-         * Add two ijk coordinates.
-         *
-         * @param h1 The first set of ijk coordinates.
-         * @param h2 The second set of ijk coordinates.
-         * @param sum The sum of the two sets of ijk coordinates.
-         */
+        /// <summary>
+        /// Add two ijk coordinates
+        /// </summary>
+        /// <param name="h1">The first set of ijk coordinates.</param>
+        /// <param name="h2">The second set of ijk coordinates.</param>
+        /// <param name="sum">The sum of the two sets of ijk coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _ijkAdd(CoordIJK h1, CoordIJK h2, ref CoordIJK sum)
         {
             sum.i = h1.i + h2.i;
@@ -188,37 +218,37 @@ namespace h3net.API
             sum.k = h1.k + h2.k;
         }
 
-        /**
-         * Subtract two ijk coordinates.
-         *
-         * @param h1 The first set of ijk coordinates.
-         * @param h2 The second set of ijk coordinates.
-         * @param diff The difference of the two sets of ijk coordinates (h1 - h2).
-         */
+        /// <summary>
+        /// Subtract two ijk coordinates
+        /// </summary>
+        /// <param name="h1">The first set of ijk coordinates</param>
+        /// <param name="h2">The second set of ijk coordinates</param>
+        /// <param name="diff">The difference of the two sets of ijk coordinates (h1 - h2)</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _ijkSub(ref  CoordIJK h1, ref  CoordIJK h2, ref CoordIJK diff) {
             diff.i = h1.i - h2.i;
             diff.j = h1.j - h2.j;
             diff.k = h1.k - h2.k;
         }
 
-        /**
-         * Uniformly scale ijk coordinates by a scalar. Works in place.
-         *
-         * @param c The ijk coordinates to scale.
-         * @param factor The scaling factor.
-         */
+        /// <summary>
+        /// Uniformly scale ijk coordinates by a scalar. Works in place.
+        /// </summary>
+        /// <param name="c">The ijk coordinates to scale.</param>
+        /// <param name="factor">The scaling factor.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _ijkScale(ref CoordIJK c, int factor) {
             c.i *= factor;
             c.j *= factor;
             c.k *= factor;
         }
 
-        /**
-         * Normalizes ijk coordinates by setting the components to the smallest possible
-         * values. Works in place.
-         *
-         * @param c The ijk coordinates to normalize.
-         */
+        /// <summary>
+        /// Normalizes ijk coordinates by setting the components to the smallest possible
+        /// values. Works in place.
+        /// </summary>
+        /// <param name="c">The ijk coordinates to normalize.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _ijkNormalize(ref CoordIJK c) {
             // remove any negative values
             if (c.i < 0) {
@@ -250,13 +280,12 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Determines the H3 digit corresponding to a unit vector in ijk coordinates.
-         *
-         * @param ijk The ijk coordinates; must be a unit vector.
-         * @return The H3 digit (0-6) corresponding to the ijk unit vector, or
-         * INVALID_DIGIT on failure.
-         */
+        /// <summary>
+        /// Determines the H3 digit corresponding to a unit vector in ijk coordinates.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates; must be a unit vector.</param>
+        /// <returns>The H3 digit (0-6) corresponding to the ijk unit vector, or <see cref="Direction.INVALID_DIGIT"/> INVALID_DIGIT on failure</returns>
+        /// <!-- Based off 3.1.1 -->
         public static Direction _unitIjkToDigit(ref  CoordIJK ijk)
         {
             CoordIJK c = new CoordIJK(ijk.i, ijk.j, ijk.k);
@@ -269,16 +298,16 @@ namespace h3net.API
                     break;
                 }
             }
-
             return digit;
         }
 
-        /**
-         * Find the normalized ijk coordinates of the indexing parent of a cell in a
-         * counter-clockwise aperture 7 grid. Works in place.
-         *
-         * @param ijk The ijk coordinates.
-         */
+
+        /// <summary>
+        /// Find the normalized ijk coordinates of the indexing parent of a cell in a
+        /// counter-clockwise aperture 7 grid. Works in place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _upAp7(ref CoordIJK ijk) {
             // convert to CoordIJ
             int i = ijk.i - ijk.k;
@@ -290,12 +319,12 @@ namespace h3net.API
             _ijkNormalize(ref ijk);
         }
 
-        /**
-         * Find the normalized ijk coordinates of the indexing parent of a cell in a
-         * clockwise aperture 7 grid. Works in place.
-         *
-         * @param ijk The ijk coordinates.
-         */
+        /// <summary>
+        /// Find the normalized ijk coordinates of the indexing parent of a cell in a
+        /// clockwise aperture 7 grid. Works in place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _upAp7r(ref CoordIJK ijk) {
             // convert to CoordIJ
             int i = ijk.i - ijk.k;
@@ -307,13 +336,13 @@ namespace h3net.API
             _ijkNormalize(ref ijk);
         }
 
-        /**
-         * Find the normalized ijk coordinates of the hex centered on the indicated
-         * hex at the next finer aperture 7 counter-clockwise resolution. Works in
-         * place.
-         *
-         * @param ijk The ijk coordinates.
-         */
+        /// <summary>
+        /// Find the normalized ijk coordinates of the hex centered on the indicated
+        /// hex at the next finer aperture 7 counter-clockwise resolution. Works in
+        /// place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _downAp7(ref CoordIJK ijk) {
             // res r unit vectors in res r+1
             CoordIJK iVec = new CoordIJK{i=3, j=0, k=1};
@@ -330,12 +359,12 @@ namespace h3net.API
             _ijkNormalize(ref ijk);
         }
 
-        /**
-         * Find the normalized ijk coordinates of the hex centered on the indicated
-         * hex at the next finer aperture 7 clockwise resolution. Works in place.
-         *
-         * @param ijk The ijk coordinates.
-         */
+        /// <summary>
+        /// Find the normalized ijk coordinates of the hex centered on the indicated
+        /// hex at the next finer aperture 7 clockwise resolution. Works in place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _downAp7r(ref CoordIJK ijk)
         {
             // res r unit vectors in res r+1
@@ -353,13 +382,13 @@ namespace h3net.API
             _ijkNormalize(ref ijk);
         }
 
-        /**
-         * Find the normalized ijk coordinates of the hex in the specified digit
-         * direction from the specified ijk coordinates. Works in place.
-         *
-         * @param ijk The ijk coordinates.
-         * @param digit The digit direction from the original ijk coordinates.
-         */
+        /// <summary>
+        /// Find the normalized ijk coordinates of the hex in the specified digit
+        /// direction from the specified ijk coordinates. Works in place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates.</param>
+        /// <param name="digit">The digit direction from the original ijk coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _neighbor(ref CoordIJK ijk, Direction digit)
         {
             if (digit > Direction.CENTER_DIGIT && digit < Direction.NUM_DIGITS)
@@ -369,11 +398,11 @@ namespace h3net.API
             }
         }
 
-        /**
-         * Rotates ijk coordinates 60 degrees counter-clockwise. Works in place.
-         *
-         * @param ijk The ijk coordinates.
-         */
+        /// <summary>
+        /// Rotates ijk coordinates 60 degrees counter-clockwise. Works in place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _ijkRotate60ccw(ref CoordIJK ijk) {
             // unit vector rotations
             CoordIJK iVec = new CoordIJK(1, 1, 0);
@@ -390,11 +419,11 @@ namespace h3net.API
             _ijkNormalize(ref ijk);
         }
 
-        /**
-         * Rotates ijk coordinates 60 degrees clockwise. Works in place.
-         *
-         * @param ijk The ijk coordinates.
-         */
+        /// <summary>
+        /// Rotates ijk coordinates 60 degrees clockwise. Works in place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _ijkRotate60cw(ref CoordIJK ijk) {
             // unit vector rotations
             CoordIJK iVec = new CoordIJK(1, 0, 1);
@@ -411,11 +440,11 @@ namespace h3net.API
             _ijkNormalize(ref ijk);
         }
 
-        /**
-         * Rotates indexing digit 60 degrees counter-clockwise. Returns result.
-         *
-         * @param digit Indexing digit (between 1 and 6 inclusive)
-         */
+        /// <summary>
+        /// Rotates indexing digit 60 degrees counter-clockwise. Returns result.
+        /// </summary>
+        /// <param name="digit">Indexing digit (between 1 and 6 inclusive)</param>
+        /// <!-- Based off 3.1.1 -->
         public static Direction _rotate60ccw(Direction digit) {
             switch (digit) {
                 case Direction.K_AXES_DIGIT:
@@ -435,12 +464,11 @@ namespace h3net.API
             }
         }
 
-
-        /**
-         * Rotates indexing digit 60 degrees clockwise. Returns result.
-         *
-         * @param digit Indexing digit (between 1 and 6 inclusive)
-         */
+        /// <summary>
+        /// Rotates indexing digit 60 degrees clockwise. Returns result.
+        /// </summary>
+        /// <param name="digit">Indexing digit (between 1 and 6 inclusive)</param>
+        /// <!-- Based off 3.1.1 -->
         public static Direction _rotate60cw(Direction digit) {
             switch (digit) {
                 case Direction.K_AXES_DIGIT:
@@ -460,15 +488,13 @@ namespace h3net.API
             }
         }
 
-
-
-        /**
-         * Find the normalized ijk coordinates of the hex centered on the indicated
-         * hex at the next finer aperture 3 counter-clockwise resolution. Works in
-         * place.
-         *
-         * @param ijk The ijk coordinates.
-         */
+        /// <summary>
+        /// Find the normalized ijk coordinates of the hex centered on the indicated
+        /// hex at the next finer aperture 3 counter-clockwise resolution. Works in
+        /// place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _downAp3(ref CoordIJK ijk)
         {
             // res r unit vectors in res r+1
@@ -486,12 +512,12 @@ namespace h3net.API
             _ijkNormalize(ref ijk);
         }
 
-        /**
-         * Find the normalized ijk coordinates of the hex centered on the indicated
-         * hex at the next finer aperture 3 clockwise resolution. Works in place.
-         *
-         * @param ijk The ijk coordinates.
-         */
+        /// <summary>
+        /// Find the normalized ijk coordinates of the hex centered on the indicated
+        /// hex at the next finer aperture 3 clockwise resolution. Works in place.
+        /// </summary>
+        /// <param name="ijk">The ijk coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _downAp3r(ref CoordIJK ijk)
         {
             // res r unit vectors in res r+1
@@ -509,12 +535,12 @@ namespace h3net.API
             _ijkNormalize(ref ijk);
         }
 
-        /**
-         * Finds the distance between the two coordinates. Returns result.
-         *
-         * @param c1 The first set of ijk coordinates.
-         * @param c2 The second set of ijk coordinates.
-         */
+        /// <summary>
+        /// Finds the distance between the two coordinates. Returns result.
+        /// </summary>
+        /// <param name="c1">The first set of ijk coordinates.</param>
+        /// <param name="c2">The second set of ijk coordinates.</param>
+        /// <!-- Based off 3.1.1 -->
         public static int ijkDistance( CoordIJK c1,  CoordIJK c2) {
             CoordIJK diff = new CoordIJK();
             _ijkSub(ref c1, ref c2, ref diff);

@@ -1,34 +1,34 @@
-﻿using System;
+﻿/*
+ * Copyright 2018, Richard Vasquez
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
+ * C version licensed under the Apache License, Version 2.0 (the "License");
+ * C Source code available at: https://github.com/uber/h3
+ *
+ */
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 namespace h3net.API
 {
-    /*
-     * Copyright 2018, Richard Vasquez
-     *
-     * Licensed under the Apache License, Version 2.0 (the "License");
-     * you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     *
-     *         http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     *
-     * Original version written in C, Copyright 2016-2017 Uber Technologies, Inc.
-     * C version licensed under the Apache License, Version 2.0 (the "License");
-     * C Source code available at: https://github.com/uber/h3
-     *
-     */
-
-    /** @file GeoCoord.cs
-     * @brief   Functions for working with lat/lon coordinates.
-     */
+    /// <summary>
+    /// Functions for working with lat/lon coordinates.
+    /// </summary>
+    /// <!-- Based off 3.1.1 -->
     [DebuggerDisplay("Lat: {lat} Lon: {lon}")]
     public class GeoCoord
     {
@@ -45,12 +45,12 @@ namespace h3net.API
         {
         }
 
-        /**
-         * Normalizes radians to a value between 0.0 and two PI.
-         *
-         * @param rads The input radians value.
-         * @return The normalized radians value.
-         */
+        /// <summary>
+        /// Normalizes radians to a value between 0.0 and two PI.
+        /// </summary>
+        /// <param name="rads">The input radans value</param>
+        /// <returns>The normalized radians value</returns>
+        /// <!-- Based off 3.1.1 -->
         public static double _posAngleRads(double rads)
         {
             var tmp = rads < 0.0
@@ -64,90 +64,94 @@ namespace h3net.API
             return tmp;
         }
 
-        /**
-         * Determines if the components of two spherical coordinates are within some
-         * threshold distance of each other.
-         *
-         * @param p1 The first spherical coordinates.
-         * @param p2 The second spherical coordinates.
-         * @param threshold The threshold distance.
-         * @return Whether or not the two coordinates are within the threshold distance
-         *         of each other.
-         */
+        /// <summary>
+        /// Determines if the components of two spherical coordinates are within some
+        /// threshold distance of each other.
+        /// </summary>
+        /// <param name="p1">The first spherical coordinates</param>
+        /// <param name="p2">The second spherical coordinates</param>
+        /// <param name="threshold">The threshold distance</param>
+        /// <returns>
+        /// Whether or not the two coordinates are within the threshold distance
+        /// of each other
+        /// </returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool geoAlmostEqualThreshold(GeoCoord p1, GeoCoord p2, double threshold)
         {
             return Math.Abs(p1.lat - p2.lat) < threshold &&
                    Math.Abs(p1.lon - p2.lon) < threshold;
         }
 
-        /**
-        * Determines if the components of two spherical coordinates are within our
-        * standard epsilon distance of each other.
-        *
-        * @param p1 The first spherical coordinates.
-        * @param p2 The second spherical coordinates.
-        * @return Whether or not the two coordinates are within the epsilon distance
-        *         of each other.
-        */
+        /// <summary>
+        /// Determines if the components of two spherical coordinates are within our
+        /// standard epsilon distance of each other.
+        /// </summary>
+        /// <param name="p1">The first spherical coordinates.</param>
+        /// <param name="p2">The second spherical coordinates.</param>
+        /// <returns>
+        ///  Whether or not the two coordinates are within the epsilon distance
+        /// of each other.
+        /// </returns>
+        /// <!-- Based off 3.1.1 -->
         public static bool geoAlmostEqual(GeoCoord v1, GeoCoord v2)
         {
             return geoAlmostEqualThreshold(v1, v2, Constants.EPSILON_RAD);
         }
 
-        /**
-         * Set the components of spherical coordinates in decimal degrees.
-         *
-         * @param p The spherical coodinates.
-         * @param latDegs The desired latitidue in decimal degrees.
-         * @param lonDegs The desired longitude in decimal degrees.
-         */
+        /// <summary>
+        /// Set the components of spherical coordinates in decimal degrees.
+        /// </summary>
+        /// <param name="p">The spherical coordinates</param>
+        /// <param name="latDegs">The desired latitude in decimal degrees</param>
+        /// <param name="lonDegs">The desired longitude in decimal degrees</param>
+        /// <!-- Based off 3.1.1 -->
         public static void setGeoDegs(ref GeoCoord p, double latDegs, double lonDegs)
         {
             _setGeoRads(ref p, degsToRads(latDegs), degsToRads(lonDegs));
 
         }
 
-        /**
-        * Set the components of spherical coordinates in radians.
-        *
-        * @param p The spherical coodinates.
-        * @param latRads The desired latitidue in decimal radians.
-        * @param lonRads The desired longitude in decimal radians.
-        */
+        /// <summary>
+        /// Set the components of spherical coordinates in radians.
+        /// </summary>
+        /// <param name="p">The spherical coordinates</param>
+        /// <param name="latDegs">The desired latitude in decimal radians</param>
+        /// <param name="lonDegs">The desired longitude in decimal radians</param>
+        /// <!-- Based off 3.1.1 -->
         public static void _setGeoRads(ref GeoCoord p, double latRads, double lonRads)
         {
             p.lat = latRads;
             p.lon = lonRads;
         }
 
-        /**
-         * Convert from decimal degrees to radians.
-         *
-         * @param degrees The decimal degrees.
-         * @return The corresponding radians.
-         */
+        /// <summary>
+        /// Convert from decimal degrees to radians.
+        /// </summary>
+        /// <param name="degrees">The decimal degrees</param>
+        /// <returns>The corresponding radians</returns>
+        /// <!-- Based off 3.1.1 -->
         public static double degsToRads(double degrees)
         {
             return degrees * Constants.M_PI_180;
         }
 
-        /**
-         * Convert from radians to decimal degrees.
-         *
-         * @param radians The radians.
-         * @return The corresponding decimal degrees.
-         */
+        /// <summary>
+        /// Convert fro radians to decimal degrees.
+        /// </summary>
+        /// <param name="radians">The radians</param>
+        /// <returns>The corresponding decimal degrees</returns>
+        /// <!-- Based off 3.1.1 -->
         public static double radsToDegs(double radians)
         {
             return radians * Constants.M_180_PI;
         }
 
-        /**
-         * constrainLat makes sure latitudes are in the proper bounds
-         *
-         * @param lat The original lat value
-         * @return The corrected lat value
-         */
+        /// <summary>
+        /// Makes sure latitudes are in the proper bounds
+        /// </summary>
+        /// <param name="lat">The original lat value</param>
+        /// <returns>The corrected lat value</returns>
+        /// <!-- Based off 3.1.1 -->
         public static double constrainLat(double lat)
         {
             while (lat > Constants.M_PI_2)
@@ -158,12 +162,12 @@ namespace h3net.API
             return lat;
         }
 
-        /**
-         * constrainLng makes sure longitudes are in the proper bounds
-         *
-         * @param lng The origin lng value
-         * @return The corrected lng value
-         */
+        /// <summary>
+        /// Makes sure longitudes are in the proper bounds
+        /// </summary>
+        /// <param name="lng">The origin lng value</param>
+        /// <returns>The corrected lng value</returns>
+        /// <!-- Based off 3.1.1 -->
         public static double constrainLng(double lng)
         {
             while (lng > Constants.M_PI)
@@ -179,13 +183,13 @@ namespace h3net.API
             return lng;
         }
 
-        /**
-         * Find the great circle distance in radians between two spherical coordinates.
-         *
-         * @param p1 The first spherical coordinates.
-         * @param p2 The second spherical coordinates.
-         * @return The great circle distance in radians between p1 and p2.
-         */
+        /// <summary>
+        /// Find the great circle distance in radians between two spherical coordinates.
+        /// </summary>
+        /// <param name="p1">The first spherical coordinates</param>
+        /// <param name="p2">The second spherical coordinates</param>
+        /// <returns>The great circle distance between p1 and p2</returns>
+        /// <!-- Based off 3.1.1 -->
         public static double _geoDistRads(GeoCoord p1, GeoCoord p2)
         {
             // use spherical triangle with p1 at A, p2 at B, and north pole at C
@@ -219,46 +223,47 @@ namespace h3net.API
             return Math.Acos(cosc);
         }
 
-        /**
-         * Find the great circle distance in kilometers between two spherical
-         * coordinates.
-         *
-         * @param p1 The first spherical coordinates.
-         * @param p2 The second spherical coordinates.
-         * @return The distance in kilometers between p1 and p2.
-         */
+        /// <summary>
+        /// Find the great circle distance in kilometers between two spherical
+        /// coordinates
+        /// </summary>
+        /// <param name="p1">The first spherical coordinates</param>
+        /// <param name="p2">The distance in kilometers between p1 and p2</param>
+        /// <!-- Based off 3.1.1 -->
         public static  double _geoDistKm(GeoCoord p1, IEnumerable<GeoCoord> p2)
         {
             return Constants.EARTH_RADIUS_KM * _geoDistRads(p1, p2.First( ));
         }
 
-        /**
-         * Determines the azimuth to p2 from p1 in radians.
-         *
-         * @param p1 The first spherical coordinates.
-         * @param p2 The second spherical coordinates.
-         * @return The azimuth in radians from p1 to p2.
-         */
+        /// <summary>
+        /// Determines the azimuth to p2 from p1 in radians
+        /// </summary>
+        /// <param name="p1">The first spherical coordinates</param>
+        /// <param name="p2">The second spherical coordinates</param>
+        /// <returns>The azimuth in radians from p1 to p2</returns>
+        /// <!-- Based off 3.1.1 -->
         public static double _geoAzimuthRads(GeoCoord p1, GeoCoord p2)
         {
             return
-                Math.Atan2(
-                    Math.Cos(p2.lat) * Math.Sin( p2.lon - p1.lon),
-                    Math.Cos(p1.lat) * Math.Sin(p2.lat) - 
-                    Math.Sin(p1.lat) * Math.Cos(p2.lat) * Math.Cos(p2.lon - p1.lon)
-                );
+                Math.Atan2
+                    (
+                     Math.Cos(p2.lat) * Math.Sin(p2.lon - p1.lon),
+                     Math.Cos(p1.lat) * Math.Sin(p2.lat) -
+                     Math.Sin(p1.lat) * Math.Cos(p2.lat) * Math.Cos(p2.lon - p1.lon)
+                    );
         }
 
-        /**
-         * Computes the point on the sphere a specified azimuth and distance from
-         * another point.
-         *
-         * @param p1 The first spherical coordinates.
-         * @param az The desired azimuth from p1.
-         * @param distance The desired distance from p1, must be non-negative.
-         * @param p2 The spherical coordinates at the desired azimuth and distance from
-         * p1.
-         */
+        /// <summary>
+        /// Computes the point on the sphere a specified azimuth and distance from
+        /// another point.
+        /// </summary>
+        /// <param name="p1">The first spherical coordinates.</param>
+        /// <param name="az">The desired azimuth from p1.</param>
+        /// <param name="distance">The desired distance from p1, must be non-negative.</param>
+        /// <param name="p2">
+        /// The spherical coordinates at the desired azimuth and distance from p1.
+        /// </param>
+        /// <!-- Based off 3.1.1 -->
         public static void _geoAzDistanceRads(ref GeoCoord p1, double az, double distance, ref GeoCoord p2)
         {
             if (distance < Constants.EPSILON) {
@@ -365,7 +370,10 @@ namespace h3net.API
             return lens[res];
         }
 
-        /** @brief Number of unique valid H3Indexes at given resolution. */
+        /// <summary>
+        /// Number of unique valid H3Indexes at given resolution.
+        /// </summary>
+        /// <!-- Based off 3.1.1 -->
         public static long numHexagons(int res) {
             long[] nums =
             {
