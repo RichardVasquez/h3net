@@ -947,7 +947,7 @@ namespace h3net.API
         /// </summary>
         /// <!-- Based off 3.1.1 -->
         // ReSharper disable once UnusedMember.Global
-        public void _baseCellToFaceIjk(int baseCell, ref FaceIJK h)
+        public static void _baseCellToFaceIjk(int baseCell, ref FaceIJK h)
         {
             h = baseCellData[baseCell].homeFijk;
         }

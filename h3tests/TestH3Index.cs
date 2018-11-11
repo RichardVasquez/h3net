@@ -1,5 +1,4 @@
-﻿using System;
-using h3net.API;
+﻿using h3net.API;
 using NUnit.Framework;
 
 namespace h3tests
@@ -111,9 +110,20 @@ namespace h3tests
         public void h3BadDigitInvalid()
         {
             H3Index h = H3Index.H3_INIT;
+            // By default the first index digit is out of range.
             H3Index.H3_SET_MODE(ref h, Constants.H3_HEXAGON_MODE);
             H3Index.H3_SET_RESOLUTION(ref h, 1);
             Assert.True(H3Index.h3IsValid(h) == 0, "h3IsValid failed on too large digit");
+        }
+
+        [Test]
+        public void h3DeletedSubsequenceInvalid()
+        {
+            H3Index h = 0;
+            // Create an index located in a deleted subsequence of a pentagon.
+            H3Index.setH3Index(ref h, 1, 4, Direction.K_AXES_DIGIT);
+            Assert.True(H3Index.h3IsValid(h) == 0,
+                     "h3IsValid failed on deleted subsequence");
         }
 
         [Test]

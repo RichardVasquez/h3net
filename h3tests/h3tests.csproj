@@ -85,6 +85,9 @@
     <Compile Include="TestVec2d.cs" />
     <Compile Include="TestVec3d.cs" />
     <Compile Include="TestVertexGraph.cs" />
+    <Compile Include="TestCoordIj.cs" />
+    <Compile Include="TestH3Distance.cs" />
+    <Compile Include="TestKRing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
