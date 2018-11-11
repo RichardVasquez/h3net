@@ -549,5 +549,31 @@ namespace h3net.API
 
             return Math.Max(absDiff.i, Math.Max(absDiff.j, absDiff.k));
         }
+
+        /// <summary>
+        /// Transforms coordinates from the IJK+ coordinate system to the IJ coordinate system
+        /// </summary>
+        /// <param name="ijk">The input IJK+ coordinates</param>
+        /// <param name="ij">The output IJ coordinates</param>
+        /// <!-- Based off 3.2.0 -->
+        public static void ijkToIj(CoordIJK ijk, ref LocalIJ.CoordIJ ij)
+        {
+            ij.i = ijk.i - ijk.k;
+            ij.j = ijk.j - ijk.k;
+        }
+
+        /// <summary>
+        /// Transforms coordinates from the IJ coordinate system to the IJK+ coordinate system
+        /// </summary>
+        /// <param name="ij">The input IJ coordinates</param>
+        /// <param name="ijk">The output IJK+ coordinates</param>
+        /// <!-- Based off 3.2.0 -->
+        public static void ijToIjk(LocalIJ.CoordIJ ij, ref CoordIJK ijk) {
+            ijk.i = ij.i;
+            ijk.j = ij.j;
+            ijk.k = 0;
+
+            _ijkNormalize(ref ijk);
+        }
     }
 }

@@ -342,7 +342,7 @@ namespace h3net.API
         /// when crossing a face edge.)
         /// </param>
         /// <returns>H3Index of the specified neighbor or 0 if deleted k-subsequence distortion is encountered.</returns>
-        /// <!-- Based off 3.1.1 -->
+        /// <!-- Based off 3.2.0 -->
         public static ulong h3NeighborRotations(H3Index origin, Direction dir, ref int rotations)
         {
             H3Index out_hex = origin;
@@ -480,7 +480,7 @@ namespace h3net.API
                 // might not follow properties of some other edges.)
                 if (oldBaseCell != newBaseCell)
                 {
-                    if (newBaseCell == 4 || newBaseCell == 117)
+                    if (BaseCells._isBaseCellPolarPentagon(newBaseCell))
                     {
                         // 'polar' base cells behave differently because they have all
                         // i neighbors.

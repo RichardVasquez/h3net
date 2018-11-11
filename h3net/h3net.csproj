@@ -73,6 +73,7 @@
     <Compile Include="API\H3Index.cs" />
     <Compile Include="API\H3UniEdge.cs" />
     <Compile Include="API\LinkedGeo.cs" />
+    <Compile Include="API\LocalIJ.cs" />
     <Compile Include="API\MathExtensions.cs" />
     <Compile Include="API\Polygon.cs" />
     <Compile Include="API\Vec2d.cs" />

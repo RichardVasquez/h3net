@@ -410,6 +410,10 @@ namespace h3net.API
         /// <!-- Based off 3.1.1 -->
         public static void h3ToString(H3Index h, ref string str, int sz)
         {
+            if (sz < 17)
+            {
+                return;
+            }
             //  We don't care about sz.  We have System.String
             str = ((ulong) h).ToString("X").ToLower();
         }
@@ -435,6 +439,7 @@ namespace h3net.API
             }
 
             int res = H3_GET_RESOLUTION(h);
+            bool foundFirstNonZeroDigit = false;
             if (res < 0 || res > Constants.MAX_H3_RES)
             {
                 return 0;
@@ -443,6 +448,14 @@ namespace h3net.API
             for (int r = 1; r <= res; r++)
             {
                 Direction digit = H3_GET_INDEX_DIGIT(h, r);
+                if (!foundFirstNonZeroDigit && digit != Direction.CENTER_DIGIT) {
+                    foundFirstNonZeroDigit = true;
+                    if (BaseCells._isBaseCellPentagon(baseCell) && digit == Direction.K_AXES_DIGIT)
+                    {
+                        return 0;
+                    }
+                }
+
                 if (digit < Direction.CENTER_DIGIT || digit >= Direction.NUM_DIGITS)
                 {
                     return 0;
@@ -837,11 +850,12 @@ namespace h3net.API
         }
 
         /// <summary>
-        /// Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
+        ///  * Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
         /// </summary>
-        /// <param name="h">The H3Index.</param> 
+        /// <param name="h">The H3Index.</param>
         /// <!-- Based off 3.1.1 -->
-        static H3Index _h3RotatePent60ccw(H3Index h) {
+        public static H3Index _h3RotatePent60ccw(ref H3Index h)
+        {
             // rotate in place; skips any leading 1 digits (k-axis)
             int foundFirstNonZeroDigit = 0;
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
@@ -851,7 +865,7 @@ namespace h3net.API
                 // look for the first non-zero digit so we
                 // can adjust for deleted k-axes sequence
                 // if necessary
-                if ((foundFirstNonZeroDigit ==0) && H3_GET_INDEX_DIGIT(h, r) != 0)
+                if (foundFirstNonZeroDigit == 0 && H3_GET_INDEX_DIGIT(h, r) != 0)
                 {
                     foundFirstNonZeroDigit = 1;
 
@@ -870,7 +884,7 @@ namespace h3net.API
         /// </summary>
         /// <param name="h"> The H3Index.</param>
         /// <!-- Based off 3.1.1 -->
-        H3Index _h3RotatePent60cw(H3Index h)
+        public static H3Index _h3RotatePent60cw(H3Index h)
         {
             // rotate in place; skips any leading 1 digits (k-axis)
             int foundFirstNonZeroDigit = 0;
@@ -959,7 +973,7 @@ namespace h3net.API
             FaceIJK fijkBC = new FaceIJK(fijk.face, new CoordIJK(fijk.coord.i,fijk.coord.j,fijk.coord.k));
 
             // build the H3Index from finest res up
-            // adjust r for the fact that the res 0 base cell offsets the index array
+            // adjust r for the fact that the res 0 base cell offsets the indexing digits
             CoordIJK ijk = fijkBC.coord;
             for (int r = res - 1; r >= 0; r--) {
                 //CoordIJK lastIJK = ijk;
@@ -1018,7 +1032,7 @@ namespace h3net.API
 
                 for (int i = 0; i < numRots; i++)
                 {
-                    h = _h3RotatePent60ccw(h);
+                    h = _h3RotatePent60ccw(ref h);
                 }
             } else {
                 for (int i = 0; i < numRots; i++) {
@@ -1067,7 +1081,7 @@ namespace h3net.API
         /// </param>
         /// <returns>Returns 1 if the possibility of overage exists, otherwise 0.</returns>
         /// <!-- Based off 3.1.1 -->
-        static int _h3ToFaceIjkWithInitializedFijk(H3Index h, ref FaceIJK fijk)
+        internal static int _h3ToFaceIjkWithInitializedFijk(H3Index h, ref FaceIJK fijk)
         {
             CoordIJK ijk = new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k);
             int res = H3_GET_RESOLUTION(h);
@@ -1211,253 +1225,6 @@ namespace h3net.API
             return res % 2 == 1;
         }
 
-        /// <summary>
-        /// Produces ijk+ coordinates for an index anchored by an origin.
-        /// 
-        /// The coordinate space used by this function may have deleted
-        /// regions or warping due to pentagonal distortion.
-        /// 
-        /// Coordinates are only comparable if they come from the same
-        /// origin index.
-        /// </summary>
-        /// <param name="origin"> An anchoring index for the ijk+ coordinate system.</param>
-        /// <param name="h3"> Index to find the coordinates of</param>
-        /// <param name="out_coord"> ijk+ coordinates of the index will be placed here on success</param>
-        /// <returns>0 on success, or another value on failure.</returns>
-        /// <!-- Based off 3.1.1 -->
-        int h3ToIjk(H3Index origin, H3Index h3, ref CoordIJK out_coord) {
-            if (H3_GET_MODE(ref origin) != Constants.H3_HEXAGON_MODE ||
-                H3_GET_MODE(ref h3) != Constants.H3_HEXAGON_MODE) {
-                // Only hexagon mode is relevant, since we can't
-                // encode directionality in CoordIJK.
-                return 1;
-            }
 
-            int res = H3_GET_RESOLUTION(origin);
-
-            if (res != H3_GET_RESOLUTION(h3)) {
-                return 1;
-            }
-
-            int originBaseCell = H3_GET_BASE_CELL(origin);
-            int baseCell = H3_GET_BASE_CELL(h3);
-
-            // Direction from origin base cell to index base cell
-            Direction dir = 0;
-            Direction revDir = 0;
-            if (originBaseCell != baseCell) {
-                dir = BaseCells._getBaseCellDirection(originBaseCell, baseCell);
-                if (dir == Direction.INVALID_DIGIT) {
-                    // Base cells are not neighbors, can't unfold.
-                    return 2;
-                }
-                revDir = BaseCells._getBaseCellDirection(baseCell, originBaseCell);
-                if (revDir == Direction.CENTER_DIGIT)
-                {
-                    throw new Exception("assert(revDir != Direction.CENTER_DIGIT);");
-                }
-            }
-
-            int originOnPent = BaseCells._isBaseCellPentagon(originBaseCell) ? 1 : 0;
-            int indexOnPent = BaseCells._isBaseCellPentagon(baseCell) ? 1 : 0;
-
-            FaceIJK indexFijk = new FaceIJK();
-            if (dir != Direction.CENTER_DIGIT) {
-                // Rotate index into the orientation of the origin base cell.
-                // cw because we are undoing the rotation into that base cell.
-                int baseCellRotations = BaseCells.baseCellNeighbor60CCWRots[originBaseCell,(int)dir];
-                if (indexOnPent == 1) {
-                    for (int i = 0; i < baseCellRotations; i++) {
-                        h3 = _h3RotatePent60cw(h3);
-
-                        revDir = CoordIJK. _rotate60cw(revDir);
-                        if (revDir == Direction.K_AXES_DIGIT)
-                        {
-                            revDir =CoordIJK. _rotate60cw(revDir);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < baseCellRotations; i++)
-                    {
-                        h3 = _h3Rotate60cw(ref h3);
-                        revDir =CoordIJK. _rotate60cw(revDir);
-                    }
-                }
-            }
-            // Face is unused. This produces coordinates in base cell coordinate space.
-            _h3ToFaceIjkWithInitializedFijk(h3, ref indexFijk);
-
-            // Origin leading digit -> index leading digit -> rotations 60 cw
-            // Either being 1 (K axis) is invalid.
-            // No good default at 0.
-             int[,] PENTAGON_ROTATIONS = {
-                {0, -1, 0, 0, 0, 0, 0},        // 0
-                {-1, -1, -1, -1, -1, -1, -1},  // 1
-                {0, -1, 0, 0, 0, 1, 0},        // 2
-                {0, -1, 0, 0, 1, 1, 0},        // 3
-                {0, -1, 0, 5, 0, 0, 0},        // 4
-                {0, -1, 5, 5, 0, 0, 0},        // 5
-                {0, -1, 0, 0, 0, 0, 0},        // 6
-            };
-            // Simply prohibit many pentagon distortion cases rather than handling them.
-            bool[,] FAILED_DIRECTIONS_II = {
-                {false, false, false, false, false, false, false},  // 0
-                {false, false, false, false, false, false, false},  // 1
-                {false, false, false, false, true, false, false},   // 2
-                {false, false, false, false, false, false, true},   // 3
-                {false, false, false, true, false, false, false},   // 4
-                {false, false, true, false, false, false, false},   // 5
-                {false, false, false, false, false, true, false},   // 6
-            };
-             bool[,] FAILED_DIRECTIONS_III = {
-                {false, false, false, false, false, false, false},  // 0
-                {false, false, false, false, false, false, false},  // 1
-                {false, false, false, false, false, true, false},   // 2
-                {false, false, false, false, true, false, false},   // 3
-                {false, false, true, false, false, false, false},   // 4
-                {false, false, false, false, false, false, true},   // 5
-                {false, false, false, true, false, false, false},   // 6
-            };
-
-            if (dir != Direction.CENTER_DIGIT ) {
-                if (baseCell == originBaseCell)
-                {
-                    throw new Exception("assert(baseCell != originBaseCell);");
-                }
-
-                if ((originOnPent & indexOnPent) == 0)
-                {
-                    throw new Exception("assert(!(originOnPent && indexOnPent));");
-                }
-                
-
-                int pentagonRotations = 0;
-                int directionRotations = 0;
-
-                if (originOnPent == 1) {
-                    int originLeadingDigit =(int) _h3LeadingNonZeroDigit(origin);
-
-                    if (isResClassIII(res) &&
-                        FAILED_DIRECTIONS_III[originLeadingDigit,(int)dir] ||
-                        !isResClassIII(res) &&
-                        FAILED_DIRECTIONS_II[originLeadingDigit,(int)dir]) {
-                        // TODO this part of the pentagon might not be unfolded
-                        // correctly.
-                        return 3;
-                    }
-
-                    directionRotations = PENTAGON_ROTATIONS[originLeadingDigit,(int)dir];
-                    pentagonRotations = directionRotations;
-                } else if (indexOnPent != 0) {
-                    int indexLeadingDigit = (int)_h3LeadingNonZeroDigit(h3);
-
-                    if ((isResClassIII(res) &&
-                         FAILED_DIRECTIONS_III[indexLeadingDigit,(int)revDir]) ||
-                        (!isResClassIII(res) &&
-                         FAILED_DIRECTIONS_II[indexLeadingDigit,(int)revDir])) {
-                        // TODO this part of the pentagon might not be unfolded
-                        // correctly.
-                        return 4;
-                    }
-
-                    pentagonRotations = PENTAGON_ROTATIONS[(int)revDir,indexLeadingDigit];
-                }
-
-                if (pentagonRotations < 0)
-                {
-                    throw new Exception("assert(pentagonRotations >= 0);");
-                }
-
-                if (directionRotations < 0)
-                {
-                    throw new Exception("assert(directionRotations >= 0);");
-                }
-
-                for (int i = 0; i < pentagonRotations; i++) {
-                    CoordIJK._ijkRotate60cw(ref indexFijk.coord);
-                }
-
-                CoordIJK offset = new CoordIJK();
-                CoordIJK._neighbor( ref offset, dir);
-                // Scale offset based on resolution
-                for (int r = res - 1; r >= 0; r--) {
-                    if (isResClassIII(r + 1)) {
-                        // rotate ccw
-                        CoordIJK._downAp7(ref offset);
-                    } else {
-                        // rotate cw
-                        CoordIJK ._downAp7r(ref offset);
-                    }
-                }
-
-                for (int i = 0; i < directionRotations; i++) {
-                    CoordIJK._ijkRotate60cw(ref offset);
-                }
-
-                // Perform necessary translation
-                CoordIJK._ijkAdd(indexFijk.coord, offset, ref indexFijk.coord);
-                CoordIJK._ijkNormalize(ref indexFijk.coord);
-            } else if (originOnPent==1  && indexOnPent==1) {
-                // If the origin and index are on pentagon, and we checked that the base
-                // cells are the same or neighboring, then they must be the same base
-                // cell.
-                if (baseCell != originBaseCell)
-                {
-                    throw new Exception("assert(baseCell == originBaseCell);");
-                }
-                
-
-                int originLeadingDigit = (int) _h3LeadingNonZeroDigit(origin);
-                int indexLeadingDigit = (int) _h3LeadingNonZeroDigit(h3);
-
-                if (FAILED_DIRECTIONS_III[originLeadingDigit,indexLeadingDigit] ||
-                    FAILED_DIRECTIONS_II[originLeadingDigit,indexLeadingDigit]) {
-                    // TODO this part of the pentagon might not be unfolded
-                    // correctly.
-                    return 5;
-                }
-
-                int withinPentagonRotations =
-                    PENTAGON_ROTATIONS[originLeadingDigit,indexLeadingDigit];
-
-                for (int i = 0; i < withinPentagonRotations; i++) {
-                    CoordIJK._ijkRotate60cw(ref indexFijk.coord);
-                }
-            }
-
-            out_coord = indexFijk.coord;
-            return 0;
-        }
-
-        /// <summary>
-        ///  * Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
-        /// </summary>
-        /// <param name="h">The H3Index.</param>
-        /// <!-- Based off 3.1.1 -->
-        public static H3Index _h3RotatePent60ccw(ref H3Index h)
-        {
-            // rotate in place; skips any leading 1 digits (k-axis)
-
-            int foundFirstNonZeroDigit = 0;
-            for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
-                // rotate this digit
-                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIJK._rotate60ccw(H3_GET_INDEX_DIGIT(h, r)));
-
-                // look for the first non-zero digit so we
-                // can adjust for deleted k-axes sequence
-                // if necessary
-                if (foundFirstNonZeroDigit == 0 && H3_GET_INDEX_DIGIT(h, r) != 0)
-                {
-                    foundFirstNonZeroDigit = 1;
-
-                    // adjust for deleted k-axes sequence
-                    if (_h3LeadingNonZeroDigit(h) == Direction.K_AXES_DIGIT)
-                    {
-                        h = _h3Rotate60ccw(ref h);
-                    }
-                }
-            }
-            return h;
-        }
     }
 }
