@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using h3net.API;
+using H3Net.Code;
 using NUnit.Framework;
 
 namespace h3tests

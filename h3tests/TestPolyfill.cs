@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using h3net.API;
+using H3Net.Code;
 using NUnit.Framework;
 
 namespace h3tests
@@ -311,7 +311,7 @@ namespace h3tests
             //  There's likely a resolution issue, and wondering if
             //  it may be related to https://github.com/uber/h3/issues/136
             //  It's nearly 10%, but right now it's stating 1122
-
+            //  TODO: FIGURE OUT THE GRANULARITY ISSUE
             //  I'm also assuming there's a longitudinal issue I need to
             //  look at since the C and C# values start drifting from 
             //  from each other at around 10^-15

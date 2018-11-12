@@ -80,6 +80,7 @@
     <Compile Include="TestHexRing.cs" />
     <Compile Include="TestLinkedGeo.cs" />
     <Compile Include="TestMaxH3ToChildrenSize.cs" />
+    <Compile Include="TestNewH3Api.cs" />
     <Compile Include="TestPolyfill.cs" />
     <Compile Include="TestPolygon.cs" />
     <Compile Include="TestVec2d.cs" />
