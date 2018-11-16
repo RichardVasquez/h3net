@@ -259,3 +259,6 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/h3net/PhantomCode/BboxCode.cs
+/h3net/PhantomCode/BridgeH3IndexFaceIjk.cs
+/h3net/PhantomCode/H3IndexCode.cs
