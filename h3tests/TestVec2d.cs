@@ -30,9 +30,9 @@ namespace h3tests
             double expectedX = 4.0;
             double expectedY = 4.0;
 
-            Assert.True(Math.Abs(intersection.x - expectedX) < Constants.DBL_EPSILON,
+            Assert.True(Math.Abs(intersection.X - expectedX) < Constants.DBL_EPSILON,
                      "X coord as expected");
-            Assert.True(Math.Abs(intersection.y - expectedY) < Constants.DBL_EPSILON,
+            Assert.True(Math.Abs(intersection.Y - expectedY) < Constants.DBL_EPSILON,
                      "Y coord as expected");
         }
 

@@ -80,9 +80,9 @@
     <Compile Include="Code\Vec2d.cs" />
     <Compile Include="Code\Vec3d.cs" />
     <Compile Include="Code\VertexGraph.cs" />
+    <Compile Include="H3Lib\BBox.cs" />
     <Compile Include="Structs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
