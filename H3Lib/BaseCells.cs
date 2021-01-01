@@ -15,7 +15,7 @@ namespace H3Lib
             /// <summary>
             /// "Home" face and normalized ijk coordinates on that face
             /// </summary>
-            public FaceIJK homeFijk;
+            public FaceIjk homeFijk;
             /// <summary>
             /// Is this base cell a pentagon?
             /// </summary>
@@ -27,7 +27,7 @@ namespace H3Lib
 
             public BaseCellData(int face, int faceI, int faceJ, int faceK, int isPenta, int offset1, int offset2) : this()
             {
-                homeFijk = new FaceIJK(face, new CoordIJK(faceI, faceJ, faceK));
+                homeFijk = new FaceIjk(face, new CoordIjk(faceI, faceJ, faceK));
                 isPentagon = isPenta;
                 cwOffsetPent = new[] {offset1, offset2};
             }
@@ -905,9 +905,9 @@ namespace H3Lib
         /// coordinate.
         /// </summary>
         /// <!-- Based off 3.1.1 -->
-        public static int _faceIjkToBaseCell(FaceIJK h)
+        public static int _faceIjkToBaseCell(FaceIjk h)
         {
-            return faceIjkBaseCells[h.face,h.coord.i,h.coord.j,h.coord.k].baseCell;
+            return faceIjkBaseCells[h.Face,h.Coord.I,h.Coord.J,h.Coord.K].baseCell;
         }
 
         /// <summary>
@@ -920,9 +920,9 @@ namespace H3Lib
         /// Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
         /// </summary>
         /// <!-- Based off 3.1.1 -->
-        public static int _faceIjkToBaseCellCCWrot60( FaceIJK h)
+        public static int _faceIjkToBaseCellCCWrot60( FaceIjk h)
         {
-            return faceIjkBaseCells[h.face, h.coord.i, h.coord.j, h.coord.k].ccwRot60;
+            return faceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K].ccwRot60;
         }
 
         /// <summary>
@@ -930,7 +930,7 @@ namespace H3Lib
         /// </summary>
         /// <!-- Based off 3.1.1 -->
         // ReSharper disable once UnusedMember.Global
-        public static void _baseCellToFaceIjk(int baseCell, ref FaceIJK h)
+        public static void _baseCellToFaceIjk(int baseCell, ref FaceIjk h)
         {
             h = baseCellData[baseCell].homeFijk;
         }

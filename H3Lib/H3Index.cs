@@ -9,7 +9,6 @@ namespace H3Lib
     /// <summary>
     /// H3Index utility functions
     /// </summary>
-    /// <!-- Based off 3.1.1 -->
     [DebuggerDisplay("{value}")]
     public class H3Index
     {
@@ -255,7 +254,6 @@ namespace H3Lib
         /// <summary>
         /// Gets the integer mode of h3.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static int H3_GET_MODE(ref H3Index h3)
         {
             return (int) ((h3 & H3_MODE_MASK) >> H3_MODE_OFFSET);
@@ -264,7 +262,6 @@ namespace H3Lib
         /// <summary>
         /// Sets the integer mode of h3 to v.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_MODE(ref H3Index h3, ulong v)
         {
             h3 = h3 & H3_MODE_MASK_NEGATIVE | (v << H3_MODE_OFFSET);
@@ -273,7 +270,6 @@ namespace H3Lib
         /// <summary>
         /// Gets the integer base cell of h3.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static int H3_GET_BASE_CELL(H3Index h3)
         {
             return (int)((h3 & H3_BC_MASK) >> H3_BC_OFFSET);
@@ -282,7 +278,6 @@ namespace H3Lib
         /// <summary>
         /// Sets the integer base cell of h3 to bc.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_BASE_CELL(ref H3Index h3, int bc)
         {
             h3 = (h3 & H3_BC_MASK_NEGATIVE) | ((ulong)bc << H3_BC_OFFSET);
@@ -291,7 +286,6 @@ namespace H3Lib
         /// <summary>
         /// Gets the integer resolution of h3.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static int H3_GET_RESOLUTION(H3Index h3)
         {
             return (int) ((h3 & H3_RES_MASK) >> H3_RES_OFFSET);
@@ -300,7 +294,6 @@ namespace H3Lib
         /// <summary>
         /// Sets the integer resolution of h3.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_RESOLUTION(ref H3Index h3, H3Index res)
         {
             h3 = (h3 & H3_RES_MASK_NEGATIVE) | (res << H3_RES_OFFSET);
@@ -309,7 +302,6 @@ namespace H3Lib
         /// <summary>
         ///     Gets the resolution res integer digit (0-7) of h3.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static Direction H3_GET_INDEX_DIGIT(H3Index h3, int res)
         {
             return (Direction) ((h3 >> ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK);
@@ -319,7 +311,6 @@ namespace H3Lib
         /// Sets a value in the reserved space. Setting to non-zero may produce
         /// invalid indexes.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_RESERVED_BITS(ref H3Index h3, ulong v)
         {
             h3 = (h3 & H3_RESERVED_MASK_NEGATIVE) | (v << H3_RESERVED_OFFSET);
@@ -328,7 +319,6 @@ namespace H3Lib
         /// <summary>
         /// Gets a value in the reserved space. Should always be zero for valid indexes.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static int H3_GET_RESERVED_BITS(H3Index h3)
         {
             return (int) ((h3 & H3_RESERVED_MASK) >> H3_RESERVED_OFFSET);
@@ -337,7 +327,6 @@ namespace H3Lib
         /// <summary>
         /// Sets the resolution res digit of h3 to the integer digit (0-7)
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static void H3_SET_INDEX_DIGIT(ref H3Index h3, int res, ulong digit)
         {
             h3 = (h3 & ~(H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)))
@@ -350,7 +339,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="h">The H3 index</param>
         /// <returns>The resolution of the H3 index argument</returns>
-        /// <!-- Based off 3.1.1 -->
         public static int h3GetResolution(H3Index h)
         {
             return H3_GET_RESOLUTION(h);
@@ -361,7 +349,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="h"> The H3 index.</param>
          /// <returns>The base cell of the H3 index argument.</returns>
-        /// <!-- Based off 3.1.1 -->
         public static int h3GetBaseCell(H3Index h) { return H3_GET_BASE_CELL(h); }
 
         /// <summary>
@@ -371,7 +358,6 @@ namespace H3Lib
         /// <returns>
         /// The H3 index corresponding to the string argument, or 0 if invalid.
         /// </returns>
-        /// <!-- Based off 3.1.1 -->
         public static H3Index stringToH3(string str) {
             H3Index h = H3_INVALID_INDEX;
             // A small risk, but for the most part, we're dealing with hex numbers, so let's use that
@@ -395,7 +381,6 @@ namespace H3Lib
         /// <param name="h"> The H3 index to convert.</param>
         /// <param name="str"> The string representation of the H3 index.</param>
         /// <param name="sz"> Size of the buffer <see cref="str"/></param>
-        /// <!-- Based off 3.1.1 -->
         public static void h3ToString(H3Index h, ref string str, int sz)
         {
             if (sz < 17)
@@ -412,7 +397,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="h">The H3 index to validate.</param> 
          /// <returns>1 if the H3 index if valid, and 0 if it is not.</returns>
-        /// <!-- Based off 3.1.1 -->
         public static int h3IsValid(H3Index h)
         {
             if (H3_GET_MODE(ref h) != Constants.H3_HEXAGON_MODE)
@@ -469,7 +453,6 @@ namespace H3Lib
         /// <param name="res"> The H3 resolution to initialize the index to.</param>
         /// <param name="baseCell"> The H3 base cell to initialize the index to.</param>
         /// <param name="initDigit"> The H3 digit (0-7) to initialize all of the index digits to.</param>
-        /// <!-- Based off 3.1.1 -->
         public static void setH3Index(ref H3Index hp, int res, int baseCell, Direction initDigit)
         {
             H3Index h = H3_INIT;
@@ -490,7 +473,6 @@ namespace H3Lib
         /// <param name="h">H3Index to find parent of</param> 
         /// <param name="parentRes"> The resolution to switch to (parent, grandparent, etc)</param> 
         /// <returns>H3Index of the parent, or 0 if you actually asked for a child</returns>
-        /// <!-- Based off 3.1.1 -->
         public static H3Index h3ToParent(H3Index h, int parentRes)
         {
             int childRes = H3_GET_RESOLUTION(h);
@@ -529,7 +511,6 @@ namespace H3Lib
         /// int count of maximum number of children (equal for hexagons, less for
         /// pentagons
         /// </returns>
-        /// <!-- Based off 3.1.1 -->
         public static int maxH3ToChildrenSize(H3Index h, int childRes)
         {
             int parentRes = H3_GET_RESOLUTION(h);
@@ -548,7 +529,6 @@ namespace H3Lib
         /// <param name="h"> H3Index to find the direct child of</param>
         /// <param name="cellNumber"> int id of the direct child (0-6)</param>
         /// <returns>The new H3Index for the child
-        /// <!-- Based off 3.1.1 -->
         public static H3Index makeDirectChild(H3Index h, int cellNumber)
         {
             int childRes = H3_GET_RESOLUTION(h) + 1;
@@ -566,7 +546,6 @@ namespace H3Lib
         /// <param name="h" H3Index to find the children of</param>
         /// <param name="childRes" int the child level to produce</param>
         /// <param name="children" H3Index* the memory to store the resulting addresses in</param>
-        /// <!-- Based off 3.1.1 -->
         public static void h3ToChildren(H3Index h, int childRes,ref  List<H3Index> children)
         {
             children = new List<H3Index>();
@@ -627,7 +606,6 @@ namespace H3Lib
         /// <remarks>
         /// We're going to modify this a little bit using some LINQ.
         /// </remarks>
-        /// <!-- Based off 3.1.1 -->
         public static int compact(ref List<H3Index> h3Set, ref List<H3Index> compactedSet, int numHexes)
         {
             //  Maximum resolution.  We're out.
@@ -719,7 +697,6 @@ namespace H3Lib
         /// An error code if output array is too small or any hexagon is
         /// smaller than the output resolution.
         /// </returns>
-        /// <!-- Based off 3.1.1 -->
         public static int uncompact(ref List<H3Index> compactedSet, int numHexes,
             ref List<H3Index> h3Set, int maxHexes, int res)
         {
@@ -757,7 +734,6 @@ namespace H3Lib
         /// The number of hexagons to allocate memory for, or a negative
         /// number if an error occurs.
         /// </returns>
-        /// <!-- Based off 3.1.1 -->
         public static int maxUncompactSize(ref List<H3Index> compactedSet, int numHexes, int res)
         {
             int maxNumHexagons = 0;
@@ -798,7 +774,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="h"> The H3Index to check.</param>
         /// <returns>Returns 1 if the hexagon is class III, otherwise 0.</returns>
-        /// <!-- Based off 3.1.1 -->
         public static int h3IsResClassIII(H3Index h) { return H3_GET_RESOLUTION(h) % 2; }
 
         /// <summary>
@@ -807,7 +782,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="h"> The H3Index to check.</param>
         /// <returns>Returns 1 if it is a pentagon, otherwise 0.</returns>
-        /// <!-- Based off 3.1.1 -->
         public static int h3IsPentagon(H3Index h)
         {
             var test = 
@@ -821,7 +795,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="h"> The H3Index.</param>
         /// <returns>The highest resolution non-zero digit in the H3Index.</returns>
-        /// <!-- Based off 3.1.1 -->
         public static Direction _h3LeadingNonZeroDigit(ulong h)
         {
             for (int r = 1; r <= H3_GET_RESOLUTION(h); r++)
@@ -841,14 +814,13 @@ namespace H3Lib
         ///  * Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
         /// </summary>
         /// <param name="h">The H3Index.</param>
-        /// <!-- Based off 3.1.1 -->
         public static H3Index _h3RotatePent60ccw(ref H3Index h)
         {
             // rotate in place; skips any leading 1 digits (k-axis)
             int foundFirstNonZeroDigit = 0;
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
                 // rotate this digit
-                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIJK._rotate60ccw(H3_GET_INDEX_DIGIT(h, r)));
+                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIjk._rotate60ccw(H3_GET_INDEX_DIGIT(h, r)));
 
                 // look for the first non-zero digit so we
                 // can adjust for deleted k-axes sequence
@@ -871,14 +843,13 @@ namespace H3Lib
         /// Rotate an H3Index 60 degrees clockwise about a pentagonal center.
         /// </summary>
         /// <param name="h"> The H3Index.</param>
-        /// <!-- Based off 3.1.1 -->
         public static H3Index _h3RotatePent60cw(H3Index h)
         {
             // rotate in place; skips any leading 1 digits (k-axis)
             int foundFirstNonZeroDigit = 0;
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
                 // rotate this digit
-                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIJK._rotate60cw(H3_GET_INDEX_DIGIT(h, r)));
+                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIjk._rotate60cw(H3_GET_INDEX_DIGIT(h, r)));
 
                 // look for the first non-zero digit so we
                 // can adjust for deleted k-axes sequence
@@ -901,12 +872,11 @@ namespace H3Lib
         /// Rotate an H3Index 60 degrees counter-clockwise.
         /// </summary>
         /// <param name="h">The H3Index.</param> 
-        /// <!-- Based off 3.1.1 -->
         public static H3Index _h3Rotate60ccw(ref H3Index h)
         {
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++) {
                 Direction oldDigit = H3_GET_INDEX_DIGIT(h, r);
-                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIJK._rotate60ccw(oldDigit));
+                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIjk._rotate60ccw(oldDigit));
             }
 
             return h;
@@ -915,13 +885,12 @@ namespace H3Lib
         /// Rotate an H3Index 60 degrees clockwise.
         /// </summary>
         /// <param name="h">The H3Index.</param> 
-        /// <!-- Based off 3.1.1 -->
         public static H3Index _h3Rotate60cw(ref H3Index h)
         {
             for (int r = 1, res = H3_GET_RESOLUTION(h); r <= res; r++)
             {
                 Direction oldDigit = H3_GET_INDEX_DIGIT(h, r);
-                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIJK._rotate60cw(oldDigit));
+                H3_SET_INDEX_DIGIT(ref h, r, (ulong) CoordIjk._rotate60cw(oldDigit));
             }
             return h;
         }
@@ -932,8 +901,7 @@ namespace H3Lib
         /// <param name="fijk"> The FaceIJK address.</param>
         /// <param name="res">The cell resolution.</param> 
         /// <returns>The encoded H3Index (or 0 on failure).</returns>
-        /// <!-- Based off 3.1.1 -->
-        public static H3Index _faceIjkToH3(ref FaceIJK fijk, int res)
+        public static H3Index _faceIjkToH3(ref FaceIjk fijk, int res)
         {
             // initialize the index
             H3Index h = H3_INIT;
@@ -942,9 +910,9 @@ namespace H3Lib
 
             // check for res 0/base cell
             if (res == 0) {
-                if (fijk.coord.i > BaseCells.MAX_FACE_COORD ||
-                    fijk.coord.j > BaseCells.MAX_FACE_COORD ||
-                    fijk.coord.k > BaseCells.MAX_FACE_COORD)
+                if (fijk.Coord.I > BaseCells.MAX_FACE_COORD ||
+                    fijk.Coord.J > BaseCells.MAX_FACE_COORD ||
+                    fijk.Coord.K > BaseCells.MAX_FACE_COORD)
                 {
                     // out of range input
                     return H3_INVALID_INDEX;
@@ -958,44 +926,44 @@ namespace H3Lib
             // start with the passed in face and resolution res ijk coordinates
             // in that face's coordinate system
             //FaceIJK fijkBC = new FaceIJK(fijk.face, fijk.coord);
-            FaceIJK fijkBC = new FaceIJK(fijk.face, new CoordIJK(fijk.coord.i,fijk.coord.j,fijk.coord.k));
+            FaceIjk fijkBC = new FaceIjk(fijk.Face, new CoordIjk(fijk.Coord.I,fijk.Coord.J,fijk.Coord.K));
 
             // build the H3Index from finest res up
             // adjust r for the fact that the res 0 base cell offsets the indexing digits
-            CoordIJK ijk = fijkBC.coord;
+            CoordIjk ijk = fijkBC.Coord;
             for (int r = res - 1; r >= 0; r--) {
                 //CoordIJK lastIJK = ijk;
-                CoordIJK lastIJK = new CoordIJK(ijk.i,ijk.j,ijk.k);
-                CoordIJK lastCenter=new CoordIJK();
+                CoordIjk lastIJK = new CoordIjk(ijk.I,ijk.J,ijk.K);
+                CoordIjk lastCenter=new CoordIjk();
                 if (isResClassIII(r + 1)) {
                     // rotate ccw
-                    CoordIJK._upAp7(ref ijk);
-                    lastCenter.i = ijk.i;
-                    lastCenter.j = ijk.j;
-                    lastCenter.k = ijk.k;
-                    CoordIJK._downAp7(ref lastCenter);
+                    CoordIjk._upAp7(ref ijk);
+                    lastCenter.I = ijk.I;
+                    lastCenter.J = ijk.J;
+                    lastCenter.K = ijk.K;
+                    CoordIjk._downAp7(ref lastCenter);
                 } else {
                     // rotate cw
-                    CoordIJK ._upAp7r(ref ijk);
-                    lastCenter.i = ijk.i;
-                    lastCenter.j = ijk.j;
-                    lastCenter.k = ijk.k;
-                    CoordIJK._downAp7r(ref lastCenter);
+                    CoordIjk ._upAp7r(ref ijk);
+                    lastCenter.I = ijk.I;
+                    lastCenter.J = ijk.J;
+                    lastCenter.K = ijk.K;
+                    CoordIjk._downAp7r(ref lastCenter);
                 }
 
-                CoordIJK diff = new CoordIJK();
-                CoordIJK._ijkSub(ref lastIJK, ref lastCenter, ref diff);
-                CoordIJK._ijkNormalize(ref diff);
+                CoordIjk diff = new CoordIjk();
+                CoordIjk._ijkSub(ref lastIJK, ref lastCenter, ref diff);
+                CoordIjk._ijkNormalize(ref diff);
 
                 H3_SET_INDEX_DIGIT(ref h, r + 1,
-                    (ulong)CoordIJK._unitIjkToDigit(ref diff));
+                    (ulong)CoordIjk._unitIjkToDigit(ref diff));
             }
 
             // fijkBC should now hold the IJK of the base cell in the
             // coordinate system of the current face
-            if (fijkBC.coord.i > BaseCells.MAX_FACE_COORD ||
-                fijkBC.coord.j > BaseCells.MAX_FACE_COORD ||
-                fijkBC.coord.k > BaseCells.MAX_FACE_COORD) {
+            if (fijkBC.Coord.I > BaseCells.MAX_FACE_COORD ||
+                fijkBC.Coord.J > BaseCells.MAX_FACE_COORD ||
+                fijkBC.Coord.K > BaseCells.MAX_FACE_COORD) {
                 // out of range input
                 return H3_INVALID_INDEX;
             }
@@ -1011,7 +979,7 @@ namespace H3Lib
                 // force rotation out of missing k-axes sub-sequence
                 if (_h3LeadingNonZeroDigit(h) == Direction.K_AXES_DIGIT) {
                     // check for a cw/ccw offset face; default is ccw
-                    if (BaseCells._baseCellIsCwOffset(baseCell, fijkBC.face)) {
+                    if (BaseCells._baseCellIsCwOffset(baseCell, fijkBC.Face)) {
                         h = _h3Rotate60cw(ref h);
                     } else {
                         h = _h3Rotate60ccw(ref h);
@@ -1040,7 +1008,6 @@ namespace H3Lib
         /// <param name="g">The spherical coordinates to encode.</param>
         /// <param name="res"> The desired H3 resolution for the encoding.</param>
         /// <returns>The encoded H3Index (or 0 on failure).</returns>
-        /// <!-- Based off 3.1.1 -->
         public static H3Index geoToH3(ref GeoCoord g, int res)
         {
             if (res < 0 || res > Constants. MAX_H3_RES)
@@ -1054,8 +1021,8 @@ namespace H3Lib
                 return H3_INVALID_INDEX;
             }
 
-            FaceIJK fijk = new FaceIJK();
-            FaceIJK._geoToFaceIjk(g, res, ref fijk);
+            FaceIjk fijk = new FaceIjk();
+            FaceIjk._geoToFaceIjk(g, res, ref fijk);
             return _faceIjkToH3(ref fijk, res);
         }
 
@@ -1068,34 +1035,33 @@ namespace H3Lib
         /// and normalized base cell coordinates.
         /// </param>
         /// <returns>Returns 1 if the possibility of overage exists, otherwise 0.</returns>
-        /// <!-- Based off 3.1.1 -->
-        internal static int _h3ToFaceIjkWithInitializedFijk(H3Index h, ref FaceIJK fijk)
+        internal static int _h3ToFaceIjkWithInitializedFijk(H3Index h, ref FaceIjk fijk)
         {
-            CoordIJK ijk = new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k);
+            CoordIjk ijk = new CoordIjk(fijk.Coord.I, fijk.Coord.J, fijk.Coord.K);
             int res = H3_GET_RESOLUTION(h);
 
             // center base cell hierarchy is entirely on this face
             int possibleOverage = 1;
             if (!BaseCells._isBaseCellPentagon(H3_GET_BASE_CELL(h)) &&
                 (res == 0 ||
-                 fijk.coord.i == 0 && fijk.coord.j == 0 && fijk.coord.k == 0))
+                 fijk.Coord.I == 0 && fijk.Coord.J == 0 && fijk.Coord.K == 0))
                 possibleOverage = 0;
 
             for (int r = 1; r <= res; r++) {
                 if (isResClassIII(r)) {
                     // Class III == rotate ccw
-                    CoordIJK._downAp7(ref ijk);
+                    CoordIjk._downAp7(ref ijk);
                 } else {
                     // Class II == rotate cw
-                    CoordIJK._downAp7r(ref ijk);
+                    CoordIjk._downAp7r(ref ijk);
                 }
 
-                CoordIJK._neighbor(ref ijk, H3_GET_INDEX_DIGIT(h, r));
+                CoordIjk._neighbor(ref ijk, H3_GET_INDEX_DIGIT(h, r));
             }
 
-            fijk.coord.i = ijk.i;
-            fijk.coord.j = ijk.j;
-            fijk.coord.k = ijk.k;
+            fijk.Coord.I = ijk.I;
+            fijk.Coord.J = ijk.J;
+            fijk.Coord.K = ijk.K;
             return possibleOverage;
         }
 
@@ -1105,8 +1071,7 @@ namespace H3Lib
         /// </summary>
         /// <param name="h"> The H3Index.</param>
         /// <param name="fijk"> The corresponding FaceIJK address.</param>
-        /// <!-- Based off 3.1.1 -->
-        public static void _h3ToFaceIjk(H3Index h, ref FaceIJK fijk)
+        public static void _h3ToFaceIjk(H3Index h, ref FaceIjk fijk)
         {
             int baseCell = H3_GET_BASE_CELL(h);
             // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
@@ -1117,12 +1082,12 @@ namespace H3Lib
             }
 
             // start with the "home" face and ijk+ coordinates for the base cell of c
-            fijk = new FaceIJK(
-                               BaseCells.baseCellData[baseCell].homeFijk.face,
-                               new CoordIJK(
-                                            BaseCells.baseCellData[baseCell].homeFijk.coord.i,
-                                            BaseCells.baseCellData[baseCell].homeFijk.coord.j,
-                                            BaseCells.baseCellData[baseCell].homeFijk.coord.k
+            fijk = new FaceIjk(
+                               BaseCells.baseCellData[baseCell].homeFijk.Face,
+                               new CoordIjk(
+                                            BaseCells.baseCellData[baseCell].homeFijk.Coord.I,
+                                            BaseCells.baseCellData[baseCell].homeFijk.Coord.J,
+                                            BaseCells.baseCellData[baseCell].homeFijk.Coord.K
                                            )
                               );
             //fijk = BaseCells.baseCellData[baseCell].homeFijk;
@@ -1133,13 +1098,13 @@ namespace H3Lib
 
             // if we're here we have the potential for an "overage"; i.e., it is
             // possible that c lies on an adjacent face
-            CoordIJK origIJK = new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k);
+            CoordIjk origIJK = new CoordIjk(fijk.Coord.I, fijk.Coord.J, fijk.Coord.K);
 
             // if we're in Class III, drop into the next finer Class II grid
             int res = H3_GET_RESOLUTION(h);
             if (isResClassIII(res)) {
                 // Class III
-                CoordIJK ._downAp7r( ref fijk.coord);
+                CoordIjk ._downAp7r( ref fijk.Coord);
                 res++;
             }
 
@@ -1147,7 +1112,7 @@ namespace H3Lib
             // a pentagon base cell with a leading 4 digit requires special handling
             bool pentLeading4 =
                 (BaseCells._isBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == Direction.I_AXES_DIGIT);
-            if (FaceIJK._adjustOverageClassII(ref fijk, res, pentLeading4 ? 1 : 0, 0) > 0)
+            if (FaceIjk._adjustOverageClassII(ref fijk, res, pentLeading4 ? 1 : 0, 0) > 0)
             {
                 // if the base cell is a pentagon we have the potential for secondary
                 // overages
@@ -1155,7 +1120,7 @@ namespace H3Lib
                 {
                     while (true)
                     {
-                        if (FaceIJK._adjustOverageClassII(ref fijk, res, 0, 0) == 0)
+                        if (FaceIjk._adjustOverageClassII(ref fijk, res, 0, 0) == 0)
                         {
                             break;
                         }
@@ -1164,12 +1129,12 @@ namespace H3Lib
 
                 if (res != H3_GET_RESOLUTION(h))
                 {
-                    CoordIJK._upAp7r(ref fijk.coord);
+                    CoordIjk._upAp7r(ref fijk.Coord);
                 }
             }
             else if (res != H3_GET_RESOLUTION(h))
             {
-                fijk.coord = new CoordIJK(origIJK.i, origIJK.j, origIJK.k);
+                fijk.Coord = new CoordIjk(origIJK.I, origIJK.J, origIJK.K);
             }
         }
 
@@ -1178,12 +1143,11 @@ namespace H3Lib
         /// </summary>
         /// <param name="h3"> The H3 index.</param>
         /// <param name="g"> The spherical coordinates of the H3 cell center.</param>
-        /// <!-- Based off 3.1.1 -->
         public static void h3ToGeo(H3Index h3, ref GeoCoord g)
         {
-            FaceIJK fijk = new FaceIJK();
+            FaceIjk fijk = new FaceIjk();
             _h3ToFaceIjk(h3, ref fijk);
-            FaceIJK. _faceIjkToGeo(fijk, H3_GET_RESOLUTION(h3), ref g);
+            FaceIjk. _faceIjkToGeo(fijk, H3_GET_RESOLUTION(h3), ref g);
         }
 
         /// <summary>
@@ -1191,27 +1155,29 @@ namespace H3Lib
         /// </summary>
         /// <param name="h3"> The H3 index.</param>
         /// <param name="gb">The boundary of the H3 cell in spherical coordinates.</param>
-        /// <!-- Based off 3.1.1 -->
-        public static void h3ToGeoBoundary(H3Index h3, ref GeoBoundary gb) {
-            FaceIJK fijk = new FaceIJK();
+        public static void h3ToGeoBoundary(H3Index h3, ref GeoBoundary gb)
+        {
+            FaceIjk fijk = new FaceIjk();
             _h3ToFaceIjk(h3, ref fijk);
-            FaceIJK._faceIjkToGeoBoundary(
-                ref fijk, H3_GET_RESOLUTION(h3),
-                h3IsPentagon(h3), ref  gb
-            );
+            if (h3IsPentagon(h3) == 1)
+            {
+                FaceIjk._faceIjkPentToGeoBoundary(fijk, H3_GET_RESOLUTION(h3), 0, Constants.NUM_PENT_VERTS, ref gb);
+            }
+            else
+            {
+                FaceIjk._faceIjkToGeoBoundary(fijk, H3_GET_RESOLUTION(h3), 0, Constants.NUM_HEX_VERTS, ref gb);
+            }
         }
 
         /// <summary>
         /// Returns whether or not a resolution is a Class III grid. Note that odd
-        //  resolutions are Class III and even resolutions are Class II.
+        ///  resolutions are Class III and even resolutions are Class II.
         /// </summary>
         /// <param name="res">The H3 resolution</param>
         /// <returns>Returns 1 if the resolution is class III grid, otherwise 0.</returns>
-        /// <!-- Based off 3.1.1 -->
         public static bool isResClassIII(int res)
         {
             return res % 2 == 1;
         }
-
-
-    }}
+    }
+}

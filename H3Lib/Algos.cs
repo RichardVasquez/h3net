@@ -327,7 +327,7 @@ namespace H3Lib
 
             for (int i = 0; i < rotations; i++)
             {
-                dir = CoordIJK._rotate60ccw(dir);
+                dir = CoordIjk._rotate60ccw(dir);
             }
 
             int newRotations = 0;
@@ -403,7 +403,7 @@ namespace H3Lib
                         // on how we got here.
                         // check for a cw/ccw offset face; default is ccw
                         if (BaseCells._baseCellIsCwOffset(
-                            newBaseCell, BaseCells.baseCellData[oldBaseCell].homeFijk.face))
+                            newBaseCell, BaseCells.baseCellData[oldBaseCell].homeFijk.Face))
                         {
                             out_hex = H3Index._h3Rotate60cw(ref out_hex);
                         }

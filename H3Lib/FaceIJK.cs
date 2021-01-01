@@ -10,58 +10,56 @@ namespace H3Lib
     /// Functions for working with icosahedral face-centered hex IJK
     /// coordinate systems.
     /// </summary>
-    /// <!-- Based off 3.1.1 -->
-    public class FaceIJK
+    public class FaceIjk
     {
         /// <summary>
         /// Information to transform into an adjacent face IJK system
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
-        public class FaceOrientIJK
+        public class FaceOrientIjk
         {
             /// <summary>
             /// face number
             /// </summary>
-            public int face;
+            public readonly int Face;
             /// <summary>
             /// res 0 translation relative to primary face
             /// </summary>
-            public CoordIJK translate;
+            public readonly CoordIjk Translate;
             /// <summary>
             /// number of 60 degree ccw rotations relative to primary
             /// </summary>
-            public int ccwRot60;
+            public readonly int CcwRot60;
 
-            public FaceOrientIJK()
+            public FaceOrientIjk()
             {
             }
 
-            public FaceOrientIJK(int f, int i, int j, int k, int c)
+            public FaceOrientIjk(int f, int i, int j, int k, int c)
             {
-                face = f;
-                translate = new CoordIJK(i, j, k);
-                ccwRot60 = c;
+                Face = f;
+                Translate = new CoordIjk(i, j, k);
+                CcwRot60 = c;
             }
         }
         /// <summary>
         /// face number
         /// </summary>
-        public int face;
+        public int Face;
         /// <summary>
         /// ijk coordinates on that face
         /// </summary>
-        public CoordIJK coord;
+        public CoordIjk Coord;
 
-        public FaceIJK()
+        public FaceIjk()
         {
-            face = 0;
-            coord = new CoordIJK(0,0,0);
+            Face = 0;
+            Coord = new CoordIjk(0, 0, 0);
         }
 
-        public FaceIJK(int f, CoordIJK cijk)
+        public FaceIjk(int f, CoordIjk cijk)
         {
-            face = f;
-            coord = cijk;
+            Face = f;
+            Coord = cijk;
         }
 
         /// <summary>
@@ -88,13 +86,11 @@ namespace H3Lib
         /// <summary>
         /// Square root of 7
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static double M_SQRT7 = 2.6457513110645905905016157536392604257102;
 
         /// <summary>
         /// icosahedron face centers in lat/lon radians
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly GeoCoord[] faceCenterGeo =
         {
             new GeoCoord(0.803582649718989942, 1.248397419617396099), // face  0
@@ -122,7 +118,6 @@ namespace H3Lib
         /// <summary>
         /// icosahedron face centers in x/y/z on the unit sphere
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly Vec3d[] faceCenterPoint =
         {
             new Vec3d(0.2199307791404606, 0.6583691780274996, 0.7198475378926182), // face  0
@@ -151,7 +146,6 @@ namespace H3Lib
         /// icosahedron face ijk axes as azimuth in radians from face center to
         /// vertex 0/1/2 respectively
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly double[,] faceAxesAzRadsCII =
         {
             {5.619958268523939882, 3.525563166130744542, 1.431168063737548730}, // face  0
@@ -179,148 +173,147 @@ namespace H3Lib
         /// <summary>
         /// Definition of which faces neighbor each other.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
-        public static readonly FaceOrientIJK[,] faceNeighbors =
+        public static readonly FaceOrientIjk[,] faceNeighbors =
         {
             {
                 // face 0
-                new FaceOrientIJK(0, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(4, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(1, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(5, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(0, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(4, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(1, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(5, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 1
-                new FaceOrientIJK(1, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(0, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(2, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(6, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(1, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(0, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(2, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(6, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 2
-                new FaceOrientIJK(2, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(1, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(3, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(7, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(2, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(1, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(3, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(7, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 3
-                new FaceOrientIJK(3, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(2, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(4, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(8, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(3, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(2, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(4, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(8, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 4
-                new FaceOrientIJK(4, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(3, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(0, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(9, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(4, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(3, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(0, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(9, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 5
-                new FaceOrientIJK(5, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(10, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(14, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(0, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(5, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(10, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(14, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(0, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 6
-                new FaceOrientIJK(6, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(11, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(10, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(1, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(6, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(11, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(10, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(1, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 7
-                new FaceOrientIJK(7, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(12, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(11, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(2, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(7, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(12, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(11, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(2, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 8
-                new FaceOrientIJK(8, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(13, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(12, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(3, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(8, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(13, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(12, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(3, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 9
-                new FaceOrientIJK(9, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(14, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(13, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(4, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(9, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(14, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(13, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(4, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 10
-                new FaceOrientIJK(10, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(5, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(6, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(15, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(10, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(5, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(6, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(15, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 11
-                new FaceOrientIJK(11, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(6, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(7, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(16, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(11, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(6, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(7, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(16, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 12
-                new FaceOrientIJK(12, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(7, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(8, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(17, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(12, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(7, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(8, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(17, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 13
-                new FaceOrientIJK(13, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(8, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(9, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(18, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(13, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(8, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(9, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(18, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 14
-                new FaceOrientIJK(14, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(9, 2, 2, 0, 3), // ij quadrant
-                new FaceOrientIJK(5, 2, 0, 2, 3), // ki quadrant
-                new FaceOrientIJK(19, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(14, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(9, 2, 2, 0, 3), // ij quadrant
+                new FaceOrientIjk(5, 2, 0, 2, 3), // ki quadrant
+                new FaceOrientIjk(19, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 15
-                new FaceOrientIJK(15, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(16, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(19, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(10, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(15, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(16, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(19, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(10, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 16
-                new FaceOrientIJK(16, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(17, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(15, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(11, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(16, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(17, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(15, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(11, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 17
-                new FaceOrientIJK(17, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(18, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(16, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(12, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(17, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(18, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(16, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(12, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 18
-                new FaceOrientIJK(18, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(19, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(17, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(13, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(18, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(19, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(17, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(13, 0, 2, 2, 3) // jk quadrant
             },
             {
                 // face 19
-                new FaceOrientIJK(19, 0, 0, 0, 0), // central face
-                new FaceOrientIJK(15, 2, 0, 2, 1), // ij quadrant
-                new FaceOrientIJK(18, 2, 2, 0, 5), // ki quadrant
-                new FaceOrientIJK(14, 0, 2, 2, 3) // jk quadrant
+                new FaceOrientIjk(19, 0, 0, 0, 0), // central face
+                new FaceOrientIjk(15, 2, 0, 2, 1), // ij quadrant
+                new FaceOrientIjk(18, 2, 2, 0, 5), // ki quadrant
+                new FaceOrientIjk(14, 0, 2, 2, 3) // jk quadrant
             }
         };
 
@@ -328,7 +321,6 @@ namespace H3Lib
         /// direction from the origin face to the destination face, relative to
         /// the origin face's coordinate system, or -1 if not adjacent.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly int[,] adjacentFaceDir =
         {
             {
@@ -416,7 +408,6 @@ namespace H3Lib
         /// <summary>
         /// overage distance table
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly int[] maxDimByCIIres =
         {
             2, // res  0
@@ -441,7 +432,6 @@ namespace H3Lib
         /// <summary>
         /// unit scale distance table
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly int[] unitScaleByCIIres =
         {
             1, // res  0
@@ -470,15 +460,14 @@ namespace H3Lib
         /// <param name="g">The spherical coordinates to encode.</param>
         /// <param name="res">The desired H3 resolution for the encoding.</param>
         /// <param name="h">The FaceIJK address of the containing cell at resolution res.</param>
-        /// <!-- Based off 3.1.1 -->
-        public static void _geoToFaceIjk(GeoCoord g, int res, ref FaceIJK h)
+        public static void _geoToFaceIjk(GeoCoord g, int res, ref FaceIjk h)
         {
             // first convert to hex2d
-            Vec2d v = new Vec2d();
-            _geoToHex2d(g, res, ref h.face, ref v);
+            var v = new Vec2d();
+            _geoToHex2d(g, res, ref h.Face, ref v);
 
             // then convert to ijk+
-            CoordIJK._hex2dToCoordIJK(ref v, ref h.coord);
+            CoordIjk._hex2dToCoordIJK(ref v, ref h.Coord);
         }
 
 
@@ -490,7 +479,6 @@ namespace H3Lib
         /// <param name="res">The desired H3 resolution for the encoding.</param>
         /// <param name="face">The icosahedral face containing the spherical coordinates.</param>
         /// <param name="v">The 2D hex coordinates of the cell containing the point.</param>
-        /// <!-- Based off 3.1.1 -->
         public static void _geoToHex2d(GeoCoord g, int res, ref int face, ref Vec2d v)
         {
             Vec3d v3d = new Vec3d();
@@ -520,9 +508,6 @@ namespace H3Lib
             }
 
             // now have face and r, now find CCW theta from CII i-axis
-//            double theta =
-//                GeoCoord._posAngleRads(faceAxesAzRadsCII[face, 0] -
-//                                       GeoCoord._posAngleRads(GeoCoord._geoAzimuthRads(faceCenterGeo[face], g)));
             double theta = (faceAxesAzRadsCII[face, 0] - 
                             GeoCoord._geoAzimuthRads(faceCenterGeo[face], g).NormalizeRadians()
                             ).NormalizeRadians();
@@ -530,7 +515,6 @@ namespace H3Lib
             // adjust theta for Class III (odd resolutions)
             if (H3Index.isResClassIII(res))
             {
-                //theta = GeoCoord._posAngleRads(theta - Constants.M_AP7_ROT_RADS);
                 theta = (theta - Constants.M_AP7_ROT_RADS).NormalizeRadians();
             }
 
@@ -539,10 +523,12 @@ namespace H3Lib
 
             // scale for current resolution length u
             r /= Constants.RES0_U_GNOMONIC;
-            for (int i = 0; i < res; i++) r *= M_SQRT7;
+            for (int i = 0; i < res; i++)
+            {
+                r *= M_SQRT7;
+            }
 
             // we now have (r, theta) in hex2d with theta ccw from x-axes
-
             // convert to local x,y
             v.X = r * Math.Cos(theta);
             v.Y = r * Math.Sin(theta);
@@ -555,10 +541,11 @@ namespace H3Lib
         /// <param name="v">The 2D hex coordinates of the cell.</param>
         /// <param name="face">The icosahedral face upon which the 2D hex coordinate system is centered</param>
         /// <param name="res">The H3 resolution of the cell</param>
-        /// <param name="substrate">Indicates whether or not this grid is actually a substrate
-        /// grid relative to the specified resolution.</param>
+        /// <param name="substrate">
+        /// Indicates whether or not this grid is actually a substrate
+        /// grid relative to the specified resolution.
+        /// </param>
         /// <param name="g">The spherical coordinates of the cell center point.</param>
-        /// <!-- Based off 3.1.1 -->
         public static void _hex2dToGeo(ref Vec2d v, int face, int res, int substrate, ref GeoCoord g)
         {
             // calculate (r, theta) in hex2d
@@ -597,12 +584,10 @@ namespace H3Lib
             // if a substrate grid, then it's already been adjusted for Class III
             if (substrate == 0 && H3Index.isResClassIII(res))
             {
-                //theta = GeoCoord._posAngleRads(theta + Constants.M_AP7_ROT_RADS);
                 theta = (theta + Constants.M_AP7_ROT_RADS).NormalizeRadians();
             }
 
             // find theta as an azimuth
-            //theta = GeoCoord._posAngleRads(faceAxesAzRadsCII[face, 0] - theta);
             theta = (faceAxesAzRadsCII[face, 0] - theta).NormalizeRadians();
 
             // now find the point at (r,theta) from the face center
@@ -616,209 +601,200 @@ namespace H3Lib
         /// <param name="h">The FaceIJK address of the cell.</param>
         /// <param name="res">The H3 resolution of the cell.</param>
         /// <param name="g">The spherical coordinates of the cell center point.</param>
-        /// <!-- Based off 3.1.1 -->
-        public static void _faceIjkToGeo(FaceIJK h, int res, ref GeoCoord g)
+        public static void _faceIjkToGeo(FaceIjk h, int res, ref GeoCoord g)
         {
-            Vec2d v = new Vec2d();
-            CoordIJK._ijkToHex2d(h.coord, ref v);
-            _hex2dToGeo(ref v, h.face, res, 0, ref g);
+            var v = new Vec2d();
+            CoordIjk._ijkToHex2d(h.Coord, ref v);
+            _hex2dToGeo(ref v, h.Face, res, 0, ref g);
         }
 
+        
         /// <summary>
         /// Generates the cell boundary in spherical coordinates for a pentagonal cell
         /// given by a FaceIJK address at a specified resolution.
         /// </summary>
         /// <param name="h">The FaceIJK address of the pentagonal cell.</param>
         /// <param name="res">The H3 resolution of the cell.</param>
+        /// <param name="start">The first topological vertex to return.</param>
+        /// <param name="length">The number of topological vertexes to return.</param>
         /// <param name="g">The spherical coordinates of the cell boundary.</param>
-        /// <!-- Based off 3.1.1 -->
-        public static void _faceIjkPentToGeoBoundary(ref FaceIJK h,  int res, ref GeoBoundary g)
+        public static void _faceIjkPentToGeoBoundary(FaceIjk h, int res, int start, int length, ref GeoBoundary g)
+        {
+            int adjRes = res;
+            var centerIjk = new FaceIjk(h.Face, new CoordIjk(h.Coord.I, h.Coord.J, h.Coord.K));
+            var fijkVerts = Enumerable.Range(1, Constants.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
+            _faceIjkPentToVerts(ref centerIjk, ref adjRes, ref fijkVerts);
+
+            // If we're returning the entire loop, we need one more iteration in case
+            // of a distortion vertex on the last edge
+            int additionalIteration = length == Constants.NUM_PENT_VERTS ? 1 : 0;
+
+            // convert each vertex to lat/lon
+            // adjust the face of each vertex as appropriate and introduce
+            // edge-crossing vertices as needed
+
+            g.numVerts = 0;
+            var lastFijk = new FaceIjk();
+            for (int vert = start; vert < start + length + additionalIteration; vert++)
+            {
+                int v = vert % Constants.NUM_PENT_VERTS;
+                var fijk = fijkVerts[v];
+                _adjustPentVertOverage(ref fijk, adjRes);
+
+                // all Class III pentagon edges cross icosahedron edges
+                // note that Class II pentagons have vertices on the edge,
+                // not edge intersections
+                if (H3Index.isResClassIII(res) && vert > start)
+                {
+                    // find hex2d of the two vertexes on the last face
+                    var tmpFijk = fijk;
+
+                    var orig2d0 = new Vec2d();
+                    CoordIjk._ijkToHex2d(lastFijk.Coord, ref orig2d0);
+
+                    int currentToLastDir = adjacentFaceDir[tmpFijk.Face, lastFijk.Face];
+
+                    var fijkOrient = faceNeighbors[tmpFijk.Face, currentToLastDir];
+
+                    tmpFijk.Face = fijkOrient.Face;
+                    var ijk = new CoordIjk(tmpFijk.Coord.I, tmpFijk.Coord.J, tmpFijk.Coord.K);
+
+                    // rotate and translate for adjacent face
+                    for (var i = 0; i < fijkOrient.CcwRot60; i++)
+                    {
+                        CoordIjk._ijkRotate60ccw(ref ijk);
+                    }
+
+                    var transVec = new CoordIjk
+                        (fijkOrient.Translate.I, fijkOrient.Translate.J, fijkOrient.Translate.K);
+                    CoordIjk._ijkScale(ref transVec, unitScaleByCIIres[adjRes] * 3);
+                    CoordIjk._ijkAdd(ijk, transVec, ref ijk);
+                    CoordIjk._ijkNormalize(ref ijk);
+
+                    var orig2d1 = new Vec2d();
+                    CoordIjk._ijkToHex2d(ijk, ref orig2d1);
+
+                    // find the appropriate icosahedron face edge vertexes
+                    int maxDim = maxDimByCIIres[adjRes];
+                    var v0 = new Vec2d(3.0 * maxDim, 0.0);
+                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.M_SQRT3_2 * maxDim);
+                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.M_SQRT3_2 * maxDim);
+
+                    Vec2d edge0;
+                    Vec2d edge1;
+                    switch (adjacentFaceDir[tmpFijk.Face,fijk.Face])
+                    {
+                        case IJ:
+                            edge0 = new Vec2d(v0.X, v0.Y);
+                            edge1 = new Vec2d(v1.X, v1.Y);
+                            break;
+                        case JK:
+                            edge0 = new Vec2d(v1.X, v1.Y);
+                            edge1 = new Vec2d(v2.X, v2.Y);
+                            break;
+                        default:
+                            if (adjacentFaceDir[tmpFijk.Face, fijk.Face] != KI)
+                            {
+                                throw new Exception("assert(adjacentFaceDir[tmpFijk.face][fijk.face] == KI);");
+                            }
+                            edge0 = new Vec2d(v2.X, v2.Y);
+                            edge1 = new Vec2d(v0.X, v0.Y);
+                            break;
+                    }
+
+                    // find the intersection and add the lat/lon point to the result
+                    var inter = new Vec2d();
+                    Vec2d._v2dIntersect(orig2d0, orig2d1, edge0, edge1, ref inter);
+                    var geo = g.verts[g.numVerts];
+                    _hex2dToGeo(ref inter, tmpFijk.Face, adjRes, 1, ref geo);
+                    g.verts[g.numVerts] = new GeoCoord(geo.Latitude, geo.Longitude);
+                    g.numVerts++;
+                }
+
+                // convert vertex to lat/lon and add to the result
+                // vert == start + NUM_PENT_VERTS is only used to test for possible
+                // intersection on last edge
+                if (vert < start + Constants.NUM_PENT_VERTS)
+                {
+                    var vec = new Vec2d();
+                    CoordIjk._ijkToHex2d(fijk.Coord, ref vec);
+                    var geo = g.verts[g.numVerts];
+                    _hex2dToGeo(ref vec, fijk.Face, adjRes, 1, ref geo);
+                    g.verts[g.numVerts] = new GeoCoord(geo.Latitude, geo.Longitude);
+                    g.numVerts++;
+                }
+
+                lastFijk = fijk;
+            }
+        }
+
+        /// <summary>
+        /// Get the vertices of a pentagon cell as substrate FaceIJK addresses
+        /// </summary>
+        /// <param name="fijk">The FaceIJK address of the cell.</param>
+        /// <param name="res">
+        /// The H3 resolution of the cell. This may be adjusted if
+        /// necessary for the substrate grid resolution.
+        /// </param>
+        /// <param name="fijkVerts">Output array for the vertices</param>
+        public static void _faceIjkPentToVerts(ref FaceIjk fijk, ref int res, ref FaceIjk[] fijkVerts)
         {
             // the vertexes of an origin-centered pentagon in a Class II resolution on a
             // substrate grid with aperture sequence 33r. The aperture 3 gets us the
             // vertices, and the 3r gets us back to Class II.
             // vertices listed ccw from the i-axes
-            CoordIJK[] vertsCII =
+            CoordIjk[] vertsCII =
             {
-                new CoordIJK(2, 1, 0), // 0
-                new CoordIJK(1, 2, 0), // 1
-                new CoordIJK(0, 2, 1), // 2
-                new CoordIJK(0, 1, 2), // 3
-                new CoordIJK(1, 0, 2) // 4
+                new CoordIjk(2, 1, 0), // 0
+                new CoordIjk(1, 2, 0), // 1
+                new CoordIjk(0, 2, 1), // 2
+                new CoordIjk(0, 1, 2), // 3
+                new CoordIjk(1, 0, 2), // 4
             };
 
             // the vertexes of an origin-centered pentagon in a Class III resolution on
             // a substrate grid with aperture sequence 33r7r. The aperture 3 gets us the
             // vertices, and the 3r7r gets us to Class II. vertices listed ccw from the
             // i-axes
-            CoordIJK[] vertsCIII =
+            CoordIjk[] vertsCIII =
             {
-                new CoordIJK(5, 4, 0), // 0
-                new CoordIJK(1, 5, 0), // 1
-                new CoordIJK(0, 5, 4), // 2
-                new CoordIJK(0, 1, 5), // 3
-                new CoordIJK(4, 0, 5) // 4
+                new CoordIjk(5, 4, 0), // 0
+                new CoordIjk(1, 5, 0), // 1
+                new CoordIjk(0, 5, 4), // 2
+                new CoordIjk(0, 1, 5), // 3
+                new CoordIjk(4, 0, 5), // 4
             };
 
             // get the correct set of substrate vertices for this resolution
-            List< CoordIJK> verts = new List<CoordIJK>();
-            verts = H3Index.isResClassIII(res)
-                ? vertsCIII.ToList()
-                : vertsCII.ToList();
+            var verts = H3Index.isResClassIII(res)
+                            ? vertsCIII
+                            : vertsCII;
 
             // adjust the center point to be in an aperture 33r substrate grid
             // these should be composed for speed
-            FaceIJK centerIJK = new FaceIJK();
-            centerIJK.face = h.face;
-            centerIJK.coord = new CoordIJK(h.coord.i, h.coord.j,h.coord.k);
-            CoordIJK._downAp3(ref centerIJK.coord);
-            CoordIJK._downAp3r(ref centerIJK.coord);
+            var coord = new CoordIjk(fijk.Coord.I, fijk.Coord.J, fijk.Coord.K);
+            CoordIjk._downAp3(ref coord);
+            CoordIjk._downAp3r(ref coord);
 
-            // if res is Class III we need to add a cw aperture 7 to get to
-            // icosahedral Class II
-            int adjRes = res;
             if (H3Index.isResClassIII(res))
             {
-               CoordIJK ._downAp7r(ref centerIJK.coord);
-                adjRes++;
+                CoordIjk._downAp7r(ref coord);
+                res++;
             }
-
+            
             // The center point is now in the same substrate grid as the origin
-            // cell vertices. Add the center point substate coordinates
+            // cell vertices. Add the center point substrate coordinates
             // to each vertex to translate the vertices to that cell.
-            FaceIJK[] fijkVerts = new FaceIJK[Constants.NUM_PENT_VERTS];
-            for (int v = 0; v < Constants.NUM_PENT_VERTS; v++)
+            for (var v = 0; v < Constants.NUM_PENT_VERTS; v++)
             {
-                fijkVerts[v] = new FaceIJK();
-                fijkVerts[v].face = centerIJK.face;
-                CoordIJK ._ijkAdd(centerIJK.coord, verts[v], ref fijkVerts[v].coord);
-                CoordIJK ._ijkNormalize(ref fijkVerts[v].coord);
+                fijkVerts[v].Face = fijk.Face;
+                var fCoord = fijkVerts[v].Coord;
+                CoordIjk._ijkAdd(coord, verts[v], ref fCoord);
+                CoordIjk._ijkNormalize(ref fCoord);
+                fijkVerts[v].Coord = fCoord;
             }
 
-            // convert each vertex to lat/lon
-            // adjust the face of each vertex as appropriate and introduce
-            // edge-crossing vertices as needed
-            g.numVerts = 0;
-            for (int i = 0; i < g.verts.Count; i++)
-            {
-                g.verts[i] = new GeoCoord();
-            }
-            FaceIJK lastFijk= new FaceIJK();
-            for (int vert = 0; vert < Constants.NUM_PENT_VERTS + 1; vert++)
-            {
-                int v = vert % Constants.NUM_PENT_VERTS;
-
-                FaceIJK fijk = fijkVerts[v];
-
-                int pentLeading4 = 0;
-                int overage = _adjustOverageClassII(ref fijk, adjRes, pentLeading4, 1);
-                if (overage == 2) // in a different triangle
-                {
-                    while (true)
-                    {
-                        overage = _adjustOverageClassII(ref fijk, adjRes, pentLeading4, 1);
-                        if (overage != 2) // not in a different triangle
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                // all Class III pentagon edges cross icosa edges
-                // note that Class II pentagons have vertices on the edge,
-                // not edge intersections
-                if (H3Index.isResClassIII(res) && vert > 0)
-                {
-                    // find hex2d of the two vertexes on the last face
-
-                    FaceIJK tmpFijk = new FaceIJK(fijk.face, new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k));
-
-                    Vec2d orig2d0 = new Vec2d();
-                    CoordIJK ._ijkToHex2d(lastFijk.coord, ref orig2d0);
-
-                    int currentToLastDir = adjacentFaceDir[tmpFijk.face,lastFijk.face];
-
-                     FaceOrientIJK fijkOrient =
-                        new FaceOrientIJK(
-                                          faceNeighbors[tmpFijk.face,currentToLastDir].face,
-                                          faceNeighbors[tmpFijk.face,currentToLastDir].translate.i,
-                                          faceNeighbors[tmpFijk.face,currentToLastDir].translate.j,
-                                          faceNeighbors[tmpFijk.face,currentToLastDir].translate.k,
-                                          faceNeighbors[tmpFijk.face,currentToLastDir].ccwRot60
-                                          );
-
-//                        faceNeighbors[tmpFijk.face,currentToLastDir];
-
-                    tmpFijk.face = fijkOrient.face;
-                    //CoordIJK ijk = tmpFijk.coord;
-                    CoordIJK ijk = new CoordIJK(tmpFijk.coord.i,tmpFijk.coord.j,tmpFijk.coord.k);
-
-                    // rotate and translate for adjacent face
-                    for (int i = 0; i < fijkOrient.ccwRot60; i++)
-                    {
-                        CoordIJK._ijkRotate60ccw(ref ijk);
-                    }
-
-                    CoordIJK transVec = fijkOrient.translate;
-                    CoordIJK ._ijkScale(ref transVec, unitScaleByCIIres[adjRes] * 3);
-                    CoordIJK ._ijkAdd(ijk, transVec, ref ijk);
-                    CoordIJK._ijkNormalize(ref ijk);
-
-                    Vec2d orig2d1 = new Vec2d();
-                    CoordIJK._ijkToHex2d(ijk, ref orig2d1);
-
-                    // find the appropriate icosa face edge vertexes
-                    int maxDim = maxDimByCIIres[adjRes];
-                    Vec2d v0 = new Vec2d( 3.0 * maxDim, 0.0);
-                    Vec2d v1 = new Vec2d( -1.5 * maxDim, 3.0 * Constants. M_SQRT3_2 * maxDim);
-                    Vec2d v2 = new Vec2d( -1.5 * maxDim, -3.0 * Constants.M_SQRT3_2 * maxDim);
-
-                    Vec2d edge0 = new Vec2d();
-                    Vec2d edge1 = new Vec2d();
-                    switch (adjacentFaceDir[tmpFijk.face,fijk.face])
-                    {
-                        case IJ:
-                            edge0 = v0;
-                            edge1 = v1;
-                            break;
-                        case JK:
-                            edge0 = v1;
-                            edge1 = v2;
-                            break;
-                        case KI:
-                        default:
-                            if (adjacentFaceDir[tmpFijk.face, fijk.face] != KI)
-                            {
-                                throw new Exception("assert(adjacentFaceDir[tmpFijk.face][fijk.face] == KI);");
-                            }
-                            edge0 = v2;
-                            edge1 = v0;
-                            break;
-                    }
-
-                    // find the intersection and add the lat/lon point to the result
-                    Vec2d inter = new Vec2d();
-                    Vec2d._v2dIntersect(orig2d0, orig2d1, edge0, edge1, ref inter);
-                    var gnv = g.verts[g.numVerts];
-                    _hex2dToGeo(ref inter, tmpFijk.face, adjRes, 1, ref gnv);
-                    g.verts[g.numVerts] = gnv;
-                    g.numVerts++;
-                }
-
-                // convert vertex to lat/lon and add to the result
-                // vert == NUM_PENT_VERTS is only used to test for possible intersection
-                // on last edge
-                if (vert < Constants.NUM_PENT_VERTS)
-                {
-                    Vec2d vec = new Vec2d();
-                    CoordIJK ._ijkToHex2d(fijk.coord, ref vec);
-                    var gnv = g.verts[g.numVerts];
-                    _hex2dToGeo(ref vec, fijk.face, adjRes, 1, ref gnv);
-                    g.verts[g.numVerts] = gnv;
-                    g.numVerts++;
-                }
-                lastFijk = fijk;
-            }
+            fijk.Coord = coord;
         }
 
         /// <summary>
@@ -827,101 +803,38 @@ namespace H3Lib
         /// </summary>
         /// <param name="h">The FaceIJK address of the cell.</param>
         /// <param name="res">The H3 resolution of the cell.</param>
-        /// <param name="isPentagon">Whether or not the cell is a pentagon.</param>
+        /// <param name="start">The first topological vertex to return.</param>
+        /// <param name="length">The number of topological vertexes to return.</param>
         /// <param name="g">The spherical coordinates of the cell boundary.</param>
-        /// <!-- Based off 3.1.1 -->
-        public static void _faceIjkToGeoBoundary(ref FaceIJK h, int res, int isPentagon, ref GeoBoundary g)
+        public static void _faceIjkToGeoBoundary(FaceIjk h, int res, int start, int length, ref GeoBoundary g)
         {
-            if (isPentagon > 0)
-            {
-                _faceIjkPentToGeoBoundary(ref h, res, ref g);
-                return;
-            }
-
-            // the vertexes of an origin-centered cell in a Class II resolution on a
-            // substrate grid with aperture sequence 33r. The aperture 3 gets us the
-            // vertices, and the 3r gets us back to Class II.
-            // vertices listed ccw from the i-axes
-            CoordIJK[] vertsCII =
-            {
-                new CoordIJK {i = 2, j = 1, k = 0}, // 0
-                new CoordIJK {i = 1, j = 2, k = 0}, // 1
-                new CoordIJK {i = 0, j = 2, k = 1}, // 2
-                new CoordIJK {i = 0, j = 1, k = 2}, // 3
-                new CoordIJK {i = 1, j = 0, k = 2}, // 4
-                new CoordIJK {i = 2, j = 0, k = 1} // 5
-            };
-
-            // the vertexes of an origin-centered cell in a Class III resolution on a
-            // substrate grid with aperture sequence 33r7r. The aperture 3 gets us the
-            // vertices, and the 3r7r gets us to Class II.
-            // vertices listed ccw from the i-axes
-            CoordIJK[] vertsCIII =
-            {
-                new CoordIJK {i = 5, j = 4, k = 0}, // 0
-                new CoordIJK {i = 1, j = 5, k = 0}, // 1
-                new CoordIJK {i = 0, j = 5, k = 4}, // 2
-                new CoordIJK {i = 0, j = 1, k = 5}, // 3
-                new CoordIJK {i = 4, j = 0, k = 5}, // 4
-                new CoordIJK {i = 5, j = 0, k = 1} // 5
-            };
-
-            // get the correct set of substrate vertices for this resolution
-            CoordIJK[] verts;
-            if (H3Index.isResClassIII(res))
-            {
-                verts = vertsCIII;
-            }
-            else
-            {
-                verts = vertsCII;
-            }
-
-            // adjust the center point to be in an aperture 33r substrate grid
-            // these should be composed for speed
-            FaceIJK centerIJK = new FaceIJK(h.face, new CoordIJK(h.coord.i, h.coord.j, h.coord.k));
-            CoordIJK._downAp3(ref centerIJK.coord);
-            CoordIJK._downAp3r(ref centerIJK.coord);
-
-            // if res is Class III we need to add a cw aperture 7 to get to
-            // icosahedral Class II
             int adjRes = res;
-            if (H3Index.isResClassIII(res))
-            {
-                CoordIJK._downAp7r(ref centerIJK.coord);
-                adjRes++;
-            }
-
-            // The center point is now in the same substrate grid as the origin
-            // cell vertices. Add the center point substate coordinates
-            // to each vertex to translate the vertices to that cell.
-            FaceIJK[] fijkVerts = new FaceIJK[Constants.NUM_HEX_VERTS];
-            for (int v = 0; v < Constants.NUM_HEX_VERTS; v++)
-            {
-                fijkVerts[v] = new FaceIJK();
-                fijkVerts[v].face = centerIJK.face;
-                CoordIJK._ijkAdd(centerIJK.coord, verts[v], ref fijkVerts[v].coord);
-                CoordIJK._ijkNormalize(ref fijkVerts[v].coord);
-            }
+            FaceIjk centerIjk = new FaceIjk(h.Face, new CoordIjk(h.Coord.I, h.Coord.J, h.Coord.K));
+            FaceIjk[] fijkVerts = Enumerable.Range(1, Constants.NUM_HEX_VERTS).Select(i => new FaceIjk()).ToArray();
+            _faceIjkToVerts(ref centerIjk, ref res, ref fijkVerts);
+            
+            // If we're returning the entire loop, we need one more iteration in case
+            // of a distortion vertex on the last edge
+            int additionalIteration = length == Constants.NUM_HEX_VERTS
+                                          ? 1
+                                          : 0;
 
             // convert each vertex to lat/lon
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
             g.numVerts = 0;
             int lastFace = -1;
-            int lastOverage = 0; // 0: none; 1: edge; 2: overage
-            for (int vert = 0; vert < Constants.NUM_HEX_VERTS + 1; vert++)
+            var lastOverage = Overage.NO_OVERAGE;
+            for (int vert = start;
+                 vert < start + length + additionalIteration;
+                 vert++)
             {
                 int v = vert % Constants.NUM_HEX_VERTS;
 
-                FaceIJK fijk = new FaceIJK
-                    (
-                     fijkVerts[v].face,
-                     new CoordIJK(fijkVerts[v].coord.i, fijkVerts[v].coord.j, fijkVerts[v].coord.k)
-                    );
+                var fijk = fijkVerts[v];
 
-                int pentLeading4 = 0;
-                int overage = _adjustOverageClassII(ref fijk, adjRes, pentLeading4, 1);
+                const int pentLeading4 = 0;
+                var overage = _adjustOverageClassII(ref fijk, adjRes, pentLeading4, 1);
 
                 /*
                 Check for edge-crossing. Each face of the underlying icosahedron is a
@@ -932,27 +845,29 @@ namespace H3Lib
                 projection. Note that Class II cell edges have vertices on the face
                 edge, with no edge line intersections.
                 */
-                if (H3Index.isResClassIII(res) && vert > 0 && fijk.face != lastFace &&
-                    lastOverage != 1)
+                if (H3Index.isResClassIII(res) && vert > start && fijk.Face != lastFace &&
+                    lastOverage != Overage.FACE_EDGE)
                 {
                     // find hex2d of the two vertexes on original face
                     int lastV = (v + 5) % Constants.NUM_HEX_VERTS;
-                    Vec2d orig2d0 = new Vec2d();
-                    CoordIJK._ijkToHex2d(fijkVerts[lastV].coord, ref orig2d0);
+                    var orig2d0 = new Vec2d();
+                    CoordIjk._ijkToHex2d(fijkVerts[lastV].Coord, ref orig2d0);
 
                     Vec2d orig2d1 = new Vec2d();
-                    CoordIJK._ijkToHex2d(fijkVerts[v].coord, ref orig2d1);
+                    CoordIjk._ijkToHex2d(fijkVerts[v].Coord, ref orig2d1);
 
-                    // find the appropriate icosa face edge vertexes
+                    // find the appropriate icosahedron face edge vertexes
                     int maxDim = maxDimByCIIres[adjRes];
                     Vec2d v0 = new Vec2d(3.0 * maxDim, 0.0);
                     Vec2d v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.M_SQRT3_2 * maxDim);
                     Vec2d v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.M_SQRT3_2 * maxDim);
 
-                    int face2 = lastFace == centerIJK.face ? fijk.face : lastFace;
-                    Vec2d edge0 = new Vec2d();
-                    Vec2d edge1 = new Vec2d();
-                    switch (adjacentFaceDir[centerIJK.face, face2])
+                    int face2 = ((lastFace == centerIjk.Face)
+                                     ? fijk.Face
+                                     : lastFace);
+                    Vec2d edge0;
+                    Vec2d edge1;
+                    switch (adjacentFaceDir[centerIjk.Face,face2])
                     {
                         case IJ:
                             edge0 = v0;
@@ -962,13 +877,12 @@ namespace H3Lib
                             edge0 = v1;
                             edge1 = v2;
                             break;
-                        case KI:
+                        // case KI:
                         default:
-                            if (adjacentFaceDir[centerIJK.face, face2] != KI)
+                            if (adjacentFaceDir[centerIjk.Face, face2] != KI)
                             {
-                                throw new Exception("Default failure in _faceIjkToGeoBoundary");
+                                throw new Exception("adjacentFaceDir[centerIJK.face][face2] != KI");
                             }
-
                             edge0 = v2;
                             edge1 = v0;
                             break;
@@ -986,29 +900,94 @@ namespace H3Lib
                         Vec2d._v2dEquals(orig2d0, inter) || Vec2d._v2dEquals(orig2d1, inter);
                     if (!isIntersectionAtVertex)
                     {
-                        var temp_verts = g.verts[g.numVerts];
-                        _hex2dToGeo(ref inter, centerIJK.face, adjRes, 1, ref temp_verts);
-                        g.verts[g.numVerts] = temp_verts;
+                        var geo = g.verts[g.numVerts];
+                        _hex2dToGeo
+                            (ref inter, centerIjk.Face, adjRes, 1, ref geo);
+                        g.verts[g.numVerts] = geo;
                         g.numVerts++;
-                        Debug.WriteLine(string.Format( "!IsIntersection {0}", g.numVerts));
                     }
                 }
 
                 // convert vertex to lat/lon and add to the result
-                // vert == NUM_HEX_VERTS is only used to test for possible intersection
-                // on last edge
-                if (vert < Constants.NUM_HEX_VERTS)
+                // vert == start + NUM_HEX_VERTS is only used to test for possible
+                // intersection on last edge
+                if (vert < start + Constants.NUM_HEX_VERTS)
                 {
                     Vec2d vec = new Vec2d();
-                    CoordIJK._ijkToHex2d(fijk.coord, ref vec);
-                    var temp_verts = g.verts[g.numVerts];
-                    _hex2dToGeo(ref vec, fijk.face, adjRes, 1, ref temp_verts);
-                    g.verts[g.numVerts] = temp_verts;
+                    CoordIjk._ijkToHex2d(fijk.Coord, ref vec);
+                    var geo = g.verts[g.numVerts];
+                    _hex2dToGeo(ref vec, fijk.Face, adjRes, 1, ref geo);
+                    g.verts[g.numVerts] = geo;
                     g.numVerts++;
                 }
 
-                lastFace = fijk.face;
+                lastFace = fijk.Face;
                 lastOverage = overage;
+            }
+        }
+
+        public static void _faceIjkToVerts(ref FaceIjk fijk, ref int res, ref FaceIjk[] fijkVerts)
+        {
+            // the vertexes of an origin-centered cell in a Class II resolution on a
+            // substrate grid with aperture sequence 33r. The aperture 3 gets us the
+            // vertices, and the 3r gets us back to Class II.
+            // vertices listed ccw from the i-axes
+            CoordIjk[] vertsCII =
+            {
+                new CoordIjk(2, 1, 0),  // 0
+                new CoordIjk(1, 2, 0),  // 1
+                new CoordIjk(0, 2, 1),  // 2
+                new CoordIjk(0, 1, 2),  // 3
+                new CoordIjk(1, 0, 2),  // 4
+                new CoordIjk(2, 0, 1)   // 5
+            };
+
+            // the vertexes of an origin-centered cell in a Class III resolution on a
+            // substrate grid with aperture sequence 33r7r. The aperture 3 gets us the
+            // vertices, and the 3r7r gets us to Class II.
+            // vertices listed ccw from the i-axes
+            CoordIjk[] vertsCIII =
+            {
+                new CoordIjk(5, 4, 0),  // 0
+                new CoordIjk(1, 5, 0),  // 1
+                new CoordIjk(0, 5, 4),  // 2
+                new CoordIjk(0, 1, 5),  // 3
+                new CoordIjk(4, 0, 5),  // 4
+                new CoordIjk(5, 0, 1)   // 5
+            };
+
+            // get the correct set of substrate vertices for this resolution
+            var verts = H3Index.isResClassIII(res)
+                            ? vertsCIII
+                            : vertsCII;
+
+            // adjust the center point to be in an aperture 33r substrate grid
+            // these should be composed for speed
+            var fCoord = fijk.Coord;
+            CoordIjk._downAp3(ref fCoord);
+            CoordIjk._downAp3r(ref fCoord);
+            fijk.Coord = new CoordIjk(fCoord.I, fCoord.J, fCoord.K);
+
+            // if res is Class III we need to add a cw aperture 7 to get to
+            // icosahedral Class II
+            if (H3Index.isResClassIII(res))
+            {
+                fCoord = fijk.Coord;
+                CoordIjk._downAp7r(ref fCoord);
+                fijk.Coord = new CoordIjk(fCoord.I, fCoord.J, fCoord.K);
+                res++;
+            }
+
+            // The center point is now in the same substrate grid as the origin
+            // cell vertices. Add the center point substrate coordinates
+            // to each vertex to translate the vertices to that cell.
+            for (int v = 0; v < Constants.NUM_HEX_VERTS; v++)
+            {
+                fijkVerts[v].Face = fijk.Face;
+                var fvCoord = fijkVerts[v].Coord;
+                CoordIjk._ijkAdd(fijk.Coord, verts[v], ref fvCoord);
+                CoordIjk._ijkNormalize(ref fvCoord);
+                fijkVerts[v].Coord = new CoordIjk(fvCoord.I, fvCoord.J, fvCoord.K);
             }
         }
     
@@ -1024,12 +1003,10 @@ namespace H3Lib
         /// 0 if on original face (no overage); 1 if on face edge (only occurs
         /// on substrate grids); 2 if overage on new face interior
         /// </returns>
-        /// <!-- Based off 3.1.1 -->
-        public static int _adjustOverageClassII(ref FaceIJK fijk, int res, int pentLeading4, int substrate)
+        public static Overage _adjustOverageClassII(ref FaceIjk fijk, int res, int pentLeading4, int substrate)
         {
-            int overage = 0;
-
-            CoordIJK ijk = new CoordIJK(fijk.coord.i, fijk.coord.j, fijk.coord.k);
+            var overage = Overage.NO_OVERAGE;
+            var ijk = new CoordIjk(fijk.Coord.I, fijk.Coord.J, fijk.Coord.K);
 
             // get the maximum dimension value; scale if a substrate grid
             int maxDim = maxDimByCIIres[res];
@@ -1039,95 +1016,111 @@ namespace H3Lib
             }
 
             // check for overage
-            if ((substrate != 0) && ijk.i + ijk.j + ijk.k == maxDim) // on edge
+            if ((substrate != 0) && ijk.I + ijk.J + ijk.K == maxDim) // on edge
             {
-                overage = 1;
+                overage = Overage.FACE_EDGE;
             }
-            else if (ijk.i + ijk.j + ijk.k > maxDim)  // overage
+            else if (ijk.I + ijk.J + ijk.K > maxDim)  // overage
             {
-                overage = 2;
+                overage = Overage.FACE_EDGE;
 
-                FaceOrientIJK fijkOrient = new FaceOrientIJK();
-                if (ijk.k > 0) {
-                    if (ijk.j > 0) // jk "quadrant"
+                FaceOrientIjk fijkOrient;
+                if (ijk.K > 0)
+                {
+                    if (ijk.J > 0) // jk "quadrant"
                     {
-                        //fijkOrient = faceNeighbors[fijk.face,JK];
-                        fijkOrient = new FaceOrientIJK(
-                                     faceNeighbors[fijk.face,JK].face,
-                                     faceNeighbors[fijk.face,JK].translate.i,
-                                     faceNeighbors[fijk.face,JK].translate.j,
-                                     faceNeighbors[fijk.face,JK].translate.k,
-                                     faceNeighbors[fijk.face,JK].ccwRot60);
+                        fijkOrient = new FaceOrientIjk(
+                                     faceNeighbors[fijk.Face,JK].Face,
+                                     faceNeighbors[fijk.Face,JK].Translate.I,
+                                     faceNeighbors[fijk.Face,JK].Translate.J,
+                                     faceNeighbors[fijk.Face,JK].Translate.K,
+                                     faceNeighbors[fijk.Face,JK].CcwRot60);
                     }
                     else  // ik "quadrant"
                     {
-                        //fijkOrient = faceNeighbors[fijk.face,KI];
-                        fijkOrient = new FaceOrientIJK(
-                                                       faceNeighbors[fijk.face,KI].face,
-                                                       faceNeighbors[fijk.face,KI].translate.i,
-                                                       faceNeighbors[fijk.face,KI].translate.j,
-                                                       faceNeighbors[fijk.face,KI].translate.k,
-                                                       faceNeighbors[fijk.face,KI].ccwRot60);
+                        fijkOrient = new FaceOrientIjk(
+                                                       faceNeighbors[fijk.Face,KI].Face,
+                                                       faceNeighbors[fijk.Face,KI].Translate.I,
+                                                       faceNeighbors[fijk.Face,KI].Translate.J,
+                                                       faceNeighbors[fijk.Face,KI].Translate.K,
+                                                       faceNeighbors[fijk.Face,KI].CcwRot60);
 
                         // adjust for the pentagonal missing sequence
                         if (pentLeading4!=0)
                         {
                             // translate origin to center of pentagon
-                            CoordIJK origin = new CoordIJK();
-                            CoordIJK._setIJK(ref origin, maxDim, 0, 0);
-                            CoordIJK tmp = new CoordIJK();
-                            CoordIJK._ijkSub(ref ijk, ref origin, ref tmp);
+                            var origin = new CoordIjk();
+                            CoordIjk._setIJK(ref origin, maxDim, 0, 0);
+                            var tmp = new CoordIjk();
+                            CoordIjk._ijkSub(ref ijk, ref origin, ref tmp);
                             // rotate to adjust for the missing sequence
-                            CoordIJK._ijkRotate60cw(ref tmp);
+                            CoordIjk._ijkRotate60cw(ref tmp);
                             // translate the origin back to the center of the triangle
-                            CoordIJK._ijkAdd(tmp, origin, ref ijk);
+                            CoordIjk._ijkAdd(tmp, origin, ref ijk);
                         }
                     }
                 }
                 else // ij "quadrant"
                 {
-//                    fijkOrient = faceNeighbors[fijk.face,IJ];
-                    fijkOrient = new FaceOrientIJK(
-                                                   faceNeighbors[fijk.face,IJ].face,
-                                                   faceNeighbors[fijk.face,IJ].translate.i,
-                                                   faceNeighbors[fijk.face,IJ].translate.j,
-                                                   faceNeighbors[fijk.face,IJ].translate.k,
-                                                   faceNeighbors[fijk.face,IJ].ccwRot60);
+                    fijkOrient = new FaceOrientIjk(
+                                                   faceNeighbors[fijk.Face,IJ].Face,
+                                                   faceNeighbors[fijk.Face,IJ].Translate.I,
+                                                   faceNeighbors[fijk.Face,IJ].Translate.J,
+                                                   faceNeighbors[fijk.Face,IJ].Translate.K,
+                                                   faceNeighbors[fijk.Face,IJ].CcwRot60);
 
                 }
 
-                fijk.face = fijkOrient.face;
+                fijk.Face = fijkOrient.Face;
 
                 // rotate and translate for adjacent face
-                for (int i = 0; i < fijkOrient.ccwRot60; i++)
+                for (var i = 0; i < fijkOrient.CcwRot60; i++)
                 {
-                    CoordIJK ._ijkRotate60ccw(ref ijk);
+                    CoordIjk ._ijkRotate60ccw(ref ijk);
                 }
 
-//                CoordIJK transVec = fijkOrient.translate;
-                CoordIJK transVec = new CoordIJK
+                var transVec = new CoordIjk
                     (
-                     fijkOrient.translate.i,
-                     fijkOrient.translate.j,
-                     fijkOrient.translate.k
+                     fijkOrient.Translate.I,
+                     fijkOrient.Translate.J,
+                     fijkOrient.Translate.K
                     );
                 int unitScale = unitScaleByCIIres[res];
                 if (substrate!=0)
                 {
                     unitScale *= 3;
                 }
-                CoordIJK._ijkScale(ref transVec, unitScale);
-                CoordIJK._ijkAdd(ijk, transVec, ref ijk);
-                CoordIJK._ijkNormalize(ref ijk);
+                CoordIjk._ijkScale(ref transVec, unitScale);
+                CoordIjk._ijkAdd(ijk, transVec, ref ijk);
+                CoordIjk._ijkNormalize(ref ijk);
 
                 // overage points on pentagon boundaries can end up on edges
-                if ((substrate != 0) && ijk.i + ijk.j + ijk.k == maxDim) // on edge
+                if ((substrate != 0) && ijk.I + ijk.J + ijk.K == maxDim) // on edge
                 {
-                    overage = 1;
+                    overage = Overage.FACE_EDGE;
                 }
             }
 
-            fijk.coord = ijk;
+            fijk.Coord = ijk;
+            return overage;
+        }
+
+        /// <summary>
+        /// Adjusts a FaceIJK address for a pentagon vertex in a substrate grid in
+        /// place so that the resulting cell address is relative to the correct
+        /// icosahedral face.
+        /// </summary>
+        /// <param name="fijk">The FaceIJK address of the cell.</param>
+        /// <param name="res">The H3 resolution of the cell.</param>
+        public static Overage _adjustPentVertOverage(ref FaceIjk fijk, int res)
+        {
+            int pentLeading4 = 0;
+            Overage overage;
+            do
+            {
+                overage = _adjustOverageClassII(ref fijk, res, pentLeading4, 1);
+            } while (overage == Overage.NEW_FACE);
+
             return overage;
         }
     }

@@ -45,16 +45,16 @@ namespace H3Lib
         public static int VertexRotations(H3Index cell)
         {
             // Get the face and other info for the origin
-            FaceIJK fijk = new FaceIJK();
+            FaceIjk fijk = new FaceIjk();
             H3Index._h3ToFaceIjk(cell, ref fijk);
             int baseCell = H3Index.h3GetBaseCell(cell);
             int cellLeadingDigit =(int) H3Index._h3LeadingNonZeroDigit(cell.value);
 
             // get the base cell face
-            FaceIJK baseFijk = new FaceIJK();
+            FaceIjk baseFijk = new FaceIjk();
             BaseCells._baseCellToFaceIjk(baseCell, ref baseFijk);
 
-            int ccwRot60 = BaseCells._baseCellToCCWrot60(baseCell, fijk.face);
+            int ccwRot60 = BaseCells._baseCellToCCWrot60(baseCell, fijk.Face);
 
             if (BaseCells._isBaseCellPentagon(baseCell))
             {
@@ -66,21 +66,21 @@ namespace H3Lib
                 }
 
                 // additional CCW rotation for polar neighbors or IK neighbors
-                if (fijk.face != baseFijk.face &&
+                if (fijk.Face != baseFijk.Face &&
                     (BaseCells._isBaseCellPolarPentagon(baseCell) ||
-                     fijk.face == dirFaces[(int)Direction.IK_AXES_DIGIT -  DIRECTION_INDEX_OFFSET]))
+                     fijk.Face == dirFaces[(int)Direction.IK_AXES_DIGIT -  DIRECTION_INDEX_OFFSET]))
                 {
                     ccwRot60 = (ccwRot60 + 1) % 6;
                 }
 
                 // Check whether the cell crosses a deleted pentagon subsequence
                 if (cellLeadingDigit == (int)Direction.JK_AXES_DIGIT &&
-                    fijk.face == dirFaces[(int) Direction.IK_AXES_DIGIT - DIRECTION_INDEX_OFFSET])
+                    fijk.Face == dirFaces[(int) Direction.IK_AXES_DIGIT - DIRECTION_INDEX_OFFSET])
                 {
                     // Crosses from JK to IK: Rotate CW
                     ccwRot60 = (ccwRot60 + 5) % 6;
                 } else if (cellLeadingDigit == (int)Direction.IK_AXES_DIGIT &&
-                           fijk.face == dirFaces[(int)Direction.JK_AXES_DIGIT - DIRECTION_INDEX_OFFSET])
+                           fijk.Face == dirFaces[(int)Direction.JK_AXES_DIGIT - DIRECTION_INDEX_OFFSET])
                 {
                     // Crosses from IK to JK: Rotate CCW
                     ccwRot60 = (ccwRot60 + 1) % 6;

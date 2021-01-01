@@ -66,8 +66,8 @@ namespace H3Lib
         /// Determines if the components of two spherical coordinates are within our
         /// standard epsilon distance of each other.
         /// </summary>
-        /// <param name="p1">The first spherical coordinates.</param>
-        /// <param name="p2">The second spherical coordinates.</param>
+        /// <param name="v1">The first spherical coordinates.</param>
+        /// <param name="v1">The second spherical coordinates.</param>
         /// <returns>
         ///  Whether or not the two coordinates are within the epsilon distance
         /// of each other.

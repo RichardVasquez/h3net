@@ -130,7 +130,7 @@ namespace H3Lib
         /// <param name="out_coord">ijk+ coordinates of the index will be placed here on success</param>
         /// <returns>0 on success, or another value on failure.</returns>
         /// <!-- Based off 3.2.0 -->
-        static int h3ToLocalIjk(H3Index origin, H3Index h3, ref CoordIJK out_coord)
+        static int h3ToLocalIjk(H3Index origin, H3Index h3, ref CoordIjk out_coord)
         {
             int res = H3Index.H3_GET_RESOLUTION(origin);
 
@@ -168,7 +168,7 @@ namespace H3Lib
                                    ? 1
                                    : 0);
 
-            FaceIJK indexFijk = new FaceIJK();
+            FaceIjk indexFijk = new FaceIjk();
             if (dir != Direction.CENTER_DIGIT)
             {
                 // Rotate index into the orientation of the origin base cell.
@@ -180,10 +180,10 @@ namespace H3Lib
                     {
                         h3 = H3Index._h3RotatePent60cw(h3);
 
-                        revDir = CoordIJK._rotate60cw(revDir);
+                        revDir = CoordIjk._rotate60cw(revDir);
                         if (revDir == Direction.K_AXES_DIGIT)
                         {
-                            revDir = CoordIJK._rotate60cw(revDir);
+                            revDir = CoordIjk._rotate60cw(revDir);
                         }
                     }
                 }
@@ -193,7 +193,7 @@ namespace H3Lib
                     {
                         h3 = H3Index._h3Rotate60cw(ref h3);
 
-                        revDir = CoordIJK._rotate60cw(revDir);
+                        revDir = CoordIjk._rotate60cw(revDir);
                     }
                 }
             }
@@ -264,34 +264,34 @@ namespace H3Lib
 
                 for (int i = 0; i < pentagonRotations; i++)
                 {
-                    CoordIJK._ijkRotate60cw(ref indexFijk.coord);
+                    CoordIjk._ijkRotate60cw(ref indexFijk.Coord);
                 }
 
-                CoordIJK offset = new CoordIJK();
-                CoordIJK._neighbor(ref offset, dir);
+                CoordIjk offset = new CoordIjk();
+                CoordIjk._neighbor(ref offset, dir);
                 // Scale offset based on resolution
                 for (int r = res - 1; r >= 0; r--)
                 {
                     if (H3Index.isResClassIII(r + 1))
                     {
                         // rotate ccw
-                        CoordIJK._downAp7(ref offset);
+                        CoordIjk._downAp7(ref offset);
                     }
                     else
                     {
                         // rotate cw
-                        CoordIJK._downAp7r(ref offset);
+                        CoordIjk._downAp7r(ref offset);
                     }
                 }
 
                 for (int i = 0; i < directionRotations; i++)
                 {
-                    CoordIJK._ijkRotate60cw(ref offset);
+                    CoordIjk._ijkRotate60cw(ref offset);
                 }
 
                 // Perform necessary translation
-                CoordIJK._ijkAdd(indexFijk.coord, offset, ref indexFijk.coord);
-                CoordIJK._ijkNormalize(ref indexFijk.coord);
+                CoordIjk._ijkAdd(indexFijk.Coord, offset, ref indexFijk.Coord);
+                CoordIjk._ijkNormalize(ref indexFijk.Coord);
             }
             else if (originOnPent != 0 && indexOnPent != 0)
             {
@@ -320,11 +320,11 @@ namespace H3Lib
 
                 for (int i = 0; i < withinPentagonRotations; i++)
                 {
-                    CoordIJK._ijkRotate60cw(ref indexFijk.coord);
+                    CoordIjk._ijkRotate60cw(ref indexFijk.Coord);
                 }
             }
 
-            out_coord = indexFijk.coord;
+            out_coord = indexFijk.Coord;
             return 0;
         }
 
@@ -342,7 +342,7 @@ namespace H3Lib
         /// <param name="out_h3">The index will be placed here on success</param>
         /// <returns>0 on success, or another value on failure</returns>
         /// <!-- Based off 3.2.0 -->
-        internal static int localIjkToH3(H3Index origin, CoordIJK ijk, ref H3Index out_h3)
+        internal static int localIjkToH3(H3Index origin, CoordIjk ijk, ref H3Index out_h3)
         {
             int res = H3Index.H3_GET_RESOLUTION(origin);
             int originBaseCell = H3Index.H3_GET_BASE_CELL(origin);
@@ -359,13 +359,13 @@ namespace H3Lib
             // check for res 0/base cell
             if (res == 0)
             {
-                if (ijk.i > 1 || ijk.j > 1 || ijk.k > 1)
+                if (ijk.I > 1 || ijk.J > 1 || ijk.K > 1)
                 {
                     // out of range input
                     return 1;
                 }
 
-                dir = CoordIJK._unitIjkToDigit(ref ijk);
+                dir = CoordIjk._unitIjkToDigit(ref ijk);
                 int newBaseCell = BaseCells._getBaseCellNeighbor(originBaseCell, dir);
                 if (newBaseCell == BaseCells.INVALID_BASE_CELL)
                 {
@@ -380,48 +380,48 @@ namespace H3Lib
             // we need to find the correct base cell offset (if any) for this H3 index;
             // start with the passed in base cell and resolution res ijk coordinates
             // in that base cell's coordinate system
-            CoordIJK ijkCopy = new CoordIJK(ijk.i, ijk.j, ijk.k);
+            CoordIjk ijkCopy = new CoordIjk(ijk.I, ijk.J, ijk.K);
 
             // build the H3Index from finest res up
             // adjust r for the fact that the res 0 base cell offsets the indexing
             // digits
             for (int r = res - 1; r >= 0; r--)
             {
-                CoordIJK lastIJK = ijkCopy;
-                CoordIJK lastCenter;
+                CoordIjk lastIJK = ijkCopy;
+                CoordIjk lastCenter;
                 if (H3Index.isResClassIII(r + 1))
                 {
                     // rotate ccw
-                    CoordIJK._upAp7(ref ijkCopy);
+                    CoordIjk._upAp7(ref ijkCopy);
                     lastCenter = ijkCopy;
-                    CoordIJK._downAp7(ref lastCenter);
+                    CoordIjk._downAp7(ref lastCenter);
                 }
                 else
                 {
                     // rotate cw
-                    CoordIJK._upAp7r(ref ijkCopy);
+                    CoordIjk._upAp7r(ref ijkCopy);
                     lastCenter = ijkCopy;
-                    CoordIJK._downAp7r(ref lastCenter);
+                    CoordIjk._downAp7r(ref lastCenter);
                 }
 
-                CoordIJK diff = new CoordIJK();
-                CoordIJK._ijkSub(ref lastIJK, ref lastCenter, ref diff);
-                CoordIJK._ijkNormalize(ref diff);
+                CoordIjk diff = new CoordIjk();
+                CoordIjk._ijkSub(ref lastIJK, ref lastCenter, ref diff);
+                CoordIjk._ijkNormalize(ref diff);
 
-                H3Index.H3_SET_INDEX_DIGIT(ref out_h3, r + 1, (ulong) CoordIJK._unitIjkToDigit(ref diff));
+                H3Index.H3_SET_INDEX_DIGIT(ref out_h3, r + 1, (ulong) CoordIjk._unitIjkToDigit(ref diff));
             }
 
             // ijkCopy should now hold the IJK of the base cell in the
             // coordinate system of the current base cell
 
-            if (ijkCopy.i > 1 || ijkCopy.j > 1 || ijkCopy.k > 1)
+            if (ijkCopy.I > 1 || ijkCopy.J > 1 || ijkCopy.K > 1)
             {
                 // out of range input
                 return 2;
             }
 
             // lookup the correct base cell
-            dir = CoordIJK._unitIjkToDigit(ref ijkCopy);
+            dir = CoordIjk._unitIjkToDigit(ref ijkCopy);
             int baseCell = BaseCells._getBaseCellNeighbor(originBaseCell, dir);
             // If baseCell is invalid, it must be because the origin base cell is a
             // pentagon, and because pentagon base cells do not border each other,
@@ -445,7 +445,7 @@ namespace H3Lib
                         PENTAGON_ROTATIONS_REVERSE[(int) originLeadingDigit, (int) dir];
                     for (int i = 0; i < pentagonRotations; i++)
                     {
-                        dir = CoordIJK._rotate60ccw(dir);
+                        dir = CoordIjk._rotate60ccw(dir);
                     }
 
                     // The pentagon rotations are being chosen so that dir is not the
@@ -605,13 +605,13 @@ namespace H3Lib
             // non-experimental API, this function (with the experimental prefix) will
             // be marked as deprecated and to be removed in the next major version. It
             // will be replaced with a non-prefixed function name.
-            CoordIJK ijk = new CoordIJK();
+            CoordIjk ijk = new CoordIjk();
             int failed = h3ToLocalIjk(origin, h3, ref ijk);
             if (failed != 0) {
                 return failed;
             }
 
-            CoordIJK.ijkToIj(ijk, ref out_coord);
+            CoordIjk.ijkToIj(ijk, ref out_coord);
 
             return 0;
         }
@@ -640,8 +640,8 @@ namespace H3Lib
             // non-experimental API, this function (with the experimental prefix) will
             // be marked as deprecated and to be removed in the next major version. It
             // will be replaced with a non-prefixed function name.
-            CoordIJK ijk = new CoordIJK();
-            CoordIJK.ijToIjk(ij, ref ijk);
+            CoordIjk ijk = new CoordIjk();
+            CoordIjk.ijToIjk(ij, ref ijk);
 
             return localIjkToH3(origin, ijk, ref out_h3);
         }
@@ -660,8 +660,8 @@ namespace H3Lib
         /// </returns>
         /// <!-- Based off 3.2.0 -->
         public static int h3Distance(H3Index origin, H3Index h3) {
-            CoordIJK originIjk = new CoordIJK();
-            CoordIJK h3Ijk = new CoordIJK();
+            CoordIjk originIjk = new CoordIjk();
+            CoordIjk h3Ijk = new CoordIjk();
             if (h3ToLocalIjk(origin, origin, ref originIjk) != 0)
             {
                 // Currently there are no tests that would cause getting the coordinates
@@ -673,7 +673,7 @@ namespace H3Lib
                 return -1;
             }
 
-            return CoordIJK.ijkDistance(originIjk, h3Ijk);
+            return CoordIjk.ijkDistance(originIjk, h3Ijk);
         }
     }
     

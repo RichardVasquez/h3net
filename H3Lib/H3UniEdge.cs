@@ -277,7 +277,7 @@ namespace H3Lib
             // that while there are always 2 topological vertexes per edge, the
             // resulting edge boundary may have an additional distortion vertex if it
             // crosses an edge of the icosahedron.
-            FaceIJK fijk = new FaceIJK();
+            FaceIjk fijk = new FaceIjk();
             H3Index._h3ToFaceIjk(origin, ref fijk);
 
             int res = H3Index.H3_GET_RESOLUTION(origin);
@@ -285,44 +285,12 @@ namespace H3Lib
 
             if (isPentagon == 1)
             {
-                FaceIJK._faceIjkPentToGeoBoundary(ref fijk,res,startVertex,ref gb);
+                FaceIjk._faceIjkPentToGeoBoundary(fijk, res, startVertex, 2, ref gb);
             }
-            // TODO: More efficient solution :)
-            GeoBoundary origin = new GeoBoundary();
-            GeoBoundary destination = new GeoBoundary();
-            GeoCoord postponedVertex = new GeoCoord();
-            bool hasPostponedVertex = false;
-
-            H3Index.h3ToGeoBoundary(getOriginH3IndexFromUnidirectionalEdge(edge), ref origin);
-            H3Index.h3ToGeoBoundary(getDestinationH3IndexFromUnidirectionalEdge(edge), ref destination);
-
-            int k = 0;
-            for (int i = 0; i < origin.numVerts; i++)
+            else
             {
-//                if (_hasMatchingVertex(origin.verts[i], destination))
-//                {
-//                    // If we are on vertex 0, we need to handle the case where it's the
-//                    // end of the edge, not the beginning.
-//                    if (i == 0 &&
-//                        !_hasMatchingVertex(origin.verts[i + 1], destination))
-//                    {
-//                        postponedVertex = origin.verts[i];
-//                        hasPostponedVertex = true;
-//                    }
-//                    else
-//                    {
-//                        gb.verts[k] = origin.verts[i];
-//                        k++;
-//                    }
-//                }
+                FaceIjk._faceIjkToGeoBoundary(fijk, res, startVertex, 2, ref gb);
             }
-
-            // If we postponed adding the last vertex, add it now
-            if (hasPostponedVertex) {
-                gb.verts[k] = postponedVertex;
-                k++;
-            }
-            gb.numVerts = k;
         }
     }
 }
