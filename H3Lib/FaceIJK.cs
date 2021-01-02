@@ -62,6 +62,12 @@ namespace H3Lib
             Coord = cijk;
         }
 
+        public FaceIjk(FaceIjk fijk)
+        {
+            Face = fijk.Face;
+            Coord = new CoordIjk(fijk.Coord);
+        }
+
         /// <summary>
         /// Invalid faceNeighbors table direction
         /// </summary>
@@ -621,7 +627,7 @@ namespace H3Lib
         public static void _faceIjkPentToGeoBoundary(FaceIjk h, int res, int start, int length, ref GeoBoundary g)
         {
             int adjRes = res;
-            var centerIjk = new FaceIjk(h.Face, new CoordIjk(h.Coord.I, h.Coord.J, h.Coord.K));
+            var centerIjk = new FaceIjk(h);
             var fijkVerts = Enumerable.Range(1, Constants.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
             _faceIjkPentToVerts(ref centerIjk, ref adjRes, ref fijkVerts);
 
@@ -635,11 +641,13 @@ namespace H3Lib
 
             g.numVerts = 0;
             var lastFijk = new FaceIjk();
+
             for (int vert = start; vert < start + length + additionalIteration; vert++)
             {
                 int v = vert % Constants.NUM_PENT_VERTS;
-                var fijk = fijkVerts[v];
+                var fijk = new FaceIjk(fijkVerts[v]);
                 _adjustPentVertOverage(ref fijk, adjRes);
+                fijkVerts[v] = new FaceIjk(fijk);
 
                 // all Class III pentagon edges cross icosahedron edges
                 // note that Class II pentagons have vertices on the edge,
@@ -647,7 +655,7 @@ namespace H3Lib
                 if (H3Index.isResClassIII(res) && vert > start)
                 {
                     // find hex2d of the two vertexes on the last face
-                    var tmpFijk = fijk;
+                    var tmpFijk = new FaceIjk(fijk);
 
                     var orig2d0 = new Vec2d();
                     CoordIjk._ijkToHex2d(lastFijk.Coord, ref orig2d0);
@@ -657,7 +665,7 @@ namespace H3Lib
                     var fijkOrient = faceNeighbors[tmpFijk.Face, currentToLastDir];
 
                     tmpFijk.Face = fijkOrient.Face;
-                    var ijk = new CoordIjk(tmpFijk.Coord.I, tmpFijk.Coord.J, tmpFijk.Coord.K);
+                    var ijk = new CoordIjk(tmpFijk.Coord);
 
                     // rotate and translate for adjacent face
                     for (var i = 0; i < fijkOrient.CcwRot60; i++)
@@ -665,14 +673,14 @@ namespace H3Lib
                         CoordIjk._ijkRotate60ccw(ref ijk);
                     }
 
-                    var transVec = new CoordIjk
-                        (fijkOrient.Translate.I, fijkOrient.Translate.J, fijkOrient.Translate.K);
+                    var transVec = new CoordIjk(fijkOrient.Translate);
                     CoordIjk._ijkScale(ref transVec, unitScaleByCIIres[adjRes] * 3);
                     CoordIjk._ijkAdd(ijk, transVec, ref ijk);
                     CoordIjk._ijkNormalize(ref ijk);
 
                     var orig2d1 = new Vec2d();
                     CoordIjk._ijkToHex2d(ijk, ref orig2d1);
+                    tmpFijk.Coord = ijk;
 
                     // find the appropriate icosahedron face edge vertexes
                     int maxDim = maxDimByCIIres[adjRes];
@@ -724,7 +732,7 @@ namespace H3Lib
                     g.numVerts++;
                 }
 
-                lastFijk = fijk;
+                lastFijk = new FaceIjk(fijk);
             }
         }
 
@@ -772,7 +780,7 @@ namespace H3Lib
 
             // adjust the center point to be in an aperture 33r substrate grid
             // these should be composed for speed
-            var coord = new CoordIjk(fijk.Coord.I, fijk.Coord.J, fijk.Coord.K);
+            var coord = new CoordIjk(fijk.Coord);
             CoordIjk._downAp3(ref coord);
             CoordIjk._downAp3r(ref coord);
 
@@ -781,6 +789,8 @@ namespace H3Lib
                 CoordIjk._downAp7r(ref coord);
                 res++;
             }
+
+            fijk.Coord = coord;
             
             // The center point is now in the same substrate grid as the origin
             // cell vertices. Add the center point substrate coordinates

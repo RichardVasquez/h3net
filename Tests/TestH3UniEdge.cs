@@ -292,7 +292,7 @@ namespace Tests
             H3Index pentagon = 0;
             GeoBoundary boundary = new GeoBoundary();
             GeoBoundary edgeBoundary = new GeoBoundary();
-            var edges = new ulong[6].Select(cell => new H3Index(cell)).ToList();
+            var edges = new ulong[6].Select(cell => new H3Index(0)).ToList();
 
             int[,] expectedVertices =
             {
@@ -301,9 +301,7 @@ namespace Tests
                 { 6,  7,  8}, {0, 1, 2}
             };
 
-            // TODO: The current implementation relies on lat/lon comparison and fails
-            // on resolutions finer than 12
-            for (int res = 1; res < 13; res += 2)
+            for (int res = 1; res < Constants.MAX_H3_RES; res += 2)
             {
                 H3Index.setH3Index(ref pentagon, res, 24, 0);
                 H3Index.h3ToGeoBoundary(pentagon, ref boundary);

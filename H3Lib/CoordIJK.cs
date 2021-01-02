@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace H3Lib
 {
@@ -15,33 +16,33 @@ namespace H3Lib
     /// 2. hex2d: local face-centered coordinate system scaled a specific H3 grid
     ///    resolution unit length and with x-axes aligned with the local i-axes
     /// </remarks>
-    public class CoordIjk:IEquatable<CoordIjk>
+    public readonly struct CoordIjk:IEquatable<CoordIjk>
     {
-        public int I;
-        public int J;
-        public int K;
+        public readonly int I;
+        public readonly int J;
+        public readonly int K;
 
         /// <summary>
         /// IJK hexagon coordinates
         /// </summary>
-        public CoordIjk(int i, int j, int k)
+        public CoordIjk(int i, int j, int k):this()
         {
             I = i;
             J = j;
             K = k;
         }
 
-        public CoordIjk()
+        public CoordIjk(CoordIjk coord)
         {
-            I = 0;
-            J = 0;
-            K = 0;
+            I = coord.I;
+            J = coord.J;
+            K = coord.K;
         }
 
         /// <summary>
         /// CoordIJK unit vectors corresponding to the 7 H3 digits.
         /// </summary>
-        private static readonly CoordIjk[] UNIT_VECS =
+        public static readonly CoordIjk[] UNIT_VECS =
         {
             new CoordIjk{I=0, J=0, K=0},  // direction 0
             new CoordIjk{I=0, J=0, K=1},  // direction 1
@@ -51,6 +52,18 @@ namespace H3Lib
             new CoordIjk{I=1, J=0, K=1},  // direction 5
             new CoordIjk{I=1, J=1, K=0}   // direction 6
         };
+
+        public static readonly Dictionary<Direction, CoordIjk> UnitVectors =
+            new Dictionary<Direction, CoordIjk>
+            {
+                {Direction.CENTER_DIGIT, new CoordIjk(0, 0, 0)},
+                {Direction.K_AXES_DIGIT, new CoordIjk(0, 0, 1)},
+                {Direction.J_AXES_DIGIT, new CoordIjk(0, 1, 0)},
+                {Direction.JK_AXES_DIGIT, new CoordIjk(0, 1, 1)},
+                {Direction.I_AXES_DIGIT, new CoordIjk(1, 0, 0)},
+                {Direction.IK_AXES_DIGIT, new CoordIjk(1, 0, 1)},
+                {Direction.IJ_AXES_DIGIT, new CoordIjk(1, 1, 0)},
+            };
 
         /// <summary>
         /// Sets an IJK coordinate to the specified component values.
@@ -244,7 +257,6 @@ namespace H3Lib
         /// values. Works in place.
         /// </summary>
         /// <param name="c">The ijk coordinates to normalize.</param>
-        /// <!-- Based off 3.1.1 -->
         public static void _ijkNormalize(ref CoordIjk c) {
             // remove any negative values
             if (c.I < 0) {
@@ -278,7 +290,7 @@ namespace H3Lib
             c.J -= min;
             c.K -= min;
         }
-
+        
         /// <summary>
         /// Determines the H3 digit corresponding to a unit vector in ijk coordinates.
         /// </summary>

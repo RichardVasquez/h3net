@@ -21,7 +21,20 @@ namespace H3Lib
         {
             public int i;
             public int j;
+
+            public CoordIJ()
+            {
+                i = 0;
+                j = 0;
+            }
+
+            public CoordIJ(int _i, int _j)
+            {
+                i = _i;
+                j = _j;
+            }
         }
+        
         /// <summary>
         /// Origin leading digit -&gt; index leading digit -&gt; rotations 60 cw
         /// Either being 1 (K axis) is invalid.

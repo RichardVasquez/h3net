@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace H3Lib.Extensions
 {
@@ -59,33 +62,15 @@ namespace H3Lib.Extensions
 
             return result;
         }
-        
-        /// <summary>
-        /// Set the components of spherical coordinates in decimal degrees.
-        /// </summary>
-        /// <param name="p">The spherical coordinates</param>
-        /// <param name="latitude">The desired latitude in decimal degrees</param>
-        /// <param name="longitude">The desired longitude in decimal degrees</param>
-        /// <!-- Based off 3.1.1 -->
-        public static void SetDegrees(this GeoCoord p, double latitude, double longitude)
-        {
-            GeoCoord._setGeoRads(ref p,
-                                 GeoCoord.DegreesToRadians(latitude),
-                                 GeoCoord.DegreesToRadians(longitude));
-        }
-        
-        /// <summary>
-        /// Set the components of spherical coordinates in radians.
-        /// </summary>
-        /// <param name="p">The spherical coordinates</param>
-        /// <param name="latitude">The desired latitude in decimal radians</param>
-        /// <param name="longitude">The desired longitude in decimal radians</param>
-        /// <!-- Based off 3.1.1 -->
-        public static void SetRadians(this GeoCoord p, double latitude, double longitude)
-        {
-            GeoCoord._setGeoRads(ref p, latitude, longitude);
-        }
 
 
+        /// <summary>
+        /// Transforms coordinates from the IJ coordinate system to the IJK+ coordinate system
+        /// </summary>
+        /// <param name="ij">The input IJ coordinates</param>
+        public static CoordIjk ToIjk(this LocalIJ.CoordIJ ij)
+        {
+            return new CoordIjk(ij.i, ij.j, 0).Normalized();
+        }
     }
 }
