@@ -9,9 +9,52 @@ namespace H3Lib
     /// <summary>
     /// H3Index utility functions
     /// </summary>
-    [DebuggerDisplay("{value}")]
+    [DebuggerDisplay("{Value}")]
     public class H3Index
     {
+        public int Resolution
+        {
+            get => (int) (Value & H3_RES_MASK) >> H3_RES_OFFSET;
+            set
+            {
+                var input = (ulong) value;
+                Value = (Value & H3_RES_MASK_NEGATIVE) | (input << H3_RES_OFFSET);
+            }
+        }
+
+        public int BaseCell
+        {
+            get => (int)((Value & H3_BC_MASK) >> H3_BC_OFFSET);
+            set
+            {
+                var input = (ulong) value;
+                Value = (Value & H3_BC_MASK_NEGATIVE) | (input << H3_BC_OFFSET);
+            }
+        }
+
+        public Direction LeadingNonZeroDigit
+        {
+            get
+            {
+                for (var r = 1; r < Resolution; r++)
+                {
+                    if (H3_GET_INDEX_DIGIT(Value, r) > 0)
+                    {
+                        return H3_GET_INDEX_DIGIT(Value, r);
+                    }
+                }
+
+                return Direction.CENTER_DIGIT;
+            }
+        }
+
+        public H3Mode Mode { get; set; }
+
+        public bool IsResClassIii(int resolution)
+        {
+            return resolution % 2 == 1;
+        }
+
         /// <summary>
         /// The number of bits in an H3 index.
         /// </summary>
@@ -92,7 +135,7 @@ namespace H3Lib
         /// <summary>
         /// Where the actual index is stored.
         /// </summary>
-        public ulong value;
+        public ulong Value;
 
         /// <summary>
         /// Invalid index used to indicate an error from geoToH3 and related functions
@@ -104,17 +147,17 @@ namespace H3Lib
 
         public H3Index(ulong val) 
         {
-            value = val;
+            Value = val;
         }
 
         public H3Index()
         {
-            value = 0;
+            Value = 0;
         }
 
         protected bool Equals(H3Index other)
         {
-            return value == other.value;
+            return Value == other.Value;
         }
         public override bool Equals(object obj)
         {
@@ -137,7 +180,7 @@ namespace H3Lib
 
         public override int GetHashCode()
         {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         public static bool operator ==(H3Index h1, int i2)
@@ -146,7 +189,7 @@ namespace H3Lib
             {
                 return false;
             }
-            return h1.value == (ulong)i2;
+            return h1.Value == (ulong)i2;
         }
 
         public static bool operator !=(H3Index h1, int i2)
@@ -160,7 +203,7 @@ namespace H3Lib
             {
                 return false;
             }
-            return h2.value == (ulong)i1;
+            return h2.Value == (ulong)i1;
         }
 
         public static bool operator !=(int i1, H3Index h2)
@@ -176,7 +219,7 @@ namespace H3Lib
                 return false;
             }
 
-            return h1.value == h2.value;
+            return h1.Value == h2.Value;
         }
 
         public static bool operator !=(H3Index h1, H3Index h2)
@@ -191,7 +234,7 @@ namespace H3Lib
                 return false;
             }
 
-            return h1.value == u2;
+            return h1.Value == u2;
         }
 
         public static bool operator !=(H3Index  u1, ulong u2)
@@ -206,7 +249,7 @@ namespace H3Lib
                 return false;
             }
 
-            return h2.value == u1;
+            return h2.Value == u1;
         }
 
         public static bool operator !=(ulong  u1, H3Index h2)
@@ -248,7 +291,7 @@ namespace H3Lib
 
         public static implicit operator ulong(H3Index h3)
         {
-            return h3.value;
+            return h3.Value;
         }
 
         /// <summary>
@@ -332,7 +375,25 @@ namespace H3Lib
             h3 = (h3 & ~(H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)))
                  |  ((ulong)digit << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET));
         }
+
         
+        /// <summary>
+        ///     Gets the resolution res integer digit (0-7) of h3.
+        /// </summary>
+        public Direction GetIndexDigit(int res)
+        {
+            return (Direction) ((Value >> ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK);
+        }
+
+        /// <summary>
+        /// Sets the resolution res digit of h3 to the integer digit (0-7)
+        /// </summary>
+        public void SetIndexDigit(int res, ulong digit)
+        {
+            Value = (Value & ~(H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)))
+              |  (digit << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET));
+            
+        }
 
         /// <summary>
         /// Returns the H3 resolution of an H3 index.
@@ -585,7 +646,7 @@ namespace H3Lib
                         }
                     }
                 }
-                current = new List<H3Index>(realChildren.Where(c=>c.value!=0));
+                current = new List<H3Index>(realChildren.Where(c=>c.Value!=0));
                 currentRes++;
             }
 
@@ -636,16 +697,16 @@ namespace H3Lib
                 foreach (var hex in remainingHexes)
                 {
                     H3Index parent = h3ToParent(hex, parentRes);
-                    if (!generation.ContainsKey(parent.value))
+                    if (!generation.ContainsKey(parent.Value))
                     {
-                        generation[parent.value] = new List<ulong>();
+                        generation[parent.Value] = new List<ulong>();
                     }
 
-                    if (generation[parent].Contains(hex.value))
+                    if (generation[parent].Contains(hex.Value))
                     {
                         return -1;  //  We have duplicate hexes that we're trying to compact
                     }
-                    generation[parent].Add(hex.value);
+                    generation[parent].Add(hex.Value);
                 }
                 // Only possible on duplicate input
                 var errorTest = generation.Where(hex => hex.Value.Count > 7);

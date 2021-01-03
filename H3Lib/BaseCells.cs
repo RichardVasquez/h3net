@@ -1,15 +1,16 @@
 namespace H3Lib
 {
+   
+    
     /// <summary>
     /// Base cell related lookup tables and access functions.
     /// </summary>
-    /// <!-- Based off 3.1.1 -->
     public class BaseCells
     {
+
         /// <summary>
         /// Information on a single base cell
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public struct BaseCellData
         {
             /// <summary>
@@ -36,7 +37,6 @@ namespace H3Lib
         /// <summary>
         /// base cell at a given ijk and required rotations into its system
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public struct BaseCellOrient
         {
             /// <summary>
@@ -61,7 +61,6 @@ namespace H3Lib
         /// For each base cell, for each direction, the neighboring base
         /// cell ID is given. 127 indicates there is no neighbor in that direction.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly int[,] baseCellNeighbors = {
             {0, 1, 5, 2, 4, 3, 8},                          // base cell 0
             {1, 7, 6, 9, 0, 3, 2},                          // base cell 1
@@ -194,7 +193,6 @@ namespace H3Lib
         /// CCW rotations to the coordinate system of the neighbor is given.
         /// -1 indicates there is no neighbor in that direction.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly int[,] baseCellNeighbor60CCWRots =
         {
             {0, 5, 0, 0, 1, 5, 1},   // base cell 0
@@ -334,7 +332,6 @@ namespace H3Lib
         /// This table can be accessed using the functions <see cref="_faceIjkToBaseCell"/>
         /// and <see cref="_faceIjkToBaseCellCCWrot60"/>
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly BaseCellOrient[,,,] faceIjkBaseCells =
         {
             {// face 0
@@ -744,7 +741,6 @@ namespace H3Lib
         /// is a pentagon, the two cw offset rotation adjacent faces are given (-1
         /// indicates that no cw offset rotation faces exist for this base cell).
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static readonly BaseCellData[] baseCellData = {
             new BaseCellData(1, 1 ,0 ,0, 0, 0, 0), // base cell 0
             new BaseCellData(2, 1, 1, 0, 0, 0, 0),	// base cell 1
@@ -893,7 +889,6 @@ namespace H3Lib
         /// Return whether the indicated base cell is a pentagon where all
         /// neighbors are oriented towards it.
         /// </summary>
-        /// <!-- Based off 3.2.0 -->
         public static bool _isBaseCellPolarPentagon(int baseCell) {
             return baseCell == 4 || baseCell == 117;
         }
@@ -904,7 +899,6 @@ namespace H3Lib
         /// face-centered ijk coordinate system, return the base cell located at that
         /// coordinate.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static int _faceIjkToBaseCell(FaceIjk h)
         {
             return faceIjkBaseCells[h.Face,h.Coord.I,h.Coord.J,h.Coord.K].baseCell;
@@ -919,7 +913,6 @@ namespace H3Lib
         ///
         /// Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static int _faceIjkToBaseCellCCWrot60( FaceIjk h)
         {
             return faceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K].ccwRot60;
@@ -928,7 +921,6 @@ namespace H3Lib
         /// <summary>
         /// Find the FaceIJK given a base cell.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         // ReSharper disable once UnusedMember.Global
         public static void _baseCellToFaceIjk(int baseCell, ref FaceIjk h)
         {
@@ -962,7 +954,6 @@ namespace H3Lib
         /// <summary>
         /// Return whether or not the tested face is a cw offset face.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static bool _baseCellIsCwOffset(int baseCell, int testFace)
         {
             return baseCellData[baseCell].cwOffsetPent[0] == testFace ||
@@ -972,7 +963,6 @@ namespace H3Lib
         /// <summary>
         /// Return the neighboring base cell in the given direction.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static int _getBaseCellNeighbor(int baseCell, Direction dir)
         {
             return baseCellNeighbors[baseCell, (int) dir];
@@ -982,7 +972,6 @@ namespace H3Lib
         /// Return the direction from the origin base cell to the neighbor.
         /// </summary>
         /// <returns>INVALID_DIGIT if the base cells are not neighbors.</returns>
-        /// <!-- Based off 3.1.1 -->
         public static Direction _getBaseCellDirection(int originBaseCell, int neighboringBaseCell)
         {
             for (var dir = Direction.CENTER_DIGIT; dir <Direction.NUM_DIGITS; dir++) 

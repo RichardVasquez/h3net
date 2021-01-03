@@ -208,13 +208,13 @@ namespace Tests
         {
             // Simple checks for ordering of values
             // hexAreaKm2 ordering
-            TestDecreasingFunction(GeoCoord.hexAreaKm2);
+            TestDecreasingFunction(GeoCoord.HexAreaKm2);
             // hexAreaM2 ordering
-            TestDecreasingFunction(GeoCoord.hexAreaM2);
+            TestDecreasingFunction(GeoCoord.HexAreaM2);
             // edgeLengthKm ordering
-            TestDecreasingFunction(GeoCoord.edgeLengthKm);
+            TestDecreasingFunction(GeoCoord.EdgeLengthKm);
             // edgeLengthM ordering
-            TestDecreasingFunction(GeoCoord.edgeLengthM);
+            TestDecreasingFunction(GeoCoord.EdgeLengthM);
         }
 
         [Test]

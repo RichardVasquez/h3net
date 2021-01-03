@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using H3Lib.Extensions;
 
 namespace H3Lib
 {
@@ -268,7 +269,7 @@ namespace H3Lib
             }
 
             // Put origin in the output array. out is used as a hash set.
-            int off =(int)( origin.value % (ulong)maxIdx);
+            int off =(int)( origin.Value % (ulong)maxIdx);
             while (outHex[off] != 0 && outHex[off] != origin)
             {
                 off++;
@@ -327,7 +328,7 @@ namespace H3Lib
 
             for (int i = 0; i < rotations; i++)
             {
-                dir = CoordIjk._rotate60ccw(dir);
+                dir = dir.Rotate60CounterClockwise();
             }
 
             int newRotations = 0;

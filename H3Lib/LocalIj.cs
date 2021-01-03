@@ -9,38 +9,14 @@ namespace H3Lib
     /// coordinate space in the vicinity of
     /// an origin index.
     /// </summary>
-    /// <!-- Based off 3.2.0 -->
-    public class LocalIJ
+    public class LocalIj
     {
-        /// <summary>
-        /// IJ Hexagon coordinates.
-        ///
-        /// Each axis is spaced 120 degrees apart
-        /// </summary>
-        public class CoordIJ
-        {
-            public int i;
-            public int j;
-
-            public CoordIJ()
-            {
-                i = 0;
-                j = 0;
-            }
-
-            public CoordIJ(int _i, int _j)
-            {
-                i = _i;
-                j = _j;
-            }
-        }
-        
+       
         /// <summary>
         /// Origin leading digit -&gt; index leading digit -&gt; rotations 60 cw
         /// Either being 1 (K axis) is invalid.
         /// No good default at 0.
         /// </summary>
-        /// <!-- Based off 3.2.0 -->
         internal static readonly int[,] PENTAGON_ROTATIONS =
         {
             { 0, -1,  0,  0,  0,  0,  0}, // 0
@@ -57,7 +33,6 @@ namespace H3Lib
         /// For reversing the rotation introduced in PENTAGON_ROTATIONS when the index is
         /// on a pentagon and the origin is not.
         /// </summary>
-        /// <!-- Based off 3.2.0 -->
         internal  static readonly int[,] PENTAGON_ROTATIONS_REVERSE =
         {
             {0, 0, 0, 0, 0, 0, 0}, // 0
@@ -73,7 +48,6 @@ namespace H3Lib
         /// Reverse base cell direction -&gt; leading index digit -&gt; rotations 60 ccw.
         /// For reversing the rotation introduced in PENTAGON_ROTATIONS when the index is
         /// on a pentagon and the origin is not.
-        /// <!-- Based off 3.2.0 -->
         internal static readonly int[,] PENTAGON_ROTATIONS_REVERSE_NONPOLAR =
         {
             {0, 0, 0, 0, 0, 0, 0},         // 0
@@ -90,7 +64,6 @@ namespace H3Lib
         /// For reversing the rotation introduced in PENTAGON_ROTATIONS when the index is
         /// on a polar pentagon and the origin is not.
         /// </summary>
-        /// <!-- Based off 3.2.0 -->
         internal static readonly int[,] PENTAGON_ROTATIONS_REVERSE_POLAR =
         {
             {0, 0, 0, 0, 0, 0, 0},         // 0
@@ -102,244 +75,30 @@ namespace H3Lib
             {0, 1, 1, 0, 1, 1, 1}          // 6
         };
 
-
-        //  Simply prohibit many pentagon distortion cases rather than handling them.
-        internal static readonly bool[,] FAILED_DIRECTIONS_II =
+        /**
+         * Prohibited directions when unfolding a pentagon.
+         *
+         * Indexes by two directions, both relative to the pentagon base cell. The first
+         * is the direction of the origin index and the second is the direction of the
+         * index to unfold. Direction refers to the direction from base cell to base
+         * cell if the indexes are on different base cells, or the leading digit if
+         * within the pentagon base cell.
+         *
+         * This previously included a Class II/Class III check but these were removed
+         * due to failure cases. It's possible this could be restricted to a narrower
+         * set of a failure cases. Currently, the logic is any unfolding across more
+         * than one icosahedron face is not permitted.
+         */
+        internal static readonly bool[,] FAILED_DIRECTIONS =
         {
             {false, false, false, false, false, false, false}, // 0
             {false, false, false, false, false, false, false}, // 1
-            {false, false, false, false, true, false, false}, // 2
-            {false, false, false, false, false, false, true}, // 3
-            {false, false, false, true, false, false, false}, // 4
-            {false, false, true, false, false, false, false}, // 5
-            {false, false, false, false, false, true, false}  // 6
+            {false, false, false, false, true, true, false}, // 2
+            {false, false, false, false, true, false, true}, // 3
+            {false, false, true, true, false, false, false}, // 4
+            {false, false, true, false, false, false, true}, // 5
+            {false, false, false, true, false, true, false}, // 6
         };
-
-        internal static readonly bool[,] FAILED_DIRECTIONS_III =
-        {
-            {false, false, false, false, false, false, false}, // 0
-            {false, false, false, false, false, false, false}, // 1
-            {false, false, false, false, false, true, false}, // 2
-            {false, false, false, false, true, false, false}, // 3
-            {false, false, true, false, false, false, false}, // 4
-            {false, false, false, false, false, false, true}, // 5
-            {false, false, false, true, false, false, false} // 6
-        };
-
-        /// <summary>
-        /// Produces ijk+ coordinates for an index anchored by an origin.
-        ///
-        /// The coordinate space used by this function may have deleted
-        /// regions or warping due to pentagonal distortion.
-        ///
-        /// Coordinates are only comparable if they come from the same
-        /// origin index.
-        ///
-        /// Failure may occur if the index is too far away from the origin
-        /// or if the index is on the other side of a pentagon.
-        /// </summary>
-        /// <param name="origin">An anchoring index for the ijk+ coordinate system</param>
-        /// <param name="h3">Index to find the coordinates of</param>
-        /// <param name="out_coord">ijk+ coordinates of the index will be placed here on success</param>
-        /// <returns>0 on success, or another value on failure.</returns>
-        /// <!-- Based off 3.2.0 -->
-        static int h3ToLocalIjk(H3Index origin, H3Index h3, ref CoordIjk out_coord)
-        {
-            int res = H3Index.H3_GET_RESOLUTION(origin);
-
-            if (res != H3Index.H3_GET_RESOLUTION(h3))
-            {
-                return 1;
-            }
-
-            int originBaseCell = H3Index.H3_GET_BASE_CELL(origin);
-            int baseCell = H3Index.H3_GET_BASE_CELL(h3);
-
-            // Direction from origin base cell to index base cell
-            Direction dir = 0;
-            Direction revDir = 0;
-            if (originBaseCell != baseCell)
-            {
-                dir = BaseCells._getBaseCellDirection(originBaseCell, baseCell);
-                if (dir == Direction.INVALID_DIGIT)
-                {
-                    // Base cells are not neighbors, can't unfold.
-                    return 2;
-                }
-
-                revDir = BaseCells._getBaseCellDirection(baseCell, originBaseCell);
-                if (revDir == Direction.INVALID_DIGIT)
-                {
-                    throw new Exception("assert(revDir != INVALID_DIGIT)");
-                }
-            }
-
-            int originOnPent = (BaseCells._isBaseCellPentagon(originBaseCell)
-                                    ? 1
-                                    : 0);
-            int indexOnPent = (BaseCells._isBaseCellPentagon(baseCell)
-                                   ? 1
-                                   : 0);
-
-            FaceIjk indexFijk = new FaceIjk();
-            if (dir != Direction.CENTER_DIGIT)
-            {
-                // Rotate index into the orientation of the origin base cell.
-                // cw because we are undoing the rotation into that base cell.
-                int baseCellRotations = BaseCells.baseCellNeighbor60CCWRots[originBaseCell, (int) dir];
-                if (indexOnPent != 0)
-                {
-                    for (int i = 0; i < baseCellRotations; i++)
-                    {
-                        h3 = H3Index._h3RotatePent60cw(h3);
-
-                        revDir = CoordIjk._rotate60cw(revDir);
-                        if (revDir == Direction.K_AXES_DIGIT)
-                        {
-                            revDir = CoordIjk._rotate60cw(revDir);
-                        }
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < baseCellRotations; i++)
-                    {
-                        h3 = H3Index._h3Rotate60cw(ref h3);
-
-                        revDir = CoordIjk._rotate60cw(revDir);
-                    }
-                }
-            }
-
-            // Face is unused. This produces coordinates in base cell coordinate space.
-            H3Index._h3ToFaceIjkWithInitializedFijk(h3, ref indexFijk);
-
-            if (dir != Direction.CENTER_DIGIT)
-            {
-                if (baseCell == originBaseCell)
-                {
-                    throw new Exception("assert(baseCell != originBaseCell);");
-                }
-
-                if ((originOnPent != 0) && (indexOnPent != 0))
-                {
-                    throw new Exception("assert(!(originOnPent && indexOnPent));");
-                }
-
-                int pentagonRotations = 0;
-                int directionRotations = 0;
-
-                if (originOnPent != 0)
-                {
-                    int originLeadingDigit = (int) H3Index._h3LeadingNonZeroDigit(origin);
-
-                    if ((H3Index.isResClassIII(res) &&
-                         FAILED_DIRECTIONS_III[originLeadingDigit, (int) dir]) ||
-                        (!H3Index.isResClassIII(res) &&
-                         FAILED_DIRECTIONS_II[originLeadingDigit, (int) dir]))
-                    {
-                        // TODO this part of the pentagon might not be unfolded
-                        // correctly.
-                        return 3;
-                    }
-
-                    directionRotations = PENTAGON_ROTATIONS[originLeadingDigit, (int) dir];
-                    pentagonRotations = directionRotations;
-                }
-                else if (indexOnPent != 0)
-                {
-                    int indexLeadingDigit = (int) H3Index._h3LeadingNonZeroDigit(h3);
-
-                    if ((H3Index.isResClassIII(res) &&
-                         FAILED_DIRECTIONS_III[indexLeadingDigit, (int) revDir]) ||
-                        (!H3Index.isResClassIII(res) &&
-                         FAILED_DIRECTIONS_II[indexLeadingDigit, (int) revDir]))
-                    {
-                        // TODO this part of the pentagon might not be unfolded
-                        // correctly.
-                        return 4;
-                    }
-
-                    pentagonRotations = PENTAGON_ROTATIONS[(int) revDir, indexLeadingDigit];
-                }
-
-                if (pentagonRotations < 0)
-                {
-                    throw new Exception("assert(pentagonRotations >= 0);");
-                }
-
-                if (directionRotations < 0)
-                {
-                    throw new Exception("assert(directionRotations >= 0);");
-                }
-
-
-
-                for (int i = 0; i < pentagonRotations; i++)
-                {
-                    CoordIjk._ijkRotate60cw(ref indexFijk.Coord);
-                }
-
-                CoordIjk offset = new CoordIjk();
-                CoordIjk._neighbor(ref offset, dir);
-                // Scale offset based on resolution
-                for (int r = res - 1; r >= 0; r--)
-                {
-                    if (H3Index.isResClassIII(r + 1))
-                    {
-                        // rotate ccw
-                        CoordIjk._downAp7(ref offset);
-                    }
-                    else
-                    {
-                        // rotate cw
-                        CoordIjk._downAp7r(ref offset);
-                    }
-                }
-
-                for (int i = 0; i < directionRotations; i++)
-                {
-                    CoordIjk._ijkRotate60cw(ref offset);
-                }
-
-                // Perform necessary translation
-                CoordIjk._ijkAdd(indexFijk.Coord, offset, ref indexFijk.Coord);
-                CoordIjk._ijkNormalize(ref indexFijk.Coord);
-            }
-            else if (originOnPent != 0 && indexOnPent != 0)
-            {
-                // If the origin and index are on pentagon, and we checked that the base
-                // cells are the same or neighboring, then they must be the same base
-                // cell.
-                if (baseCell != originBaseCell)
-                {
-                    throw new Exception("assert(baseCell == originBaseCell);");
-                }
-
-
-                int originLeadingDigit = (int) H3Index._h3LeadingNonZeroDigit(origin);
-                int indexLeadingDigit = (int) H3Index._h3LeadingNonZeroDigit(h3);
-
-                if (FAILED_DIRECTIONS_III[originLeadingDigit, indexLeadingDigit] ||
-                    FAILED_DIRECTIONS_II[originLeadingDigit, indexLeadingDigit])
-                {
-                    // TODO this part of the pentagon might not be unfolded
-                    // correctly.
-                    return 5;
-                }
-
-                int withinPentagonRotations =
-                    PENTAGON_ROTATIONS[originLeadingDigit, indexLeadingDigit];
-
-                for (int i = 0; i < withinPentagonRotations; i++)
-                {
-                    CoordIjk._ijkRotate60cw(ref indexFijk.Coord);
-                }
-            }
-
-            out_coord = indexFijk.Coord;
-            return 0;
-        }
 
         /// <summary>
         /// Produces an index for ijk+ coordinates anchored by an origin.
@@ -354,7 +113,6 @@ namespace H3Lib
         /// <param name="ijk">IJK+ Coordinates to find the index of</param>
         /// <param name="out_h3">The index will be placed here on success</param>
         /// <returns>0 on success, or another value on failure</returns>
-        /// <!-- Based off 3.2.0 -->
         internal static int localIjkToH3(H3Index origin, CoordIjk ijk, ref H3Index out_h3)
         {
             int res = H3Index.H3_GET_RESOLUTION(origin);
@@ -612,7 +370,6 @@ namespace H3Lib
         /// <param name="h3">Index to find the coordinates of</param>
         /// <param name="out_coord">ij coordinates of the index will be placed here on success</param>
         /// <returns>0 on success, or another value on failure.</returns>
-        /// <!-- Based off 3.2.0 -->
         public static int experimentalH3ToLocalIj(H3Index origin, H3Index h3, CoordIJ out_coord) {
             // This function is currently experimental. Once ready to be part of the
             // non-experimental API, this function (with the experimental prefix) will
@@ -645,7 +402,6 @@ namespace H3Lib
         /// <param name="ij">ij coordinates to index.</param>
         /// <param name="out_h3">Index will be placed here on success.</param>
         /// <returns>0 on succedd, or another value on failure</returns>
-        /// <!-- Based off 3.2.0 -->
         public static int experimentalLocalIjToH3(H3Index origin,  CoordIJ ij,
                                    ref H3Index out_h3)
         {
@@ -671,7 +427,6 @@ namespace H3Lib
         /// <returns>
         /// The distance, or a negative number if the library could not compute the distance
         /// </returns>
-        /// <!-- Based off 3.2.0 -->
         public static int h3Distance(H3Index origin, H3Index h3) {
             CoordIjk originIjk = new CoordIjk();
             CoordIjk h3Ijk = new CoordIjk();

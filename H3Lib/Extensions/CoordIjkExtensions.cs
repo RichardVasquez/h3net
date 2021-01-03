@@ -208,7 +208,7 @@ namespace H3Lib.Extensions
             return (iVec + jVec + kVec).Normalized();
         }
 
-                /// <summary>
+        /// <summary>
         /// Find the normalized ijk coordinates of the hex centered on the indicated
         /// hex at the next finer aperture 3 counter-clockwise resolution. Works in
         /// place.
@@ -255,9 +255,9 @@ namespace H3Lib.Extensions
         /// Transforms coordinates from the IJK+ coordinate system to the IJ coordinate system
         /// </summary>
         /// <param name="ijk">The input IJK+ coordinates</param>
-        public static LocalIJ.CoordIJ ToIj(this CoordIjk ijk)
+        public static CoordIj ToIj(this CoordIjk ijk)
         {
-            return new LocalIJ.CoordIJ(ijk.I - ijk.K, ijk.J - ijk.K);
+            return new CoordIj(ijk.I - ijk.K, ijk.J - ijk.K);
         }
 
         /// <summary>
@@ -282,5 +282,231 @@ namespace H3Lib.Extensions
         {
             return new CoordIjk(-ijk.I, ijk.J, 0).Normalized();
         }
+        
+        /// <summary>
+        /// Produces an index for ijk+ coordinates anchored by an origin.
+        ///
+        /// The coordinate space used by this function may have deleted
+        /// regions or warping due to pentagonal distortion.
+        ///
+        /// Failure may occur if the coordinates are too far away from the origin
+        /// or if the index is on the other side of a pentagon.
+        /// </summary>
+        /// <param name="origin">An anchoring index for the ijk+ coordinate system.</param>
+        /// <param name="ijk">IJK+ Coordinates to find the index of</param>
+        /// <returns>0 on success, or another value on failure</returns>
+        public static (int, H3Index) LocalIjkToH3(this CoordIjk ijk, H3Index origin)
+        {
+            int res = origin.Resolution;
+            int originBaseCell = origin.BaseCell;
+            bool originOnPent = originBaseCell.IsBaseCellPentagon();
+
+            // This logic is very similar to faceIjkToH3
+            // initialize the index
+            var outH3 = new H3Index() {Mode = H3Mode.Hexagon, Resolution = res};
+
+            // check for res 0/base cell
+            if (res == 0) 
+            {
+                if (ijk.I > 1 && ijk.J > 1 && ijk.K > 1)
+                {
+                    return (1, outH3);
+                }
+
+                Direction dir1 = ijk.ToDirection();
+                int newBaseCell = BaseCells.baseCellNeighbors[originBaseCell, (int)dir1];
+            
+                if (newBaseCell == BaseCells.INVALID_BASE_CELL)
+                {
+                    // Moving in an invalid direction off a pentagon.
+                    return (1, new H3Index());
+                }
+                H3Index.H3_SET_BASE_CELL(ref outH3, newBaseCell);
+                return (0, outH3);
+            }
+
+            // we need to find the correct base cell offset (if any) for this H3 index;
+            // start with the passed in base cell and resolution res ijk coordinates
+            // in that base cell's coordinate system
+            CoordIjk ijkCopy = new CoordIjk(ijk);
+
+            // build the H3Index from finest res up
+            // adjust r for the fact that the res 0 base cell offsets the indexing
+            // digits
+            for (int r = res - 1; r >= 0; r--)
+            {
+                var lastIJK = new CoordIjk(ijkCopy);
+                var lastCenter = new CoordIjk();
+                if ((r+1).IsResClassIii())
+                {
+                    // rotate ccw
+                    ijkCopy = ijkCopy.UpAp7();
+                    lastCenter = new CoordIjk(ijkCopy);
+                    lastCenter = lastCenter.DownAp7();
+                }
+                else
+                {
+                    // rotate cw
+                    ijkCopy = ijkCopy.UpAp7R();
+                    lastCenter = new CoordIjk(ijkCopy);
+                    lastCenter = lastCenter.DownAp7R();
+                }
+
+                var diff = (lastIJK - lastCenter).Normalized();
+                outH3.SetIndexDigit(r + 1, (ulong) diff.ToDirection());
+            }
+
+            // ijkCopy should now hold the IJK of the base cell in the
+            // coordinate system of the current base cell
+            if (ijkCopy.I > 1 || ijkCopy.J > 1 || ijkCopy.K > 1)
+            {
+                // out of range input
+                return (2, new H3Index());
+            }
+
+            // lookup the correct base cell
+            var dir2 = ijkCopy.ToDirection();
+            int baseCell = BaseCells.baseCellNeighbors[originBaseCell, (int) dir2];
+            // If baseCell is invalid, it must be because the origin base cell is a
+            // pentagon, and because pentagon base cells do not border each other,
+            // baseCell must not be a pentagon.
+            bool indexOnPent =
+                baseCell != BaseCells.INVALID_BASE_CELL && baseCell.IsBaseCellPentagon();
+
+            if (dir2 != Direction.CENTER_DIGIT)
+            {
+                // If the index is in a warped direction, we need to un-warp the base
+                // cell direction. There may be further need to rotate the index digits.
+                var pentagonRotations = 0;
+                if (originOnPent)
+                {
+                    Direction originLeadingDigit = origin.LeadingNonZeroDigit;
+                    pentagonRotations =
+                        LocalIj.PENTAGON_ROTATIONS_REVERSE[(int)originLeadingDigit, (int)dir2];
+                    for (var i = 0; i < pentagonRotations; i++)
+                    {
+                        dir2 = dir2.Rotate60CounterClockwise();
+                    }
+
+                    // The pentagon rotations are being chosen so that dir is not the
+                    // deleted direction. If it still happens, it means we're moving
+                    // into a deleted subsequence, so there is no index here.
+                    if (dir2 == Direction.K_AXES_DIGIT)
+                    {
+                        return(3, new H3Index());
+                    }
+                    baseCell = BaseCells.baseCellNeighbors[originBaseCell, (int)dir2];
+
+                    // indexOnPent does not need to be checked again since no pentagon
+                    // base cells border each other.
+                    if (baseCell == BaseCells.INVALID_BASE_CELL)
+                    {
+                        throw new Exception("baseCell != INVALID_BASE_CELL");
+                    }
+
+                    if (baseCell.IsBaseCellPentagon())
+                    {
+                        throw new Exception("!_isBaseCellPentagon(baseCell)");
+                    }
+                }
+                
+                // Now we can determine the relation between the origin and target base
+                // cell.
+                int baseCellRotations =
+                    BaseCells.baseCellNeighbor60CCWRots[originBaseCell, (int) dir2];
+                if (baseCellRotations < 0)
+                {
+                    throw new Exception("assert(baseCellRotations >= 0)");
+                }
+
+                // Adjust for pentagon warping within the base cell. The base cell
+                // should be in the right location, so now we need to rotate the index
+                // back. We might not need to check for errors since we would just be
+                // double mapping.
+                if (indexOnPent)
+                {
+                    var revDir = baseCell.GetBaseCellDirection(originBaseCell);
+                    if (revDir == Direction.INVALID_DIGIT)
+                    {
+                        throw new Exception("assert(revDir != INVALID_DIGIT)");
+                    }
+
+                    // Adjust for the different coordinate space in the two base cells.
+                    // This is done first because we need to do the pentagon rotations
+                    // based on the leading digit in the pentagon's coordinate system.
+                    for (var i = 0; i < baseCellRotations; i++)
+                    {
+                        outH3 = outH3.Rotate60CounterClockwise();
+                    }
+
+                    var indexLeadingDigit = outH3.LeadingNonZeroDigit;
+                    pentagonRotations =
+                        baseCell.IsBaseCellPentagon()
+                            ? LocalIj.PENTAGON_ROTATIONS_REVERSE_POLAR[(int) revDir, (int) indexLeadingDigit]
+                            : LocalIj.PENTAGON_ROTATIONS_REVERSE_NONPOLAR[(int) revDir, (int) indexLeadingDigit];
+
+                    if (pentagonRotations < 0)
+                    {
+                        throw new Exception("pentagonRotations >= 0");
+                    }
+
+                    for (int i = 0; i < pentagonRotations; i++)
+                    {
+                        outH3 = outH3.RotatePent60CounterClockwise();
+                    }
+                }
+                else
+                {
+                    if (pentagonRotations < 0)
+                    {
+                        throw new Exception("pentagonRotations >= 0");
+                    }
+
+                    for (int i = 0; i < pentagonRotations; i++)
+                    {
+                        outH3 = outH3.Rotate60CounterClockwise();
+                    }
+
+                    // Adjust for the different coordinate space in the two base cells.
+                    for (int i = 0; i < baseCellRotations; i++)
+                    {
+                        outH3 = outH3.Rotate60CounterClockwise();
+                        
+                    }
+                }
+            }
+            else if (originOnPent && indexOnPent)
+            {
+                int originLeadingDigit = (int)origin.LeadingNonZeroDigit;
+                int indexLeadingDigit = (int) outH3.LeadingNonZeroDigit;
+
+                int withinPentagonRotations =
+                    LocalIj.PENTAGON_ROTATIONS_REVERSE[originLeadingDigit, indexLeadingDigit];
+                if (withinPentagonRotations < 0)
+                {
+                    throw new Exception("withinPentagonRotations >= 0");
+                }
+
+                for (int i = 0; i < withinPentagonRotations; i++)
+                {
+                    outH3 = outH3.Rotate60CounterClockwise();
+                }
+            }
+
+            if (!indexOnPent)
+            {
+                return (0, outH3);
+            }
+
+            // TODO: There are cases in h3ToLocalIjk which are failed but not
+            // accounted for here - instead just fail if the recovered index is
+            // invalid.
+            return outH3.LeadingNonZeroDigit == Direction.K_AXES_DIGIT
+                       ? (4, new H3Index())
+                       : (0, outH3);
+        }
+
     }
+    
+    
 }
