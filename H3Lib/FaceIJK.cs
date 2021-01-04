@@ -10,37 +10,9 @@ namespace H3Lib
     /// Functions for working with icosahedral face-centered hex IJK
     /// coordinate systems.
     /// </summary>
+    [DebuggerDisplay("Face: {Face} Coord: {Coord}")]
     public class FaceIjk
     {
-        /// <summary>
-        /// Information to transform into an adjacent face IJK system
-        /// </summary>
-        public class FaceOrientIjk
-        {
-            /// <summary>
-            /// face number
-            /// </summary>
-            public readonly int Face;
-            /// <summary>
-            /// res 0 translation relative to primary face
-            /// </summary>
-            public readonly CoordIjk Translate;
-            /// <summary>
-            /// number of 60 degree ccw rotations relative to primary
-            /// </summary>
-            public readonly int CcwRot60;
-
-            public FaceOrientIjk()
-            {
-            }
-
-            public FaceOrientIjk(int f, int i, int j, int k, int c)
-            {
-                Face = f;
-                Translate = new CoordIjk(i, j, k);
-                CcwRot60 = c;
-            }
-        }
         /// <summary>
         /// face number
         /// </summary>
@@ -68,6 +40,10 @@ namespace H3Lib
             Coord = new CoordIjk(fijk.Coord);
         }
 
+        /// <summary>
+        /// Invalid face index
+        /// </summary>
+        public const int INVALID_FACE = -1;
         /// <summary>
         /// Invalid faceNeighbors table direction
         /// </summary>
@@ -664,16 +640,16 @@ namespace H3Lib
 
                     var fijkOrient = faceNeighbors[tmpFijk.Face, currentToLastDir];
 
-                    tmpFijk.Face = fijkOrient.Face;
+                    tmpFijk.Face = fijkOrient.FaceOrientIjk1.Face;
                     var ijk = new CoordIjk(tmpFijk.Coord);
 
                     // rotate and translate for adjacent face
-                    for (var i = 0; i < fijkOrient.CcwRot60; i++)
+                    for (var i = 0; i < fijkOrient.FaceOrientIjk1.CcwRot60; i++)
                     {
                         CoordIjk._ijkRotate60ccw(ref ijk);
                     }
 
-                    var transVec = new CoordIjk(fijkOrient.Translate);
+                    var transVec = new CoordIjk(fijkOrient.FaceOrientIjk1.Translate);
                     CoordIjk._ijkScale(ref transVec, unitScaleByCIIres[adjRes] * 3);
                     CoordIjk._ijkAdd(ijk, transVec, ref ijk);
                     CoordIjk._ijkNormalize(ref ijk);
@@ -1040,20 +1016,20 @@ namespace H3Lib
                     if (ijk.J > 0) // jk "quadrant"
                     {
                         fijkOrient = new FaceOrientIjk(
-                                     faceNeighbors[fijk.Face,JK].Face,
-                                     faceNeighbors[fijk.Face,JK].Translate.I,
-                                     faceNeighbors[fijk.Face,JK].Translate.J,
-                                     faceNeighbors[fijk.Face,JK].Translate.K,
-                                     faceNeighbors[fijk.Face,JK].CcwRot60);
+                                     faceNeighbors[fijk.Face,JK].FaceOrientIjk1.Face,
+                                     faceNeighbors[fijk.Face,JK].FaceOrientIjk1.Translate.I,
+                                     faceNeighbors[fijk.Face,JK].FaceOrientIjk1.Translate.J,
+                                     faceNeighbors[fijk.Face,JK].FaceOrientIjk1.Translate.K,
+                                     faceNeighbors[fijk.Face,JK].FaceOrientIjk1.CcwRot60);
                     }
                     else  // ik "quadrant"
                     {
                         fijkOrient = new FaceOrientIjk(
-                                                       faceNeighbors[fijk.Face,KI].Face,
-                                                       faceNeighbors[fijk.Face,KI].Translate.I,
-                                                       faceNeighbors[fijk.Face,KI].Translate.J,
-                                                       faceNeighbors[fijk.Face,KI].Translate.K,
-                                                       faceNeighbors[fijk.Face,KI].CcwRot60);
+                                                       faceNeighbors[fijk.Face,KI].FaceOrientIjk1.Face,
+                                                       faceNeighbors[fijk.Face,KI].FaceOrientIjk1.Translate.I,
+                                                       faceNeighbors[fijk.Face,KI].FaceOrientIjk1.Translate.J,
+                                                       faceNeighbors[fijk.Face,KI].FaceOrientIjk1.Translate.K,
+                                                       faceNeighbors[fijk.Face,KI].FaceOrientIjk1.CcwRot60);
 
                         // adjust for the pentagonal missing sequence
                         if (pentLeading4!=0)
@@ -1073,27 +1049,27 @@ namespace H3Lib
                 else // ij "quadrant"
                 {
                     fijkOrient = new FaceOrientIjk(
-                                                   faceNeighbors[fijk.Face,IJ].Face,
-                                                   faceNeighbors[fijk.Face,IJ].Translate.I,
-                                                   faceNeighbors[fijk.Face,IJ].Translate.J,
-                                                   faceNeighbors[fijk.Face,IJ].Translate.K,
-                                                   faceNeighbors[fijk.Face,IJ].CcwRot60);
+                                                   faceNeighbors[fijk.Face,IJ].FaceOrientIjk1.Face,
+                                                   faceNeighbors[fijk.Face,IJ].FaceOrientIjk1.Translate.I,
+                                                   faceNeighbors[fijk.Face,IJ].FaceOrientIjk1.Translate.J,
+                                                   faceNeighbors[fijk.Face,IJ].FaceOrientIjk1.Translate.K,
+                                                   faceNeighbors[fijk.Face,IJ].FaceOrientIjk1.CcwRot60);
 
                 }
 
-                fijk.Face = fijkOrient.Face;
+                fijk.Face = fijkOrient.FaceOrientIjk1.Face;
 
                 // rotate and translate for adjacent face
-                for (var i = 0; i < fijkOrient.CcwRot60; i++)
+                for (var i = 0; i < fijkOrient.FaceOrientIjk1.CcwRot60; i++)
                 {
                     CoordIjk ._ijkRotate60ccw(ref ijk);
                 }
 
                 var transVec = new CoordIjk
                     (
-                     fijkOrient.Translate.I,
-                     fijkOrient.Translate.J,
-                     fijkOrient.Translate.K
+                     fijkOrient.FaceOrientIjk1.Translate.I,
+                     fijkOrient.FaceOrientIjk1.Translate.J,
+                     fijkOrient.FaceOrientIjk1.Translate.K
                     );
                 int unitScale = unitScaleByCIIres[res];
                 if (substrate!=0)

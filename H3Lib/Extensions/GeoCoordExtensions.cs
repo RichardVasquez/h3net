@@ -27,11 +27,6 @@ namespace H3Lib.Extensions
             return gc.SetGeoRads(latitude, longitude);
         }
 
-        public static void ToFaceIjk(this GeoCoord g, int res, FaceIjk h)
-        {
-            //var v = g.to
-        }
-
         
         /// <summary>
         /// Set the components of spherical coordinates in radians.
@@ -203,5 +198,90 @@ namespace H3Lib.Extensions
             }   
             return new GeoCoord(tempLatitude, tempLongitude);
         }
+
+        public static FaceIjk ToFaceIjk(this GeoCoord g, int res)
+        {
+            // first convert to hex2d
+            (int newFace, var v) = g.ToHex2d(res, 0);
+            var newCoord = v.ToCoordIjk();
+
+            return new FaceIjk(newFace, newCoord);
+        }
+
+        public static (int, Vec2d) ToHex2d(this GeoCoord g, int res, int face)
+        {
+            Vec3d v3d = g.ToVec3d();
+            int newFace = 0;
+
+            // determine the icosahedron face
+            double sqd = v3d.PointSquareDistance(FaceIjk.faceCenterPoint[0]);
+
+            for (int f = 1; f < Constants.NUM_ICOSA_FACES; f++)
+            {
+                double sqdT = v3d.PointSquareDistance(FaceIjk.faceCenterPoint[f]);
+                if (!(sqdT < sqd))
+                {
+                    continue;
+                }
+                newFace = f;
+                sqd = sqdT;
+            }
+
+            // cos(r) = 1 - 2 * sin^2(r/2) = 1 - 2 * (sqd / 4) = 1 - sqd/2
+            double r = Math.Acos(1 - sqd / 2);
+
+            if (r < double.Epsilon)
+            {
+                return (newFace, new Vec2d());
+            }
+
+            // now have face and r, now find CCW theta from CII i-axis
+            double theta =
+                (
+                    FaceIjk.faceAxesAzRadsCII[newFace, 0] -
+                    g.AzimuthRadiansTo(FaceIjk.faceCenterGeo[newFace]).NormalizeRadians()
+                ).NormalizeRadians();
+            
+            // adjust theta for Class III (odd resolutions)
+            if (res.IsResClassIii())
+            {
+                theta = (theta - Constants.M_AP7_ROT_RADS).NormalizeRadians();
+            }
+
+            // perform gnomonic scaling of r
+            r = Math.Tan(r);
+
+            // scale for current resolution length u
+            r /= Constants.RES0_U_GNOMONIC;
+            for (var i = 0; i < res; i++)
+            {
+                r *= FaceIjk.M_SQRT7;
+            }
+
+            // we now have (r, theta) in hex2d with theta ccw from x-axes
+            // convert to local x,y
+            return (newFace,
+                    new Vec2d
+                        (
+                         r * Math.Cos(theta),
+                         r * Math.Sin(theta)
+                        ));
+        }
+
+        /// <summary>
+        /// Calculate the 3D coordinate on unit sphere from the latitude and longitude.
+        /// </summary>
+        /// <param name="geo">The latitude and longitude of the point</param>
+        public static Vec3d ToVec3d(this GeoCoord geo)
+        {
+            double r = Math.Cos(geo.Latitude);
+            return new Vec3d
+                (
+                 Math.Cos(geo.Longitude) * r,
+                 Math.Sin(geo.Longitude) * r,
+                 Math.Sin(geo.Latitude)
+                );
+        }
+        
     }
 }

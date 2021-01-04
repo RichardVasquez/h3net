@@ -143,7 +143,7 @@ namespace H3Lib
             if (H3Index.H3_GET_MODE(ref edge) != Constants.H3_UNIEDGE_MODE) {
                 return H3Index.H3_INVALID_INDEX;
             }
-            H3Index origin = edge.Value;
+            H3Index origin = edge.H3Value;
             H3Index.H3_SET_MODE(ref origin, Constants.H3_HEXAGON_MODE);
             H3Index.H3_SET_RESERVED_BITS(ref origin, 0);
             return origin;

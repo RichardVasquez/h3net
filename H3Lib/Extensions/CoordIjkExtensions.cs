@@ -328,7 +328,7 @@ namespace H3Lib.Extensions
             // we need to find the correct base cell offset (if any) for this H3 index;
             // start with the passed in base cell and resolution res ijk coordinates
             // in that base cell's coordinate system
-            CoordIjk ijkCopy = new CoordIjk(ijk);
+            var ijkCopy = new CoordIjk(ijk);
 
             // build the H3Index from finest res up
             // adjust r for the fact that the res 0 base cell offsets the indexing
@@ -336,7 +336,7 @@ namespace H3Lib.Extensions
             for (int r = res - 1; r >= 0; r--)
             {
                 var lastIJK = new CoordIjk(ijkCopy);
-                var lastCenter = new CoordIjk();
+                CoordIjk lastCenter;
                 if ((r+1).IsResClassIii())
                 {
                     // rotate ccw
@@ -477,8 +477,8 @@ namespace H3Lib.Extensions
             }
             else if (originOnPent && indexOnPent)
             {
-                int originLeadingDigit = (int)origin.LeadingNonZeroDigit;
-                int indexLeadingDigit = (int) outH3.LeadingNonZeroDigit;
+                var originLeadingDigit = (int)origin.LeadingNonZeroDigit;
+                var indexLeadingDigit = (int) outH3.LeadingNonZeroDigit;
 
                 int withinPentagonRotations =
                     LocalIj.PENTAGON_ROTATIONS_REVERSE[originLeadingDigit, indexLeadingDigit];
@@ -487,7 +487,7 @@ namespace H3Lib.Extensions
                     throw new Exception("withinPentagonRotations >= 0");
                 }
 
-                for (int i = 0; i < withinPentagonRotations; i++)
+                for (var i = 0; i < withinPentagonRotations; i++)
                 {
                     outH3 = outH3.Rotate60CounterClockwise();
                 }
@@ -505,8 +505,5 @@ namespace H3Lib.Extensions
                        ? (4, new H3Index())
                        : (0, outH3);
         }
-
     }
-    
-    
 }

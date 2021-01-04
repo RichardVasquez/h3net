@@ -3,33 +3,28 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using H3Lib.Extensions;
 
 namespace H3Lib
 {
     /// <summary>
     /// H3Index utility functions
     /// </summary>
-    [DebuggerDisplay("{Value}")]
+    [DebuggerDisplay("{H3Value}")]
     public class H3Index
     {
         public int Resolution
         {
-            get => (int) (Value & H3_RES_MASK) >> H3_RES_OFFSET;
-            set
-            {
-                var input = (ulong) value;
-                Value = (Value & H3_RES_MASK_NEGATIVE) | (input << H3_RES_OFFSET);
-            }
+            get => (int) (H3Value & H3_RES_MASK) >> H3_RES_OFFSET;
+            set => H3Value = (H3Value & H3_RES_MASK_NEGATIVE) |
+                             ((ulong)value << H3_RES_OFFSET);
         }
 
         public int BaseCell
         {
-            get => (int)((Value & H3_BC_MASK) >> H3_BC_OFFSET);
-            set
-            {
-                var input = (ulong) value;
-                Value = (Value & H3_BC_MASK_NEGATIVE) | (input << H3_BC_OFFSET);
-            }
+            get => (int)((H3Value & H3_BC_MASK) >> H3_BC_OFFSET);
+            set => H3Value = (H3Value & H3_BC_MASK_NEGATIVE) |
+                             ((ulong)value << H3_BC_OFFSET);
         }
 
         public Direction LeadingNonZeroDigit
@@ -38,9 +33,9 @@ namespace H3Lib
             {
                 for (var r = 1; r < Resolution; r++)
                 {
-                    if (H3_GET_INDEX_DIGIT(Value, r) > 0)
+                    if (H3_GET_INDEX_DIGIT(H3Value, r) > 0)
                     {
-                        return H3_GET_INDEX_DIGIT(Value, r);
+                        return H3_GET_INDEX_DIGIT(H3Value, r);
                     }
                 }
 
@@ -48,7 +43,44 @@ namespace H3Lib
             }
         }
 
-        public H3Mode Mode { get; set; }
+        public H3Mode Mode
+        {
+            get => (H3Mode) ((H3Value & H3_MODE_MASK) >> H3_MODE_OFFSET);
+            set => H3Value = H3Value & H3_MODE_MASK_NEGATIVE |
+                             ((ulong)value << H3_MODE_OFFSET);
+        }
+
+        public int HighBit
+        {
+            get => (int) ((H3Value & H3_HIGH_BIT_MASK) >> H3_MAX_OFFSET);
+            set => H3Value = (H3Value & H3_HIGH_BIT_MASK_NEGATIVE) |
+                             ((ulong) value << H3_MAX_OFFSET);
+        }
+
+        public int ReservedBits
+        {
+            get => (int) ((H3Value & H3_RESERVED_MASK) >> H3_RESERVED_OFFSET);
+            set => H3Value = (H3Value & H3_RESERVED_MASK_NEGATIVE) | ((ulong) value << H3_RESERVED_OFFSET);
+        }
+        /// <summary>
+        /// Sets a value in the reserved space. Setting to non-zero may produce
+        /// invalid indexes.
+        /// </summary>
+        public static void H3_SET_RESERVED_BITS(ref H3Index h3, ulong v)
+        {
+            h3 = (h3 & H3_RESERVED_MASK_NEGATIVE) | (v << H3_RESERVED_OFFSET);
+        }
+
+        /// <summary>
+        /// Gets a value in the reserved space. Should always be zero for valid indexes.
+        /// </summary>
+        public static int H3_GET_RESERVED_BITS(H3Index h3)
+        {
+            return (int) ((h3 & H3_RESERVED_MASK) >> H3_RESERVED_OFFSET);
+        }
+
+#region
+       // public H3Mode Mode { get; set; }
 
         public bool IsResClassIii(int resolution)
         {
@@ -83,6 +115,14 @@ namespace H3Lib
         /// The number of bits in a single H3 resolution digit.
         /// </summary>
         public static int H3_PER_DIGIT_OFFSET = 3;
+        /// <summary>
+        /// 1 in the highest bit, 0's everywhere else.
+        /// </summary>
+        public static ulong H3_HIGH_BIT_MASK = (ulong) 1 << H3_MAX_OFFSET;
+        /// <summary>
+        /// 0 in the highest bit, 1's everywhere else.
+        /// </summary>
+        public static ulong H3_HIGH_BIT_MASK_NEGATIVE = ~H3_HIGH_BIT_MASK;
         /// <summary>
         /// 1's in the 4 mode bits, 0's everywhere else.
         /// </summary>
@@ -135,7 +175,7 @@ namespace H3Lib
         /// <summary>
         /// Where the actual index is stored.
         /// </summary>
-        public ulong Value;
+        public ulong H3Value;
 
         /// <summary>
         /// Invalid index used to indicate an error from geoToH3 and related functions
@@ -147,17 +187,17 @@ namespace H3Lib
 
         public H3Index(ulong val) 
         {
-            Value = val;
+            H3Value = val;
         }
 
         public H3Index()
         {
-            Value = 0;
+            H3Value = 0;
         }
 
         protected bool Equals(H3Index other)
         {
-            return Value == other.Value;
+            return H3Value == other.H3Value;
         }
         public override bool Equals(object obj)
         {
@@ -180,7 +220,7 @@ namespace H3Lib
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return H3Value.GetHashCode();
         }
 
         public static bool operator ==(H3Index h1, int i2)
@@ -189,7 +229,7 @@ namespace H3Lib
             {
                 return false;
             }
-            return h1.Value == (ulong)i2;
+            return h1.H3Value == (ulong)i2;
         }
 
         public static bool operator !=(H3Index h1, int i2)
@@ -203,7 +243,7 @@ namespace H3Lib
             {
                 return false;
             }
-            return h2.Value == (ulong)i1;
+            return h2.H3Value == (ulong)i1;
         }
 
         public static bool operator !=(int i1, H3Index h2)
@@ -219,7 +259,7 @@ namespace H3Lib
                 return false;
             }
 
-            return h1.Value == h2.Value;
+            return h1.H3Value == h2.H3Value;
         }
 
         public static bool operator !=(H3Index h1, H3Index h2)
@@ -234,7 +274,7 @@ namespace H3Lib
                 return false;
             }
 
-            return h1.Value == u2;
+            return h1.H3Value == u2;
         }
 
         public static bool operator !=(H3Index  u1, ulong u2)
@@ -249,7 +289,7 @@ namespace H3Lib
                 return false;
             }
 
-            return h2.Value == u1;
+            return h2.H3Value == u1;
         }
 
         public static bool operator !=(ulong  u1, H3Index h2)
@@ -291,7 +331,7 @@ namespace H3Lib
 
         public static implicit operator ulong(H3Index h3)
         {
-            return h3.Value;
+            return h3.H3Value;
         }
 
         /// <summary>
@@ -341,7 +381,10 @@ namespace H3Lib
         {
             h3 = (h3 & H3_RES_MASK_NEGATIVE) | (res << H3_RES_OFFSET);
         }
+#endregion
 
+#region        
+#endregion
         /// <summary>
         ///     Gets the resolution res integer digit (0-7) of h3.
         /// </summary>
@@ -350,22 +393,6 @@ namespace H3Lib
             return (Direction) ((h3 >> ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK);
         }
 
-        /// <summary>
-        /// Sets a value in the reserved space. Setting to non-zero may produce
-        /// invalid indexes.
-        /// </summary>
-        public static void H3_SET_RESERVED_BITS(ref H3Index h3, ulong v)
-        {
-            h3 = (h3 & H3_RESERVED_MASK_NEGATIVE) | (v << H3_RESERVED_OFFSET);
-        }
-
-        /// <summary>
-        /// Gets a value in the reserved space. Should always be zero for valid indexes.
-        /// </summary>
-        public static int H3_GET_RESERVED_BITS(H3Index h3)
-        {
-            return (int) ((h3 & H3_RESERVED_MASK) >> H3_RESERVED_OFFSET);
-        }
 
         /// <summary>
         /// Sets the resolution res digit of h3 to the integer digit (0-7)
@@ -376,13 +403,12 @@ namespace H3Lib
                  |  ((ulong)digit << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET));
         }
 
-        
         /// <summary>
         ///     Gets the resolution res integer digit (0-7) of h3.
         /// </summary>
         public Direction GetIndexDigit(int res)
         {
-            return (Direction) ((Value >> ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK);
+            return (Direction) ((H3Value >> ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK);
         }
 
         /// <summary>
@@ -390,7 +416,7 @@ namespace H3Lib
         /// </summary>
         public void SetIndexDigit(int res, ulong digit)
         {
-            Value = (Value & ~(H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)))
+            H3Value = (H3Value & ~(H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)))
               |  (digit << ((Constants.MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET));
             
         }
@@ -413,119 +439,14 @@ namespace H3Lib
         public static int h3GetBaseCell(H3Index h) { return H3_GET_BASE_CELL(h); }
 
         /// <summary>
-        /// Converts a string representation of an H3 index into an H3 index.
-        /// </summary>
-        /// <param name="str"> The string representation of an H3 index.</param>
-        /// <returns>
-        /// The H3 index corresponding to the string argument, or 0 if invalid.
-        /// </returns>
-        public static H3Index stringToH3(string str) {
-            H3Index h = H3_INVALID_INDEX;
-            // A small risk, but for the most part, we're dealing with hex numbers, so let's use that
-            // as our default.
-            if (ulong.TryParse(str, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out ulong ul1))
-            {
-                return new H3Index(ul1);
-            }
-            // If failed, h will be unmodified and we should return 0 anyways.
-            if (ulong.TryParse(str, out ulong ul2))
-            {
-                return new H3Index(ul2);
-            }
-
-            return 0;
-        }
-
-        /// <summary>
         /// Converts an H3 index into a string representation.
+        /// 16 characters long, 0 padded
         /// </summary>
-        /// <param name="h"> The H3 index to convert.</param>
-        /// <param name="str"> The string representation of the H3 index.</param>
-        /// <param name="sz"> Size of the buffer <see cref="str"/></param>
-        public static void h3ToString(H3Index h, ref string str, int sz)
+        public override string ToString()
         {
-            if (sz < 17)
-            {
-                return;
-            }
-            //  We don't care about sz.  We have System.String
-            str = ((ulong) h).ToString("X").ToLower();
-        }
-
-
-        /// <summary>
-        /// Returns whether or not an H3 index is valid.
-        /// </summary>
-        /// <param name="h">The H3 index to validate.</param> 
-         /// <returns>1 if the H3 index if valid, and 0 if it is not.</returns>
-        public static int h3IsValid(H3Index h)
-        {
-            if (H3_GET_MODE(ref h) != Constants.H3_HEXAGON_MODE)
-            {
-                return 0;
-            }
-
-            int baseCell = H3_GET_BASE_CELL(h);
-            if (baseCell < 0 || baseCell >= Constants.NUM_BASE_CELLS)
-            {
-                return 0;
-            }
-
-            int res = H3_GET_RESOLUTION(h);
-            bool foundFirstNonZeroDigit = false;
-            if (res < 0 || res > Constants.MAX_H3_RES)
-            {
-                return 0;
-            }
-
-            for (int r = 1; r <= res; r++)
-            {
-                Direction digit = H3_GET_INDEX_DIGIT(h, r);
-                if (!foundFirstNonZeroDigit && digit != Direction.CENTER_DIGIT) {
-                    foundFirstNonZeroDigit = true;
-                    if (BaseCells._isBaseCellPentagon(baseCell) && digit == Direction.K_AXES_DIGIT)
-                    {
-                        return 0;
-                    }
-                }
-
-                if (digit < Direction.CENTER_DIGIT || digit >= Direction.NUM_DIGITS)
-                {
-                    return 0;
-                }
-            }
-
-            for (int r = res + 1; r <= Constants.MAX_H3_RES; r++)
-            {
-                Direction digit = H3_GET_INDEX_DIGIT(h, r);
-                if (digit != Direction.INVALID_DIGIT)
-                {
-                    return 0;
-                }
-            }
-
-            return 1;
-        }
-
-        /// <summary>
-        /// Initializes an H3 index.
-        /// </summary>
-        /// <param name="hp"> The H3 index to initialize.</param>
-        /// <param name="res"> The H3 resolution to initialize the index to.</param>
-        /// <param name="baseCell"> The H3 base cell to initialize the index to.</param>
-        /// <param name="initDigit"> The H3 digit (0-7) to initialize all of the index digits to.</param>
-        public static void setH3Index(ref H3Index hp, int res, int baseCell, Direction initDigit)
-        {
-            H3Index h = H3_INIT;
-            H3_SET_MODE(ref h, Constants.H3_HEXAGON_MODE);
-            H3_SET_RESOLUTION(ref h, res);
-            H3_SET_BASE_CELL(ref h, baseCell);
-            for (int r = 1; r <= res; r++)
-            {
-                H3_SET_INDEX_DIGIT(ref h, r, (ulong) initDigit);
-            }
-
-            hp = h;
+            var str = H3Value.ToString("X");
+            int len = str.Length;
+            return  str.PadLeft(16 - len, '0');
         }
 
         /// <summary>
@@ -563,33 +484,13 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// maxH3ToChildrenSize returns the maximum number of children possible for a
-        /// given child level.
-        /// </summary>
-        /// <param name="h"> H3Index to find the number of children of</param>
-        /// <param name="childRes"> The resolution of the child level you're interested in</param>
-        /// <returns>
-        /// int count of maximum number of children (equal for hexagons, less for
-        /// pentagons
-        /// </returns>
-        public static int maxH3ToChildrenSize(H3Index h, int childRes)
-        {
-            int parentRes = H3_GET_RESOLUTION(h);
-            if (parentRes > childRes) 
-            {
-                return 0;
-            }
-            return MathExtensions._ipow(7, childRes - parentRes);
-        }
-
-        /// <summary>
         /// makeDirectChild takes an index and immediately returns the immediate child
         /// index based on the specified cell number. Bit operations only, could generate
         /// invalid indexes if not careful (deleted cell under a pentagon).
         /// </summary>
         /// <param name="h"> H3Index to find the direct child of</param>
         /// <param name="cellNumber"> int id of the direct child (0-6)</param>
-        /// <returns>The new H3Index for the child
+        /// <returns>The new H3Index for the child</returns>
         public static H3Index makeDirectChild(H3Index h, int cellNumber)
         {
             int childRes = H3_GET_RESOLUTION(h) + 1;
@@ -604,9 +505,9 @@ namespace H3Lib
         /// at the specified resolution storing them into the provided memory pointer.
         /// It's assumed that maxH3ToChildrenSize was used to determine the allocation.
         /// </summary>
-        /// <param name="h" H3Index to find the children of</param>
-        /// <param name="childRes" int the child level to produce</param>
-        /// <param name="children" H3Index* the memory to store the resulting addresses in</param>
+        /// <param name="h"> H3Index to find the children of</param>
+        /// <param name="childRes"> int the child level to produce</param>
+        /// <param name="children"> H3Index* the memory to store the resulting addresses in</param>
         public static void h3ToChildren(H3Index h, int childRes,ref  List<H3Index> children)
         {
             children = new List<H3Index>();
@@ -646,7 +547,7 @@ namespace H3Lib
                         }
                     }
                 }
-                current = new List<H3Index>(realChildren.Where(c=>c.Value!=0));
+                current = new List<H3Index>(realChildren.Where(c=>c.H3Value!=0));
                 currentRes++;
             }
 
@@ -697,16 +598,16 @@ namespace H3Lib
                 foreach (var hex in remainingHexes)
                 {
                     H3Index parent = h3ToParent(hex, parentRes);
-                    if (!generation.ContainsKey(parent.Value))
+                    if (!generation.ContainsKey(parent.H3Value))
                     {
-                        generation[parent.Value] = new List<ulong>();
+                        generation[parent.H3Value] = new List<ulong>();
                     }
 
-                    if (generation[parent].Contains(hex.Value))
+                    if (generation[parent].Contains(hex.H3Value))
                     {
                         return -1;  //  We have duplicate hexes that we're trying to compact
                     }
-                    generation[parent].Add(hex.Value);
+                    generation[parent].Add(hex.H3Value);
                 }
                 // Only possible on duplicate input
                 var errorTest = generation.Where(hex => hex.Value.Count > 7);
@@ -1228,17 +1129,6 @@ namespace H3Lib
             {
                 FaceIjk._faceIjkToGeoBoundary(fijk, H3_GET_RESOLUTION(h3), 0, Constants.NUM_HEX_VERTS, ref gb);
             }
-        }
-
-        /// <summary>
-        /// Returns whether or not a resolution is a Class III grid. Note that odd
-        ///  resolutions are Class III and even resolutions are Class II.
-        /// </summary>
-        /// <param name="res">The H3 resolution</param>
-        /// <returns>Returns 1 if the resolution is class III grid, otherwise 0.</returns>
-        public static bool isResClassIII(int res)
-        {
-            return res % 2 == 1;
         }
     }
 }

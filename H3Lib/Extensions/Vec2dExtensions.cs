@@ -2,7 +2,7 @@ using System;
 
 namespace H3Lib.Extensions
 {
-    public static class Vec2DExtensions
+    public static class Vec2dExtensions
     {
         /// <summary>
         /// Determine the containing hex in ijk+ coordinates for a 2D cartesian

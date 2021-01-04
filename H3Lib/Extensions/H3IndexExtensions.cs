@@ -1,13 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations that act upon a data type of <see cref="H3Index"/> located
+    /// in one central location.
+    /// </summary>
     public static class H3IndexExtensions
     {
-       
         /// <summary>
         /// Area of H3 cell in radians^2.
         ///
@@ -377,6 +379,19 @@ namespace H3Lib.Extensions
             return h;
         }
 
+        /// <summary>
+        /// Convert an H3Index to the FaceIjk address on a specified icosahedral face.
+        /// </summary>
+        /// <param name="h"> The H3Index.</param>
+        /// <param name="fijk">
+        /// The FaceIjk address, initialized with the desired face
+        /// and normalized base cell coordinates.
+        /// </param>
+        /// <returns>
+        /// Tuple
+        /// Item1: Returns 1 if the possibility of overage exists, otherwise 0.
+        /// Item2: Modified FaceIjk
+        /// </returns>
         public static (int, FaceIjk) ToFaceIjkWithInitializedFijk(this H3Index h, FaceIjk fijk)
         {
             var empty = new CoordIjk();
@@ -559,6 +574,333 @@ namespace H3Lib.Extensions
             }
 
             return (0, lineOut);
+        }
+
+        /// <summary>
+        /// Returns whether or not an H3 index is a valid cell (hexagon or pentagon).
+        /// </summary>
+        /// <param name="h">The H3 index to validate.</param>
+        /// <returns>true if the H3 index is valid</returns>
+        public static bool IsValid(this H3Index h)
+        {
+            if (h.HighBit != 0 || h.Mode != H3Mode.Hexagon || h.ReservedBits != 0)
+            {
+                return false;
+            }
+
+            int baseCell = h.BaseCell;
+            if (baseCell < 0 || baseCell >= Constants.NUM_BASE_CELLS)
+            {
+                return false;
+            }
+
+            int res = h.Resolution;
+            if (res < 0 || res > Constants.MAX_H3_RES)
+            {
+                return false;
+            }
+
+            var foundFirstNonZeroDigit = false;
+            for (var r = 1; r <= res; r++)
+            {
+                var digit = h.GetIndexDigit(r);
+
+                if (!foundFirstNonZeroDigit && digit != Direction.CENTER_DIGIT) 
+                {
+                    foundFirstNonZeroDigit = true;
+                    if (baseCell.IsBaseCellPentagon() && digit == Direction.K_AXES_DIGIT)
+                    {
+                        return false;
+                    }
+                }
+
+                if (digit < Direction.CENTER_DIGIT || digit >= Direction.NUM_DIGITS)
+                {
+                    return false;
+                }
+            }
+
+            for (int r = res + 1; r <= Constants.MAX_H3_RES; r++)
+            { 
+                var digit = h.GetIndexDigit(r);
+                if (digit != Direction.INVALID_DIGIT)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// h3ToParent produces the parent index for a given H3 index
+        /// </summary>
+        /// <param name="h">H3Index to find parent of</param>
+        /// <param name="parentRes">The resolution to switch to (parent, grandparent, etc)</param>
+        /// <returns>H3Index of the parent, or H3_NULL if you actually asked for a child</returns>
+        public static H3Index ToParent(this H3Index h, int parentRes)
+        {
+            int childRes = h.Resolution;
+            if (parentRes > childRes)
+            {
+                return H3Index.H3_NULL;
+            }
+
+            if (parentRes == childRes)
+            {
+                return h;
+            }
+
+            if (parentRes < 0 || parentRes > Constants.MAX_H3_RES)
+            {
+                return H3Index.H3_NULL;
+            }
+
+            var parentH = new H3Index(h) {Resolution = parentRes};
+            for (int i = parentRes + 1; i <= childRes; i++)
+            {
+                parentH.SetIndexDigit(i, H3Index.H3_DIGIT_MASK);
+            }
+            return parentH;
+        }
+     
+        /// <summary>
+        /// maxH3ToChildrenSize returns the maximum number of children possible for a
+        /// given child level.
+        /// </summary>
+        /// <param name="h3">H3Index to find the number of children of</param>
+        /// <param name="childRes">The resolution of the child level you're interested in</param>
+        /// <returns>count of maximum number of children (equal for hexagons, less for pentagons</returns>
+        public static long MaxChildrenSize(this H3Index h3, int childRes)
+        {
+            int parentRes = h3.Resolution;
+            return !parentRes.IsValidChildRes(childRes)
+                       ? 0
+                       : 7L.Power(childRes - parentRes);
+        }
+
+        /// <summary>
+        /// Initializes an H3 index.
+        /// </summary>
+        /// <param name="hp"> The H3 index to initialize.</param>
+        /// <param name="res"> The H3 resolution to initialize the index to.</param>
+        /// <param name="baseCell"> The H3 base cell to initialize the index to.</param>
+        /// <param name="initDigit"> The H3 digit (0-7) to initialize all of the index digits to.</param>
+        public static H3Index SetIndex(this H3Index hp, int res, int baseCell, Direction initDigit)
+        {
+            H3Index h = H3Index.H3_INIT;
+            h.Mode = H3Mode.Hexagon;
+            h.Resolution = res;
+            h.BaseCell = baseCell;
+
+            for (var r = 1; r <= res; r++)
+            {
+                h.SetIndexDigit(r, (ulong) initDigit);
+            }
+
+            hp = h;
+            return hp;
+        }
+
+        /// <summary>
+        /// Takes an H3Index and determines if it is actually a pentagon.
+        /// </summary>
+        /// <param name="h"> The H3Index to check.</param>
+        /// <returns>Returns true if it is a pentagon, otherwise false.</returns>
+        public static bool IsPentagon(this H3Index h)
+        {
+            return BaseCells._isBaseCellPentagon(h.BaseCell) &&
+                   h.LeadingNonZeroDigit == Direction.CENTER_DIGIT;
+        }
+
+        /// <summary>
+        /// MakeDirectChild takes an index and immediately returns the immediate child
+        /// index based on the specified cell number. Bit operations only, could generate
+        /// invalid indexes if not careful (deleted cell under a pentagon).
+        /// </summary>
+        /// <param name="h"> H3Index to find the direct child of</param>
+        /// <param name="cellNumber"> int id of the direct child (0-6)</param>
+        /// <returns>The new H3Index for the child</returns>
+        public static H3Index MakeDirectChild(this H3Index h, int cellNumber)
+        {
+            int childRes = h.Resolution + 1;
+            var childH = h;
+            childH.Resolution = childRes;
+            childH.SetIndexDigit(childRes, (ulong) cellNumber);
+            return childH;
+        }
+
+        /// <summary>
+        /// Convert an H3Index to a FaceIJK address.
+        /// </summary>
+        /// <param name="h">The H3 Index</param>
+        /// <returns>The corresponding FaceIJK address.</returns>
+        public static FaceIjk ToFaceIjk(this H3Index h)
+        {
+            int baseCell = h.BaseCell;
+            // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
+            // to be adjusted (and some of sub-sequence 4 below)
+            if (baseCell.IsBaseCellPentagon() && h.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT)
+            {
+                h = h.Rotate60Clockwise();
+            }
+
+           
+            // start with the "home" face and ijk+ coordinates for the base cell of c
+            var fijk = new FaceIjk(BaseCells.baseCellData[baseCell].homeFijk);
+            (int result, var faceIjk) = h.ToFaceIjkWithInitializedFijk(fijk);
+            if (result == 0)
+            {
+                return faceIjk; // no overage is possible; h lies on this face
+            }
+
+            // if we're here we have the potential for an "overage"; i.e., it is
+            // possible that c lies on an adjacent face
+            var origIJK = new CoordIjk(fijk.Coord);
+
+            // if we're in Class III, drop into the next finer Class II grid
+            int res = h.Resolution;
+            if(res.IsResClassIii())
+            {
+                // Class III
+                fijk = new FaceIjk(fijk.Face, fijk.Coord.DownAp7R());
+                res++;
+            }
+
+            // adjust for overage if needed
+            // a pentagon base cell with a leading 4 digit requires special handling
+            int pentLeading4 =
+                (baseCell.IsBaseCellPentagon() && h.LeadingNonZeroDigit == Direction.I_AXES_DIGIT)
+                    ? 1
+                    : 0;
+
+            var test = fijk.AdjustOverageClassIi(res, pentLeading4, 0);
+            
+            if (test.Item1 != Overage.NO_OVERAGE)
+            {
+                // if the base cell is a pentagon we have the potential for secondary
+                // overages
+                if (baseCell.IsBaseCellPentagon())
+                {
+                    while (fijk.AdjustOverageClassIi(res,0,0).Item1 != Overage.NO_OVERAGE)
+                    {
+                        continue;
+                    }
+                }
+
+                if (res != h.Resolution)
+                {
+                    var fCoord = new CoordIjk(fijk.Coord).UpAp7R();
+                    fijk = new FaceIjk(fijk.Face, fCoord);
+                }
+            } else if (res != h.Resolution)
+            {
+                fijk = new FaceIjk(fijk.Face, origIJK);
+            }
+
+            return fijk;
+        }
+        
+        /// <summary>
+        /// Find all icosahedron faces intersected by a given H3 index, represented
+        /// as integers from 0-19. The array is sparse; since 0 is a valid value,
+        /// invalid array values are represented as -1. It is the responsibility of
+        /// the caller to filter out invalid values.
+        /// </summary>
+        /// <param name="h3">The H3 index</param>*
+        /// <returns>Output list.</returns>
+        public static List<int> GetFaces(this H3Index h3)
+        {
+            int res = h3.Resolution;
+            bool isPentagon = h3.IsPentagon();
+            var results = new List<int>();
+            
+            // We can't use the vertex-based approach here for class II pentagons,
+            // because all their vertices are on the icosahedron edges. Their
+            // direct child pentagons cross the same faces, so use those instead.
+            if (isPentagon && res.IsResClassIii())
+            {
+                // Note that this would not work for res 15, but this is only run on
+                // Class II pentagons, it should never be invoked for a res 15 index.
+                var childPentagon = h3.MakeDirectChild(0);
+                return childPentagon.GetFaces();
+            }
+
+            // convert to FaceIJK
+            var fijk = h3.ToFaceIjk();
+
+            // Get all vertices as FaceIJK addresses. For simplicity, always
+            // initialize the array with 6 verts, ignoring the last one for pentagons
+            var fijkVerts = Enumerable.Range(1, Constants.NUM_HEX_VERTS)
+                                      .Select(s => new FaceIjk()).ToList();
+
+            int vertexCount = isPentagon
+                                  ? Constants.NUM_PENT_VERTS
+                                  : Constants.NUM_HEX_VERTS;
+
+            
+            if (isPentagon)
+            {
+                (var fijkOut, int newRes, var vertexArray) = fijk.PentToVerts(res, fijkVerts);
+                fijk = fijkOut;
+                res = newRes;
+                fijkVerts = vertexArray.ToList();
+            }
+            else
+            {
+                (var fijkOut, int newRes, var vertexArray) = fijk.ToVerts(res, fijkVerts);
+                fijk = fijkOut;
+                res = newRes;
+                fijkVerts = vertexArray.ToList();
+            }
+
+            // We may not use all of the slots in the output array,
+            // so fill with invalid values to indicate unused slots
+            int faceCount = h3.MaxFaceCount();
+            for (var i = 0; i < faceCount; i++)
+            {
+                results.Add(FaceIjk.INVALID_FACE);
+            }
+
+            // add each vertex face, using the output array as a hash set
+            for (var i = 0; i < vertexCount; i++)
+            {
+                var vert = fijkVerts[i];
+
+                // Adjust overage, determining whether this vertex is
+                // on another face
+                if (isPentagon)
+                {
+                    
+                    _adjustPentVertOverage(vert, res);
+                } else
+                {
+                    (_, vert) = vert.AdjustOverageClassIi(res, 0, 1);
+                }
+
+                // Save the face to the output array
+                int face = vert->face;
+                int pos = 0;
+                // Find the first empty output position, or the first position
+                // matching the current face
+                while (out[pos] != INVALID_FACE && out[pos] != face) pos++;
+                out[pos] = face;
+            }
+        }
+
+        /// <summary>
+        /// Returns the max number of possible icosahedron faces an H3 index
+        /// may intersect.
+        /// </summary>
+        /// <param name="h3"></param>
+        /// <returns></returns>
+        public static int MaxFaceCount(this H3Index h3)
+        {
+            // a pentagon always intersects 5 faces, a hexagon never intersects more
+            // than 2 (but may only intersect 1)
+            return h3.IsPentagon()
+                       ? 5
+                       : 2;
         }
 
     }

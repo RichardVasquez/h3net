@@ -269,7 +269,7 @@ namespace H3Lib
             }
 
             // Put origin in the output array. out is used as a hash set.
-            int off =(int)( origin.Value % (ulong)maxIdx);
+            int off =(int)( origin.H3Value % (ulong)maxIdx);
             while (outHex[off] != 0 && outHex[off] != origin)
             {
                 off++;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 
 namespace H3Lib.Extensions
@@ -164,5 +165,65 @@ namespace H3Lib.Extensions
 
             return Direction.INVALID_DIGIT;
         }
+
+        /// <summary>
+        /// Square of a number
+        /// </summary>
+        /// <param name="x">The input number</param>
+        /// <returns>The square of the input number</returns>
+        public static double Square(this double x)
+        {
+            return x * x;
+        }
+
+        /// <summary>
+        /// Converts a string representation of an H3 index into an H3 index.
+        /// </summary>
+        /// <param name="s"> The string representation of an H3 index.</param>
+        /// <returns>
+        /// The H3 index corresponding to the string argument, or 0 if invalid.
+        /// </returns>
+        public static H3Index ToH3(this string s)
+        {
+            // A small risk, but for the most part, we're dealing with hex
+            // numbers, so let's use that as our default.
+            if (ulong.TryParse(s, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out ulong ul1))
+            {
+                return new H3Index(ul1);
+            }
+            // If failed, try parsing as a decimal based number
+            return ulong.TryParse(s, out ulong ul2)
+                       ? new H3Index(ul2)
+                       : 0;
+        }
+
+        /// <summary>
+        /// Determines whether one resolution is a valid child resolution of another.
+        /// Each resolution is considered a valid child resolution of itself.
+        /// </summary>
+        /// <param name="parentRes">int resolution of the parent</param>
+        /// <param name="childRes">int resolution of the child</param>
+        /// <returns>The validity of the child resolution</returns>
+        public static bool IsValidChildRes(this int parentRes, int childRes)
+        {
+            return childRes >= parentRes &&
+                   childRes <= Constants.MAX_H3_RES;
+        }
+
+
+        /// Generates all pentagons at the specified resolution
+        ///
+        /// <param name="res">The resolution to produce pentagons at.</param>
+        /// <returns>Output List.</returns>
+        public static List<H3Index> GetPentagonIndexes(this int res)
+        {
+            var cells = Enumerable
+                       .Range(0, Constants.NUM_BASE_CELLS)
+                       .Where(bc => bc.IsBaseCellPentagon());
+            return cells
+                  .Select(cell => new H3Index().SetIndex(res, cell, Direction.CENTER_DIGIT))
+                  .ToList();
+        }
+       
     }
 }

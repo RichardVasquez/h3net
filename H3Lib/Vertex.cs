@@ -48,7 +48,7 @@ namespace H3Lib
             FaceIjk fijk = new FaceIjk();
             H3Index._h3ToFaceIjk(cell, ref fijk);
             int baseCell = H3Index.h3GetBaseCell(cell);
-            int cellLeadingDigit =(int) H3Index._h3LeadingNonZeroDigit(cell.Value);
+            int cellLeadingDigit =(int) H3Index._h3LeadingNonZeroDigit(cell.H3Value);
 
             // get the base cell face
             FaceIjk baseFijk = new FaceIjk();
