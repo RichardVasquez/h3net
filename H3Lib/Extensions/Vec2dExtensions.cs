@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 
 namespace H3Lib.Extensions
 {
@@ -92,6 +93,71 @@ namespace H3Lib.Extensions
 
             return h.Normalized();
         }
+
+        /// <summary>
+        /// Determines the center point in spherical coordinates of a cell given by 2D
+        /// hex coordinates on a particular icosahedral face.
+        /// </summary>
+        /// <param name="v">The 2D hex coordinates of the cell</param>
+        /// <param name="face">The icosahedral face upon which the 2D hex coordinate system is centered</param>
+        /// <param name="res">The H3 resolution of the cell</param>
+        /// <param name="substrate">
+        /// Indicates whether or not this grid is actually a substrate
+        /// grid relative to the specified resolution.
+        /// </param>
+        /// <returns>The spherical coordinates of the cell center point</returns>
+        /// <!--
+        /// faceIjk.c
+        /// void _hex2dToGeo
+        /// -->
+        public static GeoCoord ToGeoCoord(this Vec2d v, int face, int res, int substrate)
+        {
+            // calculate (r, theta) in hex2d
+            double r = v.Magnitude;
+            bool bSubstrate = substrate != 0;
+
+            if (r < Constants.EPSILON)
+            {
+                return FaceIjk.FaceCenterGeo[face];
+            }
+
+            double theta = Math.Atan2(v.Y, v.X);
+
+            // scale for current resolution length u
+            for (var i = 0; i < res; i++)
+            {
+                r /= FaceIjk.M_SQRT7;
+            }
+
+            // scale accordingly if this is a substrate grid
+            if (substrate !=0)
+            {
+                r /= 3.0;
+                if (res.IsResClassIii())
+                {
+                    r /= FaceIjk.M_SQRT7;
+                }
+            }
+
+            r *= Constants.RES0_U_GNOMONIC;
+
+            // perform inverse gnomonic scaling of r
+            r = Math.Atan(r);
+
+            // adjust theta for Class III
+            // if a substrate grid, then it's already been adjusted for Class III
+            if (!bSubstrate && res.IsResClassIii())
+            {
+                theta = (theta + Constants.M_AP7_ROT_RADS).NormalizeRadians();
+            }
+
+            // find theta as an azimuth
+            theta = (FaceIjk.FaceAxesAzRadsCii[face, 0] - theta).NormalizeRadians();
+
+            // now find the point at (r,theta) from the face center
+            return FaceIjk.FaceCenterGeo[face].GetAzimuthDistancePoint(theta, r);
+        }
+        
 
     }
 }

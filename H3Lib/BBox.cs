@@ -7,7 +7,6 @@ namespace H3Lib
     /// <summary>
     /// Geographic bounding box with coordinates defined in radians
     /// </summary>
-    /// <!-- Based off 3.1.1 -->
     public class BBox
     {
         public double North;
@@ -26,7 +25,6 @@ namespace H3Lib
         /// <param name="verts">Array of vertices</param>
         /// <param name="numVerts">Number of vertices</param>
         /// <param name="bbox">Output box</param>
-        /// <!-- Based off 3.1.1 -->
         static void BboxFromVertices(List<GeoCoord> verts, int numVerts, ref BBox bbox) 
         {
             // Early exit if there are no vertices
@@ -73,7 +71,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="Geofence">Input <see cref="Geofence"/></param>
         /// <param name="bbox">Output bbox</param>
-        /// <!-- Based off 3.1.1 -->
         public static void bboxFromGeofence(Geofence Geofence, ref BBox bbox) {
             BboxFromVertices(Geofence.verts.ToList() , Geofence.numVerts, ref bbox);
         }
@@ -83,7 +80,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="polygon">Input <see cref="GeoPolygon"/></param>
         /// <param name="bboxes">Output bboxes, one for the outer loop and one for each hole</param>
-        /// <!-- Based off 3.1.1 -->
         void bboxesFromGeoPolygon(GeoPolygon polygon, ref List<BBox> bboxes)
         {
             var bb = bboxes[0];
@@ -102,7 +98,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="bbox">bounding box to inspect</param>
         /// <returns>true if transmeridian</returns>
-        /// <!-- Based off 3.1.1 -->
         public static bool bboxIsTransmeridian(BBox bbox)
         {
             return bbox.East < bbox.West;
@@ -113,7 +108,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="bbox">Input bounding box</param>
         /// <param name="center">Output center coordinate</param>
-        /// <!-- Based off 3.1.1 -->
         public static void bboxCenter(BBox bbox, ref GeoCoord center)
         {
             center.Latitude = (bbox.North + bbox.South) / 2.0;
@@ -130,7 +124,6 @@ namespace H3Lib
         /// <param name="bbox">Bounding box</param>
         /// <param name="point">Point to test</param>
         /// <returns>true is point is contained</returns>
-        /// <!-- Based off 3.1.1 -->
         public static bool bboxContains(BBox bbox, GeoCoord point)
         {
             return 
@@ -151,7 +144,6 @@ namespace H3Lib
         /// <param name="b1">Bounding box 1</param>
         /// <param name="b2">Bounding box 2</param>
         /// <returns>True if the boxes are equal</returns>
-        /// <!-- Based off 3.1.1 -->
         public static bool bboxEquals(BBox b1, BBox b2)
         {
             return Math.Abs(b1.North - b2.North) < Constants.EPSILON &&
@@ -165,7 +157,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="h3Index">Index of the hexagon</param>
         /// <returns>radius of hexagon in kilometers</returns>
-        /// <!-- Based off 3.1.1 -->
         static double _hexRadiusKm(H3Index h3Index)
         {
             // There is probably a cheaper way to determine the radius of a
@@ -184,7 +175,6 @@ namespace H3Lib
         /// <param name="bbox">Bounding box to measure</param>
         /// <param name="res">Resolution of hexagons to use in measurement</param>
         /// <returns>Radius in hexagons</returns>
-        /// <!-- Based off 3.1.1 -->
         public static int bboxHexRadius(BBox bbox, int res)
         {
             // Determine the center of the bounding box

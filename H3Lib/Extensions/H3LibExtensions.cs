@@ -166,7 +166,7 @@ namespace H3Lib.Extensions
         /// -->
         public static bool IsBaseCellPentagon(this int baseCell)
         {
-            return BaseCells.baseCellData[baseCell].isPentagon == 1;
+            return BaseCells.BaseCellData[baseCell].IsPentagon == 1;
         }
         
         /// <summary>
@@ -195,7 +195,7 @@ namespace H3Lib.Extensions
         public static Direction GetBaseCellDirection(this int originBaseCell, int neighboringBaseCell)
         {
             for (var dir = Direction.CENTER_DIGIT; dir < Direction.NUM_DIGITS; dir++) {
-                int testBaseCell = BaseCells.baseCellNeighbors[originBaseCell, (int)dir];
+                int testBaseCell = BaseCells.BaseCellNeighbors[originBaseCell, (int)dir];
                 if (testBaseCell == neighboringBaseCell)
                 {
                     return dir;
@@ -273,7 +273,7 @@ namespace H3Lib.Extensions
         {
             var cells = Enumerable
                        .Range(0, Constants.NUM_BASE_CELLS)
-                       .Where(bc => bc.IsBaseCellPentagon());
+                       .Where(BaseCells.IsBaseCellPentagon);
             return cells
                   .Select(cell => new H3Index().SetIndex(res, cell, Direction.CENTER_DIGIT))
                   .ToList();

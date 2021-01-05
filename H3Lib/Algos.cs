@@ -341,17 +341,17 @@ namespace H3Lib
             {
                 if (r == -1)
                 {
-                    H3Index.H3_SET_BASE_CELL(ref out_hex, BaseCells.baseCellNeighbors[oldBaseCell, (int) dir]);
-                    newRotations = BaseCells.baseCellNeighbor60CCWRots[oldBaseCell, (int) dir];
+                    H3Index.H3_SET_BASE_CELL(ref out_hex, BaseCells.BaseCellNeighbors[oldBaseCell, (int) dir]);
+                    newRotations = BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) dir];
 
-                    if (H3Index.H3_GET_BASE_CELL(out_hex) == BaseCells.INVALID_BASE_CELL)
+                    if (H3Index.H3_GET_BASE_CELL(out_hex) == BaseCells.InvalidBaseCell)
                     {
                         // Adjust for the deleted k vertex at the base cell level.
                         // This edge actually borders a different neighbor.
                         H3Index.H3_SET_BASE_CELL(ref out_hex,
-                            BaseCells.baseCellNeighbors[oldBaseCell, (int) Direction.IK_AXES_DIGIT]);
+                            BaseCells.BaseCellNeighbors[oldBaseCell, (int) Direction.IK_AXES_DIGIT]);
                         newRotations =
-                            BaseCells.baseCellNeighbor60CCWRots[oldBaseCell, (int) Direction.IK_AXES_DIGIT];
+                            BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) Direction.IK_AXES_DIGIT];
 
                         // perform the adjustment for the k-subsequence we're skipping
                         // over.
@@ -403,8 +403,8 @@ namespace H3Lib
                         // We need to rotate out of that case depending
                         // on how we got here.
                         // check for a cw/ccw offset face; default is ccw
-                        if (BaseCells._baseCellIsCwOffset(
-                            newBaseCell, BaseCells.baseCellData[oldBaseCell].homeFijk.Face))
+                        if (BaseCells.IsClockwiseOffset(
+                            newBaseCell, BaseCells.BaseCellData[oldBaseCell].HomeFijk.Face))
                         {
                             out_hex = H3Index._h3Rotate60cw(ref out_hex);
                         }

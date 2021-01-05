@@ -872,9 +872,9 @@ namespace H3Lib
 
             // check for res 0/base cell
             if (res == 0) {
-                if (fijk.Coord.I > BaseCells.MAX_FACE_COORD ||
-                    fijk.Coord.J > BaseCells.MAX_FACE_COORD ||
-                    fijk.Coord.K > BaseCells.MAX_FACE_COORD)
+                if (fijk.Coord.I > BaseCells.MaxFaceCoord ||
+                    fijk.Coord.J > BaseCells.MaxFaceCoord ||
+                    fijk.Coord.K > BaseCells.MaxFaceCoord)
                 {
                     // out of range input
                     return H3_INVALID_INDEX;
@@ -923,9 +923,9 @@ namespace H3Lib
 
             // fijkBC should now hold the IJK of the base cell in the
             // coordinate system of the current face
-            if (fijkBC.Coord.I > BaseCells.MAX_FACE_COORD ||
-                fijkBC.Coord.J > BaseCells.MAX_FACE_COORD ||
-                fijkBC.Coord.K > BaseCells.MAX_FACE_COORD) {
+            if (fijkBC.Coord.I > BaseCells.MaxFaceCoord ||
+                fijkBC.Coord.J > BaseCells.MaxFaceCoord ||
+                fijkBC.Coord.K > BaseCells.MaxFaceCoord) {
                 // out of range input
                 return H3_INVALID_INDEX;
             }
@@ -936,12 +936,12 @@ namespace H3Lib
 
             // rotate if necessary to get canonical base cell orientation
             // for this base cell
-            int numRots = BaseCells._faceIjkToBaseCellCCWrot60(fijkBC);
+            int numRots = BaseCells.ToBaseCellCounterClockwiseRotate60(fijkBC);
             if (BaseCells.IsBaseCellPentagon(baseCell)) {
                 // force rotation out of missing k-axes sub-sequence
                 if (_h3LeadingNonZeroDigit(h) == Direction.K_AXES_DIGIT) {
                     // check for a cw/ccw offset face; default is ccw
-                    if (BaseCells._baseCellIsCwOffset(baseCell, fijkBC.Face)) {
+                    if (BaseCells.IsClockwiseOffset(baseCell, fijkBC.Face)) {
                         h = _h3Rotate60cw(ref h);
                     } else {
                         h = _h3Rotate60ccw(ref h);
@@ -984,7 +984,8 @@ namespace H3Lib
             }
 
             FaceIjk fijk = new FaceIjk();
-            FaceIjk._geoToFaceIjk(g, res, ref fijk);
+            fijk = g.ToFaceIjk(res);
+
             return _faceIjkToH3(ref fijk, res);
         }
 
@@ -1045,11 +1046,11 @@ namespace H3Lib
 
             // start with the "home" face and ijk+ coordinates for the base cell of c
             fijk = new FaceIjk(
-                               BaseCells.baseCellData[baseCell].homeFijk.Face,
+                               BaseCells.BaseCellData[baseCell].HomeFijk.Face,
                                new CoordIjk(
-                                            BaseCells.baseCellData[baseCell].homeFijk.Coord.I,
-                                            BaseCells.baseCellData[baseCell].homeFijk.Coord.J,
-                                            BaseCells.baseCellData[baseCell].homeFijk.Coord.K
+                                            BaseCells.BaseCellData[baseCell].HomeFijk.Coord.I,
+                                            BaseCells.BaseCellData[baseCell].HomeFijk.Coord.J,
+                                            BaseCells.BaseCellData[baseCell].HomeFijk.Coord.K
                                            )
                               );
             //fijk = BaseCells.baseCellData[baseCell].homeFijk;
@@ -1074,7 +1075,7 @@ namespace H3Lib
             // a pentagon base cell with a leading 4 digit requires special handling
             bool pentLeading4 =
                 (BaseCells.IsBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == Direction.I_AXES_DIGIT);
-            if (FaceIjk._adjustOverageClassII(ref fijk, res, pentLeading4 ? 1 : 0, 0) > 0)
+            if (fijk.AdjustOverageClassIi(res, pentLeading4 ? 1 : 0, 0).Item1 > 0)
             {
                 // if the base cell is a pentagon we have the potential for secondary
                 // overages
@@ -1082,7 +1083,7 @@ namespace H3Lib
                 {
                     while (true)
                     {
-                        if (FaceIjk._adjustOverageClassII(ref fijk, res, 0, 0) == 0)
+                        if (fijk.AdjustOverageClassIi( res, 0, 0).Item1 == 0)
                         {
                             break;
                         }
@@ -1109,7 +1110,7 @@ namespace H3Lib
         {
             FaceIjk fijk = new FaceIjk();
             _h3ToFaceIjk(h3, ref fijk);
-            FaceIjk. _faceIjkToGeo(fijk, H3_GET_RESOLUTION(h3), ref g);
+            FaceIjk. ToGeoCoord(fijk, H3_GET_RESOLUTION(h3), ref g);
         }
 
         /// <summary>

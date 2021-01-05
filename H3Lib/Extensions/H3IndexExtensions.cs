@@ -182,7 +182,7 @@ namespace H3Lib.Extensions
             {
                 // Rotate index into the orientation of the origin base cell.
                 // cw because we are undoing the rotation into that base cell.
-                int baseCellRotations = BaseCells.baseCellNeighbor60CCWRots[originBaseCell,(int)dir];
+                int baseCellRotations = BaseCells.BaseCellNeighbor60CounterClockwiseRotation[originBaseCell,(int)dir];
                 if (indexOnPent == 1)
                 {
                     for (int i = 0; i < baseCellRotations; i++)
@@ -445,7 +445,7 @@ namespace H3Lib.Extensions
             // center base cell hierarchy is entirely on this face
             var possibleOverage = 1;
 
-            if (!h.BaseCell.IsBaseCellPentagon() &&
+            if (!BaseCells.IsBaseCellPentagon( h.BaseCell) &&
                 (res == 0 || ijk == empty))
             {
                 possibleOverage = 0;
@@ -671,7 +671,8 @@ namespace H3Lib.Extensions
                 if (!foundFirstNonZeroDigit && digit != Direction.CENTER_DIGIT) 
                 {
                     foundFirstNonZeroDigit = true;
-                    if (baseCell.IsBaseCellPentagon() && digit == Direction.K_AXES_DIGIT)
+                    if (BaseCells.IsBaseCellPentagon(baseCell) &&
+                        digit == Direction.K_AXES_DIGIT)
                     {
                         return false;
                     }
@@ -826,14 +827,14 @@ namespace H3Lib.Extensions
             int baseCell = h.BaseCell;
             // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
             // to be adjusted (and some of sub-sequence 4 below)
-            if (baseCell.IsBaseCellPentagon() && h.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT)
+            if (BaseCells.IsBaseCellPentagon(baseCell) && h.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT)
             {
                 h = h.Rotate60Clockwise();
             }
 
            
             // start with the "home" face and ijk+ coordinates for the base cell of c
-            var fijk = new FaceIjk(BaseCells.baseCellData[baseCell].homeFijk);
+            var fijk = new FaceIjk(BaseCells.BaseCellData[baseCell].HomeFijk);
             (int result, var faceIjk) = h.ToFaceIjkWithInitializedFijk(fijk);
             if (result == 0)
             {
@@ -856,7 +857,9 @@ namespace H3Lib.Extensions
             // adjust for overage if needed
             // a pentagon base cell with a leading 4 digit requires special handling
             int pentLeading4 =
-                (baseCell.IsBaseCellPentagon() && h.LeadingNonZeroDigit == Direction.I_AXES_DIGIT)
+                
+                BaseCells.IsBaseCellPentagon(baseCell) &&
+                h.LeadingNonZeroDigit == Direction.I_AXES_DIGIT
                     ? 1
                     : 0;
 
@@ -866,7 +869,7 @@ namespace H3Lib.Extensions
             {
                 // if the base cell is a pentagon we have the potential for secondary
                 // overages
-                if (baseCell.IsBaseCellPentagon())
+                if (BaseCells.IsBaseCellPentagon(baseCell))
                 {
                     while (fijk.AdjustOverageClassIi(res,0,0).Item1 != Overage.NO_OVERAGE)
                     {
@@ -949,7 +952,7 @@ namespace H3Lib.Extensions
             int faceCount = h3.MaxFaceCount();
             for (var i = 0; i < faceCount; i++)
             {
-                results.Add(FaceIjk.INVALID_FACE);
+                results.Add(FaceIjk.InvalidFace);
             }
 
             // add each vertex face, using the output array as a hash set
@@ -971,11 +974,11 @@ namespace H3Lib.Extensions
                 int face = vert.Face;
                 // Find the first empty output position, or the first position
                 // matching the current face
-                int pos = results.IndexOf(FaceIjk.INVALID_FACE);
+                int pos = results.IndexOf(FaceIjk.InvalidFace);
                 results[pos] = vert.Face;
             }
 
-            results.RemoveAll(r => r == FaceIjk.INVALID_FACE);
+            results.RemoveAll(r => r == FaceIjk.InvalidFace);
             return results;
         }
 

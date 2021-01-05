@@ -269,11 +269,11 @@ namespace H3Lib.Extensions
             int newFace = 0;
 
             // determine the icosahedron face
-            double sqd = v3d.PointSquareDistance(FaceIjk.faceCenterPoint[0]);
+            double sqd = v3d.PointSquareDistance(FaceIjk.FaceCenterPoint[0]);
 
             for (int f = 1; f < Constants.NUM_ICOSA_FACES; f++)
             {
-                double sqdT = v3d.PointSquareDistance(FaceIjk.faceCenterPoint[f]);
+                double sqdT = v3d.PointSquareDistance(FaceIjk.FaceCenterPoint[f]);
                 if (!(sqdT < sqd))
                 {
                     continue;
@@ -293,8 +293,8 @@ namespace H3Lib.Extensions
             // now have face and r, now find CCW theta from CII i-axis
             double theta =
                 (
-                    FaceIjk.faceAxesAzRadsCII[newFace, 0] -
-                    g.AzimuthRadiansTo(FaceIjk.faceCenterGeo[newFace]).NormalizeRadians()
+                    FaceIjk.FaceAxesAzRadsCii[newFace, 0] -
+                    g.AzimuthRadiansTo(FaceIjk.FaceCenterGeo[newFace]).NormalizeRadians()
                 ).NormalizeRadians();
             
             // adjust theta for Class III (odd resolutions)

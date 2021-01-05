@@ -370,7 +370,7 @@ namespace H3Lib.Extensions
         {
             int res = origin.Resolution;
             int originBaseCell = origin.BaseCell;
-            bool originOnPent = originBaseCell.IsBaseCellPentagon();
+            bool originOnPent = BaseCells.IsBaseCellPentagon(originBaseCell);
 
             // This logic is very similar to faceIjkToH3
             // initialize the index
@@ -385,9 +385,9 @@ namespace H3Lib.Extensions
                 }
 
                 Direction dir1 = ijk.ToDirection();
-                int newBaseCell = BaseCells.baseCellNeighbors[originBaseCell, (int)dir1];
+                int newBaseCell = BaseCells.GetNeighbor(originBaseCell, dir1);
             
-                if (newBaseCell == BaseCells.INVALID_BASE_CELL)
+                if (newBaseCell == BaseCells.InvalidBaseCell)
                 {
                     // Moving in an invalid direction off a pentagon.
                     return (1, new H3Index());
@@ -437,12 +437,12 @@ namespace H3Lib.Extensions
 
             // lookup the correct base cell
             var dir2 = ijkCopy.ToDirection();
-            int baseCell = BaseCells.baseCellNeighbors[originBaseCell, (int) dir2];
+            int baseCell = BaseCells.GetNeighbor(originBaseCell, dir2);
             // If baseCell is invalid, it must be because the origin base cell is a
             // pentagon, and because pentagon base cells do not border each other,
             // baseCell must not be a pentagon.
             bool indexOnPent =
-                baseCell != BaseCells.INVALID_BASE_CELL && baseCell.IsBaseCellPentagon();
+                baseCell != BaseCells.InvalidBaseCell && BaseCells.IsBaseCellPentagon(baseCell);
 
             if (dir2 != Direction.CENTER_DIGIT)
             {
@@ -466,16 +466,16 @@ namespace H3Lib.Extensions
                     {
                         return(3, new H3Index());
                     }
-                    baseCell = BaseCells.baseCellNeighbors[originBaseCell, (int)dir2];
+                    baseCell = BaseCells.BaseCellNeighbors[originBaseCell, (int)dir2];
 
                     // indexOnPent does not need to be checked again since no pentagon
                     // base cells border each other.
-                    if (baseCell == BaseCells.INVALID_BASE_CELL)
+                    if (baseCell == BaseCells.InvalidBaseCell)
                     {
                         throw new Exception("baseCell != INVALID_BASE_CELL");
                     }
 
-                    if (baseCell.IsBaseCellPentagon())
+                    if (BaseCells.IsBaseCellPentagon(baseCell))
                     {
                         throw new Exception("!_isBaseCellPentagon(baseCell)");
                     }
@@ -484,7 +484,7 @@ namespace H3Lib.Extensions
                 // Now we can determine the relation between the origin and target base
                 // cell.
                 int baseCellRotations =
-                    BaseCells.baseCellNeighbor60CCWRots[originBaseCell, (int) dir2];
+                    BaseCells.BaseCellNeighbor60CounterClockwiseRotation[originBaseCell, (int) dir2];
                 if (baseCellRotations < 0)
                 {
                     throw new Exception("assert(baseCellRotations >= 0)");
@@ -512,7 +512,7 @@ namespace H3Lib.Extensions
 
                     var indexLeadingDigit = outH3.LeadingNonZeroDigit;
                     pentagonRotations =
-                        baseCell.IsBaseCellPentagon()
+                        BaseCells.IsBaseCellPentagon(baseCell)
                             ? LocalIj.PENTAGON_ROTATIONS_REVERSE_POLAR[(int) revDir, (int) indexLeadingDigit]
                             : LocalIj.PENTAGON_ROTATIONS_REVERSE_NONPOLAR[(int) revDir, (int) indexLeadingDigit];
 

@@ -52,9 +52,9 @@ namespace H3Lib
 
             // get the base cell face
             FaceIjk baseFijk = new FaceIjk();
-            BaseCells._baseCellToFaceIjk(baseCell, ref baseFijk);
+            baseFijk = BaseCells.ToFaceIjk(baseCell);
 
-            int ccwRot60 = BaseCells._baseCellToCCWrot60(baseCell, fijk.Face);
+            int ccwRot60 = BaseCells.ToCounterClockwiseRotate60(baseCell, fijk.Face);
 
             if (BaseCells.IsBaseCellPentagon(baseCell))
             {
@@ -67,7 +67,7 @@ namespace H3Lib
 
                 // additional CCW rotation for polar neighbors or IK neighbors
                 if (fijk.Face != baseFijk.Face &&
-                    (BaseCells._isBaseCellPolarPentagon(baseCell) ||
+                    (BaseCells.IsBaseCellPolarPentagon(baseCell) ||
                      fijk.Face == dirFaces[(int)Direction.IK_AXES_DIGIT -  DIRECTION_INDEX_OFFSET]))
                 {
                     ccwRot60 = (ccwRot60 + 1) % 6;

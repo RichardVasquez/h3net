@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+
 namespace H3Lib
 {
-   
     
     /// <summary>
     /// Base cell related lookup tables and access functions.
@@ -9,64 +10,17 @@ namespace H3Lib
     {
 
         /// <summary>
-        /// Information on a single base cell
-        /// </summary>
-        public struct BaseCellData
-        {
-            /// <summary>
-            /// "Home" face and normalized ijk coordinates on that face
-            /// </summary>
-            public FaceIjk homeFijk;
-            /// <summary>
-            /// Is this base cell a pentagon?
-            /// </summary>
-            public int isPentagon;
-            /// <summary>
-            /// If it's a pentagon, what are its two clockwise offset faces?
-            /// </summary>
-            public int[] cwOffsetPent;// [2]
-
-            public BaseCellData(int face, int faceI, int faceJ, int faceK, int isPenta, int offset1, int offset2) : this()
-            {
-                homeFijk = new FaceIjk(face, new CoordIjk(faceI, faceJ, faceK));
-                isPentagon = isPenta;
-                cwOffsetPent = new[] {offset1, offset2};
-            }
-        }
-
-        /// <summary>
-        /// base cell at a given ijk and required rotations into its system
-        /// </summary>
-        public struct BaseCellOrient
-        {
-            /// <summary>
-            /// base cell number
-            /// </summary>
-            public int baseCell;
-            /// <summary>
-            /// number of ccw 60 degree rotations relative to current face
-            /// </summary>
-            public int ccwRot60;
-
-            public BaseCellOrient(int b, int c) : this()
-            {
-                baseCell = b;
-                ccwRot60 = c;
-            }
-        }
-
-        /// <summary>
         /// Neighboring base cell ID in each IJK direction.
         ///
         /// For each base cell, for each direction, the neighboring base
         /// cell ID is given. 127 indicates there is no neighbor in that direction.
         /// </summary>
-        public static readonly int[,] baseCellNeighbors = {
+        public static readonly int[,] BaseCellNeighbors = {
             {0, 1, 5, 2, 4, 3, 8},                          // base cell 0
             {1, 7, 6, 9, 0, 3, 2},                          // base cell 1
             {2, 6, 10, 11, 0, 1, 5},                        // base cell 2
             {3, 13, 1, 7, 4, 12, 0},                        // base cell 3
-            {4, INVALID_BASE_CELL, 15, 8, 3, 0, 12},        // base cell 4 (pentagon)
+            {4, InvalidBaseCell, 15, 8, 3, 0, 12},        // base cell 4 (pentagon)
             {5, 2, 18, 10, 8, 0, 16},                       // base cell 5
             {6, 14, 11, 17, 1, 9, 2},                       // base cell 6
             {7, 21, 9, 19, 3, 13, 1},                       // base cell 7
@@ -76,7 +30,7 @@ namespace H3Lib
             {11, 17, 23, 25, 2, 6, 10},                     // base cell 11
             {12, 28, 13, 26, 4, 15, 3},                     // base cell 12
             {13, 26, 21, 29, 3, 12, 7},                     // base cell 13
-            {14, INVALID_BASE_CELL, 17, 27, 9, 20, 6},      // base cell 14 (pentagon)
+            {14, InvalidBaseCell, 17, 27, 9, 20, 6},      // base cell 14 (pentagon)
             {15, 22, 28, 31, 4, 8, 12},                     // base cell 15
             {16, 18, 33, 30, 8, 5, 22},                     // base cell 16
             {17, 11, 14, 6, 35, 25, 27},                    // base cell 17
@@ -86,7 +40,7 @@ namespace H3Lib
             {21, 38, 19, 34, 13, 29, 7},                    // base cell 21
             {22, 16, 41, 33, 15, 8, 31},                    // base cell 22
             {23, 24, 11, 10, 39, 37, 25},                   // base cell 23
-            {24, INVALID_BASE_CELL, 32, 37, 10, 23, 18},    // base cell 24 (pentagon)
+            {24, InvalidBaseCell, 32, 37, 10, 23, 18},    // base cell 24 (pentagon)
             {25, 23, 17, 11, 45, 39, 35},                   // base cell 25
             {26, 42, 29, 43, 12, 28, 13},                   // base cell 26
             {27, 40, 35, 46, 14, 20, 17},                   // base cell 27
@@ -100,7 +54,7 @@ namespace H3Lib
             {35, 46, 45, 56, 17, 27, 25},                   // base cell 35
             {36, 20, 34, 19, 55, 40, 54},                   // base cell 36
             {37, 39, 52, 57, 24, 23, 32},                   // base cell 37
-            {38, INVALID_BASE_CELL, 34, 51, 29, 47, 21},    // base cell 38 (pentagon)
+            {38, InvalidBaseCell, 34, 51, 29, 47, 21},    // base cell 38 (pentagon)
             {39, 37, 25, 23, 59, 57, 45},                   // base cell 39
             {40, 27, 36, 20, 60, 46, 55},                   // base cell 40
             {41, 49, 53, 61, 22, 33, 31},                   // base cell 41
@@ -111,7 +65,7 @@ namespace H3Lib
             {46, 60, 56, 68, 27, 40, 35},                   // base cell 46
             {47, 38, 43, 29, 69, 51, 64},                   // base cell 47
             {48, 49, 30, 33, 67, 66, 50},                   // base cell 48
-            {49, INVALID_BASE_CELL, 61, 66, 33, 48, 41},    // base cell 49 (pentagon)
+            {49, InvalidBaseCell, 61, 66, 33, 48, 41},    // base cell 49 (pentagon)
             {50, 48, 32, 30, 70, 67, 52},                   // base cell 50
             {51, 69, 54, 71, 38, 47, 34},                   // base cell 51
             {52, 57, 70, 74, 32, 37, 50},                   // base cell 52
@@ -120,12 +74,12 @@ namespace H3Lib
             {55, 40, 54, 36, 72, 60, 73},                   // base cell 55
             {56, 68, 63, 77, 35, 46, 45},                   // base cell 56
             {57, 59, 74, 78, 37, 39, 52},                   // base cell 57
-            {58, INVALID_BASE_CELL, 62, 76, 44, 65, 42},    // base cell 58 (pentagon)
+            {58, InvalidBaseCell, 62, 76, 44, 65, 42},    // base cell 58 (pentagon)
             {59, 63, 78, 79, 39, 45, 57},                   // base cell 59
             {60, 72, 68, 80, 40, 55, 46},                   // base cell 60
             {61, 53, 49, 41, 81, 75, 66},                   // base cell 61
             {62, 43, 58, 42, 82, 64, 76},                   // base cell 62
-            {63, INVALID_BASE_CELL, 56, 45, 79, 59, 77},    // base cell 63 (pentagon)
+            {63, InvalidBaseCell, 56, 45, 79, 59, 77},    // base cell 63 (pentagon)
             {64, 47, 62, 43, 84, 69, 82},                   // base cell 64
             {65, 58, 53, 44, 86, 76, 75},                   // base cell 65
             {66, 67, 81, 85, 49, 48, 61},                   // base cell 66
@@ -134,7 +88,7 @@ namespace H3Lib
             {69, 51, 64, 47, 89, 71, 84},                   // base cell 69
             {70, 67, 52, 50, 83, 87, 74},                   // base cell 70
             {71, 89, 73, 91, 51, 69, 54},                   // base cell 71
-            {72, INVALID_BASE_CELL, 73, 55, 80, 60, 88},    // base cell 72 (pentagon)
+            {72, InvalidBaseCell, 73, 55, 80, 60, 88},    // base cell 72 (pentagon)
             {73, 91, 72, 88, 54, 71, 55},                   // base cell 73
             {74, 78, 83, 92, 52, 57, 70},                   // base cell 74
             {75, 65, 61, 53, 94, 86, 81},                   // base cell 75
@@ -145,7 +99,7 @@ namespace H3Lib
             {80, 68, 72, 60, 99, 90, 88},                   // base cell 80
             {81, 85, 94, 101, 61, 66, 75},                  // base cell 81
             {82, 96, 84, 98, 62, 76, 64},                   // base cell 82
-            {83, INVALID_BASE_CELL, 74, 70, 100, 87, 92},   // base cell 83 (pentagon)
+            {83, InvalidBaseCell, 74, 70, 100, 87, 92},   // base cell 83 (pentagon)
             {84, 69, 82, 64, 97, 89, 98},                   // base cell 84
             {85, 87, 101, 102, 66, 67, 81},                 // base cell 85
             {86, 76, 75, 65, 104, 96, 94},                  // base cell 86
@@ -159,7 +113,7 @@ namespace H3Lib
             {94, 86, 81, 75, 107, 104, 101},                // base cell 94
             {95, 92, 79, 78, 109, 108, 93},                 // base cell 95
             {96, 104, 98, 110, 76, 86, 82},                 // base cell 96
-            {97, INVALID_BASE_CELL, 98, 84, 103, 89, 111},  // base cell 97 (pentagon)
+            {97, InvalidBaseCell, 98, 84, 103, 89, 111},  // base cell 97 (pentagon)
             {98, 110, 97, 111, 82, 96, 84},                 // base cell 98
             {99, 80, 105, 88, 106, 90, 113},                // base cell 99
             {100, 102, 83, 87, 108, 114, 92},               // base cell 100
@@ -169,7 +123,7 @@ namespace H3Lib
             {104, 107, 110, 115, 86, 94, 96},               // base cell 104
             {105, 88, 103, 91, 113, 99, 116},               // base cell 105
             {106, 93, 99, 90, 117, 109, 113},                   // base cell 106
-            {107, INVALID_BASE_CELL, 101, 94, 115, 104, 112},   // base cell 107 (pentagon)
+            {107, InvalidBaseCell, 101, 94, 115, 104, 112},   // base cell 107 (pentagon)
             {108, 100, 95, 92, 118, 114, 109},                  // base cell 108
             {109, 108, 93, 95, 117, 118, 106},                  // base cell 109
             {110, 98, 104, 96, 119, 111, 115},                  // base cell 110
@@ -179,7 +133,7 @@ namespace H3Lib
             {114, 112, 100, 102, 118, 120, 108},                // base cell 114
             {115, 110, 107, 104, 120, 119, 112},                // base cell 115
             {116, 103, 119, 111, 113, 105, 121},                // base cell 116
-            {117, INVALID_BASE_CELL, 109, 118, 113, 121, 106},  // base cell 117 (pentagon)
+            {117, InvalidBaseCell, 109, 118, 113, 121, 106},  // base cell 117 (pentagon)
             {118, 120, 108, 114, 117, 121, 109},                // base cell 118
             {119, 111, 115, 110, 121, 116, 120},                // base cell 119
             {120, 115, 114, 112, 121, 119, 118},                // base cell 120
@@ -193,7 +147,11 @@ namespace H3Lib
         /// CCW rotations to the coordinate system of the neighbor is given.
         /// -1 indicates there is no neighbor in that direction.
         /// </summary>
-        public static readonly int[,] baseCellNeighbor60CCWRots =
+        /// <!--
+        /// baseCells.c
+        /// baseCellNeighbor60CCWRots
+        /// -->
+        public static readonly int[,] BaseCellNeighbor60CounterClockwiseRotation =
         {
             {0, 5, 0, 0, 1, 5, 1},   // base cell 0
             {0, 0, 1, 0, 1, 0, 1},   // base cell 1
@@ -330,405 +288,405 @@ namespace H3Lib
         /// Valid lookup coordinates are from (0, 0, 0) to (2, 2, 2).
         ///
         /// This table can be accessed using the functions <see cref="_faceIjkToBaseCell"/>
-        /// and <see cref="_faceIjkToBaseCellCCWrot60"/>
+        /// and <see cref="ToBaseCellCounterClockwiseRotate60"/>
         /// </summary>
-        public static readonly BaseCellOrient[,,,] faceIjkBaseCells =
+        public static readonly BaseCellRotation[,,,] FaceIjkBaseCells =
         {
             {// face 0
                 {   // i 0
-                    { new BaseCellOrient(16, 0), new BaseCellOrient(18, 0), new BaseCellOrient(24, 0) },  // j 0
-                    { new BaseCellOrient(33, 0), new BaseCellOrient(30, 0), new BaseCellOrient(32, 3) },  // j 1
-                    { new BaseCellOrient(49, 1), new BaseCellOrient(48, 3), new BaseCellOrient(50, 3) }   // j 2
+                    { new BaseCellRotation(16, 0), new BaseCellRotation(18, 0), new BaseCellRotation(24, 0) },  // j 0
+                    { new BaseCellRotation(33, 0), new BaseCellRotation(30, 0), new BaseCellRotation(32, 3) },  // j 1
+                    { new BaseCellRotation(49, 1), new BaseCellRotation(48, 3), new BaseCellRotation(50, 3) }   // j 2
                 },
                 {   // i 1
-                    { new BaseCellOrient(8, 0), new BaseCellOrient(5, 5), new BaseCellOrient(10, 5) },    // j 0
-                    { new BaseCellOrient(22, 0), new BaseCellOrient(16, 0), new BaseCellOrient(18, 0) },  // j 1
-                    { new BaseCellOrient(41, 1), new BaseCellOrient(33, 0), new BaseCellOrient(30, 0) }   // j 2
+                    { new BaseCellRotation(8, 0), new BaseCellRotation(5, 5), new BaseCellRotation(10, 5) },    // j 0
+                    { new BaseCellRotation(22, 0), new BaseCellRotation(16, 0), new BaseCellRotation(18, 0) },  // j 1
+                    { new BaseCellRotation(41, 1), new BaseCellRotation(33, 0), new BaseCellRotation(30, 0) }   // j 2
                 },
                 {   // i 2
-                    { new BaseCellOrient(4, 0), new BaseCellOrient(0, 5), new BaseCellOrient(2, 5) },    // j 0
-                    { new BaseCellOrient(15, 1), new BaseCellOrient(8, 0), new BaseCellOrient(5, 5) },   // j 1
-                    { new BaseCellOrient(31, 1), new BaseCellOrient(22, 0), new BaseCellOrient(16, 0) }  // j 2
+                    { new BaseCellRotation(4, 0), new BaseCellRotation(0, 5), new BaseCellRotation(2, 5) },    // j 0
+                    { new BaseCellRotation(15, 1), new BaseCellRotation(8, 0), new BaseCellRotation(5, 5) },   // j 1
+                    { new BaseCellRotation(31, 1), new BaseCellRotation(22, 0), new BaseCellRotation(16, 0) }  // j 2
                 }
             },
             {// face 1
                 {
                     // i 0
-                    { new BaseCellOrient(2, 0), new BaseCellOrient(6, 0), new BaseCellOrient(14, 0) },    // j 0
-                    { new BaseCellOrient(10, 0), new BaseCellOrient(11, 0), new BaseCellOrient(17, 3) },  // j 1
-                    { new BaseCellOrient(24, 1), new BaseCellOrient(23, 3), new BaseCellOrient(25, 3) }   // j 2
+                    { new BaseCellRotation(2, 0), new BaseCellRotation(6, 0), new BaseCellRotation(14, 0) },    // j 0
+                    { new BaseCellRotation(10, 0), new BaseCellRotation(11, 0), new BaseCellRotation(17, 3) },  // j 1
+                    { new BaseCellRotation(24, 1), new BaseCellRotation(23, 3), new BaseCellRotation(25, 3) }   // j 2
                 },
                 {
                     // i 1
-                    {new BaseCellOrient(0, 0), new BaseCellOrient(1, 5), new BaseCellOrient(9, 5) },    // j 0
-                    {new BaseCellOrient(5, 0), new BaseCellOrient(2, 0), new BaseCellOrient(6, 0) },    // j 1
-                    {new BaseCellOrient(18, 1), new BaseCellOrient(10, 0), new BaseCellOrient(11, 0) }  // j 2
+                    {new BaseCellRotation(0, 0), new BaseCellRotation(1, 5), new BaseCellRotation(9, 5) },    // j 0
+                    {new BaseCellRotation(5, 0), new BaseCellRotation(2, 0), new BaseCellRotation(6, 0) },    // j 1
+                    {new BaseCellRotation(18, 1), new BaseCellRotation(10, 0), new BaseCellRotation(11, 0) }  // j 2
                 },
                 {
                     // i 2
-                    {new BaseCellOrient(4, 1), new BaseCellOrient(3, 5), new BaseCellOrient(7, 5) },  // j 0
-                    {new BaseCellOrient(8, 1), new BaseCellOrient(0, 0), new BaseCellOrient(1, 5) },  // j 1
-                    {new BaseCellOrient(16, 1), new BaseCellOrient(5, 0), new BaseCellOrient(2, 0) }  // j 2
+                    {new BaseCellRotation(4, 1), new BaseCellRotation(3, 5), new BaseCellRotation(7, 5) },  // j 0
+                    {new BaseCellRotation(8, 1), new BaseCellRotation(0, 0), new BaseCellRotation(1, 5) },  // j 1
+                    {new BaseCellRotation(16, 1), new BaseCellRotation(5, 0), new BaseCellRotation(2, 0) }  // j 2
                 }
             },
             {// face 2
                 {
                     // i 0
-                    {new BaseCellOrient(7, 0), new BaseCellOrient(21, 0), new BaseCellOrient(38, 0) },  // j 0
-                    {new BaseCellOrient(9, 0), new BaseCellOrient(19, 0), new BaseCellOrient(34, 3) },  // j 1
-                    {new BaseCellOrient(14, 1), new BaseCellOrient(20, 3), new BaseCellOrient(36, 3) }  // j 2
+                    {new BaseCellRotation(7, 0), new BaseCellRotation(21, 0), new BaseCellRotation(38, 0) },  // j 0
+                    {new BaseCellRotation(9, 0), new BaseCellRotation(19, 0), new BaseCellRotation(34, 3) },  // j 1
+                    {new BaseCellRotation(14, 1), new BaseCellRotation(20, 3), new BaseCellRotation(36, 3) }  // j 2
                 },
                 {
                     // i 1
-                    {new BaseCellOrient(3, 0), new BaseCellOrient(13, 5), new BaseCellOrient(29, 5) },  // j 0
-                    {new BaseCellOrient(1, 0), new BaseCellOrient(7, 0), new BaseCellOrient(21, 0) },   // j 1
-                    {new BaseCellOrient(6, 1), new BaseCellOrient(9, 0), new BaseCellOrient(19, 0) }    // j 2
+                    {new BaseCellRotation(3, 0), new BaseCellRotation(13, 5), new BaseCellRotation(29, 5) },  // j 0
+                    {new BaseCellRotation(1, 0), new BaseCellRotation(7, 0), new BaseCellRotation(21, 0) },   // j 1
+                    {new BaseCellRotation(6, 1), new BaseCellRotation(9, 0), new BaseCellRotation(19, 0) }    // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(4, 2), new BaseCellOrient(12, 5), new BaseCellOrient(26, 5) },  // j 0
-                    { new BaseCellOrient(0, 1), new BaseCellOrient(3, 0), new BaseCellOrient(13, 5) },   // j 1
-                    { new BaseCellOrient(2, 1), new BaseCellOrient(1, 0), new BaseCellOrient(7, 0) }     // j 2
+                    { new BaseCellRotation(4, 2), new BaseCellRotation(12, 5), new BaseCellRotation(26, 5) },  // j 0
+                    { new BaseCellRotation(0, 1), new BaseCellRotation(3, 0), new BaseCellRotation(13, 5) },   // j 1
+                    { new BaseCellRotation(2, 1), new BaseCellRotation(1, 0), new BaseCellRotation(7, 0) }     // j 2
                 }
             },
             {// face 3
                 {
                     // i 0
-                    { new BaseCellOrient(26, 0), new BaseCellOrient(42, 0), new BaseCellOrient(58, 0) },  // j 0
-                    { new BaseCellOrient(29, 0), new BaseCellOrient(43, 0), new BaseCellOrient(62, 3) },  // j 1
-                    { new BaseCellOrient(38, 1), new BaseCellOrient(47, 3), new BaseCellOrient(64, 3) }   // j 2
+                    { new BaseCellRotation(26, 0), new BaseCellRotation(42, 0), new BaseCellRotation(58, 0) },  // j 0
+                    { new BaseCellRotation(29, 0), new BaseCellRotation(43, 0), new BaseCellRotation(62, 3) },  // j 1
+                    { new BaseCellRotation(38, 1), new BaseCellRotation(47, 3), new BaseCellRotation(64, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(12, 0), new BaseCellOrient(28, 5), new BaseCellOrient(44, 5) },  // j 0
-                    { new BaseCellOrient(13, 0), new BaseCellOrient(26, 0), new BaseCellOrient(42, 0) },  // j 1
-                    { new BaseCellOrient(21, 1), new BaseCellOrient(29, 0), new BaseCellOrient(43, 0) }   // j 2
+                    { new BaseCellRotation(12, 0), new BaseCellRotation(28, 5), new BaseCellRotation(44, 5) },  // j 0
+                    { new BaseCellRotation(13, 0), new BaseCellRotation(26, 0), new BaseCellRotation(42, 0) },  // j 1
+                    { new BaseCellRotation(21, 1), new BaseCellRotation(29, 0), new BaseCellRotation(43, 0) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(4, 3), new BaseCellOrient(15, 5), new BaseCellOrient(31, 5) },  // j 0
-                    { new BaseCellOrient(3, 1), new BaseCellOrient(12, 0), new BaseCellOrient(28, 5) },  // j 1
-                    { new BaseCellOrient(7, 1), new BaseCellOrient(13, 0), new BaseCellOrient(26, 0) }   // j 2
+                    { new BaseCellRotation(4, 3), new BaseCellRotation(15, 5), new BaseCellRotation(31, 5) },  // j 0
+                    { new BaseCellRotation(3, 1), new BaseCellRotation(12, 0), new BaseCellRotation(28, 5) },  // j 1
+                    { new BaseCellRotation(7, 1), new BaseCellRotation(13, 0), new BaseCellRotation(26, 0) }   // j 2
                 }
             },
             {// face 4
                 {
                     // i 0
-                    { new BaseCellOrient(31, 0), new BaseCellOrient(41, 0), new BaseCellOrient(49, 0) },  // j 0
-                    { new BaseCellOrient(44, 0), new BaseCellOrient(53, 0), new BaseCellOrient(61, 3) },  // j 1
-                    { new BaseCellOrient(58, 1), new BaseCellOrient(65, 3), new BaseCellOrient(75, 3) }   // j 2
+                    { new BaseCellRotation(31, 0), new BaseCellRotation(41, 0), new BaseCellRotation(49, 0) },  // j 0
+                    { new BaseCellRotation(44, 0), new BaseCellRotation(53, 0), new BaseCellRotation(61, 3) },  // j 1
+                    { new BaseCellRotation(58, 1), new BaseCellRotation(65, 3), new BaseCellRotation(75, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(15, 0), new BaseCellOrient(22, 5), new BaseCellOrient(33, 5) },  // j 0
-                    { new BaseCellOrient(28, 0), new BaseCellOrient(31, 0), new BaseCellOrient(41, 0) },  // j 1
-                    { new BaseCellOrient(42, 1), new BaseCellOrient(44, 0), new BaseCellOrient(53, 0) }   // j 2
+                    { new BaseCellRotation(15, 0), new BaseCellRotation(22, 5), new BaseCellRotation(33, 5) },  // j 0
+                    { new BaseCellRotation(28, 0), new BaseCellRotation(31, 0), new BaseCellRotation(41, 0) },  // j 1
+                    { new BaseCellRotation(42, 1), new BaseCellRotation(44, 0), new BaseCellRotation(53, 0) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(4, 4), new BaseCellOrient(8, 5), new BaseCellOrient(16, 5) },    // j 0
-                    { new BaseCellOrient(12, 1), new BaseCellOrient(15, 0), new BaseCellOrient(22, 5) },  // j 1
-                    { new BaseCellOrient(26, 1), new BaseCellOrient(28, 0), new BaseCellOrient(31, 0) }   // j 2
+                    { new BaseCellRotation(4, 4), new BaseCellRotation(8, 5), new BaseCellRotation(16, 5) },    // j 0
+                    { new BaseCellRotation(12, 1), new BaseCellRotation(15, 0), new BaseCellRotation(22, 5) },  // j 1
+                    { new BaseCellRotation(26, 1), new BaseCellRotation(28, 0), new BaseCellRotation(31, 0) }   // j 2
                 }
             },
             {// face 5
                 {
                     // i 0
-                    { new BaseCellOrient(50, 0), new BaseCellOrient(48, 0), new BaseCellOrient(49, 3) },  // j 0
-                    { new BaseCellOrient(32, 0), new BaseCellOrient(30, 3), new BaseCellOrient(33, 3) },  // j 1
-                    { new BaseCellOrient(24, 3), new BaseCellOrient(18, 3), new BaseCellOrient(16, 3) }   // j 2
+                    { new BaseCellRotation(50, 0), new BaseCellRotation(48, 0), new BaseCellRotation(49, 3) },  // j 0
+                    { new BaseCellRotation(32, 0), new BaseCellRotation(30, 3), new BaseCellRotation(33, 3) },  // j 1
+                    { new BaseCellRotation(24, 3), new BaseCellRotation(18, 3), new BaseCellRotation(16, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(70, 0), new BaseCellOrient(67, 0), new BaseCellOrient(66, 3) },  // j 0
-                    { new BaseCellOrient(52, 3), new BaseCellOrient(50, 0), new BaseCellOrient(48, 0) },  // j 1
-                    { new BaseCellOrient(37, 3), new BaseCellOrient(32, 0), new BaseCellOrient(30, 3) }   // j 2
+                    { new BaseCellRotation(70, 0), new BaseCellRotation(67, 0), new BaseCellRotation(66, 3) },  // j 0
+                    { new BaseCellRotation(52, 3), new BaseCellRotation(50, 0), new BaseCellRotation(48, 0) },  // j 1
+                    { new BaseCellRotation(37, 3), new BaseCellRotation(32, 0), new BaseCellRotation(30, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(83, 0), new BaseCellOrient(87, 3), new BaseCellOrient(85, 3) },  // j 0
-                    { new BaseCellOrient(74, 3), new BaseCellOrient(70, 0), new BaseCellOrient(67, 0) },  // j 1
-                    { new BaseCellOrient(57, 1), new BaseCellOrient(52, 3), new BaseCellOrient(50, 0) }   // j 2
+                    { new BaseCellRotation(83, 0), new BaseCellRotation(87, 3), new BaseCellRotation(85, 3) },  // j 0
+                    { new BaseCellRotation(74, 3), new BaseCellRotation(70, 0), new BaseCellRotation(67, 0) },  // j 1
+                    { new BaseCellRotation(57, 1), new BaseCellRotation(52, 3), new BaseCellRotation(50, 0) }   // j 2
                 }
             },
             {// face 6
                 {
                     // i 0
-                    { new BaseCellOrient(25, 0), new BaseCellOrient(23, 0), new BaseCellOrient(24, 3) },  // j 0
-                    { new BaseCellOrient(17, 0), new BaseCellOrient(11, 3), new BaseCellOrient(10, 3) },  // j 1
-                    { new BaseCellOrient(14, 3), new BaseCellOrient(6, 3), new BaseCellOrient(2, 3) }     // j 2
+                    { new BaseCellRotation(25, 0), new BaseCellRotation(23, 0), new BaseCellRotation(24, 3) },  // j 0
+                    { new BaseCellRotation(17, 0), new BaseCellRotation(11, 3), new BaseCellRotation(10, 3) },  // j 1
+                    { new BaseCellRotation(14, 3), new BaseCellRotation(6, 3), new BaseCellRotation(2, 3) }     // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(45, 0), new BaseCellOrient(39, 0), new BaseCellOrient(37, 3) },  // j 0
-                    { new BaseCellOrient(35, 3), new BaseCellOrient(25, 0), new BaseCellOrient(23, 0) },  // j 1
-                    { new BaseCellOrient(27, 3), new BaseCellOrient(17, 0), new BaseCellOrient(11, 3) }   // j 2
+                    { new BaseCellRotation(45, 0), new BaseCellRotation(39, 0), new BaseCellRotation(37, 3) },  // j 0
+                    { new BaseCellRotation(35, 3), new BaseCellRotation(25, 0), new BaseCellRotation(23, 0) },  // j 1
+                    { new BaseCellRotation(27, 3), new BaseCellRotation(17, 0), new BaseCellRotation(11, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(63, 0), new BaseCellOrient(59, 3), new BaseCellOrient(57, 3) },  // j 0
-                    { new BaseCellOrient(56, 3), new BaseCellOrient(45, 0), new BaseCellOrient(39, 0) },  // j 1
-                    { new BaseCellOrient(46, 3), new BaseCellOrient(35, 3), new BaseCellOrient(25, 0) }   // j 2
+                    { new BaseCellRotation(63, 0), new BaseCellRotation(59, 3), new BaseCellRotation(57, 3) },  // j 0
+                    { new BaseCellRotation(56, 3), new BaseCellRotation(45, 0), new BaseCellRotation(39, 0) },  // j 1
+                    { new BaseCellRotation(46, 3), new BaseCellRotation(35, 3), new BaseCellRotation(25, 0) }   // j 2
                 }
             },
             {// face 7
                 {
                     // i 0
-                    { new BaseCellOrient(36, 0), new BaseCellOrient(20, 0), new BaseCellOrient(14, 3) },  // j 0
-                    { new BaseCellOrient(34, 0), new BaseCellOrient(19, 3), new BaseCellOrient(9, 3) },   // j 1
-                    { new BaseCellOrient(38, 3), new BaseCellOrient(21, 3), new BaseCellOrient(7, 3) }    // j 2
+                    { new BaseCellRotation(36, 0), new BaseCellRotation(20, 0), new BaseCellRotation(14, 3) },  // j 0
+                    { new BaseCellRotation(34, 0), new BaseCellRotation(19, 3), new BaseCellRotation(9, 3) },   // j 1
+                    { new BaseCellRotation(38, 3), new BaseCellRotation(21, 3), new BaseCellRotation(7, 3) }    // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(55, 0), new BaseCellOrient(40, 0), new BaseCellOrient(27, 3) },  // j 0
-                    { new BaseCellOrient(54, 3), new BaseCellOrient(36, 0), new BaseCellOrient(20, 0) },  // j 1
-                    { new BaseCellOrient(51, 3), new BaseCellOrient(34, 0), new BaseCellOrient(19, 3) }   // j 2
+                    { new BaseCellRotation(55, 0), new BaseCellRotation(40, 0), new BaseCellRotation(27, 3) },  // j 0
+                    { new BaseCellRotation(54, 3), new BaseCellRotation(36, 0), new BaseCellRotation(20, 0) },  // j 1
+                    { new BaseCellRotation(51, 3), new BaseCellRotation(34, 0), new BaseCellRotation(19, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(72, 0), new BaseCellOrient(60, 3), new BaseCellOrient(46, 3) },  // j 0
-                    { new BaseCellOrient(73, 3), new BaseCellOrient(55, 0), new BaseCellOrient(40, 0) },  // j 1
-                    { new BaseCellOrient(71, 3), new BaseCellOrient(54, 3), new BaseCellOrient(36, 0) }   // j 2
+                    { new BaseCellRotation(72, 0), new BaseCellRotation(60, 3), new BaseCellRotation(46, 3) },  // j 0
+                    { new BaseCellRotation(73, 3), new BaseCellRotation(55, 0), new BaseCellRotation(40, 0) },  // j 1
+                    { new BaseCellRotation(71, 3), new BaseCellRotation(54, 3), new BaseCellRotation(36, 0) }   // j 2
                 }
             },
             {// face 8
                 {
                     // i 0
-                    { new BaseCellOrient(64, 0), new BaseCellOrient(47, 0), new BaseCellOrient(38, 3) },  // j 0
-                    { new BaseCellOrient(62, 0), new BaseCellOrient(43, 3), new BaseCellOrient(29, 3) },  // j 1
-                    { new BaseCellOrient(58, 3), new BaseCellOrient(42, 3), new BaseCellOrient(26, 3) }   // j 2
+                    { new BaseCellRotation(64, 0), new BaseCellRotation(47, 0), new BaseCellRotation(38, 3) },  // j 0
+                    { new BaseCellRotation(62, 0), new BaseCellRotation(43, 3), new BaseCellRotation(29, 3) },  // j 1
+                    { new BaseCellRotation(58, 3), new BaseCellRotation(42, 3), new BaseCellRotation(26, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(84, 0), new BaseCellOrient(69, 0), new BaseCellOrient(51, 3) },  // j 0
-                    { new BaseCellOrient(82, 3), new BaseCellOrient(64, 0), new BaseCellOrient(47, 0) },  // j 1
-                    { new BaseCellOrient(76, 3), new BaseCellOrient(62, 0), new BaseCellOrient(43, 3) }   // j 2
+                    { new BaseCellRotation(84, 0), new BaseCellRotation(69, 0), new BaseCellRotation(51, 3) },  // j 0
+                    { new BaseCellRotation(82, 3), new BaseCellRotation(64, 0), new BaseCellRotation(47, 0) },  // j 1
+                    { new BaseCellRotation(76, 3), new BaseCellRotation(62, 0), new BaseCellRotation(43, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(97, 0), new BaseCellOrient(89, 3), new BaseCellOrient(71, 3) },  // j 0
-                    { new BaseCellOrient(98, 3), new BaseCellOrient(84, 0), new BaseCellOrient(69, 0) },  // j 1
-                    { new BaseCellOrient(96, 3), new BaseCellOrient(82, 3), new BaseCellOrient(64, 0) }   // j 2
+                    { new BaseCellRotation(97, 0), new BaseCellRotation(89, 3), new BaseCellRotation(71, 3) },  // j 0
+                    { new BaseCellRotation(98, 3), new BaseCellRotation(84, 0), new BaseCellRotation(69, 0) },  // j 1
+                    { new BaseCellRotation(96, 3), new BaseCellRotation(82, 3), new BaseCellRotation(64, 0) }   // j 2
                 }
             },
             {// face 9
                 {
                     // i 0
-                    { new BaseCellOrient(75, 0), new BaseCellOrient(65, 0), new BaseCellOrient(58, 3) },  // j 0
-                    { new BaseCellOrient(61, 0), new BaseCellOrient(53, 3), new BaseCellOrient(44, 3) },  // j 1
-                    { new BaseCellOrient(49, 3), new BaseCellOrient(41, 3), new BaseCellOrient(31, 3) }   // j 2
+                    { new BaseCellRotation(75, 0), new BaseCellRotation(65, 0), new BaseCellRotation(58, 3) },  // j 0
+                    { new BaseCellRotation(61, 0), new BaseCellRotation(53, 3), new BaseCellRotation(44, 3) },  // j 1
+                    { new BaseCellRotation(49, 3), new BaseCellRotation(41, 3), new BaseCellRotation(31, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(94, 0), new BaseCellOrient(86, 0), new BaseCellOrient(76, 3) },  // j 0
-                    { new BaseCellOrient(81, 3), new BaseCellOrient(75, 0), new BaseCellOrient(65, 0) },  // j 1
-                    { new BaseCellOrient(66, 3), new BaseCellOrient(61, 0), new BaseCellOrient(53, 3) }   // j 2
+                    { new BaseCellRotation(94, 0), new BaseCellRotation(86, 0), new BaseCellRotation(76, 3) },  // j 0
+                    { new BaseCellRotation(81, 3), new BaseCellRotation(75, 0), new BaseCellRotation(65, 0) },  // j 1
+                    { new BaseCellRotation(66, 3), new BaseCellRotation(61, 0), new BaseCellRotation(53, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(107, 0), new BaseCellOrient(104, 3), new BaseCellOrient(96, 3) },  // j 0
-                    { new BaseCellOrient(101, 3), new BaseCellOrient(94, 0), new BaseCellOrient(86, 0) },   // j 1
-                    { new BaseCellOrient(85, 3), new BaseCellOrient(81, 3), new BaseCellOrient(75, 0) }     // j 2
+                    { new BaseCellRotation(107, 0), new BaseCellRotation(104, 3), new BaseCellRotation(96, 3) },  // j 0
+                    { new BaseCellRotation(101, 3), new BaseCellRotation(94, 0), new BaseCellRotation(86, 0) },   // j 1
+                    { new BaseCellRotation(85, 3), new BaseCellRotation(81, 3), new BaseCellRotation(75, 0) }     // j 2
                 }
             },
             {// face 10
                 {
                     // i 0
-                    { new BaseCellOrient(57, 0), new BaseCellOrient(59, 0), new BaseCellOrient(63, 3) },  // j 0
-                    { new BaseCellOrient(74, 0), new BaseCellOrient(78, 3), new BaseCellOrient(79, 3) },  // j 1
-                    { new BaseCellOrient(83, 3), new BaseCellOrient(92, 3), new BaseCellOrient(95, 3) }   // j 2
+                    { new BaseCellRotation(57, 0), new BaseCellRotation(59, 0), new BaseCellRotation(63, 3) },  // j 0
+                    { new BaseCellRotation(74, 0), new BaseCellRotation(78, 3), new BaseCellRotation(79, 3) },  // j 1
+                    { new BaseCellRotation(83, 3), new BaseCellRotation(92, 3), new BaseCellRotation(95, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(37, 0), new BaseCellOrient(39, 3), new BaseCellOrient(45, 3) },  // j 0
-                    { new BaseCellOrient(52, 0), new BaseCellOrient(57, 0), new BaseCellOrient(59, 0) },  // j 1
-                    { new BaseCellOrient(70, 3), new BaseCellOrient(74, 0), new BaseCellOrient(78, 3) }   // j 2
+                    { new BaseCellRotation(37, 0), new BaseCellRotation(39, 3), new BaseCellRotation(45, 3) },  // j 0
+                    { new BaseCellRotation(52, 0), new BaseCellRotation(57, 0), new BaseCellRotation(59, 0) },  // j 1
+                    { new BaseCellRotation(70, 3), new BaseCellRotation(74, 0), new BaseCellRotation(78, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(24, 0), new BaseCellOrient(23, 3), new BaseCellOrient(25, 3) },  // j 0
-                    { new BaseCellOrient(32, 3), new BaseCellOrient(37, 0), new BaseCellOrient(39, 3) },  // j 1
-                    { new BaseCellOrient(50, 3), new BaseCellOrient(52, 0), new BaseCellOrient(57, 0) }   // j 2
+                    { new BaseCellRotation(24, 0), new BaseCellRotation(23, 3), new BaseCellRotation(25, 3) },  // j 0
+                    { new BaseCellRotation(32, 3), new BaseCellRotation(37, 0), new BaseCellRotation(39, 3) },  // j 1
+                    { new BaseCellRotation(50, 3), new BaseCellRotation(52, 0), new BaseCellRotation(57, 0) }   // j 2
                 }
             },
             {// face 11
                 {
                     // i 0
-                    { new BaseCellOrient(46, 0), new BaseCellOrient(60, 0), new BaseCellOrient(72, 3) },  // j 0
-                    { new BaseCellOrient(56, 0), new BaseCellOrient(68, 3), new BaseCellOrient(80, 3) },  // j 1
-                    { new BaseCellOrient(63, 3), new BaseCellOrient(77, 3), new BaseCellOrient(90, 3) }   // j 2
+                    { new BaseCellRotation(46, 0), new BaseCellRotation(60, 0), new BaseCellRotation(72, 3) },  // j 0
+                    { new BaseCellRotation(56, 0), new BaseCellRotation(68, 3), new BaseCellRotation(80, 3) },  // j 1
+                    { new BaseCellRotation(63, 3), new BaseCellRotation(77, 3), new BaseCellRotation(90, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(27, 0), new BaseCellOrient(40, 3), new BaseCellOrient(55, 3) },  // j 0
-                    { new BaseCellOrient(35, 0), new BaseCellOrient(46, 0), new BaseCellOrient(60, 0) },  // j 1
-                    { new BaseCellOrient(45, 3), new BaseCellOrient(56, 0), new BaseCellOrient(68, 3) }   // j 2
+                    { new BaseCellRotation(27, 0), new BaseCellRotation(40, 3), new BaseCellRotation(55, 3) },  // j 0
+                    { new BaseCellRotation(35, 0), new BaseCellRotation(46, 0), new BaseCellRotation(60, 0) },  // j 1
+                    { new BaseCellRotation(45, 3), new BaseCellRotation(56, 0), new BaseCellRotation(68, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(14, 0), new BaseCellOrient(20, 3), new BaseCellOrient(36, 3) },  // j 0
-                    { new BaseCellOrient(17, 3), new BaseCellOrient(27, 0), new BaseCellOrient(40, 3) },  // j 1
-                    { new BaseCellOrient(25, 3), new BaseCellOrient(35, 0), new BaseCellOrient(46, 0) }   // j 2
+                    { new BaseCellRotation(14, 0), new BaseCellRotation(20, 3), new BaseCellRotation(36, 3) },  // j 0
+                    { new BaseCellRotation(17, 3), new BaseCellRotation(27, 0), new BaseCellRotation(40, 3) },  // j 1
+                    { new BaseCellRotation(25, 3), new BaseCellRotation(35, 0), new BaseCellRotation(46, 0) }   // j 2
                 }
             },
             {// face 12
                 {
                     // i 0
-                    { new BaseCellOrient(71, 0), new BaseCellOrient(89, 0), new BaseCellOrient(97, 3) },   // j 0
-                    { new BaseCellOrient(73, 0), new BaseCellOrient(91, 3), new BaseCellOrient(103, 3) },  // j 1
-                    { new BaseCellOrient(72, 3), new BaseCellOrient(88, 3), new BaseCellOrient(105, 3) }   // j 2
+                    { new BaseCellRotation(71, 0), new BaseCellRotation(89, 0), new BaseCellRotation(97, 3) },   // j 0
+                    { new BaseCellRotation(73, 0), new BaseCellRotation(91, 3), new BaseCellRotation(103, 3) },  // j 1
+                    { new BaseCellRotation(72, 3), new BaseCellRotation(88, 3), new BaseCellRotation(105, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(51, 0), new BaseCellOrient(69, 3), new BaseCellOrient(84, 3) },  // j 0
-                    { new BaseCellOrient(54, 0), new BaseCellOrient(71, 0), new BaseCellOrient(89, 0) },  // j 1
-                    { new BaseCellOrient(55, 3), new BaseCellOrient(73, 0), new BaseCellOrient(91, 3) }   // j 2
+                    { new BaseCellRotation(51, 0), new BaseCellRotation(69, 3), new BaseCellRotation(84, 3) },  // j 0
+                    { new BaseCellRotation(54, 0), new BaseCellRotation(71, 0), new BaseCellRotation(89, 0) },  // j 1
+                    { new BaseCellRotation(55, 3), new BaseCellRotation(73, 0), new BaseCellRotation(91, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(38, 0), new BaseCellOrient(47, 3), new BaseCellOrient(64, 3) },  // j 0
-                    { new BaseCellOrient(34, 3), new BaseCellOrient(51, 0), new BaseCellOrient(69, 3) },  // j 1
-                    { new BaseCellOrient(36, 3), new BaseCellOrient(54, 0), new BaseCellOrient(71, 0) }   // j 2
+                    { new BaseCellRotation(38, 0), new BaseCellRotation(47, 3), new BaseCellRotation(64, 3) },  // j 0
+                    { new BaseCellRotation(34, 3), new BaseCellRotation(51, 0), new BaseCellRotation(69, 3) },  // j 1
+                    { new BaseCellRotation(36, 3), new BaseCellRotation(54, 0), new BaseCellRotation(71, 0) }   // j 2
                 }
             },
             {// face 13
                 {
                     // i 0
-                    { new BaseCellOrient(96, 0), new BaseCellOrient(104, 0), new BaseCellOrient(107, 3) },  // j 0
-                    { new BaseCellOrient(98, 0), new BaseCellOrient(110, 3), new BaseCellOrient(115, 3) },  // j 1
-                    { new BaseCellOrient(97, 3), new BaseCellOrient(111, 3), new BaseCellOrient(119, 3) }   // j 2
+                    { new BaseCellRotation(96, 0), new BaseCellRotation(104, 0), new BaseCellRotation(107, 3) },  // j 0
+                    { new BaseCellRotation(98, 0), new BaseCellRotation(110, 3), new BaseCellRotation(115, 3) },  // j 1
+                    { new BaseCellRotation(97, 3), new BaseCellRotation(111, 3), new BaseCellRotation(119, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(76, 0), new BaseCellOrient(86, 3), new BaseCellOrient(94, 3) },   // j 0
-                    { new BaseCellOrient(82, 0), new BaseCellOrient(96, 0), new BaseCellOrient(104, 0) },  // j 1
-                    { new BaseCellOrient(84, 3), new BaseCellOrient(98, 0), new BaseCellOrient(110, 3) }   // j 2
+                    { new BaseCellRotation(76, 0), new BaseCellRotation(86, 3), new BaseCellRotation(94, 3) },   // j 0
+                    { new BaseCellRotation(82, 0), new BaseCellRotation(96, 0), new BaseCellRotation(104, 0) },  // j 1
+                    { new BaseCellRotation(84, 3), new BaseCellRotation(98, 0), new BaseCellRotation(110, 3) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(58, 0), new BaseCellOrient(65, 3), new BaseCellOrient(75, 3) },  // j 0
-                    { new BaseCellOrient(62, 3), new BaseCellOrient(76, 0), new BaseCellOrient(86, 3) },  // j 1
-                    { new BaseCellOrient(64, 3), new BaseCellOrient(82, 0), new BaseCellOrient(96, 0) }   // j 2
+                    { new BaseCellRotation(58, 0), new BaseCellRotation(65, 3), new BaseCellRotation(75, 3) },  // j 0
+                    { new BaseCellRotation(62, 3), new BaseCellRotation(76, 0), new BaseCellRotation(86, 3) },  // j 1
+                    { new BaseCellRotation(64, 3), new BaseCellRotation(82, 0), new BaseCellRotation(96, 0) }   // j 2
                 }
             },
             {// face 14
                 {
                     // i 0
-                    { new BaseCellOrient(85, 0), new BaseCellOrient(87, 0), new BaseCellOrient(83, 3) },     // j 0
-                    { new BaseCellOrient(101, 0), new BaseCellOrient(102, 3), new BaseCellOrient(100, 3) },  // j 1
-                    { new BaseCellOrient(107, 3), new BaseCellOrient(112, 3), new BaseCellOrient(114, 3) }   // j 2
+                    { new BaseCellRotation(85, 0), new BaseCellRotation(87, 0), new BaseCellRotation(83, 3) },     // j 0
+                    { new BaseCellRotation(101, 0), new BaseCellRotation(102, 3), new BaseCellRotation(100, 3) },  // j 1
+                    { new BaseCellRotation(107, 3), new BaseCellRotation(112, 3), new BaseCellRotation(114, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(66, 0), new BaseCellOrient(67, 3), new BaseCellOrient(70, 3) },   // j 0
-                    { new BaseCellOrient(81, 0), new BaseCellOrient(85, 0), new BaseCellOrient(87, 0) },   // j 1
-                    { new BaseCellOrient(94, 3), new BaseCellOrient(101, 0), new BaseCellOrient(102, 3) }  // j 2
+                    { new BaseCellRotation(66, 0), new BaseCellRotation(67, 3), new BaseCellRotation(70, 3) },   // j 0
+                    { new BaseCellRotation(81, 0), new BaseCellRotation(85, 0), new BaseCellRotation(87, 0) },   // j 1
+                    { new BaseCellRotation(94, 3), new BaseCellRotation(101, 0), new BaseCellRotation(102, 3) }  // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(49, 0), new BaseCellOrient(48, 3), new BaseCellOrient(50, 3) },  // j 0
-                    { new BaseCellOrient(61, 3), new BaseCellOrient(66, 0), new BaseCellOrient(67, 3) },  // j 1
-                    { new BaseCellOrient(75, 3), new BaseCellOrient(81, 0), new BaseCellOrient(85, 0) }   // j 2
+                    { new BaseCellRotation(49, 0), new BaseCellRotation(48, 3), new BaseCellRotation(50, 3) },  // j 0
+                    { new BaseCellRotation(61, 3), new BaseCellRotation(66, 0), new BaseCellRotation(67, 3) },  // j 1
+                    { new BaseCellRotation(75, 3), new BaseCellRotation(81, 0), new BaseCellRotation(85, 0) }   // j 2
                 }
             },
             {// face 15
                 {
                     // i 0
-                    { new BaseCellOrient(95, 0), new BaseCellOrient(92, 0), new BaseCellOrient(83, 0) },  // j 0
-                    { new BaseCellOrient(79, 0), new BaseCellOrient(78, 0), new BaseCellOrient(74, 3) },  // j 1
-                    { new BaseCellOrient(63, 1), new BaseCellOrient(59, 3), new BaseCellOrient(57, 3) }   // j 2
+                    { new BaseCellRotation(95, 0), new BaseCellRotation(92, 0), new BaseCellRotation(83, 0) },  // j 0
+                    { new BaseCellRotation(79, 0), new BaseCellRotation(78, 0), new BaseCellRotation(74, 3) },  // j 1
+                    { new BaseCellRotation(63, 1), new BaseCellRotation(59, 3), new BaseCellRotation(57, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(109, 0), new BaseCellOrient(108, 0), new BaseCellOrient(100, 5) },  // j 0
-                    { new BaseCellOrient(93, 1), new BaseCellOrient(95, 0), new BaseCellOrient(92, 0) },     // j 1
-                    { new BaseCellOrient(77, 1), new BaseCellOrient(79, 0), new BaseCellOrient(78, 0) }      // j 2
+                    { new BaseCellRotation(109, 0), new BaseCellRotation(108, 0), new BaseCellRotation(100, 5) },  // j 0
+                    { new BaseCellRotation(93, 1), new BaseCellRotation(95, 0), new BaseCellRotation(92, 0) },     // j 1
+                    { new BaseCellRotation(77, 1), new BaseCellRotation(79, 0), new BaseCellRotation(78, 0) }      // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(117, 4), new BaseCellOrient(118, 5), new BaseCellOrient(114, 5) },  // j 0
-                    { new BaseCellOrient(106, 1), new BaseCellOrient(109, 0), new BaseCellOrient(108, 0) },  // j 1
-                    { new BaseCellOrient(90, 1), new BaseCellOrient(93, 1), new BaseCellOrient(95, 0) }      // j 2
+                    { new BaseCellRotation(117, 4), new BaseCellRotation(118, 5), new BaseCellRotation(114, 5) },  // j 0
+                    { new BaseCellRotation(106, 1), new BaseCellRotation(109, 0), new BaseCellRotation(108, 0) },  // j 1
+                    { new BaseCellRotation(90, 1), new BaseCellRotation(93, 1), new BaseCellRotation(95, 0) }      // j 2
                 }
             },
             {// face 16
                 {
                     // i 0
-                    { new BaseCellOrient(90, 0), new BaseCellOrient(77, 0), new BaseCellOrient(63, 0) },  // j 0
-                    { new BaseCellOrient(80, 0), new BaseCellOrient(68, 0), new BaseCellOrient(56, 3) },  // j 1
-                    { new BaseCellOrient(72, 1), new BaseCellOrient(60, 3), new BaseCellOrient(46, 3) }   // j 2
+                    { new BaseCellRotation(90, 0), new BaseCellRotation(77, 0), new BaseCellRotation(63, 0) },  // j 0
+                    { new BaseCellRotation(80, 0), new BaseCellRotation(68, 0), new BaseCellRotation(56, 3) },  // j 1
+                    { new BaseCellRotation(72, 1), new BaseCellRotation(60, 3), new BaseCellRotation(46, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(106, 0), new BaseCellOrient(93, 0), new BaseCellOrient(79, 5) },  // j 0
-                    { new BaseCellOrient(99, 1), new BaseCellOrient(90, 0), new BaseCellOrient(77, 0) },   // j 1
-                    { new BaseCellOrient(88, 1), new BaseCellOrient(80, 0), new BaseCellOrient(68, 0) }    // j 2
+                    { new BaseCellRotation(106, 0), new BaseCellRotation(93, 0), new BaseCellRotation(79, 5) },  // j 0
+                    { new BaseCellRotation(99, 1), new BaseCellRotation(90, 0), new BaseCellRotation(77, 0) },   // j 1
+                    { new BaseCellRotation(88, 1), new BaseCellRotation(80, 0), new BaseCellRotation(68, 0) }    // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(117, 3), new BaseCellOrient(109, 5), new BaseCellOrient(95, 5) },  // j 0
-                    { new BaseCellOrient(113, 1), new BaseCellOrient(106, 0), new BaseCellOrient(93, 0) },  // j 1
-                    { new BaseCellOrient(105, 1), new BaseCellOrient(99, 1), new BaseCellOrient(90, 0) }    // j 2
+                    { new BaseCellRotation(117, 3), new BaseCellRotation(109, 5), new BaseCellRotation(95, 5) },  // j 0
+                    { new BaseCellRotation(113, 1), new BaseCellRotation(106, 0), new BaseCellRotation(93, 0) },  // j 1
+                    { new BaseCellRotation(105, 1), new BaseCellRotation(99, 1), new BaseCellRotation(90, 0) }    // j 2
                 }
             },
             {// face 17
                 {
                     // i 0
-                    { new BaseCellOrient(105, 0), new BaseCellOrient(88, 0), new BaseCellOrient(72, 0) },  // j 0
-                    { new BaseCellOrient(103, 0), new BaseCellOrient(91, 0), new BaseCellOrient(73, 3) },  // j 1
-                    { new BaseCellOrient(97, 1), new BaseCellOrient(89, 3), new BaseCellOrient(71, 3) }    // j 2
+                    { new BaseCellRotation(105, 0), new BaseCellRotation(88, 0), new BaseCellRotation(72, 0) },  // j 0
+                    { new BaseCellRotation(103, 0), new BaseCellRotation(91, 0), new BaseCellRotation(73, 3) },  // j 1
+                    { new BaseCellRotation(97, 1), new BaseCellRotation(89, 3), new BaseCellRotation(71, 3) }    // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(113, 0), new BaseCellOrient(99, 0), new BaseCellOrient(80, 5) },   // j 0
-                    { new BaseCellOrient(116, 1), new BaseCellOrient(105, 0), new BaseCellOrient(88, 0) },  // j 1
-                    { new BaseCellOrient(111, 1), new BaseCellOrient(103, 0), new BaseCellOrient(91, 0) }   // j 2
+                    { new BaseCellRotation(113, 0), new BaseCellRotation(99, 0), new BaseCellRotation(80, 5) },   // j 0
+                    { new BaseCellRotation(116, 1), new BaseCellRotation(105, 0), new BaseCellRotation(88, 0) },  // j 1
+                    { new BaseCellRotation(111, 1), new BaseCellRotation(103, 0), new BaseCellRotation(91, 0) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(117, 2), new BaseCellOrient(106, 5), new BaseCellOrient(90, 5) },  // j 0
-                    { new BaseCellOrient(121, 1), new BaseCellOrient(113, 0), new BaseCellOrient(99, 0) },  // j 1
-                    { new BaseCellOrient(119, 1), new BaseCellOrient(116, 1), new BaseCellOrient(105, 0) }  // j 2
+                    { new BaseCellRotation(117, 2), new BaseCellRotation(106, 5), new BaseCellRotation(90, 5) },  // j 0
+                    { new BaseCellRotation(121, 1), new BaseCellRotation(113, 0), new BaseCellRotation(99, 0) },  // j 1
+                    { new BaseCellRotation(119, 1), new BaseCellRotation(116, 1), new BaseCellRotation(105, 0) }  // j 2
                 }
             },
             {// face 18
                 {
                     // i 0
-                    { new BaseCellOrient(119, 0), new BaseCellOrient(111, 0), new BaseCellOrient(97, 0) },  // j 0
-                    { new BaseCellOrient(115, 0), new BaseCellOrient(110, 0), new BaseCellOrient(98, 3) },  // j 1
-                    { new BaseCellOrient(107, 1), new BaseCellOrient(104, 3), new BaseCellOrient(96, 3) }   // j 2
+                    { new BaseCellRotation(119, 0), new BaseCellRotation(111, 0), new BaseCellRotation(97, 0) },  // j 0
+                    { new BaseCellRotation(115, 0), new BaseCellRotation(110, 0), new BaseCellRotation(98, 3) },  // j 1
+                    { new BaseCellRotation(107, 1), new BaseCellRotation(104, 3), new BaseCellRotation(96, 3) }   // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(121, 0), new BaseCellOrient(116, 0), new BaseCellOrient(103, 5) },  // j 0
-                    { new BaseCellOrient(120, 1), new BaseCellOrient(119, 0), new BaseCellOrient(111, 0) },  // j 1
-                    { new BaseCellOrient(112, 1), new BaseCellOrient(115, 0), new BaseCellOrient(110, 0) }   // j 2
+                    { new BaseCellRotation(121, 0), new BaseCellRotation(116, 0), new BaseCellRotation(103, 5) },  // j 0
+                    { new BaseCellRotation(120, 1), new BaseCellRotation(119, 0), new BaseCellRotation(111, 0) },  // j 1
+                    { new BaseCellRotation(112, 1), new BaseCellRotation(115, 0), new BaseCellRotation(110, 0) }   // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(117, 1), new BaseCellOrient(113, 5), new BaseCellOrient(105, 5) },  // j 0
-                    { new BaseCellOrient(118, 1), new BaseCellOrient(121, 0), new BaseCellOrient(116, 0) },  // j 1
-                    { new BaseCellOrient(114, 1), new BaseCellOrient(120, 1), new BaseCellOrient(119, 0) }   // j 2
+                    { new BaseCellRotation(117, 1), new BaseCellRotation(113, 5), new BaseCellRotation(105, 5) },  // j 0
+                    { new BaseCellRotation(118, 1), new BaseCellRotation(121, 0), new BaseCellRotation(116, 0) },  // j 1
+                    { new BaseCellRotation(114, 1), new BaseCellRotation(120, 1), new BaseCellRotation(119, 0) }   // j 2
                 }
             },
             {// face 19
                 {
                     // i 0
-                    { new BaseCellOrient(114, 0), new BaseCellOrient(112, 0), new BaseCellOrient(107, 0) },  // j 0
-                    { new BaseCellOrient(100, 0), new BaseCellOrient(102, 0), new BaseCellOrient(101, 3) },  // j 1
-                    { new BaseCellOrient(83, 1), new BaseCellOrient(87, 3), new BaseCellOrient(85, 3) }      // j 2
+                    { new BaseCellRotation(114, 0), new BaseCellRotation(112, 0), new BaseCellRotation(107, 0) },  // j 0
+                    { new BaseCellRotation(100, 0), new BaseCellRotation(102, 0), new BaseCellRotation(101, 3) },  // j 1
+                    { new BaseCellRotation(83, 1), new BaseCellRotation(87, 3), new BaseCellRotation(85, 3) }      // j 2
                 },
                 {
                     // i 1
-                    { new BaseCellOrient(118, 0), new BaseCellOrient(120, 0), new BaseCellOrient(115, 5) },  // j 0
-                    { new BaseCellOrient(108, 1), new BaseCellOrient(114, 0), new BaseCellOrient(112, 0) },  // j 1
-                    { new BaseCellOrient(92, 1), new BaseCellOrient(100, 0), new BaseCellOrient(102, 0) }    // j 2
+                    { new BaseCellRotation(118, 0), new BaseCellRotation(120, 0), new BaseCellRotation(115, 5) },  // j 0
+                    { new BaseCellRotation(108, 1), new BaseCellRotation(114, 0), new BaseCellRotation(112, 0) },  // j 1
+                    { new BaseCellRotation(92, 1), new BaseCellRotation(100, 0), new BaseCellRotation(102, 0) }    // j 2
                 },
                 {
                     // i 2
-                    { new BaseCellOrient(117, 0), new BaseCellOrient(121, 5), new BaseCellOrient(119, 5) },  // j 0
-                    { new BaseCellOrient(109, 1), new BaseCellOrient(118, 0), new BaseCellOrient(120, 0) },  // j 1
-                    { new BaseCellOrient(95, 1), new BaseCellOrient(108, 1), new BaseCellOrient(114, 0) }    // j 2
+                    { new BaseCellRotation(117, 0), new BaseCellRotation(121, 5), new BaseCellRotation(119, 5) },  // j 0
+                    { new BaseCellRotation(109, 1), new BaseCellRotation(118, 0), new BaseCellRotation(120, 0) },  // j 1
+                    { new BaseCellRotation(95, 1), new BaseCellRotation(108, 1), new BaseCellRotation(114, 0) }    // j 2
                 }
             }
         };
@@ -741,7 +699,7 @@ namespace H3Lib
         /// is a pentagon, the two cw offset rotation adjacent faces are given (-1
         /// indicates that no cw offset rotation faces exist for this base cell).
         /// </summary>
-        public static readonly BaseCellData[] baseCellData = {
+        public static readonly BaseCellData[] BaseCellData = {
             new BaseCellData(1, 1 ,0 ,0, 0, 0, 0), // base cell 0
             new BaseCellData(2, 1, 1, 0, 0, 0, 0),	// base cell 1
             new BaseCellData(1, 0, 0, 0, 0, 0, 0),	// base cell 2
@@ -866,16 +824,45 @@ namespace H3Lib
             new BaseCellData(18, 1, 0, 0, 0, 0, 0)     // base cell 121
         };
 
-        public const int INVALID_BASE_CELL = 127;
+        public const int InvalidBaseCell = 127;
         /// <summary>
         /// Maximum input for any component to face-to-base-cell lookup functions
         /// </summary>
-        public const int MAX_FACE_COORD = 2;
+        public const int MaxFaceCoord = 2;
 
         /// <summary>
         /// Invalid number of rotations
         /// </summary>
-        public const int INVALID_ROTATIONS = -1;
+        public const int InvalidRotations = -1;
+
+        /// <summary>
+        /// res0IndexCount returns the number of resolution 0 indexes
+        /// </summary>
+        /// <!--
+        /// baseCells.c
+        /// int H3_EXPORT(res0IndexCount)
+        /// -->
+        public static int res0IndexCount()
+        {
+            return Constants.NUM_BASE_CELLS;
+        }
+
+        /// <summary>
+        /// Generates all base cells
+        /// </summary>
+        public static List<H3Index> getRes0Indexes()
+        {
+            var results = new List<H3Index>();
+            for (var bc = 0; bc < Constants.NUM_BASE_CELLS; bc++)
+            {
+                H3Index baseCell = H3Index.H3_INIT;
+                baseCell.Mode = H3Mode.Hexagon;
+                baseCell.BaseCell = bc;
+                results.Add(baseCell);
+            }
+
+            return results;
+        }
         
         /// <summary>
         /// Return whether or not the indicated base cell is a pentagon.
@@ -886,16 +873,71 @@ namespace H3Lib
         /// -->
         public static bool IsBaseCellPentagon(int baseCell)
         {
-            return baseCellData[baseCell].isPentagon == 1;
+            return BaseCellData[baseCell].IsPentagon == 1;
         }
 
         /// <summary>
         /// Return whether the indicated base cell is a pentagon where all
         /// neighbors are oriented towards it.
         /// </summary>
-        public static bool _isBaseCellPolarPentagon(int baseCell) {
+        /// <!--
+        /// baseCells.c
+        /// bool _isBaseCellPolarPentagon
+        /// -->
+        public static bool IsBaseCellPolarPentagon(int baseCell)
+        {
             return baseCell == 4 || baseCell == 117;
         }
+
+        /// <summary>
+        /// Find the FaceIJK given a base cell.
+        /// </summary>
+        /// <!--
+        /// baseCells.c
+        /// _baseCellToFaceIjk
+        /// -->
+        public static FaceIjk ToFaceIjk(int baseCell)
+        {
+            return new FaceIjk(BaseCellData[baseCell].HomeFijk);
+        }
+
+        /// <summary>
+        /// Given a base cell and the face it appears on, return
+        /// the number of 60' ccw rotations for that base cell's
+        /// coordinate system.
+        /// </summary>
+        /// <returns>
+        /// The number of rotations, or INVALID_ROTATIONS if the base
+        /// cell is not found on the given face
+        /// </returns>
+        /// <!--
+        /// baseCells.c
+        /// int _baseCellToCCWrot60
+        /// -->
+        public static int ToCounterClockwiseRotate60(int baseCell, int face)
+        {
+            if (face < 0 || face > Constants.NUM_ICOSA_FACES)
+            {
+                return InvalidRotations;
+            }
+
+            var cellRotations = (BaseCellRotation[,,]) FaceIjkBaseCells.GetValue(face);
+            if (cellRotations == null)
+            {
+                return InvalidRotations;
+            }
+
+            foreach (var rotation in cellRotations)
+            {
+                if (rotation.BaseCell == baseCell)
+                {
+                    return rotation.CounterClockwiseRotate60;
+                }
+            }
+
+            return InvalidRotations;
+        }
+        
         /// <summary>
         /// Find base cell given FaceIJK.
         ///
@@ -905,7 +947,7 @@ namespace H3Lib
         /// </summary>
         public static int _faceIjkToBaseCell(FaceIjk h)
         {
-            return faceIjkBaseCells[h.Face,h.Coord.I,h.Coord.J,h.Coord.K].baseCell;
+            return FaceIjkBaseCells[h.Face,h.Coord.I,h.Coord.J,h.Coord.K].BaseCell;
         }
 
         /// <summary>
@@ -917,51 +959,9 @@ namespace H3Lib
         ///
         /// Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
         /// </summary>
-        public static int _faceIjkToBaseCellCCWrot60( FaceIjk h)
+        public static int ToBaseCellCounterClockwiseRotate60( FaceIjk h)
         {
-            return faceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K].ccwRot60;
-        }
-
-        /// <summary>
-        /// Find the FaceIJK given a base cell.
-        /// </summary>
-        // ReSharper disable once UnusedMember.Global
-        public static void _baseCellToFaceIjk(int baseCell, ref FaceIjk h)
-        {
-            h = baseCellData[baseCell].homeFijk;
-        }
-
-        public static int _baseCellToCCWrot60(int baseCell, int face)
-        {
-            if (face < 0 || face > Constants.NUM_ICOSA_FACES)
-            {
-                return INVALID_ROTATIONS;
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    for (int k = 0; k < 3; k++)
-                    {
-                        if (faceIjkBaseCells[face, i, j, k].baseCell == baseCell)
-                        {
-                            return faceIjkBaseCells[face, i, j, k].ccwRot60;
-                        }
-                    }
-                }
-            }
-
-            return INVALID_ROTATIONS;
-        }
-
-        /// <summary>
-        /// Return whether or not the tested face is a cw offset face.
-        /// </summary>
-        public static bool _baseCellIsCwOffset(int baseCell, int testFace)
-        {
-            return baseCellData[baseCell].cwOffsetPent[0] == testFace ||
-                   baseCellData[baseCell].cwOffsetPent[1] == testFace;
+            return FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K].CounterClockwiseRotate60;
         }
 
         /// <summary>
@@ -969,7 +969,19 @@ namespace H3Lib
         /// </summary>
         public static int _getBaseCellNeighbor(int baseCell, Direction dir)
         {
-            return baseCellNeighbors[baseCell, (int) dir];
+            return BaseCellNeighbors[baseCell, (int) dir];
+        }
+
+        /// <summary>
+        /// Return the neighboring base cell in the given direction.
+        /// </summary>
+        /// <!--
+        /// baseCells.c
+        /// _getBaseCellNeighbor
+        /// -->
+        public static int GetNeighbor(int baseCell, Direction dir)
+        {
+            return BaseCellNeighbors[baseCell, (int) dir];
         }
 
         /// <summary>
@@ -980,7 +992,7 @@ namespace H3Lib
         {
             for (var dir = Direction.CENTER_DIGIT; dir <Direction.NUM_DIGITS; dir++) 
             {
-                var testBaseCell = _getBaseCellNeighbor(originBaseCell, dir);
+                var testBaseCell = GetNeighbor(originBaseCell, dir);
                 if (testBaseCell == neighboringBaseCell)
                 {
                     return dir;
@@ -998,8 +1010,8 @@ namespace H3Lib
         /// -->
         public static bool IsClockwiseOffset(int baseCell, int testFace)
         {
-            return baseCellData[baseCell].cwOffsetPent[0] == testFace ||
-                   baseCellData[baseCell].cwOffsetPent[1] == testFace;
+            return BaseCellData[baseCell].ClockwiseOffsetPentagon[0] == testFace ||
+                   BaseCellData[baseCell].ClockwiseOffsetPentagon[1] == testFace;
         }
     }
 

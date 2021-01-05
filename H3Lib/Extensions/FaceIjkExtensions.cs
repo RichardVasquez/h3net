@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
+using System.Linq;
 
 namespace H3Lib.Extensions
 {
@@ -52,7 +53,7 @@ namespace H3Lib.Extensions
             var ijk = fijk.Coord;
 
             // get the maximum dimension value; scale if a substrate grid
-            int maxDim = FaceIjk.maxDimByCIIres[res];
+            int maxDim = FaceIjk.MaxDimByCiiRes[res];
             if (substrate != 0)
             {
                 maxDim *= 3;
@@ -63,7 +64,7 @@ namespace H3Lib.Extensions
             {
                 overage = Overage.FACE_EDGE;
             }
-            else if (ijk.I + ijk.J + ijk.K > maxDim)  // overage
+            else if (ijk.I + ijk.J + ijk.K > maxDim) // overage
             {
                 overage = Overage.NEW_FACE;
                 FaceOrientIjk fijkOrient;
@@ -72,11 +73,11 @@ namespace H3Lib.Extensions
                 {
                     if (ijk.J > 0) // jk "quadrant"
                     {
-                        fijkOrient = FaceIjk.faceNeighbors[fijk.Face, FaceIjk.JK];
+                        fijkOrient = FaceIjk.FaceNeighbors[fijk.Face, FaceIjk.JK];
                     }
-                    else  // ik "quadrant"
+                    else // ik "quadrant"
                     {
-                        fijkOrient = FaceIjk.faceNeighbors[fijk.Face, FaceIjk.KI];
+                        fijkOrient = FaceIjk.FaceNeighbors[fijk.Face, FaceIjk.KI];
 
                         // adjust for the pentagonal missing sequence
                         if (pentLeading4 != 0)
@@ -93,7 +94,7 @@ namespace H3Lib.Extensions
                 }
                 else // ij "quadrant"
                 {
-                    fijkOrient = FaceIjk.faceNeighbors[fijk.Face, FaceIjk.IJ];
+                    fijkOrient = FaceIjk.FaceNeighbors[fijk.Face, FaceIjk.IJ];
                 }
 
                 fijk = new FaceIjk(fijkOrient.Face, fijk.Coord);
@@ -105,7 +106,7 @@ namespace H3Lib.Extensions
                 }
 
                 var transVec = fijkOrient.Translate;
-                int unitScale = FaceIjk.unitScaleByCIIres[res];
+                int unitScale = FaceIjk.UnitScaleByCiiRes[res];
                 if (substrate != 0)
                 {
                     unitScale *= 3;
@@ -145,9 +146,10 @@ namespace H3Lib.Extensions
                 (overage, fijk) = fijk.AdjustOverageClassIi(res, pentLeading4, 1);
 
             } while (overage == Overage.NEW_FACE);
+
             return (overage, fijk);
         }
-        
+
         /// <summary>
         /// Get the vertices of a pentagon cell as substrate FaceIJK addresses
         /// </summary>
@@ -188,11 +190,11 @@ namespace H3Lib.Extensions
             // i-axes
             CoordIjk[] vertsCiii =
             {
-                new CoordIjk(5, 4, 0),  // 0
-                new CoordIjk(1, 5, 0),  // 1
-                new CoordIjk(0, 5, 4),  // 2
-                new CoordIjk(0, 1, 5),  // 3
-                new CoordIjk(4, 0, 5),  // 4
+                new CoordIjk(5, 4, 0), // 0
+                new CoordIjk(1, 5, 0), // 1
+                new CoordIjk(0, 5, 4), // 2
+                new CoordIjk(0, 1, 5), // 3
+                new CoordIjk(4, 0, 5), // 4
             };
 
             // get the correct set of substrate vertices for this resolution
@@ -252,12 +254,12 @@ namespace H3Lib.Extensions
             // vertices listed ccw from the i-axes
             CoordIjk[] vertsCii =
             {
-                new CoordIjk(2, 1, 0),  // 0
-                new CoordIjk(1, 2, 0),  // 1
-                new CoordIjk(0, 2, 1),  // 2
-                new CoordIjk(0, 1, 2),  // 3
-                new CoordIjk(1, 0, 2),  // 4
-                new CoordIjk(2, 0, 1)   // 5
+                new CoordIjk(2, 1, 0), // 0
+                new CoordIjk(1, 2, 0), // 1
+                new CoordIjk(0, 2, 1), // 2
+                new CoordIjk(0, 1, 2), // 3
+                new CoordIjk(1, 0, 2), // 4
+                new CoordIjk(2, 0, 1) // 5
             };
 
             // the vertexes of an origin-centered cell in a Class III resolution on a
@@ -266,19 +268,19 @@ namespace H3Lib.Extensions
             // vertices listed ccw from the i-axes
             CoordIjk[] vertsCiii =
             {
-                new CoordIjk(5, 4, 0),  // 0
-                new CoordIjk(1, 5, 0),  // 1
-                new CoordIjk(0, 5, 4),  // 2
-                new CoordIjk(0, 1, 5),  // 3
-                new CoordIjk(4, 0, 5),  // 4
-                new CoordIjk(5, 0, 1)   // 5
+                new CoordIjk(5, 4, 0), // 0
+                new CoordIjk(1, 5, 0), // 1
+                new CoordIjk(0, 5, 4), // 2
+                new CoordIjk(0, 1, 5), // 3
+                new CoordIjk(4, 0, 5), // 4
+                new CoordIjk(5, 0, 1) // 5
             };
 
             // get the correct set of substrate vertices for this resolution
             var verts = res.IsResClassIii()
                             ? vertsCiii
                             : vertsCii;
-            
+
             // adjust the center point to be in an aperture 33r substrate grid
             // these should be composed for speed
             fijk = fijk.ReplaceCoord(fijk.Coord.DownAp3().DownAp3R());
@@ -292,7 +294,7 @@ namespace H3Lib.Extensions
             }
 
             // The center point is now in the same substrate grid as the origin
-            // cell vertices. Add the center point substate coordinates
+            // cell vertices. Add the center point substrate coordinates
             // to each vertex to translate the vertices to that cell.
             for (int v = 0; v < Constants.NUM_HEX_VERTS; v++)
             {
@@ -324,9 +326,9 @@ namespace H3Lib.Extensions
             // check for res 0/base cell
             if (res == 0)
             {
-                if (fijk.Coord.I > BaseCells.MAX_FACE_COORD ||
-                    fijk.Coord.J > BaseCells.MAX_FACE_COORD ||
-                    fijk.Coord.K > BaseCells.MAX_FACE_COORD)
+                if (fijk.Coord.I > BaseCells.MaxFaceCoord ||
+                    fijk.Coord.J > BaseCells.MaxFaceCoord ||
+                    fijk.Coord.K > BaseCells.MaxFaceCoord)
                 {
                     // out of range input
                     return H3Index.H3_NULL;
@@ -349,7 +351,7 @@ namespace H3Lib.Extensions
             {
                 var lastIjk = new CoordIjk(ijk);
                 CoordIjk lastCenter;
-                if ((r+1).IsResClassIii())
+                if ((r + 1).IsResClassIii())
                 {
                     // rotate ccw
                     ijk = ijk.UpAp7();
@@ -364,16 +366,16 @@ namespace H3Lib.Extensions
 
                 var diff = lastIjk - lastCenter;
 
-                h.SetIndexDigit(r+1, (ulong)diff.ToDirection());
+                h.SetIndexDigit(r + 1, (ulong) diff.ToDirection());
             }
 
             fijkBc = fijkBc.ReplaceCoord(ijk);
 
             // fijkBC should now hold the IJK of the base cell in the
             // coordinate system of the current face
-            if (fijkBc.Coord.I > BaseCells.MAX_FACE_COORD ||
-                fijkBc.Coord.J > BaseCells.MAX_FACE_COORD ||
-                fijkBc.Coord.K > BaseCells.MAX_FACE_COORD)
+            if (fijkBc.Coord.I > BaseCells.MaxFaceCoord ||
+                fijkBc.Coord.J > BaseCells.MaxFaceCoord ||
+                fijkBc.Coord.K > BaseCells.MaxFaceCoord)
             {
                 // out of range input
                 return H3Index.H3_NULL;
@@ -386,7 +388,7 @@ namespace H3Lib.Extensions
             // rotate if necessary to get canonical base cell orientation
             // for this base cell
             int numRots = fijkBc.ToBaseCellCounterClockwiseRotate60();
-            if (baseCell.IsBaseCellPentagon())
+            if (BaseCells.IsBaseCellPentagon(baseCell))
             {
                 // force rotation out of missing k-axes sub-sequence
                 if (h.LeadingNonZeroDigit == Direction.K_AXES_DIGIT)
@@ -397,7 +399,7 @@ namespace H3Lib.Extensions
                             : h.Rotate60CounterClockwise();
                 }
 
-                for (int i = 0; i < numRots; i++)
+                for (var i = 0; i < numRots; i++)
                 {
                     h = h.RotatePent60CounterClockwise();
                 }
@@ -410,7 +412,7 @@ namespace H3Lib.Extensions
                 }
             }
 
-            return h;            
+            return h;
         }
 
         /// <summary>
@@ -429,8 +431,8 @@ namespace H3Lib.Extensions
         public static int ToBaseCell(this FaceIjk h)
         {
             return BaseCells
-                  .faceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
-                  .baseCell;
+                  .FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
+                  .BaseCell;
         }
 
         /// <summary>
@@ -449,8 +451,282 @@ namespace H3Lib.Extensions
         public static int ToBaseCellCounterClockwiseRotate60(this FaceIjk h)
         {
             return BaseCells
-                  .faceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
-                  .ccwRot60;
+                  .FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
+                  .CounterClockwiseRotate60;
+        }
+
+        /// <summary>
+        /// Determines the center point in spherical coordinates of a cell given by
+        /// a FaceIJK address at a specified resolution.
+        /// </summary>
+        /// <param name="h">The FaceIJK address of the cell.</param>
+        /// <param name="res">The H3 resolution of the cell.</param>
+        /// <param name="g">The spherical coordinates of the cell center point.</param>
+        /// <!--
+        /// faceijk.c
+        /// void _faceIjkToGeo
+        /// -->
+        public static GeoCoord ToGeoCoord(this FaceIjk h, int res)
+        {
+            //var v = new Vec2d();
+            return h.Coord
+                    .ToHex2d()
+                    .ToGeoCoord(h.Face, res, 0);
+        }
+
+        /// <summary>
+        /// Generates the cell boundary in spherical coordinates for a cell given by a
+        /// FaceIJK address at a specified resolution.
+        /// </summary>
+        /// <param name="h">The FaceIJK address of the cell</param>
+        /// <param name="res">The H3 resolution of the cell</param>
+        /// <param name="start">The first topological vertex to return</param>
+        /// <param name="length">The number of topological vertexes to return</param>
+        /// <returns>The spherical coordinates of the cell boundary</returns>
+        /// <!--
+        /// faceijk.c
+        /// void _faceIjkToGeoBoundary
+        /// -->
+        public static GeoBoundary ToGeoBoundary(this FaceIjk h, int res, int start, int length)
+        {
+            var gb = new GeoBoundary();
+
+            var centerIjk = new FaceIjk(h);
+            var fijkVerts = Enumerable.Range(1, Constants.NUM_HEX_VERTS)
+                                      .Select(i => new FaceIjk())
+                                      .ToArray();
+            (var tempFaceIjk, int tempRes, var tempVerts) = centerIjk.ToVerts(res, fijkVerts);
+            centerIjk = tempFaceIjk;
+            int adjRes = tempRes;
+            fijkVerts = tempVerts.ToArray();
+
+            // If we're returning the entire loop, we need one more iteration in case
+            // of a distortion vertex on the last edge
+            int additionalIteration = length == Constants.NUM_HEX_VERTS
+                                          ? 1
+                                          : 0;
+
+            // convert each vertex to lat/lon
+            // adjust the face of each vertex as appropriate and introduce
+            // edge-crossing vertices as needed
+            gb.numVerts = 0;
+            int lastFace = -1;
+            var lastOverage = Overage.NO_OVERAGE;
+            for (int vert = start;
+                 vert < start + length + additionalIteration;
+                 vert++)
+            {
+                int v = vert % Constants.NUM_HEX_VERTS;
+                var fijk = fijkVerts[v];
+                const int pentLeading4 = 0;
+
+                var (overage, tmpFijk) = fijk.AdjustOverageClassIi(adjRes, pentLeading4, 1);
+                fijk = tmpFijk;
+
+                /*
+                Check for edge-crossing. Each face of the underlying icosahedron is a
+                different projection plane. So if an edge of the hexagon crosses an
+                icosahedron edge, an additional vertex must be introduced at that
+                intersection point. Then each half of the cell edge can be projected
+                to geographic coordinates using the appropriate icosahedron face
+                projection. Note that Class II cell edges have vertices on the face
+                edge, with no edge line intersections.
+                */
+                if (res.IsResClassIii() && vert > start && fijk.Face != lastFace &&
+                    lastOverage != Overage.FACE_EDGE)
+                {
+                    // find hex2d of the two vertexes on original face
+                    int lastV = (v + 5) % Constants.NUM_HEX_VERTS;
+                    var orig2d0 = fijkVerts[lastV].Coord.ToHex2d();
+                    var orig2d1 = fijkVerts[v].Coord.ToHex2d();
+
+                    // find the appropriate icosahedron face edge vertexes
+                    int maxDim = FaceIjk.MaxDimByCiiRes[adjRes];
+                    var v0 = new Vec2d(3.0 * maxDim, 0.0);
+                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.M_SQRT3_2 * maxDim);
+                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.M_SQRT3_2 * maxDim);
+
+                    int face2 = lastFace == centerIjk.Face
+                                    ? fijk.Face
+                                    : lastFace;
+                    Vec2d edge0;
+                    Vec2d edge1;
+                    switch (FaceIjk.AdjacentFaceDir[centerIjk.Face, face2])
+                    {
+                        case FaceIjk.IJ:
+                            edge0 = v0;
+                            edge1 = v1;
+                            break;
+                        case FaceIjk.JK:
+                            edge0 = v1;
+                            edge1 = v2;
+                            break;
+                        default:
+                            if (FaceIjk.AdjacentFaceDir[centerIjk.Face, face2] != FaceIjk.KI)
+                            {
+                                throw new Exception("adjacentFaceDir[centerIJK.face][face2] == KI");
+                            }
+
+                            edge0 = v2;
+                            edge1 = v0;
+                            break;
+                    }
+
+                    // find the intersection and add the lat/lon point to the result
+                    var inter = Vec2d.FindIntersection(orig2d0, orig2d1, edge0, edge1);
+                    /*
+                    If a point of intersection occurs at a hexagon vertex, then each
+                    adjacent hexagon edge will lie completely on a single icosahedron
+                    face, and no additional vertex is required.
+                    */
+                    bool isIntersectionAtVertex = orig2d0 == inter || orig2d1 == inter;
+                    if (!isIntersectionAtVertex)
+                    {
+                        gb.verts[gb.numVerts] = inter.ToGeoCoord(centerIjk.Face, adjRes, 1);
+                        gb.numVerts++;
+                    }
+                }
+
+                // convert vertex to lat/lon and add to the result
+                // vert == start + NUM_HEX_VERTS is only used to test for possible
+                // intersection on last edge
+                if (vert < start + Constants.NUM_HEX_VERTS)
+                {
+                    gb.verts[gb.numVerts] = fijk.Coord
+                                                .ToHex2d()
+                                                .ToGeoCoord(fijk.Face, adjRes, 1);
+                    gb.numVerts++;
+                }
+
+                lastFace = fijk.Face;
+                lastOverage = overage;
+            }
+
+            return gb;
+        }
+
+        /// <summary>
+        /// Generates the cell boundary in spherical coordinates for a pentagonal cell
+        /// given by a FaceIJK address at a specified resolution.
+        /// </summary>
+        /// <param name="h">The FaceIJK address of the pentagonal cell.</param>
+        /// <param name="res">The H3 resolution of the cell.</param>
+        /// <param name="start">The first topological vertex to return.</param>
+        /// <param name="length">The number of topological vertexes to return.</param>
+        /// <returns>The spherical coordinates of the cell boundary.</returns>
+        /// <!--
+        /// faceijk.c
+        /// void _faceIjkPentToGeoBoundary
+        /// -->
+        public static GeoBoundary PentToGeoBoundary(this FaceIjk h, int res, int start, int length)
+        {
+            var gb = new GeoBoundary();
+            int adjRes = res;
+            var centerIjk = new FaceIjk(h);
+            var fijkVerts = Enumerable.Range(1, Constants.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
+            (_, int tempRes, var tempVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
+            adjRes = tempRes;
+            fijkVerts = tempVerts.ToArray();
+
+            // If we're returning the entire loop, we need one more iteration in case
+            // of a distortion vertex on the last edge
+            int additionalIteration = length == Constants.NUM_PENT_VERTS
+                                          ? 1
+                                          : 0;
+
+            // convert each vertex to lat/lon
+            // adjust the face of each vertex as appropriate and introduce
+            // edge-crossing vertices as needed
+
+            gb.numVerts = 0;
+            var lastFijk = new FaceIjk();
+
+            for (int vert = start; vert < start + length + additionalIteration; vert++)
+            {
+                int v = vert % Constants.NUM_PENT_VERTS;
+
+                (_, fijkVerts[v]) = fijkVerts[v].AdjustPentOverage(adjRes); 
+                var fijk = fijkVerts[v];
+                
+                // all Class III pentagon edges cross icosahedron edges
+                // note that Class II pentagons have vertices on the edge,
+                // not edge intersections
+                if (res.IsResClassIii() && vert > start)
+                {
+                    // find hex2d of the two vertexes on the last face
+                    var tmpFijk = new FaceIjk(fijk);
+
+                    var orig2d0 = lastFijk.Coord.ToHex2d();
+
+                    int currentToLastDir = FaceIjk.AdjacentFaceDir[tmpFijk.Face, lastFijk.Face];
+
+                    var fijkOrient = FaceIjk.FaceNeighbors[tmpFijk.Face, currentToLastDir];
+
+                    tmpFijk.ReplaceFace(fijkOrient.Face);
+                    var ijk = new CoordIjk(tmpFijk.Coord);
+
+                    // rotate and translate for adjacent face
+                    for (var i = 0; i < fijkOrient.Ccw60Rotations; i++)
+                    {
+                        ijk = ijk.Rotate60Clockwise();
+                    }
+
+                    ijk = (ijk + fijkOrient.Translate * 3).Normalized();
+
+                    var orig2d1 = ijk.ToHex2d();
+                    tmpFijk = tmpFijk.ReplaceCoord(ijk);
+
+                    // find the appropriate icosahedron face edge vertexes
+                    int maxDim = FaceIjk.MaxDimByCiiRes[adjRes];
+                    var v0 = new Vec2d(3.0 * maxDim, 0.0);
+                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.M_SQRT3_2 * maxDim);
+                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.M_SQRT3_2 * maxDim);
+
+                    Vec2d edge0;
+                    Vec2d edge1;
+
+                    switch (FaceIjk.AdjacentFaceDir[tmpFijk.Face, fijk.Face])
+                    {
+                        case FaceIjk.IJ:
+                            edge0 = new Vec2d(v0.X, v0.Y);
+                            edge1 = new Vec2d(v1.X, v1.Y);
+                            break;
+                        case FaceIjk.JK:
+                            edge0 = new Vec2d(v1.X, v1.Y);
+                            edge1 = new Vec2d(v2.X, v2.Y);
+                            break;
+                        default:
+                            if (FaceIjk.AdjacentFaceDir[tmpFijk.Face, fijk.Face] != FaceIjk.KI)
+                            {
+                                throw new Exception("assert(adjacentFaceDir[tmpFijk.face][fijk.face] == KI);");
+                            }
+
+                            edge0 = new Vec2d(v2.X, v2.Y);
+                            edge1 = new Vec2d(v0.X, v0.Y);
+                            break;
+                    }
+
+                    // find the intersection and add the lat/lon point to the result
+                    var inter = Vec2d.FindIntersection(orig2d0, orig2d1, edge0, edge1);
+                    gb.verts[gb.numVerts] = inter.ToGeoCoord(tmpFijk.Face, adjRes, 1);
+                    gb.numVerts++;
+                }
+
+                // convert vertex to lat/lon and add to the result
+                // vert == start + NUM_PENT_VERTS is only used to test for possible
+                // intersection on last edge
+                if (vert < start + Constants.NUM_PENT_VERTS)
+                {
+                    gb.verts[gb.numVerts] = fijk.Coord
+                                                .ToHex2d()
+                                                .ToGeoCoord(fijk.Face, adjRes, 1);
+                    gb.numVerts++;
+                }
+
+                lastFijk = new FaceIjk(fijk);
+            }
+
+            return gb;
         }
     }
 }

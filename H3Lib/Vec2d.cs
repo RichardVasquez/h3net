@@ -47,8 +47,9 @@ namespace H3Lib
         /// <returns>The intersection point.</returns>
         /// <!--
         /// vec2d.c
+        /// _v2dIntersect
         /// -->
-        public static Vec2d FindIntersection(Vec2d p0,  Vec2d p1,  Vec2d p2, Vec2d p3, ref Vec2d inter)
+        public static Vec2d FindIntersection(Vec2d p0,  Vec2d p1,  Vec2d p2, Vec2d p3)
         {
             var s1 = new Vec2d(p1.X - p0.X, p1.Y - p0.Y);
             var s2 = new Vec2d(p3.X - p2.X, p3.Y - p2.Y);
