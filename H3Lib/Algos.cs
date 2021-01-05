@@ -389,7 +389,7 @@ namespace H3Lib
             }
 
             int newBaseCell = H3Index.H3_GET_BASE_CELL(out_hex);
-            if (BaseCells._isBaseCellPentagon(newBaseCell))
+            if (BaseCells.IsBaseCellPentagon(newBaseCell))
             {
                 int alreadyAdjustedKSubsequence = 0;
 

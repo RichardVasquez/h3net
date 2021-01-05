@@ -21,6 +21,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="cell">H3 cell</param>
         /// <returns>cell area in radians^2</returns>
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(cellAreaRads2)
+        /// -->
         public static double CellAreaRadians2(this H3Index cell)
         {
             var c = new GeoCoord();
@@ -42,6 +46,10 @@ namespace H3Lib.Extensions
         /// Area of H3 cell in kilometers^2.
         /// </summary>
         /// <param name="h">h3 cell</param>
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(cellAreaKm2)
+        /// -->
         public static double CellAreaKm2(this H3Index h)
         {
             return h.CellAreaRadians2() * Constants.EARTH_RADIUS_KM * Constants.EARTH_RADIUS_KM;
@@ -51,6 +59,10 @@ namespace H3Lib.Extensions
         /// Area of H3 cell in meters^2.
         /// </summary>
         /// <param name="h">h3 cell</param>
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(cellAreaM2)
+        /// -->
         public static double CellAreaM2(this H3Index h)
         {
             return h.CellAreaKm2() * 1000 * 1000;
@@ -61,6 +73,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="edge">H3 unidirectional edge</param>
         /// <returns>length in radians</returns>
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(exactEdgeLengthRads)
+        /// -->
         public static double ExactEdgeLengthRads(this H3Index edge)
         {
             var gb = new GeoBoundary();
@@ -78,6 +94,10 @@ namespace H3Lib.Extensions
         /// Length of a unidirectional edge in kilometers.
         /// </summary>
         /// <param name="edge">H3 unidirectional edge</param>
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(exactEdgeLengthKm)
+        /// -->
         public static double ExactEdgeLengthKm(this H3Index edge)
         {
             return edge.ExactEdgeLengthRads() * Constants.EARTH_RADIUS_KM;
@@ -87,6 +107,10 @@ namespace H3Lib.Extensions
         /// Length of a unidirectional edge in meters.
         /// </summary>
         /// <param name="edge">H3 unidirectional edge</param>
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(exactEdgeLengthM)
+        /// -->
         public static double ExactEdgeLengthM(this H3Index edge)
         {
             return edge.ExactEdgeLengthKm() * 1000;
@@ -111,6 +135,10 @@ namespace H3Lib.Extensions
         /// Item1: 0 on success, or another value on failure.
         /// Item2: ijk+ coordinates of the index will be placed here on success
         /// </returns>
+        /// <!--
+        /// localij.c
+        /// int h3ToLocalIjk
+        /// -->
         public static (int, CoordIjk) ToLocalIjk(this H3Index origin, H3Index h3)
         {
             int res = origin.Resolution;
@@ -141,10 +169,10 @@ namespace H3Lib.Extensions
                 }
             }
 
-            int originOnPent = BaseCells._isBaseCellPentagon(originBaseCell)
+            int originOnPent = BaseCells.IsBaseCellPentagon(originBaseCell)
                                    ? 1
                                    : 0;
-            int indexOnPent = BaseCells._isBaseCellPentagon(baseCell)
+            int indexOnPent = BaseCells.IsBaseCellPentagon(baseCell)
                                   ? 1
                                   : 0;
 
@@ -322,6 +350,10 @@ namespace H3Lib.Extensions
         /// Rotate an H3Index 60 degrees clockwise about a pentagonal center.
         /// </summary>
         /// <param name="h"> The H3Index.</param>
+        /// <!--
+        /// h3Index.c
+        /// H3Index _h3RotatePent60cw
+        /// -->
         public static H3Index RotatePent60Clockwise(this H3Index h)
         {
             // rotate in place; skips any leading 1 digits (k-axis)
@@ -353,7 +385,11 @@ namespace H3Lib.Extensions
         /// <summary>
         /// Rotate an H3Index 60 degrees counter-clockwise.
         /// </summary>
-        /// <param name="h">The H3Index.</param> 
+        /// <param name="h">The H3Index.</param>
+        /// <!--
+        /// h3Index.c
+        /// H3Index _h3Rotate60ccw(H3Index h)
+        /// -->
         public static H3Index Rotate60CounterClockwise(this H3Index h)
         {
             for (int r = 1, res = h.Resolution; r <= res; r++)
@@ -368,7 +404,11 @@ namespace H3Lib.Extensions
         /// <summary>
         /// Rotate an H3Index 60 degrees clockwise.
         /// </summary>
-        /// <param name="h">The H3Index.</param> 
+        /// <param name="h">The H3Index.</param>
+        /// <!--
+        /// h3Index.c
+        /// H3Index _h3Rotate60cw
+        /// --> 
         public static H3Index Rotate60Clockwise(this H3Index h)
         {
             for (int r = 1, res = h.Resolution; r <= res; r++)
@@ -392,6 +432,10 @@ namespace H3Lib.Extensions
         /// Item1: Returns 1 if the possibility of overage exists, otherwise 0.
         /// Item2: Modified FaceIjk
         /// </returns>
+        /// <!--
+        /// h3Index.c
+        /// int _h3ToFaceIjkWithInitializedFijk
+        /// -->
         public static (int, FaceIjk) ToFaceIjkWithInitializedFijk(this H3Index h, FaceIjk fijk)
         {
             var empty = new CoordIjk();
@@ -441,6 +485,10 @@ namespace H3Lib.Extensions
         /// Tuple with Item1 indicating success (0) or other
         ///            Item2 contains ij coordinates. 
         /// </returns>
+        /// <!--
+        /// localij.c
+        /// int H3_EXPORT(experimentalH3ToLocalIj)
+        /// -->
         public static (int, CoordIj) ToLocalIjExperimental(this H3Index origin, H3Index h3)
         {
             // This function is currently experimental. Once ready to be part of the
@@ -466,6 +514,10 @@ namespace H3Lib.Extensions
         /// The distance, or a negative number if the library could not
         /// compute the distance.
         /// </returns>
+        /// <!--
+        /// localij.c
+        /// int H3_EXPORT(h3Distance)
+        /// -->
         public static int DistanceTo(this H3Index origin, H3Index h3)
         {
             (int status1, var originIjk) = origin.ToLocalIjk(origin);
@@ -498,6 +550,10 @@ namespace H3Lib.Extensions
         /// Size of the line, or a negative number if the line cannot
         /// be computed.
         /// </returns>
+        /// <!--
+        /// localij.c
+        /// int H3_EXPORT(h3LineSize)
+        /// -->
         public static int LineSize(this H3Index start, H3Index end)
         {
             int distance = start.DistanceTo(end);
@@ -505,7 +561,6 @@ namespace H3Lib.Extensions
                        ? distance + 1
                        : distance;
         }
-
 
         /// <summary>
         /// Given two H3 indexes, return the line of indexes between them (inclusive).
@@ -529,6 +584,10 @@ namespace H3Lib.Extensions
         /// (status, IEnumerable)
         /// status => 0 success, otherwise failure
         /// </returns>
+        /// <!--
+        /// localij.c
+        /// int H3_EXPORT(h3Line)
+        /// -->
         public static (int, IEnumerable<H3Index>) LineTo(this H3Index start, H3Index end)
         {
             int distance = start.DistanceTo(end);
@@ -581,6 +640,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h">The H3 index to validate.</param>
         /// <returns>true if the H3 index is valid</returns>
+        /// <!--
+        /// h3Index.c
+        /// int H3_EXPORT(h3IsValid)
+        /// -->
         public static bool IsValid(this H3Index h)
         {
             if (h.HighBit != 0 || h.Mode != H3Mode.Hexagon || h.ReservedBits != 0)
@@ -638,6 +701,10 @@ namespace H3Lib.Extensions
         /// <param name="h">H3Index to find parent of</param>
         /// <param name="parentRes">The resolution to switch to (parent, grandparent, etc)</param>
         /// <returns>H3Index of the parent, or H3_NULL if you actually asked for a child</returns>
+        /// <!--
+        /// h3Index.c
+        /// H3Index H3_EXPORT(h3ToParent)
+        /// -->
         public static H3Index ToParent(this H3Index h, int parentRes)
         {
             int childRes = h.Resolution;
@@ -671,6 +738,10 @@ namespace H3Lib.Extensions
         /// <param name="h3">H3Index to find the number of children of</param>
         /// <param name="childRes">The resolution of the child level you're interested in</param>
         /// <returns>count of maximum number of children (equal for hexagons, less for pentagons</returns>
+        /// <!--
+        /// h3Index.c
+        /// int64_t H3_EXPORT(maxH3ToChildrenSize)
+        /// -->
         public static long MaxChildrenSize(this H3Index h3, int childRes)
         {
             int parentRes = h3.Resolution;
@@ -686,6 +757,10 @@ namespace H3Lib.Extensions
         /// <param name="res"> The H3 resolution to initialize the index to.</param>
         /// <param name="baseCell"> The H3 base cell to initialize the index to.</param>
         /// <param name="initDigit"> The H3 digit (0-7) to initialize all of the index digits to.</param>
+        /// <!--
+        /// h3Index.c
+        /// void setH3Index
+        /// -->
         public static H3Index SetIndex(this H3Index hp, int res, int baseCell, Direction initDigit)
         {
             H3Index h = H3Index.H3_INIT;
@@ -707,9 +782,12 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h"> The H3Index to check.</param>
         /// <returns>Returns true if it is a pentagon, otherwise false.</returns>
+        /// <!--
+        /// h3Index.c
+        /// int H3_EXPORT(h3IsPentagon)
         public static bool IsPentagon(this H3Index h)
         {
-            return BaseCells._isBaseCellPentagon(h.BaseCell) &&
+            return BaseCells.IsBaseCellPentagon(h.BaseCell) &&
                    h.LeadingNonZeroDigit == Direction.CENTER_DIGIT;
         }
 
@@ -721,6 +799,10 @@ namespace H3Lib.Extensions
         /// <param name="h"> H3Index to find the direct child of</param>
         /// <param name="cellNumber"> int id of the direct child (0-6)</param>
         /// <returns>The new H3Index for the child</returns>
+        /// <!--
+        /// h3Index.c
+        /// H3Index makeDirectChild
+        /// -->
         public static H3Index MakeDirectChild(this H3Index h, int cellNumber)
         {
             int childRes = h.Resolution + 1;
@@ -735,6 +817,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h">The H3 Index</param>
         /// <returns>The corresponding FaceIJK address.</returns>
+        /// <!--
+        /// h3Index.cs
+        /// void _h3ToFaceIjk
+        /// -->
         public static FaceIjk ToFaceIjk(this H3Index h)
         {
             int baseCell = h.BaseCell;
@@ -809,6 +895,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h3">The H3 index</param>*
         /// <returns>Output list.</returns>
+        /// <!--
+        /// h3Index.c
+        /// void H3_EXPORT(h3GetFaces)
+        /// -->
         public static List<int> GetFaces(this H3Index h3)
         {
             int res = h3.Resolution;
@@ -871,21 +961,22 @@ namespace H3Lib.Extensions
                 // on another face
                 if (isPentagon)
                 {
-                    
-                    _adjustPentVertOverage(vert, res);
+                    (_, vert) = vert.AdjustPentOverage(res);
                 } else
                 {
                     (_, vert) = vert.AdjustOverageClassIi(res, 0, 1);
                 }
 
                 // Save the face to the output array
-                int face = vert->face;
-                int pos = 0;
+                int face = vert.Face;
                 // Find the first empty output position, or the first position
                 // matching the current face
-                while (out[pos] != INVALID_FACE && out[pos] != face) pos++;
-                out[pos] = face;
+                int pos = results.IndexOf(FaceIjk.INVALID_FACE);
+                results[pos] = vert.Face;
             }
+
+            results.RemoveAll(r => r == FaceIjk.INVALID_FACE);
+            return results;
         }
 
         /// <summary>
@@ -894,6 +985,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h3"></param>
         /// <returns></returns>
+        /// <!--
+        /// h3Index.c
+        /// int H3_EXPORT(maxFaceCount)
+        /// -->
         public static int MaxFaceCount(this H3Index h3)
         {
             // a pentagon always intersects 5 faces, a hexagon never intersects more

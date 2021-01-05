@@ -747,7 +747,7 @@ namespace H3Lib
         public static int h3IsPentagon(H3Index h)
         {
             var test = 
-                BaseCells._isBaseCellPentagon(H3_GET_BASE_CELL(h)) &&
+                BaseCells.IsBaseCellPentagon(H3_GET_BASE_CELL(h)) &&
                 _h3LeadingNonZeroDigit(h) == 0;
             return test ? 1 : 0;
         }
@@ -937,7 +937,7 @@ namespace H3Lib
             // rotate if necessary to get canonical base cell orientation
             // for this base cell
             int numRots = BaseCells._faceIjkToBaseCellCCWrot60(fijkBC);
-            if (BaseCells._isBaseCellPentagon(baseCell)) {
+            if (BaseCells.IsBaseCellPentagon(baseCell)) {
                 // force rotation out of missing k-axes sub-sequence
                 if (_h3LeadingNonZeroDigit(h) == Direction.K_AXES_DIGIT) {
                     // check for a cw/ccw offset face; default is ccw
@@ -1004,7 +1004,7 @@ namespace H3Lib
 
             // center base cell hierarchy is entirely on this face
             int possibleOverage = 1;
-            if (!BaseCells._isBaseCellPentagon(H3_GET_BASE_CELL(h)) &&
+            if (!BaseCells.IsBaseCellPentagon(H3_GET_BASE_CELL(h)) &&
                 (res == 0 ||
                  fijk.Coord.I == 0 && fijk.Coord.J == 0 && fijk.Coord.K == 0))
                 possibleOverage = 0;
@@ -1038,7 +1038,7 @@ namespace H3Lib
             int baseCell = H3_GET_BASE_CELL(h);
             // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
             // to be adjusted (and some of sub-sequence 4 below)
-            if (BaseCells._isBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == Direction.IK_AXES_DIGIT)
+            if (BaseCells.IsBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == Direction.IK_AXES_DIGIT)
             {
                 h = _h3Rotate60cw(ref h);
             }
@@ -1073,12 +1073,12 @@ namespace H3Lib
             // adjust for overage if needed
             // a pentagon base cell with a leading 4 digit requires special handling
             bool pentLeading4 =
-                (BaseCells._isBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == Direction.I_AXES_DIGIT);
+                (BaseCells.IsBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == Direction.I_AXES_DIGIT);
             if (FaceIjk._adjustOverageClassII(ref fijk, res, pentLeading4 ? 1 : 0, 0) > 0)
             {
                 // if the base cell is a pentagon we have the potential for secondary
                 // overages
-                if (BaseCells._isBaseCellPentagon(baseCell))
+                if (BaseCells.IsBaseCellPentagon(baseCell))
                 {
                     while (true)
                     {

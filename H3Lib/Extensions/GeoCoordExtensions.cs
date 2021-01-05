@@ -11,6 +11,10 @@ namespace H3Lib.Extensions
         /// <param name="gc">The spherical coordinates</param>
         /// <param name="latitude">The desired latitude in decimal degrees</param>
         /// <param name="longitude">The desired longitude in decimal degrees</param>
+        /// <!--
+        /// geoCoord.c
+        /// void setGeoDegs
+        /// -->
         public static GeoCoord SetDegrees(this GeoCoord gc, double latitude, double longitude)
         {
             return gc.SetGeoRads(latitude.DegreesToRadians(), longitude.DegreesToRadians());
@@ -34,6 +38,10 @@ namespace H3Lib.Extensions
         /// <param name="gc">The spherical coordinates</param>
         /// <param name="latitudeRadians">The desired latitude in decimal radians</param>
         /// <param name="longitudeRadians">The desired longitude in decimal radians</param>
+        /// <!--
+        /// geoCoord.c
+        /// void _setGeoRads
+        /// -->
         public static GeoCoord SetGeoRads(this GeoCoord gc, double latitudeRadians, double longitudeRadians)
         {
             gc =  new GeoCoord(latitudeRadians, longitudeRadians);
@@ -51,7 +59,11 @@ namespace H3Lib.Extensions
         /// <param name="b">the second lat/lng pair (in radians)</param>
         /// <returns>
         /// the great circle distance in radians between a and b
-        /// </returns>
+        /// </
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(pointDistRads)
+        /// -->
         public static double DistanceToRadians(this GeoCoord a, GeoCoord b)
         {
             double sinLat = Math.Sin((b.Latitude - a.Latitude) / 2.0);
@@ -67,6 +79,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="a">the first lat/lng pair (in radians)</param>
         /// <param name="b">the second lat/lng pair (in radians)</param>
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(pointDistKm)
+        /// -->
         public static double DistanceToKm(this GeoCoord a, GeoCoord b)
         {
             return a.DistanceToRadians(b) * Constants.EARTH_RADIUS_KM;
@@ -77,6 +93,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="a">the first lat/lng pair (in radians)</param>
         /// <param name="b">the second lat/lng pair (in radians)</param>
+        /// <!--
+        /// geoCoord.c
+        /// double H3_EXPORT(pointDistM)
+        /// -->
         public static double DistanceToM(this GeoCoord a, GeoCoord b)
         {
             return a.DistanceToKm(b) * 1000;
@@ -88,6 +108,10 @@ namespace H3Lib.Extensions
         /// <param name="p1">The first spherical coordinates</param>
         /// <param name="p2">The second spherical coordinates</param>
         /// <returns>The azimuth in radians from p1 to p2</returns>
+        /// <!--
+        /// geoCoord.c
+        /// double _geoAzimuthRads
+        /// -->
         public static double AzimuthRadiansTo(this GeoCoord p1, GeoCoord p2)
         {
             return
@@ -107,6 +131,10 @@ namespace H3Lib.Extensions
         /// <param name="azimuth">The desired azimuth from p1.</param>
         /// <param name="distance">The desired distance from p1, must be non-negative.</param>
         /// <returns>The spherical coordinates at the desired azimuth and distance from p1.</returns>
+        /// <!--
+        /// geoCoord.c
+        /// void _geoAzDistanceRads
+        /// -->
         public static GeoCoord GetAzimuthDistancePoint(this GeoCoord p1, double azimuth, double distance)
         {
             if (distance < Constants.EPSILON)
@@ -199,6 +227,17 @@ namespace H3Lib.Extensions
             return new GeoCoord(tempLatitude, tempLongitude);
         }
 
+        /// <summary>
+        /// Encodes a coordinate on the sphere to the FaceIJK address of the containing
+        /// cell at the specified resolution.
+        /// </summary>
+        /// <param name="g">The spherical coordinates to encode.</param>
+        /// <param name="res">The desired H3 resolution for the encoding.</param>
+        /// <returns>The FaceIJK address of the containing cell at resolution res.</returns>
+        /// <!--
+        /// faceijk.c
+        /// void _geoToFaceIjk
+        /// -->
         public static FaceIjk ToFaceIjk(this GeoCoord g, int res)
         {
             // first convert to hex2d
@@ -208,6 +247,22 @@ namespace H3Lib.Extensions
             return new FaceIjk(newFace, newCoord);
         }
 
+        /// <summary>
+        /// Encodes a coordinate on the sphere to the corresponding icosahedral face and
+        /// containing 2D hex coordinates relative to that face center.
+        /// </summary>
+        /// <param name="g">The spherical coordinates to encode.</param>
+        /// <param name="res">The desired H3 resolution for the encoding.</param>
+        /// <param name="face">The icosahedral face containing the spherical coordinates.</param>
+        /// <returns>
+        /// Tuple
+        /// Item1: The resulting face (can later get rid of <see cref="face"/> parameter.
+        /// Item2: The 2D hex coordinates of the cell containing the point.
+        /// </returns>
+        /// <!--
+        /// faceijk.c
+        /// void _geoToHex2d
+        /// -->
         public static (int, Vec2d) ToHex2d(this GeoCoord g, int res, int face)
         {
             Vec3d v3d = g.ToVec3d();
@@ -272,6 +327,10 @@ namespace H3Lib.Extensions
         /// Calculate the 3D coordinate on unit sphere from the latitude and longitude.
         /// </summary>
         /// <param name="geo">The latitude and longitude of the point</param>
+        /// <!--
+        /// vec3d.c
+        /// void _geoToVec3d
+        /// -->
         public static Vec3d ToVec3d(this GeoCoord geo)
         {
             double r = Math.Cos(geo.Latitude);

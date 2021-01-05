@@ -42,6 +42,10 @@ namespace H3Lib.Extensions
         /// Find the center point in 2D cartesian coordinates of a hex.
         /// </summary>
         /// <param name="h">The ijk coordinates of the hex.</param>
+        /// <!--
+        /// coordijk,c
+        /// void _ijkToHex2d
+        /// -->
         public static Vec2d ToHex2d(this CoordIjk h)
         {
             int i = h.I - h.K;
@@ -55,6 +59,10 @@ namespace H3Lib.Extensions
         /// values. Works in place.
         /// </summary>
         /// <param name="coord">The ijk coordinates to normalize.</param>
+        /// <!--
+        /// coordijk,c
+        /// void _ijkNormalize
+        /// -->
         public static CoordIjk Normalized(this CoordIjk coord)
         {
             (int i, int j, int k) = (coord.I, coord.J, coord.K);
@@ -90,7 +98,14 @@ namespace H3Lib.Extensions
         /// Determines the H3 digit corresponding to a unit vector in ijk coordinates.
         /// </summary>
         /// <param name="ijk">The ijk coordinates; must be a unit vector.</param>
-        /// <returns>The H3 digit (0-6) corresponding to the ijk unit vector, or <see cref="Direction.INVALID_DIGIT"/> INVALID_DIGIT on failure</returns>
+        /// <returns>
+        /// The H3 digit (0-6) corresponding to the ijk unit vector, or
+        /// <see cref="Direction.INVALID_DIGIT"/> INVALID_DIGIT on failure
+        /// </returns>
+        /// <!--
+        /// coordijk.c
+        /// Direction _unitIjkToDigit
+        /// -->
         public static Direction ToDirection(this CoordIjk ijk)
         {
             var c = ijk.Normalized();
@@ -106,6 +121,10 @@ namespace H3Lib.Extensions
         /// counter-clockwise aperture 7 grid. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates</param>
+        /// <!--
+        /// coordijk.c
+        /// void _upAp7
+        /// -->
         public static CoordIjk UpAp7(this CoordIjk ijk)
         {
             // convert to CoordIJ
@@ -123,6 +142,10 @@ namespace H3Lib.Extensions
         /// clockwise aperture 7 grid. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates</param>
+        /// <!--
+        /// coordijk.c
+        /// void _upAp7r
+        /// -->
         public static CoordIjk UpAp7R(this CoordIjk ijk)
         {
             // convert to CoordIJ
@@ -141,6 +164,10 @@ namespace H3Lib.Extensions
         /// place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates</param>
+        /// <!--
+        /// coordijk.c
+        /// void _downAp7
+        /// -->
         public static CoordIjk DownAp7(this CoordIjk ijk)
         {
             var iVec = new CoordIjk(3, 0, 1) * ijk.I;
@@ -155,6 +182,10 @@ namespace H3Lib.Extensions
         /// hex at the next finer aperture 7 clockwise resolution. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
+        /// <!--
+        /// coordijk.c
+        /// void _downAp7r
+        /// -->
         public static CoordIjk DownAp7R(this CoordIjk ijk)
         {
             var iVec = new CoordIjk(3, 1, 0) * ijk.I;
@@ -170,6 +201,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
         /// <param name="digit">The digit direction from the original ijk coordinates.</param>
+        /// <!--
+        /// coordijk.c
+        /// void _neighbor
+        /// -->
         public static CoordIjk Neighbor(this CoordIjk ijk, Direction digit)
         {
             if (digit <= Direction.CENTER_DIGIT || digit >= Direction.NUM_DIGITS)
@@ -184,6 +219,10 @@ namespace H3Lib.Extensions
         /// Rotates ijk coordinates 60 degrees counter-clockwise. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
+        /// <!--
+        /// coordijk.c
+        /// void _ijkRotate60ccw
+        /// -->
         public static CoordIjk Rotate60CounterClockwise(this CoordIjk ijk)
         {
             // unit vector rotations
@@ -198,6 +237,10 @@ namespace H3Lib.Extensions
         /// Rotates ijk coordinates 60 degrees clockwise. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
+        /// <!--
+        /// coordijk.c
+        /// void _ijkRotate60cw
+        /// -->
         public static CoordIjk Rotate60Clockwise(this CoordIjk ijk)
         {
             // unit vector rotations
@@ -214,6 +257,10 @@ namespace H3Lib.Extensions
         /// place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
+        /// <!--
+        /// coordijk.c
+        /// void _downAp3
+        /// -->
         public static CoordIjk DownAp3(this CoordIjk ijk)
         {
             // res r unit vectors in res r+1
@@ -229,6 +276,10 @@ namespace H3Lib.Extensions
         /// hex at the next finer aperture 3 clockwise resolution. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
+        /// <!--
+        /// coordijk.c
+        /// void _downAp3r
+        /// -->
         public static CoordIjk DownAp3R(this CoordIjk ijk)
         {
             // res r unit vectors in res r+1
@@ -244,6 +295,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="start">The first set of ijk coordinates.</param>
         /// <param name="end">The second set of ijk coordinates.</param>
+        /// <!--
+        /// coordijk.c
+        /// int ijkDistance
+        /// -->
         public static int DistanceTo(this CoordIjk start, CoordIjk end)
         {
             var diff = (start - end).Normalized();
@@ -255,6 +310,10 @@ namespace H3Lib.Extensions
         /// Transforms coordinates from the IJK+ coordinate system to the IJ coordinate system
         /// </summary>
         /// <param name="ijk">The input IJK+ coordinates</param>
+        /// <!--
+        /// coordijk.c
+        /// void ijkToIj
+        /// -->
         public static CoordIj ToIj(this CoordIjk ijk)
         {
             return new CoordIj(ijk.I - ijk.K, ijk.J - ijk.K);
@@ -264,6 +323,10 @@ namespace H3Lib.Extensions
         /// Convert IJK coordinates to cube coordinates, in place
         /// </summary>
         /// <param name="ijk">Coordinate to convert</param>
+        /// <!--
+        /// coordijk.c
+        /// void ijkToCube
+        /// -->
         public static CoordIjk ToCube(this CoordIjk ijk)
         {
             (int i, int j, int k) = (ijk.I, ijk.J, ijk.K);
@@ -278,6 +341,10 @@ namespace H3Lib.Extensions
         /// Convert cube coordinates to IJK coordinates, in place
         /// </summary>
         /// <param name="ijk">Coordinate to convert</param>
+        /// <!--
+        /// coordijk.c
+        /// void cubeToIjk
+        /// -->
         public static CoordIjk FromCube(this CoordIjk ijk)
         {
             return new CoordIjk(-ijk.I, ijk.J, 0).Normalized();
@@ -295,6 +362,10 @@ namespace H3Lib.Extensions
         /// <param name="origin">An anchoring index for the ijk+ coordinate system.</param>
         /// <param name="ijk">IJK+ Coordinates to find the index of</param>
         /// <returns>0 on success, or another value on failure</returns>
+        /// <!--
+        /// localij.c
+        /// int localIjkToH3
+        /// -->
         public static (int, H3Index) LocalIjkToH3(this CoordIjk ijk, H3Index origin)
         {
             int res = origin.Resolution;
@@ -505,5 +576,6 @@ namespace H3Lib.Extensions
                        ? (4, new H3Index())
                        : (0, outH3);
         }
+        
     }
 }

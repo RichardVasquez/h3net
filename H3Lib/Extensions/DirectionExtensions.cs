@@ -6,6 +6,10 @@ namespace H3Lib.Extensions
         /// Rotates indexing digit 60 degrees counter-clockwise. Returns result.
         /// </summary>
         /// <param name="digit">Indexing digit (between 1 and 6 inclusive)</param>
+        /// <!--
+        /// coordijk.c
+        /// Direction _rotate60ccw
+        /// -->
         public static Direction Rotate60CounterClockwise(this Direction digit)
         {
             return digit switch
@@ -24,6 +28,10 @@ namespace H3Lib.Extensions
         /// Rotates indexing digit 60 degrees clockwise. Returns result.
         /// </summary>
         /// <param name="digit">Indexing digit (between 1 and 6 inclusive)</param>
+        /// <!--
+        /// coordijk.c
+        /// Direction _rotate60cw
+        /// -->
         public static Direction Rotate60Clockwise(this Direction digit)
         {
             return digit switch

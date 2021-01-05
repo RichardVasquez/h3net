@@ -8,6 +8,10 @@ namespace H3Lib.Extensions
         /// Transforms coordinates from the IJ coordinate system to the IJK+ coordinate system
         /// </summary>
         /// <param name="ij">The input IJ coordinates</param>
+        /// <remarks>
+        /// coordijk.c
+        /// void ijToIjk
+        /// </remarks>
         public static CoordIjk ToIjk(this CoordIj ij)
         {
             return new CoordIjk(ij.I, ij.J, 0).Normalized();
@@ -32,6 +36,10 @@ namespace H3Lib.Extensions
         /// Item1 indicates status => 0 = Success, other = failure
         /// Item2 contains H3Index upon success.
         /// </returns>
+        /// <!--
+        /// localij,c
+        /// int H3_EXPORT(experimentalLocalIjToH3)
+        /// -->
         public static (int, H3Index) LocalIjToH3Experimental(this CoordIj ij, H3Index origin)
         {
             // This function is currently experimental. Once ready to be part of the

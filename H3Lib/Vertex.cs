@@ -56,7 +56,7 @@ namespace H3Lib
 
             int ccwRot60 = BaseCells._baseCellToCCWrot60(baseCell, fijk.Face);
 
-            if (BaseCells._isBaseCellPentagon(baseCell))
+            if (BaseCells.IsBaseCellPentagon(baseCell))
             {
                 // Find the appropriate direction-to-face mapping
                 int[] dirFaces = { };

@@ -67,6 +67,18 @@ namespace H3Lib
                 {Direction.IJ_AXES_DIGIT, new CoordIjk(1, 1, 0)},
             };
 
+        /// <summary>
+        /// Given cube coords as doubles, round to valid integer coordinates. Algorithm
+        /// from https://www.redblobgames.com/grids/hexagons/#rounding
+        /// </summary>
+        /// <param name="i">Floating-point I coord</param>
+        /// <param name="j">Floating-point J coord</param>
+        /// <param name="k">Floating-point K coord</param>
+        /// <returns>IJK coord struct</returns>
+        /// <!--
+        /// localij.c
+        /// static void cubeRound
+        /// -->
         public static CoordIjk CubeRound(double i, double j, double k)
         {
             var ri = (int) Math.Round(i, MidpointRounding.AwayFromZero);

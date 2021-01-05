@@ -26,10 +26,7 @@ namespace H3Lib.Extensions
         {
             return new FaceIjk(fijk.Face, coord);
         }
-        
-        
-        
-        
+
         /// <summary>
         /// Adjusts a FaceIJK address in place so that the resulting cell address is
         /// relative to the correct icosahedral face.
@@ -43,6 +40,10 @@ namespace H3Lib.Extensions
         /// Item1: <see cref="Overage"/>
         /// Item2: Adjusted <see cref="FaceIjk"/>
         /// </returns>
+        /// <!--
+        /// faceijk.c
+        /// _adjustOverageClassII
+        /// -->
         public static (Overage, FaceIjk) AdjustOverageClassIi(
                 this FaceIjk fijk, int res, int pentLeading4, int substrate
             )
@@ -123,6 +124,29 @@ namespace H3Lib.Extensions
 
             return (overage, fijk);
         }
+
+        /// <summary>
+        /// Adjusts a FaceIJK address for a pentagon vertex in a substrate grid in
+        /// place so that the resulting cell address is relative to the correct
+        /// icosahedral face.
+        /// </summary>
+        /// <param name="fijk">The FaceIJK address of the cell.</param>
+        /// <param name="res">The H3 resolution of the cell.</param>
+        /// <!--
+        /// faceIjk.c
+        /// Overage _adjustPentVertOverage
+        /// -->
+        public static (Overage, FaceIjk) AdjustPentOverage(this FaceIjk fijk, int res)
+        {
+            const int pentLeading4 = 0;
+            Overage overage;
+            do
+            {
+                (overage, fijk) = fijk.AdjustOverageClassIi(res, pentLeading4, 1);
+
+            } while (overage == Overage.NEW_FACE);
+            return (overage, fijk);
+        }
         
         /// <summary>
         /// Get the vertices of a pentagon cell as substrate FaceIJK addresses
@@ -139,6 +163,10 @@ namespace H3Lib.Extensions
         /// Item2 Possibly modified res
         /// Item3 Array for vertices
         /// </returns>
+        /// <!--
+        /// faceijk.c
+        /// void _faceIjkPentToVerts
+        /// -->
         public static (FaceIjk, int, IList<FaceIjk>) PentToVerts(this FaceIjk fijk, int res, IList<FaceIjk> fijkVerts)
         {
             // the vertexes of an origin-centered pentagon in a Class II resolution on a
@@ -212,6 +240,10 @@ namespace H3Lib.Extensions
         /// Item2 Possibly modified res
         /// Item3 Array for vertices
         /// </returns>
+        /// <!--
+        /// faceijk.c
+        /// void _faceIjkToVerts
+        /// -->
         public static (FaceIjk, int, IList<FaceIjk>) ToVerts(this FaceIjk fijk, int res, IList<FaceIjk> fijkVerts)
         {
             // the vertexes of an origin-centered cell in a Class II resolution on a
@@ -270,6 +302,155 @@ namespace H3Lib.Extensions
             }
 
             return (fijk, res, fijkVerts);
+        }
+
+        /// <summary>
+        /// Convert an FaceIJK address to the corresponding H3Index.
+        /// </summary>
+        /// <param name="fijk">The FaceIJK address.</param>
+        /// <param name="res">The cell resolution.</param>
+        /// <returns>The encoded H3Index (or H3_NULL on failure).</returns>
+        /// <!--
+        /// h3index.c
+        /// H3Index _faceIjkToH3
+        /// -->
+        public static H3Index ToH3(this FaceIjk fijk, int res)
+        {
+            // initialize the index
+            H3Index h = H3Index.H3_INIT;
+            h.Mode = H3Mode.Hexagon;
+            h.Resolution = res;
+
+            // check for res 0/base cell
+            if (res == 0)
+            {
+                if (fijk.Coord.I > BaseCells.MAX_FACE_COORD ||
+                    fijk.Coord.J > BaseCells.MAX_FACE_COORD ||
+                    fijk.Coord.K > BaseCells.MAX_FACE_COORD)
+                {
+                    // out of range input
+                    return H3Index.H3_NULL;
+                }
+
+                h.BaseCell = fijk.ToBaseCell();
+                return h;
+            }
+
+            // we need to find the correct base cell FaceIJK for this H3 index;
+            // start with the passed in face and resolution res ijk coordinates
+            // in that face's coordinate system
+            var fijkBc = new FaceIjk(fijk);
+
+            // build the H3Index from finest res up
+            // adjust r for the fact that the res 0 base cell offsets the indexing
+            // digits
+            var ijk = new CoordIjk(fijkBc.Coord);
+            for (int r = res - 1; r >= 0; r--)
+            {
+                var lastIjk = new CoordIjk(ijk);
+                CoordIjk lastCenter;
+                if ((r+1).IsResClassIii())
+                {
+                    // rotate ccw
+                    ijk = ijk.UpAp7();
+                    lastCenter = new CoordIjk(ijk).DownAp7();
+                }
+                else
+                {
+                    // rotate cw
+                    ijk = ijk.UpAp7R();
+                    lastCenter = new CoordIjk(ijk).DownAp7R();
+                }
+
+                var diff = lastIjk - lastCenter;
+
+                h.SetIndexDigit(r+1, (ulong)diff.ToDirection());
+            }
+
+            fijkBc = fijkBc.ReplaceCoord(ijk);
+
+            // fijkBC should now hold the IJK of the base cell in the
+            // coordinate system of the current face
+            if (fijkBc.Coord.I > BaseCells.MAX_FACE_COORD ||
+                fijkBc.Coord.J > BaseCells.MAX_FACE_COORD ||
+                fijkBc.Coord.K > BaseCells.MAX_FACE_COORD)
+            {
+                // out of range input
+                return H3Index.H3_NULL;
+            }
+
+            // lookup the correct base cell
+            int baseCell = fijkBc.ToBaseCell();
+            h.BaseCell = baseCell;
+
+            // rotate if necessary to get canonical base cell orientation
+            // for this base cell
+            int numRots = fijkBc.ToBaseCellCounterClockwiseRotate60();
+            if (baseCell.IsBaseCellPentagon())
+            {
+                // force rotation out of missing k-axes sub-sequence
+                if (h.LeadingNonZeroDigit == Direction.K_AXES_DIGIT)
+                {
+                    // check for a cw/ccw offset face; default is ccw
+                    h = BaseCells.IsClockwiseOffset(baseCell, fijkBc.Face)
+                            ? h.Rotate60Clockwise()
+                            : h.Rotate60CounterClockwise();
+                }
+
+                for (int i = 0; i < numRots; i++)
+                {
+                    h = h.RotatePent60CounterClockwise();
+                }
+            }
+            else
+            {
+                for (int i = 0; i < numRots; i++)
+                {
+                    h = h.Rotate60CounterClockwise();
+                }
+            }
+
+            return h;            
+        }
+
+        /// <summary>
+        /// Find base cell given FaceIJK.
+        ///
+        /// Given the face number and a resolution 0 ijk+ coordinate in that face's
+        /// face-centered ijk coordinate system, return the base cell located at that
+        /// coordinate.
+        ///
+        /// Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
+        /// </summary>
+        /// <!--
+        /// baseCells.c
+        /// int _faceIjkToBaseCell
+        /// -->
+        public static int ToBaseCell(this FaceIjk h)
+        {
+            return BaseCells
+                  .faceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
+                  .baseCell;
+        }
+
+        /// <summary>
+        /// Find base cell given FaceIJK.
+        ///
+        /// Given the face number and a resolution 0 ijk+ coordinate in that face's
+        /// face-centered ijk coordinate system, return the number of 60' ccw rotations
+        /// to rotate into the coordinate system of the base cell at that coordinates.
+        ///
+        /// Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
+        /// </summary>
+        /// <!--
+        /// baseCells.c
+        /// int _faceIjkToBaseCellCCWrot60
+        /// -->
+        public static int ToBaseCellCounterClockwiseRotate60(this FaceIjk h)
+        {
+            return BaseCells
+                  .faceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
+                  .ccwRot60;
         }
     }
 }

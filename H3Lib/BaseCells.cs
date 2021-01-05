@@ -880,7 +880,11 @@ namespace H3Lib
         /// <summary>
         /// Return whether or not the indicated base cell is a pentagon.
         /// </summary>
-        public static bool _isBaseCellPentagon(int baseCell)
+        /// <!--
+        /// basecells.c
+        /// _isBaseCellPentagon
+        /// -->
+        public static bool IsBaseCellPentagon(int baseCell)
         {
             return baseCellData[baseCell].isPentagon == 1;
         }
@@ -983,6 +987,19 @@ namespace H3Lib
                 }
             }
             return Direction.INVALID_DIGIT;
+        }
+        
+        /// <summary>
+        /// Return whether or not the tested face is a cw offset face.
+        /// </summary>
+        /// <!--
+        /// baseCells.c
+        /// bool _baseCellIsCwOffset
+        /// -->
+        public static bool IsClockwiseOffset(int baseCell, int testFace)
+        {
+            return baseCellData[baseCell].cwOffsetPent[0] == testFace ||
+                   baseCellData[baseCell].cwOffsetPent[1] == testFace;
         }
     }
 

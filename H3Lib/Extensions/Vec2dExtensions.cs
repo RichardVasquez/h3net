@@ -9,6 +9,10 @@ namespace H3Lib.Extensions
         /// coordinate vector (from <a href="http://www.discreteglobalgrids.org/software/">DGGRID</a>).
         /// </summary>
         /// <param name="v">The 2D cartesian coordinate vector.</param>
+        /// <!--
+        /// coordijk.c
+        /// void _hex2dToCoordIJK
+        /// -->
         public static CoordIjk ToCoordIjk(this Vec2d v)
         {
             var h = new CoordIjk();
