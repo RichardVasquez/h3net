@@ -1398,5 +1398,134 @@ namespace H3Lib.Extensions
             return destination;
         }
 
+        /// <summary>
+        /// Determines if the provided H3Index is a valid unidirectional edge index
+        /// </summary>
+        /// <param name="edge">The unidirectional edge H3Index</param>
+        /// <returns>true if it is a unidirectional edge H3Index, otherwise false</returns>
+        /// <!--
+        /// h3UniEdge.c
+        /// int H3_EXPORT(h3UnidirectionalEdgeIsValid)
+        /// -->
+        public static bool IsValidUniEdge(this H3Index edge)
+        {
+            if (edge.Mode != H3Mode.UniEdge)
+            {
+                return false;
+            }
+
+            Direction neighborDirection = (Direction) edge.ReservedBits;
+
+            if (neighborDirection <= Direction.CENTER_DIGIT || neighborDirection >= Direction.NUM_DIGITS)
+            {
+                return false;
+            }
+
+            var origin = edge.OriginFromUniDirectionalEdge();
+            return (!origin.IsPentagon() || neighborDirection != Direction.K_AXES_DIGIT) && origin.IsValid();
+        }
+
+        /// <summary>
+        /// Returns the origin, destination pair of hexagon IDs for the given edge ID
+        /// </summary>
+        /// <param name="edge">The unidirectional edge H3Index</param>
+        /// <returns>Tuple containing origin and destination H#Index cells of edge</returns>
+        /// <!--
+        /// h3UniEdge.c
+        /// void H3_EXPORT(getH3IndexesFromUnidirectionalEdge)
+        /// -->
+        public static (H3Index, H3Index) GetH3IndexesFromUniEdge(this H3Index edge)
+        {
+            return (edge.OriginFromUniDirectionalEdge(), edge.DestinationFromUniDirectionalEdge());
+        }
+
+        /// <summary>
+        /// Returns the origin, destination pair of hexagon IDs for the given edge ID
+        /// </summary>
+        /// <param name="edge">The unidirectional edge H3Index</param>
+        /// <returns>Tuple containing origin and destination H#Index cells of edge</returns>
+        /// <!--
+        /// h3UniEdge.c
+        /// void H3_EXPORT(getH3IndexesFromUnidirectionalEdge)
+        /// -->
+        public static H3Index[] GetH3IndexesArrayFromUniEdge(this H3Index edge)
+        {
+            return new[] {edge.OriginFromUniDirectionalEdge(), edge.DestinationFromUniDirectionalEdge()};
+        }
+
+        /// <summary>
+        /// Provides all of the unidirectional edges from the current H3Index.
+        /// </summary>
+        /// <param name="origin">The origin hexagon H3Index to find edges for.</param>
+        /// <returns>List of edges</returns>
+        /// <!--
+        /// h3UniEdge.c
+        /// void H3_EXPORT(getH3UnidirectionalEdgesFromHexagon)
+        /// -->
+        public static H3Index[] GetUniEdgesFromCell(this H3Index origin)
+        {
+            var results = new List<H3Index>();
+            // Determine if the origin is a pentagon and special treatment needed.
+            bool isPentagon = origin.IsPentagon();
+
+            // This is actually quite simple. Just modify the bits of the origin
+            // slightly for each direction, except the 'k' direction in pentagons,
+            // which is zeroed.
+            for (var i = 0; i < 6; i++)
+            {
+                switch (isPentagon)
+                {
+                    case true when i == 0:
+                        results.Add(StaticData.H3Index.H3_NULL);
+                        break;
+                    default:
+                        results.Add(new H3Index(origin) {Mode = H3Mode.UniEdge, ReservedBits = i + 1});
+                        break;
+                }
+            }
+
+            return results.ToArray();
+        }
+
+        /// <summary>
+        /// Provides the coordinates defining the unidirectional edge.
+        /// </summary>
+        /// <param name="edge">The unidirectional edge H3Index</param>
+        /// <returns>The geoboundary object to store the edge coordinates.</returns>
+        /// <!--
+        /// h3UniEdge.c
+        /// void H3_EXPORT(getH3UnidirectionalEdgeBoundary)
+        /// -->
+        public static GeoBoundary UniEdgeToGeoBoundary(this H3Index edge)
+        {
+            // Get the origin and neighbor direction from the edge
+            var direction = (Direction) edge.ReservedBits;
+            var origin = edge.OriginFromUniDirectionalEdge();
+
+            var gb = new GeoBoundary();
+            
+            // Get the start vertex for the edge
+            int startVertex = origin.VertexNumForDirection(direction);
+            if (startVertex == StaticData.Vertex.INVALID_VERTEX_NUM)
+            {
+                // This is not actually an edge (i.e. no valid direction),
+                // so return no vertices.
+                gb.numVerts = 0;
+                return gb;
+            }
+
+            // Get the geo boundary for the appropriate vertexes of the origin. Note
+            // that while there are always 2 topological vertexes per edge, the
+            // resulting edge boundary may have an additional distortion vertex if it
+            // crosses an edge of the icosahedron.
+            var fijk = origin.ToFaceIjk();
+
+            int res = origin.Resolution;
+            bool isPentagon = origin.IsPentagon();
+
+            return isPentagon
+                     ? fijk.PentToGeoBoundary(res, startVertex, 2)
+                     : fijk.ToGeoBoundary(res, startVertex, 2);
+        }
     }
 }
