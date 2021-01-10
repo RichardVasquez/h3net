@@ -333,7 +333,7 @@ namespace H3Lib
 
             int newRotations = 0;
             int oldBaseCell = H3Index.H3_GET_BASE_CELL(out_hex);
-            Direction oldLeadingDigit = H3Index._h3LeadingNonZeroDigit(out_hex);
+            Direction oldLeadingDigit = out_hex.LeadingNonZeroDigit;
 
             // Adjust the indexing digits and, if needed, the base cell.
             int r = H3Index.H3_GET_RESOLUTION(out_hex) - 1;
@@ -341,17 +341,17 @@ namespace H3Lib
             {
                 if (r == -1)
                 {
-                    H3Index.H3_SET_BASE_CELL(ref out_hex, BaseCells.BaseCellNeighbors[oldBaseCell, (int) dir]);
-                    newRotations = BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) dir];
+                    H3Index.H3_SET_BASE_CELL(ref out_hex, StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) dir]);
+                    newRotations = StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) dir];
 
-                    if (H3Index.H3_GET_BASE_CELL(out_hex) == BaseCells.InvalidBaseCell)
+                    if (H3Index.H3_GET_BASE_CELL(out_hex) == StaticData.BaseCells.InvalidBaseCell)
                     {
                         // Adjust for the deleted k vertex at the base cell level.
                         // This edge actually borders a different neighbor.
                         H3Index.H3_SET_BASE_CELL(ref out_hex,
-                            BaseCells.BaseCellNeighbors[oldBaseCell, (int) Direction.IK_AXES_DIGIT]);
+                            StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) Direction.IK_AXES_DIGIT]);
                         newRotations =
-                            BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) Direction.IK_AXES_DIGIT];
+                            StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) Direction.IK_AXES_DIGIT];
 
                         // perform the adjustment for the k-subsequence we're skipping
                         // over.
@@ -394,7 +394,7 @@ namespace H3Lib
                 int alreadyAdjustedKSubsequence = 0;
 
                 // force rotation out of missing k-axes sub-sequence
-                if (H3Index._h3LeadingNonZeroDigit(out_hex) == Direction.K_AXES_DIGIT)
+                if (out_hex.LeadingNonZeroDigit == Direction.K_AXES_DIGIT)
                 {
                     if (oldBaseCell != newBaseCell)
                     {
@@ -404,7 +404,7 @@ namespace H3Lib
                         // on how we got here.
                         // check for a cw/ccw offset face; default is ccw
                         if (BaseCells.IsClockwiseOffset(
-                            newBaseCell, BaseCells.BaseCellData[oldBaseCell].HomeFijk.Face))
+                            newBaseCell, StaticData.BaseCells.BaseCellData[oldBaseCell].HomeFijk.Face))
                         {
                             out_hex = H3Index._h3Rotate60cw(ref out_hex);
                         }
@@ -426,7 +426,7 @@ namespace H3Lib
                         if (oldLeadingDigit == Direction.CENTER_DIGIT)
                         {
                             // Undefined: the k direction is deleted from here
-                            return H3Index.H3_INVALID_INDEX;
+                            return StaticData.H3Index.H3_INVALID_INDEX;
                         }
 
                         switch (oldLeadingDigit) {
@@ -446,7 +446,7 @@ namespace H3Lib
                                 break;
                             default:
                                 // Should never occur
-                                return H3Index.H3_INVALID_INDEX; // LCOV_EXCL_LINE
+                                return StaticData.H3Index.H3_INVALID_INDEX; // LCOV_EXCL_LINE
                         }
                     }
                 }
@@ -465,12 +465,12 @@ namespace H3Lib
                         // 'polar' base cells behave differently because they have all
                         // i neighbors.
                         if (oldBaseCell != 118 && oldBaseCell != 8 &&
-                            H3Index._h3LeadingNonZeroDigit(out_hex) != Direction.JK_AXES_DIGIT)
+                            out_hex.LeadingNonZeroDigit != Direction.JK_AXES_DIGIT)
                         {
                             rotations++;
                         }
                     }
-                    else if (H3Index._h3LeadingNonZeroDigit(out_hex) == Direction.IK_AXES_DIGIT &&
+                    else if (out_hex.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT &&
                              alreadyAdjustedKSubsequence == 0)
                     {
                         // account for distortion introduced to the 5 neighbor by the
@@ -553,7 +553,7 @@ namespace H3Lib
             distances[0] = 0;
             idx++;
 
-            if (H3Index.h3IsPentagon(origin) > 0)
+            if (origin.IsPentagon())
             {
                 // Pentagon was encountered; bail out as user doesn't want this.
                 return Constants.HEX_RANGE_PENTAGON;
@@ -583,7 +583,7 @@ namespace H3Lib
                         return Constants.HEX_RANGE_K_SUBSEQUENCE;
                     }
 
-                    if (H3Index.h3IsPentagon(origin) > 0)
+                    if (origin.IsPentagon())
                     {
                         // Pentagon was encountered; bail out as user doesn't want this.
                         return Constants.HEX_RANGE_PENTAGON;
@@ -620,7 +620,7 @@ namespace H3Lib
                     }
                 }
 
-                if (H3Index.h3IsPentagon(origin) > 0)
+                if (origin.IsPentagon())
                 {
                     // Pentagon was encountered; bail out as user doesn't want this.
                     return Constants.HEX_RANGE_PENTAGON;
@@ -688,7 +688,7 @@ namespace H3Lib
             // which faces have been crossed.)
             int rotations = 0;
             // Scratch structure for checking for pentagons
-            if (H3Index.h3IsPentagon(origin) > 0)
+            if (origin.IsPentagon())
             {
                 // Pentagon was encountered; bail out as user doesn't want this.
                 return Constants.HEX_RANGE_PENTAGON;
@@ -704,7 +704,7 @@ namespace H3Lib
                     return Constants.HEX_RANGE_K_SUBSEQUENCE; // LCOV_EXCL_LINE
                 }
 
-                if (H3Index.h3IsPentagon(origin) > 0)
+                if (origin.IsPentagon())
                 {
                     return Constants.HEX_RANGE_PENTAGON;
                 }
@@ -736,7 +736,7 @@ namespace H3Lib
                         out_hex[idx] = origin;
                         idx++;
 
-                        if (H3Index.h3IsPentagon(origin) > 0)
+                        if (origin.IsPentagon())
                         {
                             return Constants.HEX_RANGE_PENTAGON;
                         }
@@ -844,14 +844,16 @@ namespace H3Lib
                     continue;
                 }
                 // Check if hexagon is inside of polygon
-                GeoCoord hexCenter = new GeoCoord();
-                H3Index.h3ToGeo(out_hex[i], ref hexCenter);
-                hexCenter.Latitude = GeoCoord.ConstrainLatitude(hexCenter.Latitude);
-                hexCenter.Longitude = GeoCoord.ConstrainLongitude(hexCenter.Longitude);
+                var hexCenter = out_hex[1].ToGeoCoord();
+                hexCenter = new GeoCoord
+                    (
+                     hexCenter.Latitude.ConstrainLatitude(),
+                     hexCenter.Longitude.ConstrainLongitude()
+                    );
                 // And remove from list if not
                 if (!Polygon.pointInsidePolygon(geoPolygon, bboxes, hexCenter))
                 {
-                    out_hex[i] = H3Index.H3_INVALID_INDEX;
+                    out_hex[i] = StaticData.H3Index.H3_INVALID_INDEX;
                 }
             }
         }
@@ -891,7 +893,7 @@ namespace H3Lib
             // Iterate through every hexagon
             for (int i = 0; i < numHexes; i++)
             {
-                H3Index.h3ToGeoBoundary(h3Set[i], ref vertices);
+                vertices = h3Set[i].ToGeoBoundary();
                 // iterate through every edge
                 for (int j = 0; j < vertices.numVerts; j++)
                 {

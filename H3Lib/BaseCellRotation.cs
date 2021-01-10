@@ -27,7 +27,8 @@ namespace H3Lib
 
         public bool Equals(BaseCellRotation other)
         {
-            return BaseCell == other.BaseCell && CounterClockwiseRotate60 == other.CounterClockwiseRotate60;
+            return BaseCell == other.BaseCell &&
+                   CounterClockwiseRotate60 == other.CounterClockwiseRotate60;
         }
 
         public override bool Equals(object obj)

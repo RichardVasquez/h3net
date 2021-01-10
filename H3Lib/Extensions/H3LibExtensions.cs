@@ -166,9 +166,9 @@ namespace H3Lib.Extensions
         /// -->
         public static bool IsBaseCellPentagon(this int baseCell)
         {
-            return BaseCells.BaseCellData[baseCell].IsPentagon == 1;
+            return StaticData.BaseCells.BaseCellData[baseCell].IsPentagon == 1;
         }
-        
+
         /// <summary>
         /// Returns whether or not a resolution is a Class III grid. Note that odd
         ///  resolutions are Class III and even resolutions are Class II.
@@ -177,12 +177,9 @@ namespace H3Lib.Extensions
         /// <returns>Returns true if the resolution is class III grid, otherwise false.</returns>
         /// <!--
         /// h3Index.c
-        /// int isResClassIII
+        /// int H3_EXPORT(h3IsResClassIII)
         /// -->
-        public static bool IsResClassIii(this int res)
-        {
-            return res % 2 == 1;
-        }
+        public static bool IsResClassIii(this int res) => res % 2 == 1;
 
         /// <summary>
         /// Return the direction from the origin base cell to the neighbor.
@@ -195,7 +192,7 @@ namespace H3Lib.Extensions
         public static Direction GetBaseCellDirection(this int originBaseCell, int neighboringBaseCell)
         {
             for (var dir = Direction.CENTER_DIGIT; dir < Direction.NUM_DIGITS; dir++) {
-                int testBaseCell = BaseCells.BaseCellNeighbors[originBaseCell, (int)dir];
+                int testBaseCell = StaticData.BaseCells.BaseCellNeighbors[originBaseCell, (int)dir];
                 if (testBaseCell == neighboringBaseCell)
                 {
                     return dir;
@@ -278,6 +275,207 @@ namespace H3Lib.Extensions
                   .Select(cell => new H3Index().SetIndex(res, cell, Direction.CENTER_DIGIT))
                   .ToList();
         }
-       
+
+        /// <summary>
+        /// compact takes a set of hexagons all at the same resolution and compresses
+        /// them by pruning full child branches to the parent level. This is also done
+        /// for all parents recursively to get the minimum number of hex addresses that
+        /// perfectly cover the defined space.
+        /// </summary>
+        /// <param name="h3Set"> Set of hexagons</param>
+        /// <returns>status code and compacted hexes</returns>
+        /// <remarks>
+        /// Gonna do this a bit differently, allowing for varying
+        /// resolutions in input data
+        /// </remarks>
+        /// <!--
+        /// h3index.c
+        /// int H3_EXPORT(compact)
+        /// -->
+        public static (int, List<H3Index>) Compact(List<H3Index> h3Set)
+        {
+            if (h3Set == null || h3Set.Count == 0)
+            {
+                return (StaticData.H3Index.COMPACT_SUCCESS, new List<H3Index>());
+            }
+
+            if (h3Set.All(h => h.Resolution == 0))
+            {
+                // No compaction possible, just copy the set to output
+                return (StaticData.H3Index.COMPACT_SUCCESS, new List<H3Index>(h3Set));
+            }
+
+            //  Here's our results
+            var results = new HashSet<ulong>();
+            var copy = new List<H3Index>(h3Set);
+            //  Move the 0 res to the results.
+            if (h3Set.Any(h => h.Resolution == 0))
+            {
+                results.UnionWith(h3Set.Where(h => h.Resolution == 0).Select(s=>s.H3Value));
+                copy.RemoveAll(r => r.Resolution == 0);
+            }
+
+            //  What our highest resolution is.
+            int currentRes = copy.Select(r => r.Resolution).Max();
+            //  Get the remaining set with all the dupes stripped out.
+            var baseNumbers = new HashSet<ulong>(copy.Select(s => s.H3Value)).ToList();
+
+            //  Now we've got our base cells
+            var pool = new HashSet<H3Index>(baseNumbers.Select(h=>(H3Index) h));
+
+            while (pool.Count > 0)
+            {
+                var cluster = new Dictionary<ulong, List<ulong>>();
+                //  Get the cells at the current resolution and collect in parents.
+                foreach (var index in pool.Where(p => p.Resolution == currentRes))
+                {
+                    var parent = index.ToParent(currentRes - 1);
+                    if (!cluster.ContainsKey(parent.H3Value))
+                    {
+                        cluster[parent.H3Value] = new List<ulong>();
+                    }
+
+                    cluster[parent.H3Value].Add(index);
+                }
+                
+                //  Check the parent keys for the amount of children
+                foreach (ulong key in cluster.Keys)
+                {
+                    if (!((H3Index) key).IsValid())
+                    {
+                        return (StaticData.H3Index.COMPACT_BAD_DATA, new List<H3Index>());
+                    }
+                    int countChildren = cluster[key].Count;
+                    
+                    if (((H3Index) key).IsPentagon())
+                    {
+                        //  Complete set of children, dump kids, add parent to pool
+                        if (countChildren == 6)
+                        {
+                            pool.Add(key);
+                        }
+                        else
+                        {
+                            results.UnionWith(cluster[key]);
+                            pool.ExceptWith(cluster[key].Select(h=>(H3Index) h));
+                        }
+                    }
+                    else
+                    {
+                        //  Complete set of children, dump kids, add parent to pool
+                        if (countChildren == 7)
+                        {
+                            pool.Add(key);
+                        }
+                        else
+                        {
+                            results.UnionWith(cluster[key]);
+                            pool.ExceptWith(cluster[key].Select(h=>(H3Index) h));
+                        }
+                    }
+                }
+
+                //  Let's get ready for the next round.
+                cluster.Clear();
+                currentRes--;
+                if (currentRes != 0)
+                {
+                    continue;
+                }
+
+                //  We're down to res 0, clear the p0ol to jump out.
+                results.UnionWith(pool.Select(p => p.H3Value));
+                pool.Clear();
+            }
+
+            return (StaticData.H3Index.COMPACT_SUCCESS,
+                    results.Select(r => (H3Index) r).ToList());
+        }
+
+        /// <summary>
+        /// uncompact takes a compressed set of hexagons and expands back to the
+        /// original set of hexagons.
+        /// </summary>
+        /// <param name="compactedSet"> Set of hexagons</param>
+        /// <param name="res"> The hexagon resolution to decompress to</param>
+        /// <returns>
+        /// A status code and the uncompacted hexagons.
+        /// </returns>
+        /// <!--
+        /// h3index.c
+        /// int H3_EXPORT(uncompact)
+        /// -->
+        public static (int, List<H3Index>) Uncompact(this List<H3Index> compactedSet, int res)
+        {
+            //  Let's deal with the resolution issue first
+            if (compactedSet.Any(h => h.Resolution > res))
+            {
+                return (-2, new List<H3Index>());
+            }
+
+            // setup the grind
+
+            var pool = new HashSet<H3Index>();
+
+            foreach (var index in compactedSet)
+            {
+                if (index.Resolution == res)
+                {
+                    pool.Add(index);
+                }
+                else
+                {
+                    pool.UnionWith(index.ToChildren(res));
+                }
+            }
+
+            return (0, pool.ToList());
+        }
+
+        /// <summary>
+        /// maxUncompactSize takes a compacted set of hexagons are provides an
+        /// upper-bound estimate of the size of the uncompacted set of hexagons.
+        /// </summary>
+        /// <param name="compactedSet"> Set of hexagons</param>
+        /// <param name="res"> The hexagon resolution to decompress to</param>
+        /// <returns>
+        /// The number of hexagons to allocate memory for, or a negative
+        /// number if an error occurs.
+        /// </returns>
+        /// <!--
+        /// h3Index.c
+        /// int H3_EXPORT(maxUncompactSize)
+        /// -->
+        public static long MaxUncompactSize(this List<H3Index> compactedSet, int res)
+        {
+            long maxCount = 0;
+            foreach (var hex in compactedSet)
+            {
+                if (hex == 0)
+                {
+                    continue;
+                }
+
+                int currentRes = hex.Resolution;
+                if (currentRes > res)
+                {
+                    // Nonsensical. Abort.
+                    return -1;
+                }
+
+                if (currentRes == res)
+                {
+                    maxCount++;
+                }
+                else
+                {
+                    // Bigger hexagon to reduce in size
+                    
+                    maxCount += hex.MaxChildrenSize(res);
+                }
+            }
+
+            return maxCount;
+        }
     }
 }

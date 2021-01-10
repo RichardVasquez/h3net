@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using H3Lib.StaticData;
 
 namespace H3Lib.Extensions
 {
@@ -118,7 +119,7 @@ namespace H3Lib.Extensions
 
             if (r < Constants.EPSILON)
             {
-                return FaceIjk.FaceCenterGeo[face];
+                return StaticData.FaceIjk.FaceCenterGeo[face];
             }
 
             double theta = Math.Atan2(v.Y, v.X);
@@ -126,7 +127,7 @@ namespace H3Lib.Extensions
             // scale for current resolution length u
             for (var i = 0; i < res; i++)
             {
-                r /= FaceIjk.M_SQRT7;
+                r /= StaticData.FaceIjk.MSqrt7;
             }
 
             // scale accordingly if this is a substrate grid
@@ -135,7 +136,7 @@ namespace H3Lib.Extensions
                 r /= 3.0;
                 if (res.IsResClassIii())
                 {
-                    r /= FaceIjk.M_SQRT7;
+                    r /= StaticData.FaceIjk.MSqrt7;
                 }
             }
 
@@ -152,10 +153,10 @@ namespace H3Lib.Extensions
             }
 
             // find theta as an azimuth
-            theta = (FaceIjk.FaceAxesAzRadsCii[face, 0] - theta).NormalizeRadians();
+            theta = (StaticData.FaceIjk.FaceAxesAzRadsCii[face, 0] - theta).NormalizeRadians();
 
             // now find the point at (r,theta) from the face center
-            return FaceIjk.FaceCenterGeo[face].GetAzimuthDistancePoint(theta, r);
+            return StaticData.FaceIjk.FaceCenterGeo[face].GetAzimuthDistancePoint(theta, r);
         }
         
 

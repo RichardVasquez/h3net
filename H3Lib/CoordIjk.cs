@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace H3Lib
@@ -40,32 +39,6 @@ namespace H3Lib
             J = coord.J;
             K = coord.K;
         }
-
-        /// <summary>
-        /// CoordIJK unit vectors corresponding to the 7 H3 digits.
-        /// </summary>
-        public static readonly CoordIjk[] xUNIT_VECS =
-        {
-            new CoordIjk(0, 0, 0),  // direction 0
-            new CoordIjk(0, 0, 1),  // direction 1
-            new CoordIjk(0, 1, 0),  // direction 2
-            new CoordIjk(0, 1, 1),  // direction 3
-            new CoordIjk(1, 0, 0),  // direction 4
-            new CoordIjk(1, 0, 1),  // direction 5
-            new CoordIjk(1, 1, 0)   // direction 6
-        };
-
-        public static readonly Dictionary<Direction, CoordIjk> UnitVectors =
-            new Dictionary<Direction, CoordIjk>
-            {
-                {Direction.CENTER_DIGIT, new CoordIjk(0, 0, 0)},
-                {Direction.K_AXES_DIGIT, new CoordIjk(0, 0, 1)},
-                {Direction.J_AXES_DIGIT, new CoordIjk(0, 1, 0)},
-                {Direction.JK_AXES_DIGIT, new CoordIjk(0, 1, 1)},
-                {Direction.I_AXES_DIGIT, new CoordIjk(1, 0, 0)},
-                {Direction.IK_AXES_DIGIT, new CoordIjk(1, 0, 1)},
-                {Direction.IJ_AXES_DIGIT, new CoordIjk(1, 1, 0)},
-            };
 
         /// <summary>
         /// Given cube coords as doubles, round to valid integer coordinates. Algorithm

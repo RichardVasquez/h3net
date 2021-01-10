@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using H3Lib.StaticData;
 
 namespace H3Lib.Extensions
 {
@@ -269,11 +270,11 @@ namespace H3Lib.Extensions
             int newFace = 0;
 
             // determine the icosahedron face
-            double sqd = v3d.PointSquareDistance(FaceIjk.FaceCenterPoint[0]);
+            double sqd = v3d.PointSquareDistance(StaticData.FaceIjk.FaceCenterPoint[0]);
 
             for (int f = 1; f < Constants.NUM_ICOSA_FACES; f++)
             {
-                double sqdT = v3d.PointSquareDistance(FaceIjk.FaceCenterPoint[f]);
+                double sqdT = v3d.PointSquareDistance(StaticData.FaceIjk.FaceCenterPoint[f]);
                 if (!(sqdT < sqd))
                 {
                     continue;
@@ -293,8 +294,8 @@ namespace H3Lib.Extensions
             // now have face and r, now find CCW theta from CII i-axis
             double theta =
                 (
-                    FaceIjk.FaceAxesAzRadsCii[newFace, 0] -
-                    g.AzimuthRadiansTo(FaceIjk.FaceCenterGeo[newFace]).NormalizeRadians()
+                    StaticData.FaceIjk.FaceAxesAzRadsCii[newFace, 0] -
+                    g.AzimuthRadiansTo(StaticData.FaceIjk.FaceCenterGeo[newFace]).NormalizeRadians()
                 ).NormalizeRadians();
             
             // adjust theta for Class III (odd resolutions)
@@ -310,7 +311,7 @@ namespace H3Lib.Extensions
             r /= Constants.RES0_U_GNOMONIC;
             for (var i = 0; i < res; i++)
             {
-                r *= FaceIjk.M_SQRT7;
+                r *= StaticData.FaceIjk.MSqrt7;
             }
 
             // we now have (r, theta) in hex2d with theta ccw from x-axes
@@ -340,6 +341,32 @@ namespace H3Lib.Extensions
                  Math.Sin(geo.Longitude) * r,
                  Math.Sin(geo.Latitude)
                 );
+        }
+
+        /// <summary>
+        /// Encodes a coordinate on the sphere to the H3 index of the containing cell at
+        /// the specified resolution.
+        ///
+        /// Returns 0 on invalid input.
+        /// </summary>
+        /// <param name="g">The spherical coordinates to encode.</param>
+        /// <param name="res">The desired H3 resolution for the encoding.</param>
+        /// <returns>The encoded H3Index (or H3_NULL on failure).</returns>
+        /// <!--
+        /// h3Index.c
+        /// H3Index H3_EXPORT(geoToH3)
+        /// -->
+        public static H3Index ToH3Index(this GeoCoord g, int res)
+        {
+            if (res < 0 || res > Constants.MAX_H3_RES) {
+                return StaticData.H3Index.H3_NULL;
+            }
+            if (!double.IsFinite(g.Latitude) || !double.IsFinite(g.Longitude))
+            {
+                return StaticData.H3Index.H3_NULL;
+            }
+
+            return g.ToFaceIjk(res).ToH3(res);
         }
         
     }

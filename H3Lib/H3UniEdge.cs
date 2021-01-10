@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using H3Lib.Extensions;
 
 namespace H3Lib
 {
@@ -105,7 +106,7 @@ namespace H3Lib
             // Short-circuit and return an invalid index value if they are not neighbors
             if (h3IndexesAreNeighbors(origin, destination) == 0)
             {
-                return H3Index.H3_INVALID_INDEX;
+                return StaticData.H3Index.H3_INVALID_INDEX;
             }
 
             // Otherwise, determine the IJK direction from the origin to the destination
@@ -129,7 +130,7 @@ namespace H3Lib
             }
 
             // This should be impossible, return an invalid H3Index in this case;
-            return H3Index.H3_INVALID_INDEX; // LCOV_EXCL_LINE
+            return StaticData.H3Index.H3_INVALID_INDEX; // LCOV_EXCL_LINE
         }
 
         /// <summary>
@@ -141,7 +142,7 @@ namespace H3Lib
         public static H3Index getOriginH3IndexFromUnidirectionalEdge(H3Index edge)
         {
             if (H3Index.H3_GET_MODE(ref edge) != Constants.H3_UNIEDGE_MODE) {
-                return H3Index.H3_INVALID_INDEX;
+                return StaticData.H3Index.H3_INVALID_INDEX;
             }
             H3Index origin = edge.H3Value;
             H3Index.H3_SET_MODE(ref origin, Constants.H3_HEXAGON_MODE);
@@ -159,7 +160,7 @@ namespace H3Lib
         {
             if (H3Index.H3_GET_MODE(ref edge) != Constants.H3_UNIEDGE_MODE)
             {
-                return H3Index.H3_INVALID_INDEX;
+                return StaticData.H3Index.H3_INVALID_INDEX;
             }
             Direction direction = (Direction) H3Index.H3_GET_RESERVED_BITS(edge);
             int rotations = 0;
@@ -194,7 +195,7 @@ namespace H3Lib
             }
 
             H3Index origin = getOriginH3IndexFromUnidirectionalEdge(edge);
-            if (H3Index.h3IsPentagon(origin) != 0 && neighborDirection == Direction.K_AXES_DIGIT)
+            if (origin.IsPentagon() && neighborDirection == Direction.K_AXES_DIGIT)
             {
                 return 0;
             }
@@ -230,15 +231,15 @@ namespace H3Lib
             List<H3Index> edges)
         {
             // Determine if the origin is a pentagon and special treatment needed.
-            int isPentagon = H3Index.h3IsPentagon(origin);
+            bool isPentagon = origin.IsPentagon();
 
             // This is actually quite simple. Just modify the bits of the origin
             // slightly for each direction, except the 'k' direction in pentagons,
             // which is zeroed.
             for (int i = 0; i < 6; i++)
             {
-                if (isPentagon!=0 && i == 0) {
-                    edges[i] = H3Index.H3_NULL;
+                if (isPentagon && i == 0) {
+                    edges[i] = StaticData.H3Index.H3_NULL;
                 }
                 else
                 {
@@ -281,9 +282,9 @@ namespace H3Lib
             H3Index._h3ToFaceIjk(origin, ref fijk);
 
             int res = H3Index.H3_GET_RESOLUTION(origin);
-            int isPentagon = H3Index.h3IsPentagon(origin);
+            bool isPentagon = origin.IsPentagon();
 
-            if (isPentagon == 1)
+            if (isPentagon)
             {
                 FaceIjk._faceIjkPentToGeoBoundary(fijk, res, startVertex, 2, ref gb);
             }

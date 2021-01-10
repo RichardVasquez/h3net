@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using H3Lib.Extensions;
 
 namespace H3Lib
 {
@@ -155,16 +156,16 @@ namespace H3Lib
         /// <summary>
         /// Returns the radius of a given hexagon in kilometers
         /// </summary>
-        /// <param name="h3Index">Index of the hexagon</param>
+        /// <param name="h3">Index of the hexagon</param>
         /// <returns>radius of hexagon in kilometers</returns>
-        static double _hexRadiusKm(H3Index h3Index)
+        static double _hexRadiusKm(H3Index h3)
         {
             // There is probably a cheaper way to determine the radius of a
             // hexagon, but this way is conceptually simple
             GeoCoord h3Center = new GeoCoord();
             GeoBoundary h3Boundary = new GeoBoundary();
-            H3Index.h3ToGeo(h3Index, ref h3Center);
-            H3Index.h3ToGeoBoundary(h3Index, ref h3Boundary);
+            h3Center = h3.ToGeoCoord();
+            h3Boundary = h3.ToGeoBoundary();
             return GeoCoord._geoDistKm(h3Center,   h3Boundary.verts);
         }
 

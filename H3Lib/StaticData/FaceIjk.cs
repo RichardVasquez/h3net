@@ -1,56 +1,22 @@
-using System;
-using System.Diagnostics;
-
-namespace H3Lib
+namespace H3Lib.StaticData
 {
-    /// <summary>
-    /// Functions for working with icosahedral face-centered hex IJK
-    /// coordinate systems.
-    /// </summary>
-    [DebuggerDisplay("Face: {Face} Coord: {Coord}")]
-    public readonly struct FaceIjk:IEquatable<FaceIjk>
+    public static class FaceIjk
     {
-        /// <summary>
-        /// face number
-        /// </summary>
-        public readonly int Face;
-        /// <summary>
-        /// ijk coordinates on that face
-        /// </summary>
-        public readonly CoordIjk Coord;
-
-        public FaceIjk(int f, CoordIjk cijk)
-        {
-            Face = f;
-            Coord = cijk;
-        }
-
-        public FaceIjk(FaceIjk fijk)
-        {
-            Face = fijk.Face;
-            Coord = new CoordIjk(fijk.Coord);
-        }
-
         /// <summary>
         /// Invalid face index
         /// </summary>
-        public const int InvalidFace = -1;
-        /// <summary>
-        /// Invalid faceNeighbors table direction
-        /// </summary>
-        public const int Invalid = -1;
-        /// <summary>
-        /// Center faceNeighbors table direction
-        /// </summary>
-        public const int Center = 0;
+        public static readonly int InvalidFace = -1;
+
         /// <summary>
         /// IJ quadrant faceNeighbors table direction
         /// </summary>
         public const int IJ = 1;
+
         /// <summary>
         /// KI quadrant faceNeighbors table direction
         /// </summary>
         public const int KI = 2;
+
         /// <summary>
         /// JK quadrant faceNeighbors table direction
         /// </summary>
@@ -59,33 +25,33 @@ namespace H3Lib
         /// <summary>
         /// Square root of 7
         /// </summary>
-        public const double M_SQRT7 = 2.6457513110645905905016157536392604257102;
+        public static readonly double MSqrt7 = 2.6457513110645905905016157536392604257102;
 
         /// <summary>
         /// icosahedron face centers in lat/lon radians
         /// </summary>
-        public static readonly GeoCoord[] FaceCenterGeo =
+        public static readonly H3Lib.GeoCoord[] FaceCenterGeo =
         {
-            new GeoCoord(0.803582649718989942, 1.248397419617396099), // face  0
-            new GeoCoord(1.307747883455638156, 2.536945009877921159), // face  1
-            new GeoCoord(1.054751253523952054, -1.347517358900396623), // face  2
-            new GeoCoord(0.600191595538186799, -0.450603909469755746), // face  3
-            new GeoCoord(0.491715428198773866, 0.401988202911306943), // face  4
-            new GeoCoord(0.172745327415618701, 1.678146885280433686), // face  5
-            new GeoCoord(0.605929321571350690, 2.953923329812411617), // face  6
-            new GeoCoord(0.427370518328979641, -1.888876200336285401), // face  7
-            new GeoCoord(-0.079066118549212831, -0.733429513380867741), // face  8
-            new GeoCoord(-0.230961644455383637, 0.506495587332349035), // face  9
-            new GeoCoord(0.079066118549212831, 2.408163140208925497), // face 10
-            new GeoCoord(0.230961644455383637, -2.635097066257444203), // face 11
-            new GeoCoord(-0.172745327415618701, -1.463445768309359553), // face 12
-            new GeoCoord(-0.605929321571350690, -0.187669323777381622), // face 13
-            new GeoCoord(-0.427370518328979641, 1.252716453253507838), // face 14
-            new GeoCoord(-0.600191595538186799, 2.690988744120037492), // face 15
-            new GeoCoord(-0.491715428198773866, -2.739604450678486295), // face 16
-            new GeoCoord(-0.803582649718989942, -1.893195233972397139), // face 17
-            new GeoCoord(-1.307747883455638156, -0.604647643711872080), // face 18
-            new GeoCoord(-1.054751253523952054, 1.794075294689396615) // face 19
+            new H3Lib.GeoCoord(0.803582649718989942, 1.248397419617396099), // face  0
+            new H3Lib.GeoCoord(1.307747883455638156, 2.536945009877921159), // face  1
+            new H3Lib.GeoCoord(1.054751253523952054, -1.347517358900396623), // face  2
+            new H3Lib.GeoCoord(0.600191595538186799, -0.450603909469755746), // face  3
+            new H3Lib.GeoCoord(0.491715428198773866, 0.401988202911306943), // face  4
+            new H3Lib.GeoCoord(0.172745327415618701, 1.678146885280433686), // face  5
+            new H3Lib.GeoCoord(0.605929321571350690, 2.953923329812411617), // face  6
+            new H3Lib.GeoCoord(0.427370518328979641, -1.888876200336285401), // face  7
+            new H3Lib.GeoCoord(-0.079066118549212831, -0.733429513380867741), // face  8
+            new H3Lib.GeoCoord(-0.230961644455383637, 0.506495587332349035), // face  9
+            new H3Lib.GeoCoord(0.079066118549212831, 2.408163140208925497), // face 10
+            new H3Lib.GeoCoord(0.230961644455383637, -2.635097066257444203), // face 11
+            new H3Lib.GeoCoord(-0.172745327415618701, -1.463445768309359553), // face 12
+            new H3Lib.GeoCoord(-0.605929321571350690, -0.187669323777381622), // face 13
+            new H3Lib.GeoCoord(-0.427370518328979641, 1.252716453253507838), // face 14
+            new H3Lib.GeoCoord(-0.600191595538186799, 2.690988744120037492), // face 15
+            new H3Lib.GeoCoord(-0.491715428198773866, -2.739604450678486295), // face 16
+            new H3Lib.GeoCoord(-0.803582649718989942, -1.893195233972397139), // face 17
+            new H3Lib.GeoCoord(-1.307747883455638156, -0.604647643711872080), // face 18
+            new H3Lib.GeoCoord(-1.054751253523952054, 1.794075294689396615) // face 19
         };
 
         /// <summary>
@@ -425,31 +391,5 @@ namespace H3Lib
             -1, // res 15
             5764801 // res 16
         };
-
-        public bool Equals(FaceIjk other)
-        {
-            return Face == other.Face && Coord.Equals(other.Coord);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is FaceIjk other && Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Face, Coord);
-        }
-
-        public static bool operator ==(FaceIjk left, FaceIjk right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(FaceIjk left, FaceIjk right)
-        {
-            return !left.Equals(right);
-        }
     }
-    
 }

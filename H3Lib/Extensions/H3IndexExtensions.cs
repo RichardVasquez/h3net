@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using H3Lib.StaticData;
 
 namespace H3Lib.Extensions
 {
@@ -27,10 +28,8 @@ namespace H3Lib.Extensions
         /// -->
         public static double CellAreaRadians2(this H3Index cell)
         {
-            var c = new GeoCoord();
-            var gb = new GeoBoundary();
-            H3Index.h3ToGeo(cell, ref c);
-            H3Index.h3ToGeoBoundary(cell, ref gb);
+            var c = cell.ToGeoCoord();
+            var gb = cell.ToGeoBoundary();
 
             var area = 0.0;
             for (var i = 0; i < gb.numVerts; i++)
@@ -152,8 +151,8 @@ namespace H3Lib.Extensions
             int baseCell =  h3.BaseCell;
             
             // Direction from origin base cell to index base cell
-            Direction dir = Direction.CENTER_DIGIT;
-            Direction revDir = Direction.CENTER_DIGIT;
+            var dir = Direction.CENTER_DIGIT;
+            var revDir = Direction.CENTER_DIGIT;
             if (originBaseCell != baseCell)
             {
                 dir = BaseCells._getBaseCellDirection(originBaseCell, baseCell);
@@ -182,7 +181,7 @@ namespace H3Lib.Extensions
             {
                 // Rotate index into the orientation of the origin base cell.
                 // cw because we are undoing the rotation into that base cell.
-                int baseCellRotations = BaseCells.BaseCellNeighbor60CounterClockwiseRotation[originBaseCell,(int)dir];
+                int baseCellRotations = StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[originBaseCell,(int)dir];
                 if (indexOnPent == 1)
                 {
                     for (int i = 0; i < baseCellRotations; i++)
@@ -232,7 +231,7 @@ namespace H3Lib.Extensions
                         // TODO: We may be unfolding the pentagon incorrectly in this
                         // case; return an error code until this is guaranteed to be
                         // correct.
-                        return (3,new CoordIjk());
+                        return (3, new CoordIjk());
                     }
 
                     directionRotations = LocalIj.PENTAGON_ROTATIONS[originLeadingDigit,(int)dir];
@@ -247,7 +246,6 @@ namespace H3Lib.Extensions
                         // TODO: We may be unfolding the pentagon incorrectly in this
                         // case; return an error code until this is guaranteed to be
                         // correct.
-                        return (4, new CoordIjk());
                     }
 
                     pentagonRotations = LocalIj.PENTAGON_ROTATIONS[(int)revDir, indexLeadingDigit];
@@ -319,6 +317,14 @@ namespace H3Lib.Extensions
             return (0, indexFijk.Coord);
         }
 
+        /// <summary>
+        /// Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
+        /// </summary>
+        /// <param name="h">The H3Index.</param>
+        /// <!--
+        /// h3index.c
+        /// H3Index _h3RotatePent60ccw
+        /// -->
         public static H3Index RotatePent60CounterClockwise(this H3Index h)
         {
             // rotate in place; skips any leading 1 digits (k-axis)
@@ -345,6 +351,7 @@ namespace H3Lib.Extensions
             }
             return h;
         }
+
         
         /// <summary>
         /// Rotate an H3Index 60 degrees clockwise about a pentagonal center.
@@ -394,7 +401,7 @@ namespace H3Lib.Extensions
         {
             for (int r = 1, res = h.Resolution; r <= res; r++)
             {
-                Direction oldDigit = h.GetIndexDigit(r);
+                var oldDigit = h.GetIndexDigit(r);
                 h.SetIndexDigit(r, (ulong) oldDigit.Rotate60CounterClockwise());
             }
 
@@ -453,7 +460,7 @@ namespace H3Lib.Extensions
 
             for (var r = 1; r <= res; r++)
             {
-                ijk = h.IsResClassIii(r)
+                ijk = r.IsResClassIii()
                           ? ijk.DownAp7()
                           : ijk.DownAp7R();
 
@@ -711,7 +718,7 @@ namespace H3Lib.Extensions
             int childRes = h.Resolution;
             if (parentRes > childRes)
             {
-                return H3Index.H3_NULL;
+                return StaticData.H3Index.H3_NULL;
             }
 
             if (parentRes == childRes)
@@ -721,19 +728,19 @@ namespace H3Lib.Extensions
 
             if (parentRes < 0 || parentRes > Constants.MAX_H3_RES)
             {
-                return H3Index.H3_NULL;
+                return StaticData.H3Index.H3_NULL;
             }
 
             var parentH = new H3Index(h) {Resolution = parentRes};
             for (int i = parentRes + 1; i <= childRes; i++)
             {
-                parentH.SetIndexDigit(i, H3Index.H3_DIGIT_MASK);
+                parentH.SetIndexDigit(i, StaticData.H3Index.H3_DIGIT_MASK);
             }
             return parentH;
         }
      
         /// <summary>
-        /// maxH3ToChildrenSize returns the maximum number of children possible for a
+        /// MaxChildrenSize returns the maximum number of children possible for a
         /// given child level.
         /// </summary>
         /// <param name="h3">H3Index to find the number of children of</param>
@@ -764,7 +771,7 @@ namespace H3Lib.Extensions
         /// -->
         public static H3Index SetIndex(this H3Index hp, int res, int baseCell, Direction initDigit)
         {
-            H3Index h = H3Index.H3_INIT;
+            H3Index h = StaticData.H3Index.H3_INIT;
             h.Mode = H3Mode.Hexagon;
             h.Resolution = res;
             h.BaseCell = baseCell;
@@ -774,8 +781,7 @@ namespace H3Lib.Extensions
                 h.SetIndexDigit(r, (ulong) initDigit);
             }
 
-            hp = h;
-            return hp;
+            return h;
         }
 
         /// <summary>
@@ -786,6 +792,7 @@ namespace H3Lib.Extensions
         /// <!--
         /// h3Index.c
         /// int H3_EXPORT(h3IsPentagon)
+        /// -->
         public static bool IsPentagon(this H3Index h)
         {
             return BaseCells.IsBaseCellPentagon(h.BaseCell) &&
@@ -834,7 +841,7 @@ namespace H3Lib.Extensions
 
            
             // start with the "home" face and ijk+ coordinates for the base cell of c
-            var fijk = new FaceIjk(BaseCells.BaseCellData[baseCell].HomeFijk);
+            var fijk = new FaceIjk(StaticData.BaseCells.BaseCellData[baseCell].HomeFijk);
             (int result, var faceIjk) = h.ToFaceIjkWithInitializedFijk(fijk);
             if (result == 0)
             {
@@ -873,16 +880,19 @@ namespace H3Lib.Extensions
                 {
                     while (fijk.AdjustOverageClassIi(res,0,0).Item1 != Overage.NO_OVERAGE)
                     {
+                        //TODO: HUH?
                         continue;
                     }
                 }
 
-                if (res != h.Resolution)
+                if (res == h.Resolution)
                 {
-                    var fCoord = new CoordIjk(fijk.Coord).UpAp7R();
-                    fijk = new FaceIjk(fijk.Face, fCoord);
+                    return fijk;
                 }
-            } else if (res != h.Resolution)
+                var fCoord = new CoordIjk(fijk.Coord).UpAp7R();
+                fijk = new FaceIjk(fijk.Face, fCoord);
+            }
+            else if (res != h.Resolution)
             {
                 fijk = new FaceIjk(fijk.Face, origIJK);
             }
@@ -934,15 +944,13 @@ namespace H3Lib.Extensions
             
             if (isPentagon)
             {
-                (var fijkOut, int newRes, var vertexArray) = fijk.PentToVerts(res, fijkVerts);
-                fijk = fijkOut;
+                (_, int newRes, var vertexArray) = fijk.PentToVerts(res, fijkVerts);
                 res = newRes;
                 fijkVerts = vertexArray.ToList();
             }
             else
             {
-                (var fijkOut, int newRes, var vertexArray) = fijk.ToVerts(res, fijkVerts);
-                fijk = fijkOut;
+                (_, int newRes, var vertexArray) = fijk.ToVerts(res, fijkVerts);
                 res = newRes;
                 fijkVerts = vertexArray.ToList();
             }
@@ -952,7 +960,7 @@ namespace H3Lib.Extensions
             int faceCount = h3.MaxFaceCount();
             for (var i = 0; i < faceCount; i++)
             {
-                results.Add(FaceIjk.InvalidFace);
+                results.Add(StaticData.FaceIjk.InvalidFace);
             }
 
             // add each vertex face, using the output array as a hash set
@@ -971,14 +979,13 @@ namespace H3Lib.Extensions
                 }
 
                 // Save the face to the output array
-                int face = vert.Face;
                 // Find the first empty output position, or the first position
                 // matching the current face
-                int pos = results.IndexOf(FaceIjk.InvalidFace);
+                int pos = results.IndexOf(StaticData.FaceIjk.InvalidFace);
                 results[pos] = vert.Face;
             }
 
-            results.RemoveAll(r => r == FaceIjk.InvalidFace);
+            results.RemoveAll(r => r == StaticData.FaceIjk.InvalidFace);
             return results;
         }
 
@@ -999,6 +1006,396 @@ namespace H3Lib.Extensions
             return h3.IsPentagon()
                        ? 5
                        : 2;
+        }
+
+        /// <summary>
+        /// ToChildren takes the given hexagon id and generates all of the children
+        /// at the specified resolution storing them into the provided memory pointer.
+        /// It's assumed that maxH3ToChildrenSize was used to determine the allocation.
+        /// </summary>
+        /// <param name="h"> H3Index to find the children of</param>
+        /// <param name="childRes"> int the child level to produce</param>
+        /// <returns>The list of H3Index children</returns>
+        /// <!--
+        /// h3index.c
+        /// -->
+        public static List<H3Index> ToChildren(this H3Index h, int childRes)
+        {
+            var children = new List<H3Index>();
+            int parentRes = h.Resolution;
+
+            if (parentRes > childRes)
+            {
+                return children;
+            }
+
+            if (parentRes == childRes)
+            {
+                children.Add(h);
+                return children;
+            }
+
+            int goalRes = childRes;
+            int currentRes = parentRes;
+            var current = new List<H3Index> {h};
+            var realChildren = new List<H3Index>();
+            while (currentRes < goalRes)
+            {
+                realChildren.Clear();
+                foreach (var index in current)
+                {
+                    bool isPentagon = index.IsPentagon();
+                    for (int m = 0; m < 7; m++)
+                    {
+                        if (isPentagon && m == (int) Direction.K_AXES_DIGIT)
+                        {
+                            realChildren.Add(StaticData.H3Index.H3_INVALID_INDEX);
+                        }
+                        else
+                        {
+                            var child = index.MakeDirectChild(m);
+                            realChildren.Add(child);
+                        }
+                    }
+                }
+
+                current = new List<H3Index>
+                    (realChildren.Where(c => c.H3Value != StaticData.H3Index.H3_INVALID_INDEX));
+                currentRes++;
+            }
+
+            return current;
+        }
+
+        /// <summary>
+        /// ToCenterChild produces the center child index for a given H3 index at
+        /// the specified resolution
+        /// </summary>
+        /// <param name="h">H3Index to find center child of</param>
+        /// <param name="childRes">The resolution to switch to</param>
+        /// <returns>
+        /// H3Index of the center child, or H3_NULL if you actually asked for a parent
+        /// </returns>
+        public static H3Index ToCenterChild(this H3Index h, int childRes)
+        {
+            int parentRes = h.Resolution;
+            if (!parentRes.IsValidChildRes(childRes))
+            {
+                return StaticData.H3Index.H3_NULL;
+            }
+
+            if (childRes == parentRes)
+            {
+                return h;
+            }
+
+            var child = h;
+            child.Resolution = childRes;
+            
+            for (int i = parentRes + 1; i <= childRes; i++)
+            {
+                child.SetIndexDigit(i, 0);
+            }
+            return child;
+        }
+
+        /// <summary>
+        /// Determines the spherical coordinates of the center point of an H3 index.
+        /// </summary>
+        /// <param name="h3">The H3 index.</param>
+        /// <returns>The spherical coordinates of the H3 cell center.</returns>
+        /// <!--
+        /// h3index.c
+        /// void H3_EXPORT(h3ToGeo)
+        /// -->
+        public static GeoCoord ToGeoCoord(this H3Index h3)
+        {
+            return h3.ToFaceIjk().ToGeoCoord(h3.Resolution);
+        }
+
+        /// <summary>
+        /// Determines the cell boundary in spherical coordinates for an H3 index.
+        /// </summary>
+        /// <param name="h3">The H3 index.</param>
+        /// <returns>The boundary of the H3 cell in spherical coordinates.</returns>
+        /// <!--
+        /// h3index.c
+        /// void H3_EXPORT(h3ToGeoBoundary)
+        /// -->
+        public static GeoBoundary ToGeoBoundary(this H3Index h3)
+        {
+            var fijk = h3.ToFaceIjk();
+            
+            var gb = h3.IsPentagon()
+                     ? fijk.PentToGeoBoundary(h3.Resolution, 0, Constants.NUM_PENT_VERTS)
+                     : fijk.ToGeoBoundary(h3.Resolution, 0, Constants.NUM_HEX_VERTS);
+
+            return gb;
+        }
+
+        /// <summary>
+        /// Get the number of CCW rotations of the cell's vertex numbers
+        /// compared to the directional layout of its neighbors.
+        /// </summary>
+        /// <returns>Number of CCW rotations for the cell</returns>
+        /// <!--
+        /// vertex.c
+        /// int vertexRotations
+        /// -->
+        public static int VertexRotations(this H3Index cell)
+        {
+            // Get the face and other info for the origin
+            var fijk = cell.ToFaceIjk();
+            int baseCell = cell.BaseCell;
+            var cellLeadingDigit = (int) cell.LeadingNonZeroDigit;
+
+            // get the base cell face
+            var baseFijk = BaseCells.ToFaceIjk(baseCell);
+
+            int ccwRot60 = BaseCells.ToCounterClockwiseRotate60(baseCell, fijk.Face);
+
+            if (!baseCell.IsBaseCellPentagon())
+            {
+                return ccwRot60;
+            }
+
+            // Find the appropriate direction-to-face mapping
+            int[] dirFaces = { };
+            if (StaticData.Vertex.PentagonDirectionFaces.Any(pd => pd.BaseCell == baseCell))
+            {
+                dirFaces = StaticData.Vertex.PentagonDirectionFaces
+                                     .First(pd => pd.BaseCell == baseCell).Faces;
+            }
+
+            // additional CCW rotation for polar neighbors or IK neighbors
+            if (fijk.Face != baseFijk.Face &&
+                (baseCell.IsBaseCellPentagon() ||
+                 fijk.Face == dirFaces[(int)Direction.IK_AXES_DIGIT - StaticData.Vertex.DIRECTION_INDEX_OFFSET])
+                )
+            {
+                ccwRot60 = (ccwRot60 + 1) % 6;
+            }
+
+            ccwRot60 = cellLeadingDigit switch
+            {
+                // Check whether the cell crosses a deleted pentagon subsequence
+                (int) Direction.JK_AXES_DIGIT when
+                    fijk.Face == dirFaces[(int) Direction.IK_AXES_DIGIT - StaticData.Vertex.DIRECTION_INDEX_OFFSET]
+                    => (ccwRot60 + 5) % 6,
+                (int) Direction.IK_AXES_DIGIT when
+                    fijk.Face == dirFaces[(int) Direction.JK_AXES_DIGIT - StaticData.Vertex.DIRECTION_INDEX_OFFSET]
+                    => (ccwRot60 + 1) % 6,
+                _ => ccwRot60
+            };
+            return ccwRot60;
+        }
+        
+        /// <summary>
+        /// Get the first vertex number for a given direction. The neighbor in this
+        /// direction is located between this vertex number and the next number in
+        /// sequence.
+        /// </summary>
+        /// <returns>
+        /// The number for the first topological vertex, or INVALID_VERTEX_NUM
+        /// if the direction is not valid for this cell
+        /// </returns>
+        /// <!--
+        /// vertex.c
+        /// int vertexNumForDirection
+        /// -->
+        public static int VertexNumForDirection(this H3Index origin, Direction direction)
+        {
+            bool isPentagon = origin.IsPentagon();
+            // Check for invalid directions
+            if (direction == Direction.CENTER_DIGIT ||
+                direction >= Direction.INVALID_DIGIT ||
+                (isPentagon && direction == Direction.K_AXES_DIGIT))
+            {
+                return StaticData.Vertex.INVALID_VERTEX_NUM;
+            }
+
+            // Determine the vertex rotations for this cell
+            int rotations = origin.VertexRotations();
+
+            // Find the appropriate vertex, rotating CCW if necessary
+            if (isPentagon)
+            {
+                return (StaticData.Vertex.DirectionToVertexNumPent[(int) direction] +
+                        Constants.NUM_PENT_VERTS - rotations) %
+                       Constants.NUM_PENT_VERTS;
+            }
+
+            return (StaticData.Vertex.DirectionToVertexNumHex[(int) direction] +
+                    Constants.NUM_HEX_VERTS - rotations) %
+                   Constants.NUM_HEX_VERTS;
+        }
+
+        /// <summary>
+        /// Returns whether or not the provided H3Indexes are neighbors.
+        /// 
+        /// </summary>
+        /// <param name="origin">The origin H3 index.</param>
+        /// <param name="destination">The destination H3 index.</param>
+        /// <returns>true if the indices are neighbors, false otherwise</returns>
+        /// <!--
+        /// hwUniEdge.c
+        /// int H3_EXPORT(h3IndexesAreNeighbors)
+        /// -->
+        public static bool IsNeighborTo(this H3Index origin, H3Index destination)
+        {
+            // Make sure they're hexagon indexes
+            if (origin.Mode!= H3Mode.Hexagon || origin.Mode!= H3Mode.Hexagon)
+            {
+                return false;
+            }
+
+            // Hexagons cannot be neighbors with themselves
+            if (origin == destination)
+            {
+                return false;
+            }
+
+            // Only hexagons in the same resolution can be neighbors
+            if (origin.Resolution != destination.Resolution)
+            {
+                return false;
+            }
+
+            // H3 Indexes that share the same parent are very likely to be neighbors
+            // Child 0 is neighbor with all of its parent's 'offspring', the other
+            // children are neighbors with 3 of the 7 children. So a simple comparison
+            // of origin and destination parents and then a lookup table of the children
+            // is a super-cheap way to possibly determine they are neighbors.
+            int parentRes = origin.Resolution - 1;
+            if (parentRes > 0 && (origin.ToParent(parentRes) == destination.ToParent(parentRes)))
+            {
+                var originResDigit = origin.GetIndexDigit(parentRes + 1);
+                var destinationResDigit = destination.GetIndexDigit(parentRes + 1);
+
+                if (originResDigit == Direction.CENTER_DIGIT ||
+                    destinationResDigit == Direction.CENTER_DIGIT)
+                {
+                    return true;
+                }
+
+                // These sets are the relevant neighbors in the clockwise
+                // and counter-clockwise
+                Direction[] neighborSetClockwise =
+                {
+                    Direction.CENTER_DIGIT, Direction.JK_AXES_DIGIT, Direction.IJ_AXES_DIGIT,
+                    Direction.J_AXES_DIGIT, Direction.IK_AXES_DIGIT, Direction.K_AXES_DIGIT,
+                    Direction.I_AXES_DIGIT
+                };
+                Direction[] neighborSetCounterclockwise =
+                {
+                    Direction.CENTER_DIGIT, Direction.IK_AXES_DIGIT, Direction.JK_AXES_DIGIT,
+                    Direction.K_AXES_DIGIT, Direction.IJ_AXES_DIGIT, Direction.I_AXES_DIGIT,
+                    Direction.J_AXES_DIGIT
+                };
+
+                if (neighborSetClockwise[(int) originResDigit] == destinationResDigit ||
+                    neighborSetCounterclockwise[(int) originResDigit] == destinationResDigit)
+                {
+                    return true;
+                }
+            }
+
+            // Otherwise, we have to determine the neighbor relationship the "hard" way.
+            var neighborRing = Enumerable.Range(1, 7).Select(s => new H3Index(0)).ToList();
+            //  TODO: Circle around to this after retrofitting Algos.cs
+            Algos.kRing(origin,1, ref neighborRing);
+
+            // return if any match
+            return neighborRing.Any(nr => nr == destination);
+        }
+
+        /// <summary>
+        /// Returns a unidirectional edge H3 index based on the provided origin and destination
+        /// </summary>
+        /// <param name="origin">The origin H3 hexagon index</param>
+        /// <param name="destination">The destination H3 hexagon index</param>
+        /// <returns>The unidirectional edge H3Index, or H3_NULL on failure.</returns>
+        /// <!--
+        /// h3UniEdge.c
+        /// H3Index H3_EXPORT(getH3UnidirectionalEdge)
+        /// -->
+        public static H3Index UniDirectionalEdgeTo(this H3Index origin, H3Index destination)
+        {
+            // Short-circuit and return an invalid index value if they are not neighbors
+            if (!origin.IsNeighborTo(destination))
+            {
+                return StaticData.H3Index.H3_NULL;
+            }
+
+            // Otherwise, determine the IJK direction from the origin to the destination
+            var output = origin;
+            output.Mode = H3Mode.UniEdge;
+
+            bool isPentagon = origin.IsPentagon();
+
+            // Checks each neighbor, in order, to determine which direction the
+            // destination neighbor is located. Skips CENTER_DIGIT since that
+            // would be this index.
+            for (var direction = isPentagon ? Direction.J_AXES_DIGIT : Direction.K_AXES_DIGIT;
+                 direction <  Direction.NUM_DIGITS; direction++)
+            {
+                // TODO: Circle back after retrofitting Algos.cs
+                var rotations = 0;
+                H3Index neighbor = Algos.h3NeighborRotations(origin,direction, ref rotations);
+                if (neighbor != destination)
+                {
+                    continue;
+                }
+                output.ReservedBits = (int) direction;
+                return output;
+            }
+
+            // This should be impossible, return H3_NULL in this case;
+            return StaticData.H3Index.H3_NULL;   
+        }
+
+        /// <summary>
+        /// Returns the origin hexagon from the unidirectional edge H3Index
+        /// </summary>
+        /// <param name="edge">The edge H3 index</param>
+        /// <returns>The origin H3 hexagon index, or H3_NULL on failure</returns>
+        /// <!--
+        /// h3UniEdge.c
+        /// H3Index H3_EXPORT(getOriginH3IndexFromUnidirectionalEdge)
+        /// -->
+        public static H3Index OriginFromUniDirectionalEdge(this H3Index edge)
+        {
+            return edge.Mode != H3Mode.UniEdge
+                       ? (H3Index) StaticData.H3Index.H3_NULL
+                       : new H3Index(edge) {Mode = H3Mode.Hexagon, ReservedBits = 0};
+        }
+
+        /// <summary>
+        /// Returns the destination hexagon from the unidirectional edge H3Index
+        /// </summary>
+        /// <param name="edge">The edge H3 index</param>
+        /// <returns>
+        /// The destination H3 hexagon index, or H3_NULL on failure
+        /// </returns>
+        /// <!--
+        /// h3UniEdge.c
+        /// H3Index H3_EXPORT(getDestinationH3IndexFromUnidirectionalEdge)
+        /// -->
+        public static H3Index DestinationFromUniDirectionalEdge(this H3Index edge)
+        {
+            if (edge.Mode != H3Mode.UniEdge)
+            {
+                return StaticData.H3Index.H3_NULL;
+            }
+
+            Direction direction = (Direction) edge.ReservedBits;
+            int rotations = 0;
+            // TODO: Circle back after retrofitting Algos.cs
+            H3Index destination =
+                Algos.h3NeighborRotations(
+                                          edge.OriginFromUniDirectionalEdge(),
+                                          direction, ref rotations);
+            return destination;
         }
 
     }
