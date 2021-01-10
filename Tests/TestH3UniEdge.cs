@@ -272,13 +272,13 @@ namespace Tests
 
                 for (int i = 0; i < 6; i++) {
                     H3UniEdge.getH3UnidirectionalEdgeBoundary(edges[i], ref edgeBoundary);
-                    Assert.True(edgeBoundary.numVerts == 2,
+                    Assert.True(edgeBoundary.NumVerts == 2,
                              "Got the expected number of vertices back");
-                    for (int j = 0; j < edgeBoundary.numVerts; j++)
+                    for (int j = 0; j < edgeBoundary.NumVerts; j++)
                     {
                         Assert.True(
-                                 GeoCoord.geoAlmostEqual(edgeBoundary.verts[j],
-                                                boundary.verts[expectedVertices[i,j]]),
+                                 GeoCoord.geoAlmostEqual(edgeBoundary.Verts[j],
+                                                boundary.Verts[expectedVertices[i,j]]),
                                  "Got expected vertex");
                     }
                 }
@@ -318,14 +318,14 @@ namespace Tests
                     {
                         H3UniEdge.getH3UnidirectionalEdgeBoundary(edges[i], ref edgeBoundary);
                         Assert.True
-                            (edgeBoundary.numVerts == 3,
+                            (edgeBoundary.NumVerts == 3,
                              "Got the expected number of vertices back for a Class III pentagon"
                             );
-                        for (int j = 0; j < edgeBoundary.numVerts; j++)
+                        for (int j = 0; j < edgeBoundary.NumVerts; j++)
                         {
                             Assert.True
                                 (
-                                 GeoCoord.geoAlmostEqual(edgeBoundary.verts[j], boundary.verts[expectedVertices[i, j]]),
+                                 GeoCoord.geoAlmostEqual(edgeBoundary.Verts[j], boundary.Verts[expectedVertices[i, j]]),
                                  "Got expected vertex"
                                 );
                         }
@@ -368,12 +368,12 @@ namespace Tests
                     } else {
                         H3UniEdge.getH3UnidirectionalEdgeBoundary(edges[i], ref edgeBoundary);
                         Assert.True(
-                                 edgeBoundary.numVerts == 2,
+                                 edgeBoundary.NumVerts == 2,
                                  "Got the expected number of vertices back for a Class II pentagon");
-                        for (int j = 0; j < edgeBoundary.numVerts; j++) {
+                        for (int j = 0; j < edgeBoundary.NumVerts; j++) {
                             Assert.True(
-                                     GeoCoord.geoAlmostEqual(edgeBoundary.verts[j],
-                                                    boundary.verts[expectedVertices[i,j]]),
+                                     GeoCoord.geoAlmostEqual(edgeBoundary.Verts[j],
+                                                    boundary.Verts[expectedVertices[i,j]]),
                                      "Got expected vertex");
                         }
                     }

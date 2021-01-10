@@ -797,7 +797,7 @@ namespace H3Lib
             // This first part is identical to the maxPolyfillSize above.
 
             // Get the bounding boxes for the polygon and any holes
-            int cnt = geoPolygon.numHoles + 1;
+            int cnt = geoPolygon.NumHoles + 1;
             List<BBox> bboxes = new List<BBox>();
             for (int i = 0; i < cnt; i++)
             {
@@ -877,12 +877,12 @@ namespace H3Lib
             {
                 vertices = h3Set[i].ToGeoBoundary();
                 // iterate through every edge
-                for (int j = 0; j < vertices.numVerts; j++)
+                for (int j = 0; j < vertices.NumVerts; j++)
                 {
-                    fromVertex = new GeoCoord(vertices.verts[j].Latitude, vertices.verts[j].Longitude);
+                    fromVertex = new GeoCoord(vertices.Verts[j].Latitude, vertices.Verts[j].Longitude);
                     //fromVtx = vertices.verts[j];
-                    int idx = (j + 1) % vertices.numVerts;
-                    toVertex = new GeoCoord(vertices.verts[idx].Latitude, vertices.verts[idx].Longitude);
+                    int idx = (j + 1) % vertices.NumVerts;
+                    toVertex = new GeoCoord(vertices.Verts[idx].Latitude, vertices.Verts[idx].Longitude);
                     //toVtx = vertices.verts[(j + 1) % vertices.numVerts];
                     // If we've seen this edge already, it will be reversed
                     edge = VertexGraph.findNodeForEdge(ref graph, toVertex, fromVertex);

@@ -34,7 +34,7 @@ namespace Tests
         [Test]
         public void PointInsideGeofence()
         {
-            Geofence geofence = new Geofence {numVerts = 6, verts = SfVerts.ToArray()};
+            Geofence geofence = new Geofence {NumVerts = 6, Verts = SfVerts.ToArray()};
 
             GeoCoord inside = new GeoCoord(0.659, -2.136);
             GeoCoord somewhere = new GeoCoord(1, 2);
@@ -65,7 +65,7 @@ namespace Tests
                     new GeoCoord(-0.01, Constants.M_PI - 0.01),
                     new GeoCoord(-0.01, -Constants.M_PI + 0.01)
                 };
-            Geofence transMeridianGeofence = new Geofence {numVerts = 4, verts = verts.ToArray()};
+            Geofence transMeridianGeofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
 
             GeoCoord eastPoint = new GeoCoord(0.001, -Constants.M_PI + 0.001);
             GeoCoord eastPointOutside = new GeoCoord(.001, -Constants.M_PI + 0.1);
@@ -137,7 +137,7 @@ namespace Tests
                     new GeoCoord(1.0, 0.2)
 
                 };
-            Geofence geofence = new Geofence {numVerts = 4, verts = verts.ToArray()};
+            Geofence geofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
 
             BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
 
@@ -159,7 +159,7 @@ namespace Tests
                     new GeoCoord(-0.1, -Constants.M_PI + 0.1),
                     new GeoCoord(-0.05, -Constants.M_PI + 0.2)
                 };
-            Geofence geofence = new Geofence {numVerts = 6, verts = verts.ToArray()};
+            Geofence geofence = new Geofence {NumVerts = 6, Verts = verts.ToArray()};
 
             BBox expected = new BBox
                             {
@@ -179,7 +179,7 @@ namespace Tests
         [Test]
         public void BboxFromGeofenceNoVertices()
         {
-            Geofence geofence = new Geofence {numVerts = 0, verts = null};
+            Geofence geofence = new Geofence {NumVerts = 0, Verts = null};
 
             BBox expected = new BBox{North = 0.0, South = 0.0, East = 0.0, West = 0.0};
 
@@ -201,8 +201,8 @@ namespace Tests
                     new GeoCoord(1.1, 0.7),
                     new GeoCoord(1.0, 0.2)
                 };
-            Geofence geofence = new Geofence {numVerts = 4, verts = verts.ToArray()};
-            GeoPolygon polygon = new GeoPolygon {Geofence = geofence, numHoles = 0};
+            Geofence geofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
+            GeoPolygon polygon = new GeoPolygon {Geofence = geofence, NumHoles = 0};
 
             BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
 
@@ -222,7 +222,7 @@ namespace Tests
                     new GeoCoord(1.1, 0.7),
                     new GeoCoord(1.0, 0.2)
                 };
-            Geofence geofence = new Geofence {numVerts = 4, verts = verts.ToArray()};
+            Geofence geofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
 
             // not a real hole, but doesn't matter for the test
             List<GeoCoord> holeVerts =
@@ -236,10 +236,10 @@ namespace Tests
             List<Geofence> holeGeofence =
                 new List<Geofence>
                 {
-                    new Geofence {numVerts = 4, verts = holeVerts.ToArray()}
+                    new Geofence {NumVerts = 4, Verts = holeVerts.ToArray()}
                 };
 
-            GeoPolygon polygon = new GeoPolygon {Geofence = geofence, numHoles = 1, holes = holeGeofence};
+            GeoPolygon polygon = new GeoPolygon {Geofence = geofence, NumHoles = 1, Holes = holeGeofence};
 
             BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
             BBox expectedHole = new BBox {North = 1.0, South = 0.9, East = 0.7, West = 0.3};
@@ -294,7 +294,7 @@ namespace Tests
                 {
                     new GeoCoord(0, 0), new GeoCoord(0.1, 0.1), new GeoCoord(0, 0.1)
                 };
-            Geofence geofence = new Geofence {numVerts = 3, verts = verts.ToArray()};
+            Geofence geofence = new Geofence {NumVerts = 3, Verts = verts.ToArray()};
 
             Assert.True
                 (
@@ -349,7 +349,7 @@ namespace Tests
                     new GeoCoord(-0.4, -Constants.M_PI + 0.1),
                     new GeoCoord(0.4, Constants.M_PI - 0.1)
                 };
-            Geofence geofence = new Geofence {numVerts = 4, verts = verts.ToArray()};
+            Geofence geofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
 
             Assert.True
                 (

@@ -4,30 +4,23 @@ using System.Linq;
 
 namespace H3Lib
 {
+    
+    /// <summary>
+    /// Simplified core of GeoJSON MultiPolygon coordinates definition
+    /// </summary>
+    public class GeoMultiPolygon
+    {
+        public int NumPolygons;
+        public List<GeoPolygon> Polygons;
+    }
+
     /// <summary>
     /// Linked data structure for geo data
     /// </summary>
     // ReSharper disable once ClassNeverInstantiated.Global
     public class LinkedGeo
     {
-        public class LinkedGeoCoord
-        {
-            public GeoCoord Vertex;
-            public  LinkedGeoCoord Next;
-        }
-        public class LinkedGeoLoop
-        {
-            public  LinkedGeoCoord First;
-            public  LinkedGeoCoord Last;
-            public LinkedGeoLoop Next;
-        }
 
-        public class LinkedGeoPolygon
-        {
-            public LinkedGeoLoop First;
-            public LinkedGeoLoop Last;
-            public LinkedGeoPolygon Next;
-        }
 
         public const int NormalizationSuccess = 0;
         public const int NormalizationErrMultiplePolygons = 1;

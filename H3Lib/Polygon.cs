@@ -34,7 +34,7 @@ namespace H3Lib
         public static void bboxFromGeofence(ref Geofence loop, ref BBox bbox)
         {
             // Early exit if there are no vertices
-            if (loop.numVerts == 0) {
+            if (loop.NumVerts == 0) {
                 bbox = new BBox();
                 return;
             }
@@ -56,16 +56,16 @@ namespace H3Lib
 
             while (true) {
                 
-                if (++loopIndex >= loop.numVerts)
+                if (++loopIndex >= loop.NumVerts)
                 {
                     break;
                 }
 
-                coord = new GeoCoord(loop.verts[loopIndex].Latitude, loop.verts[loopIndex].Longitude);
+                coord = new GeoCoord(loop.Verts[loopIndex].Latitude, loop.Verts[loopIndex].Longitude);
                 next = new GeoCoord
                     (
-                     loop.verts[(loopIndex + 1) % loop.numVerts].Latitude,
-                     loop.verts[(loopIndex + 1) % loop.numVerts].Longitude
+                     loop.Verts[(loopIndex + 1) % loop.NumVerts].Latitude,
+                     loop.Verts[(loopIndex + 1) % loop.NumVerts].Longitude
                     );
 
 
@@ -119,12 +119,12 @@ namespace H3Lib
 
             while (true) {
 
-                if (++loopIndex >= loop.numVerts){ break;}
-                a = new GeoCoord(loop.verts[loopIndex].Latitude, loop.verts[loopIndex].Longitude);
+                if (++loopIndex >= loop.NumVerts){ break;}
+                a = new GeoCoord(loop.Verts[loopIndex].Latitude, loop.Verts[loopIndex].Longitude);
                 b = new GeoCoord
                     (
-                     loop.verts[(loopIndex + 1) % loop.numVerts].Latitude,
-                     loop.verts[(loopIndex + 1) % loop.numVerts].Longitude
+                     loop.Verts[(loopIndex + 1) % loop.NumVerts].Latitude,
+                     loop.Verts[(loopIndex + 1) % loop.NumVerts].Longitude
                     );
 
 
@@ -189,15 +189,15 @@ namespace H3Lib
             int loopIndex = -1;
 
             while (true) {
-                if (++loopIndex >= loop.numVerts)
+                if (++loopIndex >= loop.NumVerts)
                 {
                     break;
                 }
-                a = new GeoCoord(loop.verts[loopIndex].Latitude, loop.verts[loopIndex].Longitude);
+                a = new GeoCoord(loop.Verts[loopIndex].Latitude, loop.Verts[loopIndex].Longitude);
                 b = new GeoCoord
                     (
-                     loop.verts[(loopIndex + 1) % loop.numVerts].Latitude,
-                     loop.verts[(loopIndex + 1) % loop.numVerts].Longitude
+                     loop.Verts[(loopIndex + 1) % loop.NumVerts].Latitude,
+                     loop.Verts[(loopIndex + 1) % loop.NumVerts].Longitude
                     );
 
 
@@ -237,13 +237,13 @@ namespace H3Lib
             var bbox0 = bboxes[0];
             bboxFromGeofence(ref polygon.Geofence, ref bbox0);
             bboxes[0] = bbox0;
-            for (int i = 0; i < polygon.numHoles; i++)
+            for (int i = 0; i < polygon.NumHoles; i++)
             {
                 var tempBox = bboxes[i + 1];
-                var hole = polygon.holes[i];
+                var hole = polygon.Holes[i];
                 bboxFromGeofence(ref hole, ref tempBox);
                 bboxes[i + 1] = tempBox;
-                polygon.holes[i] = hole;
+                polygon.Holes[i] = hole;
             }
         }
 
@@ -268,14 +268,14 @@ namespace H3Lib
             // If the point is contained in the primary Geofence, but there are holes in
             // the Geofence iterate through all holes and return false if the point is
             // contained in any hole
-            if (contains && geoPolygon.numHoles > 0)
+            if (contains && geoPolygon.NumHoles > 0)
             {
-                for (int i = 0; i < geoPolygon.numHoles; i++)
+                for (int i = 0; i < geoPolygon.NumHoles; i++)
                 {
-                    var hole = geoPolygon.holes[i];
+                    var hole = geoPolygon.Holes[i];
                     var box = bboxes[i + 1];
                     var isInside = pointInsideGeofence(ref hole, ref box, ref coord);
-                    geoPolygon.holes[i] = hole;
+                    geoPolygon.Holes[i] = hole;
                     bboxes[i + 1] = box;
 
                     if (isInside)

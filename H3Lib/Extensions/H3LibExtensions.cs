@@ -491,5 +491,78 @@ namespace H3Lib.Extensions
         {
             return 3 * k * (k + 1) + 1;
         }
+
+        /// <summary>
+        /// hexRanges takes an array of input hex IDs and a max k-ring and returns an
+        /// array of hexagon IDs sorted first by the original hex IDs and then by the
+        /// k-ring (0 to max), with no guaranteed sorting within each k-ring group.
+        /// </summary>
+        /// <param name="h3Set">a list of H3Indexes</param>
+        /// <param name="k">k The number of rings to generate</param>
+        /// <returns>
+        /// Tuple
+        ///     Item1 - 0 if no pentagon is encountered. Cannot trust output otherwise
+        ///     Item2 - List of H3Index cells
+        /// </returns>
+        public static (int, List<H3Index>) HexRanges(this List<H3Index> h3Set, int k)
+        {
+            var results = new List<H3Index>();
+            foreach (var h3Cell in h3Set)
+            {
+                (int success, List<H3Index> temp) = h3Cell.HexRange(k);
+                if (success != 0)
+                {
+                    return (success, results);
+                }
+                results.AddRange(temp);
+            }
+
+            return (0, results);
+        }
+        
+        /// <summary>
+        /// Internal: Create a vertex graph from a set of hexagons. It is the
+        /// responsibility of the caller to call destroyVertexGraph on the populated
+        /// graph, otherwise the memory in the graph nodes will not be freed.
+        /// </summary>
+        /// <param name="h3Set">Set of hexagons</param>
+        /// <returns>Output graph</returns>
+        public static VertexGraph ToVertexGraph(this List<H3Index> h3Set)
+        {
+            if (h3Set.Count<1)
+            {
+                // We still need to init the graph, or calls to destroyVertexGraph will
+                // fail
+                return new VertexGraph();
+            }
+
+            var graph = new VertexGraph();
+
+            // Iterate through every hexagon
+            foreach (var vertices in h3Set.Select(cell => cell.ToGeoBoundary()))
+            {
+                // iterate through every edge
+                for (var j = 0; j < vertices.NumVerts; j++)
+                {
+                    var fromVtx = vertices.Verts[j];
+                    var toVtx = vertices.Verts[(j + 1) % vertices.NumVerts];
+
+                    // If we've seen this edge already, it will be reversed
+                    var edge = graph.FindEdge(toVtx, fromVtx);
+                    if (edge != null)
+                    {
+                        // If we've seen it, drop it. No edge is shared by more than 2
+                        // hexagons, so we'll never see it again.
+                        graph.RemoveNode(edge.Value);
+                    } else {
+                        // Add a new node for this edge
+                        graph.AddNode(fromVtx, toVtx);
+                    }
+                }
+            }
+
+            return graph;
+        }
+        
     }
 }

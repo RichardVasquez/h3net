@@ -368,6 +368,34 @@ namespace H3Lib.Extensions
 
             return g.ToFaceIjk(res).ToH3(res);
         }
+
+        /// <summary>
+        /// returns an estimated number of hexagons that trace
+        /// the cartesian-projected line
+        /// </summary>
+        /// <param name="origin">the origin coordinates</param>
+        /// <param name="destination">the destination coordinates</param>
+        /// <param name="res">the resolution of the H3 hexagons to trace the line</param>
+        /// <returns>the estimated number of hexagons required to trace the line</returns>
+        /// <!--
+        /// bbox.c
+        /// int lineHexEstimate
+        /// -->
+        public static int LineHexEstimate(this GeoCoord origin, GeoCoord destination, int res)
+        {
+            // Get the area of the pentagon as the maximally-distorted area possible
+            var pentagons = res.GetPentagonIndexes();
+            double pentagonRadiusKm = pentagons[0].HexRadiusKm();
+            double dist = origin.DistanceToKm(destination);
+
+            var estimate = (int) Math.Ceiling(dist / (2 * pentagonRadiusKm));
+            if (estimate == 0)
+            {
+                estimate = 1;
+            }
+            return estimate;
+
+        }
         
     }
 }

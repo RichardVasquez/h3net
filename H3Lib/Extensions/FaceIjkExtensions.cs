@@ -510,7 +510,7 @@ namespace H3Lib.Extensions
             // convert each vertex to lat/lon
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
-            gb.numVerts = 0;
+            gb.NumVerts = 0;
             int lastFace = -1;
             var lastOverage = Overage.NO_OVERAGE;
             for (int vert = start;
@@ -583,8 +583,8 @@ namespace H3Lib.Extensions
                     bool isIntersectionAtVertex = orig2d0 == inter || orig2d1 == inter;
                     if (!isIntersectionAtVertex)
                     {
-                        gb.verts[gb.numVerts] = inter.ToGeoCoord(centerIjk.Face, adjRes, 1);
-                        gb.numVerts++;
+                        gb.Verts[gb.NumVerts] = inter.ToGeoCoord(centerIjk.Face, adjRes, 1);
+                        gb.NumVerts++;
                     }
                 }
 
@@ -593,10 +593,10 @@ namespace H3Lib.Extensions
                 // intersection on last edge
                 if (vert < start + Constants.NUM_HEX_VERTS)
                 {
-                    gb.verts[gb.numVerts] = fijk.Coord
+                    gb.Verts[gb.NumVerts] = fijk.Coord
                                                 .ToHex2d()
                                                 .ToGeoCoord(fijk.Face, adjRes, 1);
-                    gb.numVerts++;
+                    gb.NumVerts++;
                 }
 
                 lastFace = fijk.Face;
@@ -639,7 +639,7 @@ namespace H3Lib.Extensions
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
 
-            gb.numVerts = 0;
+            gb.NumVerts = 0;
             var lastFijk = new FaceIjk();
 
             for (int vert = start; vert < start + length + additionalIteration; vert++)
@@ -709,8 +709,8 @@ namespace H3Lib.Extensions
 
                     // find the intersection and add the lat/lon point to the result
                     var inter = Vec2d.FindIntersection(orig2d0, orig2d1, edge0, edge1);
-                    gb.verts[gb.numVerts] = inter.ToGeoCoord(tmpFijk.Face, adjRes, 1);
-                    gb.numVerts++;
+                    gb.Verts[gb.NumVerts] = inter.ToGeoCoord(tmpFijk.Face, adjRes, 1);
+                    gb.NumVerts++;
                 }
 
                 // convert vertex to lat/lon and add to the result
@@ -718,10 +718,10 @@ namespace H3Lib.Extensions
                 // intersection on last edge
                 if (vert < start + Constants.NUM_PENT_VERTS)
                 {
-                    gb.verts[gb.numVerts] = fijk.Coord
+                    gb.Verts[gb.NumVerts] = fijk.Coord
                                                 .ToHex2d()
                                                 .ToGeoCoord(fijk.Face, adjRes, 1);
-                    gb.numVerts++;
+                    gb.NumVerts++;
                 }
 
                 lastFijk = new FaceIjk(fijk);

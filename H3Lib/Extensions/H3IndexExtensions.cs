@@ -32,10 +32,10 @@ namespace H3Lib.Extensions
             var gb = cell.ToGeoBoundary();
 
             var area = 0.0;
-            for (var i = 0; i < gb.numVerts; i++)
+            for (var i = 0; i < gb.NumVerts; i++)
             {
-                int j = (i + 1) % gb.numVerts;
-                area += GeoCoord.TriangleArea(gb.verts[i], gb.verts[j], c);
+                int j = (i + 1) % gb.NumVerts;
+                area += GeoCoord.TriangleArea(gb.Verts[i], gb.Verts[j], c);
             }
 
             return area;
@@ -81,9 +81,9 @@ namespace H3Lib.Extensions
             var gb = edge.UniEdgeToGeoBoundary();
 
             var length = 0.0;
-            for (var i = 0; i < gb.numVerts - 1; i++)
+            for (var i = 0; i < gb.NumVerts - 1; i++)
             {
-                length += gb.verts[i].DistanceToRadians(gb.verts[i + 1]);
+                length += gb.Verts[i].DistanceToRadians(gb.Verts[i + 1]);
             }
             return length;
         }
@@ -1509,7 +1509,7 @@ namespace H3Lib.Extensions
             {
                 // This is not actually an edge (i.e. no valid direction),
                 // so return no vertices.
-                gb.numVerts = 0;
+                gb.NumVerts = 0;
                 return gb;
             }
 
@@ -1527,6 +1527,150 @@ namespace H3Lib.Extensions
                      : fijk.ToGeoBoundary(res, startVertex, 2);
         }
 
+        /// <summary>
+        /// hexRange produces indexes within k distance of the origin index.
+        ///
+        /// Output behavior is undefined when one of the indexes returned by this
+        /// function is a pentagon or is in the pentagon distortion area.
+        ///
+        /// k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
+        /// all neighboring indexes, and so on.
+        ///
+        /// Output is placed in the provided array in order of increasing distance from
+        /// the origin.
+        /// </summary>
+        /// <param name="origin">Origin location.</param>
+        /// <param name="k">k &gt;= 0</param>
+        /// <returns>
+        /// Tuple
+        ///     Item1 - 0 if no pentagon or pentagonal distortion area was encountered.
+        ///     Item2 - List of H3Index cells
+        /// </returns>
+        /// <!--
+        /// algos.c
+        /// int H3_EXPORT(hexRange)
+        /// -->
+        public static (int, List<H3Index>) HexRange(this H3Index origin, int k)
+        {
+            (int status, List<(H3Index, int)> values) = origin.HexRangeDistances(k);
+            return (status, values.Select(v => v.Item1).ToList());
+        }
+        
+        /// <summary>
+        /// Produce cells within grid distance k of the origin cell.
+        ///
+        /// k-ring 0 is defined as the origin cell, k-ring 1 is defined as k-ring 0 and
+        /// all neighboring cells, and so on.
+        /// 
+        /// Output is placed in the provided array in no particular order. Elements of
+        /// the output array may be left zero, as can happen when crossing a pentagon.
+        /// </summary>
+        /// <param name="origin">origin cell</param>
+        /// <param name="k">k >= 0</param>
+        /// <returns>H3Index cells within range</returns>
+        /// <!--
+        /// algos.c
+        /// void H3_EXPORT(kRing)
+        /// -->
+        public static List<H3Index> KRing(this H3Index origin, int k)
+        {
+            return origin.KRingDistances(k).Keys.ToList();
+        }
+        
+        /// <summary>
+        /// Produce cells and their distances from the given origin cell, up to
+        /// distance k
+        ///
+        /// k-ring 0 is defined as the origin cell, k-ring 1 is defined as k-ring 0 and
+        /// all neighboring cells, and so on.
+        ///
+        /// Output is placed in the provided array in no particular order. Elements of
+        /// the output array may be left zero, as can happen when crossing a pentagon.
+        /// </summary>
+        /// <param name="origin">origin cell</param>
+        /// <param name="k">k &gt;= 0</param>
+        /// <returns>
+        /// A dictionary with keys being the H3Index, and the value being the distance.
+        /// </returns>
+        /// <!--
+        /// algos.c
+        /// void H3_EXPORT(kRingDistances)
+        /// -->
+        public static Dictionary<H3Index, int> KRingDistances(this H3Index origin, int k)
+        {
+            // Optimistically try the faster hexRange algorithm first
+            var testFaster = origin.HexRangeDistances(k);
+            if (testFaster.Item1 == 0)
+            {
+                return testFaster.Item2.ToDictionary(i => i.Item1, i => i.Item2);
+            }
+
+            // Fast algo failed, fall back to slower, correct algo
+            // and also wipe out array because contents untrustworthy
+
+            var results = new Dictionary<H3Index, int>();
+            return origin.KRingInternal(k, 0, results);
+        }
+
+        /// <summary>
+        /// Internal helper function called recursively for kRingDistances.
+        /// 
+        /// Adds the origin cell to the output set (treating it as a hash set)
+        /// and recurses to its neighbors, if needed.
+        /// </summary>
+        /// <param name="origin">Origin cell</param>
+        /// <param name="k">Maximum distance to move from the origin</param>
+        /// <param name="currentK">Current distance from the origin</param>
+        /// <param name="outData">Dictionary passing information beween recursions</param>
+        /// <returns>
+        /// Dictionary of cells
+        /// Key - element either an H3Index or 0
+        /// Value - indicate ijk distance from the origin cell to Item2
+        /// </returns>
+        /// <!--
+        /// algos.c
+        /// void _kRingInternal
+        /// -->
+        public static Dictionary<H3Index, int> KRingInternal(this H3Index origin, int k, int currentK, Dictionary<H3Index, int> outData)
+        {
+            if (origin == 0)
+            {
+                return null;
+            }
+
+            var results = new Dictionary<H3Index, int>(outData);
+
+            // If we already have the origin h3index in the dictionary, and
+            // we have a shorter path known, let's get out instead of
+            // processing this further.
+            if (results.ContainsKey(origin) && results[origin] <= currentK)
+            {
+                return results;
+            }
+
+            results[origin] = currentK;
+
+            // Base case: reached an index k away from the origin.
+            if (currentK >= k)
+            {
+                return results;
+            }
+            
+            // Recurse to all neighbors in no particular order.
+            for (var i = 0; i < 6; i++)
+            {
+                const int rotations = 0;
+                (origin, _) = origin.NeighborRotations(StaticData.Algos.Directions[i], rotations);
+                var recurseResults = origin.KRingInternal(k, currentK + 1, results);
+                foreach ((var key, int value) in recurseResults)
+                {
+                    results[key] = value;
+                }
+            }
+
+            return results;
+        }
+        
         /// <summary>
         /// Returns the hexagon index neighboring the origin, in the direction dir.
         ///
@@ -1547,6 +1691,10 @@ namespace H3Lib.Extensions
         /// Item1 - see summary above
         /// Item2 - Modified rotation value
         /// </returns>
+        /// <!--
+        /// algos.c
+        /// H3Index h3NeighborRotations
+        /// -->
         public static (H3Index, int) NeighborRotations(this H3Index origin, Direction dir, int rotations)
         {
             H3Index outHex = origin;
@@ -1724,7 +1872,7 @@ namespace H3Lib.Extensions
         }
 
         /// <summary>
-        /// hexRange produces indexes within k distance of the origin index.
+        /// Produces indexes within k distance of the origin index.
         /// Output behavior is undefined when one of the indexes returned by this
         /// function is a pentagon or is in the pentagon distortion area.
         ///
@@ -1745,6 +1893,10 @@ namespace H3Lib.Extensions
         ///             Item1: H3Index
         ///             Item2: distance
         /// </returns>
+        /// <!--
+        /// algos.c
+        /// int H3_EXPORT(hexRangeDistances)
+        /// -->
         public static (int, List<(H3Index, int)>) HexRangeDistances(this H3Index origin, int k)
         {
             // Return codes:
@@ -1762,8 +1914,6 @@ namespace H3Lib.Extensions
                 return (StaticData.Algos.HexRangePentagon, results);
             }
 
-            // We already added one to results, so moving forward.
-            int idx = 1;
             // 0 < ring <= k, current ring
             int ring = 1;
             // 0 <= direction < 6, current side of the ring
@@ -1828,6 +1978,116 @@ namespace H3Lib.Extensions
             }
 
             return (StaticData.Algos.HexRangeSuccess, results);
+        }
+
+        /// <summary>
+        /// Returns the "hollow" ring of hexagons at exactly grid distance k from
+        /// the origin hexagon. In particular, k=0 returns just the origin hexagon.
+        ///
+        /// A nonzero failure code may be returned in some cases, for example,
+        /// if a pentagon is encountered.
+        ///
+        /// Failure cases may be fixed in future versions.
+        /// </summary>
+        /// <param name="origin">Origin location.</param>
+        /// <param name="k">k >= 0</param>
+        /// <returns>
+        /// Tuple
+        ///     Item1 - Status: 0 if successful, other if failure
+        ///     Item2 - List of h3index cells if status == 0, otherwise empty list 
+        /// </returns>
+        /// <!--
+        /// algos.c
+        /// int H3_EXPORT(hexRing)
+        /// -->
+        public static (int, List<H3Index>) HexRing(this H3Index origin, int k)
+        {
+            var results = new List<H3Index> {origin};
+            // Short-circuit on 'identity' ring
+            if (k == 0)
+            {
+                return (0, results);
+            }
+
+            // Number of 60 degree ccw rotations to perform on the direction (based on
+            // which faces have been crossed.)
+            var rotations = 0;
+            // Scratch structure for checking for pentagons
+            if (origin.IsPentagon())
+            {
+                // Pentagon was encountered; bail out as user doesn't want this.
+                return (StaticData.Algos.HexRangePentagon, new List<H3Index>());
+            }
+
+            for (var ring = 0; ring < k; ring++)
+            {
+                (origin, rotations) = origin.NeighborRotations(StaticData.Algos.NextRingDirection, rotations);
+
+                if (origin == 0)
+                {
+                    // Should not be possible because `origin` would have to be a
+                    // pentagon
+                    return (StaticData.Algos.HexRangeKSubsequence, new List<H3Index>());
+                }
+
+                if (origin.IsPentagon())
+                {
+                    return (StaticData.Algos.HexRangePentagon, new List<H3Index>());
+                }
+            }
+
+            var lastIndex = origin;
+            for (var direction = 0; direction < 6; direction++)
+            {
+                for (var pos = 0; pos < k; pos++)
+                {
+                    (origin, rotations) = origin.NeighborRotations(StaticData.Algos.Directions[direction], rotations);
+
+                    if (origin == 0) 
+                    {
+                        // Should not be possible because `origin` would have to be a
+                        // pentagon
+                        return (StaticData.Algos.HexRangeKSubsequence, new List<H3Index>());
+                    }
+
+                    // Skip the very last index, it was already added. We do
+                    // however need to traverse to it because of the pentagonal
+                    // distortion check, below.
+                    if (pos != k - 1 || direction != 5)
+                    {
+                        results.Add(origin);
+                        if (origin.IsPentagon())
+                        {
+                            return (StaticData.Algos.HexRangePentagon, new List<H3Index>());
+                        }
+                    }
+                }
+            }
+
+            // Check that this matches the expected lastIndex, if it doesn't,
+            // it indicates pentagonal distortion occurred and we should report
+            // failure.
+            return lastIndex != origin
+                       ? (StaticData.Algos.HexRangePentagon, new List<H3Index>())
+                       : (StaticData.Algos.HexRangeSuccess, results);
+        }
+
+        /// <summary>
+        /// returns the radius of a given hexagon in Km
+        /// </summary>
+        /// <param name="h3">the index of the hexagon</param>
+        /// <returns>the radius of the hexagon in Km</returns>
+        /// <!--
+        /// bbox.c
+        /// double _hexRadiusKm
+        /// -->
+        public static double HexRadiusKm(this H3Index h3)
+        {
+            // There is probably a cheaper way to determine the radius of a
+            // hexagon, but this way is conceptually simple
+            var h3Center = h3.ToGeoCoord();
+            var h3Boundary = h3.ToGeoBoundary();
+            return h3Center.DistanceToKm(h3Boundary.Verts.First());
         }
     }
 }

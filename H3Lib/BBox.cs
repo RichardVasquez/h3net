@@ -16,6 +16,15 @@ namespace H3Lib
         public double West;
 
         /// <summary>
+        /// Whether the given bounding box crosses the antimeridian
+        /// </summary>
+        /// <!--
+        /// bbox.c
+        /// bboxIsTransmeridian
+        /// -->
+        public bool IsTransmeridian => East < West;
+        
+        /// <summary>
         /// Create a bounding box from a simple polygon defined as an array of vertices.
         ///
         /// Known limitations:
@@ -73,7 +82,7 @@ namespace H3Lib
         /// <param name="Geofence">Input <see cref="Geofence"/></param>
         /// <param name="bbox">Output bbox</param>
         public static void bboxFromGeofence(Geofence Geofence, ref BBox bbox) {
-            BboxFromVertices(Geofence.verts.ToList() , Geofence.numVerts, ref bbox);
+            BboxFromVertices(Geofence.Verts.ToList() , Geofence.NumVerts, ref bbox);
         }
 
         /// <summary>
@@ -86,10 +95,10 @@ namespace H3Lib
             var bb = bboxes[0];
             bboxFromGeofence(polygon.Geofence, ref bb);
             bboxes[0] = bb;
-            for (int i = 0; i < polygon.numHoles; i++)
+            for (int i = 0; i < polygon.NumHoles; i++)
             {
                 bb = bboxes[i + 1];
-                bboxFromGeofence(polygon.holes[i], ref bb);
+                bboxFromGeofence(polygon.Holes[i], ref bb);
                 bboxes[i + 1] = bb;
             }
         }
@@ -166,7 +175,7 @@ namespace H3Lib
             GeoBoundary h3Boundary = new GeoBoundary();
             h3Center = h3.ToGeoCoord();
             h3Boundary = h3.ToGeoBoundary();
-            return GeoCoord._geoDistKm(h3Center,   h3Boundary.verts);
+            return GeoCoord._geoDistKm(h3Center,   h3Boundary.Verts);
         }
 
         /// <summary>
@@ -204,6 +213,39 @@ namespace H3Lib
             // bounding box radius and center, it is guaranteed to fit in this k-ring
             // Rounded *up* to guarantee containment
             return (int)Math.Ceiling(bboxRadiusKm / (1.5 * centerHexRadiusKm));
+        }
+        
+        public bool Equals(BBox other)
+        {
+            return Math.Abs(North - other.North) < double.Epsilon &&
+                   Math.Abs(South - other.South) < double.Epsilon &&
+                   Math.Abs(East - other.East) < double.Epsilon &&
+                   Math.Abs(West - other.West) < double.Epsilon;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            return obj is BBox ijk && Equals(ijk);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(North, South, East, West);
+        }
+
+        public static bool operator ==(BBox left, BBox right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(BBox left, BBox right)
+        {
+            return !Equals(left, right);
         }
     }
 }

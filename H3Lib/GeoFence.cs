@@ -2,16 +2,16 @@ namespace H3Lib
 {
     public class Geofence
     {
-        public int numVerts;
-        public GeoCoord[] verts;
+        public int NumVerts;
+        public GeoCoord[] Verts;
 
         public Geofence()
         {
-            verts = new[]
+            Verts = new[]
                     {
                         new GeoCoord(0.0,0.0), new GeoCoord(0.0,0.0)
                     };
-            numVerts = 0;
+            NumVerts = 0;
 
         }
     }

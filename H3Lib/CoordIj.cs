@@ -9,7 +9,13 @@ namespace H3Lib
     /// </summary>
     public readonly struct CoordIj : IEquatable<CoordIj>
     {
+        /// <summary>
+        /// I Component
+        /// </summary>
         public readonly int I;
+        /// <summary>
+        /// J component
+        /// </summary>
         public readonly int J;
 
         public CoordIj(int i, int j) : this()
