@@ -477,5 +477,19 @@ namespace H3Lib.Extensions
 
             return maxCount;
         }
+
+        /// <summary>
+        /// Maximum number of cells that result from the kRing algorithm with the given
+        /// k. Formula source and proof: https://oeis.org/A003215
+        /// </summary>
+        /// <param name="k">k value, k &gt;= 0.</param>
+        /// <!--
+        /// algos.c
+        /// int H3_EXPORT(maxKringSize)
+        /// -->
+        public static int MaxKringSize(this int k)
+        {
+            return 3 * k * (k + 1) + 1;
+        }
     }
 }

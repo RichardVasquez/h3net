@@ -8,7 +8,6 @@ namespace H3Lib
     /// <summary>
     /// Hexagon grid algorithms
     /// </summary>
-    /// <!-- Based off 3.1.1 -->
     public class Algos
     {
         /// <summary>
@@ -20,7 +19,6 @@ namespace H3Lib
         ///   \1/ \3/
         ///     \2/
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         internal static readonly Direction[] DIRECTIONS =
         {
             Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT,
@@ -33,7 +31,6 @@ namespace H3Lib
         /// 
         /// Current digit -&gt; direction -&gt; new digit.
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         internal static readonly Direction[,] NEW_DIGIT_II =
         {
             {
@@ -71,7 +68,6 @@ namespace H3Lib
         ///
         /// Current digit -&gt; direction -&gt; new ap7 move (at coarser level).
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         internal static readonly Direction[,] NEW_ADJUSTMENT_II =
         {
             {
@@ -109,7 +105,6 @@ namespace H3Lib
         ///
         /// Current digit -&gt; direction -&gt; new ap7 move (at coarser level).
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         internal static readonly Direction[,] NEW_DIGIT_III =
         {
             {
@@ -147,7 +142,6 @@ namespace H3Lib
         /// 
         /// Current digit -&gt; direction -&gt; new ap7 move (at coarser level).
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         internal static readonly Direction[,] NEW_ADJUSTMENT_III =
         {
             {
@@ -187,7 +181,6 @@ namespace H3Lib
         /// <param name="k">Radius value </param>
         /// <remarks>k &gt;= 0</remarks>
         /// </summary>
-        /// <!-- Based off 3.1.1 -->
         public static int maxKringSize(int k)
         {
             return (k < 0)
@@ -207,7 +200,6 @@ namespace H3Lib
         /// <param name="origin">Origin location</param>
         /// <param name="k">k &gt;= 0</param>
         /// <param name="out_hex">Zero-filled array which must be of size <see cref="maxKringSize"/>(k)</param>
-        /// <!-- Based off 3.1.1 -->
         public static void kRing(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             int maxIdx = maxKringSize(k);
@@ -228,7 +220,6 @@ namespace H3Lib
         /// <param name="k">k &gt;= 0</param>
         /// <param name="out_hex">Zero-filled array which must be of size <see cref="maxKringSize"/>(k)</param>
         /// <param name="distances">Zero-filled array which must be of size <see cref="maxKringSize"/>(k)</param>
-        /// <!-- Based off 3.1.1 -->
         public static void kRingDistances(H3Index origin, int k, ref List<H3Index> out_hex, ref List<int> distances)
         {
             int maxIdx = maxKringSize(k);
@@ -258,7 +249,6 @@ namespace H3Lib
         /// <param name="maxIdx">Size of out and scratch arrays (must be <see cref="maxKringSize"/>(k))</param>
         /// <param name="curK">Current distance from the origin.</param>
         /// <remarks>Elements of distances indicate ijk distance from the origin index to the output index</remarks>
-        /// <!-- Based off 3.1.1 -->
         internal static void _kRingInternal(H3Index origin, int k, ref List<H3Index> outHex, ref List<int> distances,
             int maxIdx, int curK)
         {
@@ -321,7 +311,6 @@ namespace H3Lib
         /// when crossing a face edge.)
         /// </param>
         /// <returns>H3Index of the specified neighbor or 0 if deleted k-subsequence distortion is encountered.</returns>
-        /// <!-- Based off 3.2.0 -->
         internal static ulong h3NeighborRotations(H3Index origin, Direction dir, ref int rotations)
         {
             H3Index out_hex = origin;
@@ -507,7 +496,6 @@ namespace H3Lib
         /// <param name="k">k &gt;= 0</param>
         /// <param name="out_hex">Array which must be of size <see cref="maxKringSize"/>(k)</param>
         /// <returns>0 if no pentagon or pentagonal distortion area was encountered</returns>
-        /// <!-- Based off 3.1.1 -->
         internal static int hexRange(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             //  Can't pass in a 0 as a null pointer, so we'll
@@ -533,7 +521,6 @@ namespace H3Lib
         /// <param name="out_size">Array which must be of size <see cref="maxKringSize"/>(k)</param>
         /// <param name="distances">Null or array which must be of size <see cref="maxKringSize"/>(k)</param>
         /// <returns>0 if no pentagon or pentagonal distortion area was encountered.</returns>
-        /// <!-- Based off 3.1.1 -->
         internal static int hexRangeDistances(H3Index origin, int k, ref List<H3Index> out_size, ref List<int> distances)
         {
             // Return codes:
@@ -640,7 +627,6 @@ namespace H3Lib
         /// <param name="k">The number of rings to generate</param>
         /// <param name="out_index">contains output set of H3Indexes</param>
         /// <returns>0 if no pentagon is encountered. Cannot trust output otherwise</returns>
-        /// <!-- Based off 3.1.1 -->
         internal static int hexRanges(ref List<H3Index> h3Set, int length, int k, List<H3Index> out_index)
         {
             //List<H3Index> segment = new List<H3Index>();
@@ -673,7 +659,6 @@ namespace H3Lib
         /// <param name="k">k &gt;= 0</param>
         /// <param name="out_hex">Array which must be of size 6 * k (or 1 if k == 0)</param>
         /// <returns>0 if no pentagonal distortion was encountered</returns>
-        /// <!-- Based off 3.1.1 -->
         public static int hexRing(H3Index origin, int k, ref List<H3Index> out_hex)
         {
             // Short-circuit on 'identity' ring
@@ -768,7 +753,6 @@ namespace H3Lib
         /// <param name="geoPolygon">A GeoJSON-like data structure indicating the poly to fill</param>
         /// <param name="res">Hexagon resolution (0-15)</param>
         /// <returns>number of hexagons to allocate for</returns>
-        /// <!-- Based off 3.1.1 -->
         internal static int maxPolyfillSize(ref GeoPolygon geoPolygon, int res)
         {
             // Get the bounding box for the GeoJSON-like struct
@@ -793,7 +777,6 @@ namespace H3Lib
         /// <param name="geoPolygon">The Geofence and holes defining the relevant area</param>
         /// <param name="res"> The Hexagon resolution (0-15)</param>
         /// <param name="out_hex">The slab of zeroed memory to write to. Assumed to be big enough.</param>
-        /// <!-- Based off 3.1.1 -->
         internal static void polyfill(GeoPolygon geoPolygon, int res, List<H3Index> out_hex)
         {
             // One of the goals of the polyfill algorithm is that two adjacent polygons
@@ -868,7 +851,6 @@ namespace H3Lib
          /// <param name="h3Set">Set of hexagons</param>
          /// <param name="numHexes">Number of hexagons in the set</param>
          /// <param name="graph">Output graph</param>
-         /// <!-- Based off 3.1.1 -->
          public static void h3SetToVertexGraph(ref List<H3Index> h3Set, int numHexes,
             ref VertexGraph graph)
         {
@@ -927,7 +909,6 @@ namespace H3Lib
         /// </summary>
         /// <param name="graph">input graph</param>
         /// <param name="out_polygon">output polygon</param>
-        /// <!-- Based off 3.1.1 -->
         internal static void _vertexGraphToLinkedGeo(ref VertexGraph graph, ref LinkedGeo.LinkedGeoPolygon out_polygon)
         {
             out_polygon = new LinkedGeo.LinkedGeoPolygon();
@@ -961,7 +942,6 @@ namespace H3Lib
         /// <param name="h3Set">Set of hexagons</param>
         /// <param name="numHexes">NUmber of hexagons in set</param>
         /// <param name="out_polygons">output polygon</param>
-        /// <!-- Based off 3.1.1 -->
         public static void h3SetToLinkedGeo(ref List<H3Index> h3Set, int numHexes,
             ref LinkedGeo.LinkedGeoPolygon out_polygons)
         {

@@ -78,8 +78,7 @@ namespace H3Lib.Extensions
         /// -->
         public static double ExactEdgeLengthRads(this H3Index edge)
         {
-            var gb = new GeoBoundary();
-            H3UniEdge.getH3UnidirectionalEdgeBoundary(edge, ref gb);
+            var gb = edge.UniEdgeToGeoBoundary();
 
             var length = 0.0;
             for (var i = 0; i < gb.numVerts - 1; i++)
@@ -1526,6 +1525,309 @@ namespace H3Lib.Extensions
             return isPentagon
                      ? fijk.PentToGeoBoundary(res, startVertex, 2)
                      : fijk.ToGeoBoundary(res, startVertex, 2);
+        }
+
+        /// <summary>
+        /// Returns the hexagon index neighboring the origin, in the direction dir.
+        ///
+        /// Implementation note: The only reachable case where this returns 0 is if the
+        /// origin is a pentagon and the translation is in the k direction. Thus,
+        /// 0 can only be returned if origin is a pentagon.
+        /// </summary>
+        /// <param name="origin">Origin index</param>
+        /// <param name="dir">Direction to move in</param>
+        /// <param name="rotations">
+        /// Number of ccw rotations to perform to reorient the
+        /// translation vector. Modified version Will be returned in tuple,
+        /// so make sure it's reassigned upon return.  Return will be the
+        /// new number of rotations to perform (such as when crossing a face edge.)
+        /// </param>
+        /// <returns>
+        /// Tuple
+        /// Item1 - see summary above
+        /// Item2 - Modified rotation value
+        /// </returns>
+        public static (H3Index, int) NeighborRotations(this H3Index origin, Direction dir, int rotations)
+        {
+            H3Index outHex = origin;
+            int outRotations = rotations;
+
+            for (int i = 0; i < outRotations; i++)
+            {
+                dir = dir.Rotate60CounterClockwise();
+            }
+
+            int newRotations = 0;
+            int oldBaseCell = outHex.BaseCell;
+            Direction oldLeadingDigit = outHex.LeadingNonZeroDigit;
+
+            // Adjust the indexing digits and, if needed, the base cell.
+            int r = outHex.Resolution - 1;
+            while (true)
+            {
+                if (r == -1)
+                {
+                    outHex.BaseCell = StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) dir];
+                    newRotations =
+                        StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) dir];
+
+                    if(outHex.BaseCell == StaticData.BaseCells.InvalidBaseCell)
+                    {
+                        // Adjust for the deleted k vertex at the base cell level.
+                        // This edge actually borders a different neighbor.
+                        outHex.BaseCell =
+                            StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) Direction.IK_AXES_DIGIT];
+
+                        newRotations =
+                            StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation
+                                [oldBaseCell, (int) Direction.IK_AXES_DIGIT];
+
+                        // perform the adjustment for the k-subsequence we're skipping
+                        // over.
+                        outHex=outHex.Rotate60CounterClockwise();
+                        outRotations++;
+                    }
+                    break;
+                }
+                else
+                {
+                    Direction oldDigit = outHex.GetIndexDigit(r + 1);
+                    Direction nextDir;
+                    if((r+1).IsResClassIii())
+                    {
+                        outHex.SetIndexDigit(r + 1, (ulong) StaticData.Algos.NewDigitIi[(int) oldDigit, (int) dir]);
+                        nextDir = StaticData.Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
+                    }
+                    else
+                    {
+                        outHex.SetIndexDigit(r + 1, (ulong) StaticData.Algos.NewDigitIii[(int) oldDigit, (int) dir]);
+                        nextDir = StaticData.Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
+                    }
+
+                    if (nextDir != Direction.CENTER_DIGIT)
+                    {
+                        dir = nextDir;
+                        r--;
+                    }
+                    else
+                    {
+                        // No more adjustment to perform
+                        break;
+                    }
+                }
+            }
+
+            int newBaseCell = outHex.BaseCell;
+            if(newBaseCell.IsBaseCellPentagon())
+            {
+                var alreadyAdjustedKSubsequence = false;
+
+                // force rotation out of missing k-axes sub-sequence
+                if (outHex.LeadingNonZeroDigit == Direction.K_AXES_DIGIT)
+                {
+                    if (oldBaseCell != newBaseCell)
+                    {
+                        // in this case, we traversed into the deleted
+                        // k subsequence of a pentagon base cell.
+                        // We need to rotate out of that case depending
+                        // on how we got here.
+                        // check for a cw/ccw offset face; default is ccw
+
+                        if (BaseCells.IsClockwiseOffset
+                            (newBaseCell, StaticData.BaseCells.BaseCellData[oldBaseCell].HomeFijk.Face))
+                        {
+                            outHex=outHex.Rotate60Clockwise();                            
+                        }
+                        else
+                        {
+                            // See cwOffsetPent in testKRing.c for why this is
+                            // unreachable.
+                            outHex=outHex.Rotate60CounterClockwise();
+                        }
+                        alreadyAdjustedKSubsequence = true;
+                    }
+                    else
+                    {
+                        // In this case, we traversed into the deleted
+                        // k subsequence from within the same pentagon
+                        // base cell.
+                        if (oldLeadingDigit == Direction.CENTER_DIGIT)
+                        {
+                            // Undefined: the k direction is deleted from here
+                            return (StaticData.H3Index.H3_NULL, outRotations);
+                        }
+                        else
+                        if (oldLeadingDigit == Direction.JK_AXES_DIGIT)
+                        {
+                            // Rotate out of the deleted k subsequence
+                            // We also need an additional change to the direction we're
+                            // moving in
+                            outHex = outHex.Rotate60CounterClockwise();
+                            outRotations++;
+                        }
+                        else if (oldLeadingDigit == Direction.IK_AXES_DIGIT)
+                        {
+                            // Rotate out of the deleted k subsequence
+                            // We also need an additional change to the direction we're
+                            // moving in
+                            outHex = outHex.Rotate60Clockwise();
+                            outRotations += 5;
+                        }
+                        else
+                        {
+                            // Should never occur
+                            return (StaticData.H3Index.H3_NULL, outRotations);
+                        }
+                    }
+                }
+
+                for (var i = 0; i < newRotations; i++)
+                {
+                    outHex = outHex.RotatePent60CounterClockwise();  
+                } 
+
+                // Account for differing orientation of the base cells (this edge
+                // might not follow properties of some other edges.)
+                if (oldBaseCell != newBaseCell)
+                {
+                    // TODO: Place this and related in H3LibExtensions
+                    if (BaseCells.IsBaseCellPolarPentagon(newBaseCell))
+                    {
+                        // 'polar' base cells behave differently because they have all
+                        // i neighbors.
+                        if (oldBaseCell != 118 && oldBaseCell != 8 &&
+                            outHex.LeadingNonZeroDigit!=Direction.JK_AXES_DIGIT)
+                        {
+                            outRotations++;
+                        }
+                    }
+                    else if (outHex.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT &&
+                       !alreadyAdjustedKSubsequence)
+                    {
+                        // account for distortion introduced to the 5 neighbor by the
+                        // deleted k subsequence.
+                        outRotations++;
+                
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < newRotations; i++)
+                {
+                    outHex = outHex.Rotate60CounterClockwise();
+                }
+            }
+
+            outRotations = (outRotations + newRotations) % 6;
+            return (outHex, outRotations);
+        }
+
+        /// <summary>
+        /// hexRange produces indexes within k distance of the origin index.
+        /// Output behavior is undefined when one of the indexes returned by this
+        /// function is a pentagon or is in the pentagon distortion area.
+        ///
+        /// k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
+        /// all neighboring indexes, and so on.
+        ///
+        /// Output is placed in the provided array in order of increasing distance from
+        /// the origin. The distances in hexagons is placed in the distances array at
+        /// the same offset.
+        /// </summary>
+        /// <param name="origin">Origin location.</param>
+        /// <param name="k">k &gt;= 0</param>
+        /// <returns>
+        /// Tuple with list of tuples
+        /// Main tuple:
+        ///     Item1 : status code
+        ///     Item2 : List of tuples
+        ///             Item1: H3Index
+        ///             Item2: distance
+        /// </returns>
+        public static (int, List<(H3Index, int)>) HexRangeDistances(this H3Index origin, int k)
+        {
+            // Return codes:
+            // 1 Pentagon was encountered
+            // 2 Pentagon distortion (deleted k subsequence) was encountered
+            // Pentagon being encountered is not itself a problem; really the deleted
+            // k-subsequence is the problem, but for compatibility reasons we fail on
+            // the pentagon.
+
+            // k must be >= 0, so origin is always needed
+            var results = new List<(H3Index, int)> {(origin, 0)};
+
+            if (origin.IsPentagon())
+            {
+                return (StaticData.Algos.HexRangePentagon, results);
+            }
+
+            // We already added one to results, so moving forward.
+            int idx = 1;
+            // 0 < ring <= k, current ring
+            int ring = 1;
+            // 0 <= direction < 6, current side of the ring
+            int direction = 0;
+            // 0 <= i < ring, current position on the side of the ring
+            int i = 0;
+            // Number of 60 degree ccw rotations to perform on the direction (based on
+            // which faces have been crossed.)
+            int rotations = 0;
+
+            while (ring <= k)
+            {
+                if (direction == 0 && i == 0)
+                {
+                    // Not putting in the output set as it will be done later, at
+                    // the end of this ring.
+                    (origin, rotations) = origin.NeighborRotations(StaticData.Algos.NextRingDirection, rotations);
+
+                    if (origin == 0)
+                    {
+                        // Should not be possible because `origin` would have to be a
+                        // pentagon
+                        return (StaticData.Algos.HexRangeKSubsequence, results);
+                    }
+
+                    if(origin.IsPentagon())
+                    {
+                        // Pentagon was encountered; bail out as user doesn't want this.
+                        return (StaticData.Algos.HexRangePentagon, results);
+                    }
+                }
+
+                (origin, rotations) = origin.NeighborRotations(StaticData.Algos.Directions[direction], rotations);
+                if (origin == 0)
+                {
+                    // Should not be possible because `origin` would have to be a
+                    // pentagon
+                    return (StaticData.Algos.HexRangeKSubsequence, results);
+                }
+
+                results.Add((origin, ring));
+
+                i++;
+                // Check if end of this side of the k-ring
+                if (i == ring)
+                {
+                    i = 0;
+                    direction++;
+                    // Check if end of this ring.
+                    if (direction == 6)
+                    {
+                        direction = 0;
+                        ring++;
+                    }
+                }
+
+                if (origin.IsPentagon())
+                {
+                    // Pentagon was encountered; bail out as user doesn't want this.
+                    return (StaticData.Algos.HexRangePentagon, results);
+                }
+            }
+
+            return (StaticData.Algos.HexRangeSuccess, results);
         }
     }
 }
