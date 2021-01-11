@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace H3Lib
 {
+    /// TODO: Make sure all the LinkedList stuff works
     /// <summary>
     /// A polygon node in a linked geo structure, part of a linked list.
     /// </summary>

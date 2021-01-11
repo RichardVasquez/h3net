@@ -389,13 +389,13 @@ namespace H3Lib.Extensions
             // rotate if necessary to get canonical base cell orientation
             // for this base cell
             int numRots = fijkBc.ToBaseCellCounterClockwiseRotate60();
-            if (BaseCells.IsBaseCellPentagon(baseCell))
+            if (baseCell.IsBaseCellPentagon())
             {
                 // force rotation out of missing k-axes sub-sequence
                 if (h.LeadingNonZeroDigit == Direction.K_AXES_DIGIT)
                 {
                     // check for a cw/ccw offset face; default is ccw
-                    h = BaseCells.IsClockwiseOffset(baseCell, fijkBc.Face)
+                    h = baseCell.IsClockwiseOffset(fijkBc.Face)
                             ? h.Rotate60Clockwise()
                             : h.Rotate60CounterClockwise();
                 }

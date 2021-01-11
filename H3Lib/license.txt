@@ -1,4 +1,4 @@
-Copyright 2018-2020, Richard Vasquez
+Copyright 2018-2021, Richard Vasquez
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,4 +16,4 @@ limitations under the License.
 
 Original version written in C, Copyright 2016-2020 Uber Technologies, Inc.
 C version licensed under the Apache License, Version 2.0 (the "License");
-Original Source code available at: https://github.com/uber/h3
+Original C Source code available at: https://github.com/uber/h3

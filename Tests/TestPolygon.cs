@@ -414,7 +414,7 @@ namespace Tests
 
             int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
 
-            Assert.True(result == LinkedGeo.NormalizationSuccess, "No error code returned");
+            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
 
             Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 1, "Polygon count correct");
             Assert.True(LinkedGeo.CountLinkedLoops(ref polygon) == 1, "Loop count correct");
@@ -450,7 +450,7 @@ namespace Tests
 
             int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
 
-            Assert.True(result == LinkedGeo.NormalizationSuccess, "No error code returned");
+            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
 
             Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 2, "Polygon count correct");
             Assert.True
@@ -495,7 +495,7 @@ namespace Tests
 
             int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
 
-            Assert.True(result == LinkedGeo.NormalizationSuccess, "No error code returned");
+            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
 
             Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 1, "Polygon count correct");
             Assert.True(LinkedGeo.CountLinkedLoops(ref polygon) == 2,
@@ -551,7 +551,7 @@ namespace Tests
 
             int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
 
-            Assert.True(result == LinkedGeo.NormalizationSuccess, "No error code returned");
+            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
 
             Assert.True
                 (
@@ -619,7 +619,7 @@ namespace Tests
 
             int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
 
-            Assert.True(result == LinkedGeo.NormalizationSuccess, "No error code returned");
+            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
 
             Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 2, "Polygon count correct");
             Assert.True
@@ -709,7 +709,7 @@ namespace Tests
 
             int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
 
-            Assert.True(result == LinkedGeo.NormalizationSuccess, "No error code returned");
+            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
 
             Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 2, "Polygon count correct");
             Assert.True(LinkedGeo.CountLinkedLoops(ref polygon) == 2,
@@ -755,7 +755,7 @@ namespace Tests
 
             Assert.True
                 (
-                 result == LinkedGeo.NormalizationErrUnassignedHoles,
+                 result == H3Lib.StaticData.LinkedGeo.NormalizationErrUnassignedHoles,
                  "Expected error code returned"
                 );
 
@@ -801,7 +801,7 @@ namespace Tests
             // Should be a no-op
             int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
 
-            Assert.True(result ==LinkedGeo. NormalizationErrMultiplePolygons,
+            Assert.True(result ==H3Lib.StaticData.LinkedGeo. NormalizationErrMultiplePolygons,
                      "Expected error code returned");
 
             Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 2, "Polygon count correct");
@@ -846,7 +846,7 @@ namespace Tests
             int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
             
             // Expected error code returned
-            Assert.AreEqual(result, LinkedGeo.NormalizationErrUnassignedHoles);
+            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationErrUnassignedHoles);
         }
     }
 }

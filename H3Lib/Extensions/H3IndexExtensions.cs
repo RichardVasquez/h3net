@@ -53,7 +53,7 @@ namespace H3Lib.Extensions
         {
             return h.CellAreaRadians2() * Constants.EARTH_RADIUS_KM * Constants.EARTH_RADIUS_KM;
         }
-        
+
         /// <summary>
         /// Area of H3 cell in meters^2.
         /// </summary>
@@ -154,23 +154,23 @@ namespace H3Lib.Extensions
             var revDir = Direction.CENTER_DIGIT;
             if (originBaseCell != baseCell)
             {
-                dir = BaseCells._getBaseCellDirection(originBaseCell, baseCell);
+                dir = originBaseCell.GetBaseCellDirection(baseCell);
                 if (dir == Direction.INVALID_DIGIT)
                 {
                     // Base cells are not neighbors, can't unfold.
                     return (2, new CoordIjk());
                 }
-                revDir = BaseCells._getBaseCellDirection(baseCell, originBaseCell);
+                revDir = baseCell.GetBaseCellDirection(originBaseCell);
                 if (revDir == Direction.INVALID_DIGIT)
                 {
                     throw new Exception("assert(revDir != INVALID_DIGIT);");
                 }
             }
 
-            int originOnPent = BaseCells.IsBaseCellPentagon(originBaseCell)
+            int originOnPent = baseCell.IsBaseCellPentagon()
                                    ? 1
                                    : 0;
-            int indexOnPent = BaseCells.IsBaseCellPentagon(baseCell)
+            int indexOnPent = baseCell.IsBaseCellPentagon()
                                   ? 1
                                   : 0;
 
@@ -225,7 +225,7 @@ namespace H3Lib.Extensions
                 if (originOnPent == 1)
                 {
                     var originLeadingDigit = (int) origin.LeadingNonZeroDigit;
-                    if (LocalIj.FAILED_DIRECTIONS[originLeadingDigit, (int) dir])
+                    if (LocalIJ.FAILED_DIRECTIONS[originLeadingDigit, (int) dir])
                     {
                         // TODO: We may be unfolding the pentagon incorrectly in this
                         // case; return an error code until this is guaranteed to be
@@ -233,21 +233,21 @@ namespace H3Lib.Extensions
                         return (3, new CoordIjk());
                     }
 
-                    directionRotations = LocalIj.PENTAGON_ROTATIONS[originLeadingDigit,(int)dir];
+                    directionRotations = LocalIJ.PENTAGON_ROTATIONS[originLeadingDigit,(int)dir];
                     pentagonRotations = directionRotations;
                 }
                 else if (indexOnPent == 1)
                 {
                     int indexLeadingDigit = (int) h3.LeadingNonZeroDigit;
 
-                    if (LocalIj.FAILED_DIRECTIONS[indexLeadingDigit,(int)revDir])
+                    if (LocalIJ.FAILED_DIRECTIONS[indexLeadingDigit,(int)revDir])
                     {
                         // TODO: We may be unfolding the pentagon incorrectly in this
                         // case; return an error code until this is guaranteed to be
                         // correct.
                     }
 
-                    pentagonRotations = LocalIj.PENTAGON_ROTATIONS[(int)revDir, indexLeadingDigit];
+                    pentagonRotations = LocalIJ.PENTAGON_ROTATIONS[(int)revDir, indexLeadingDigit];
                 }
 
                 if (pentagonRotations < 0)
@@ -297,7 +297,7 @@ namespace H3Lib.Extensions
                 var originLeadingDigit = (int)origin.LeadingNonZeroDigit;
                 var indexLeadingDigit = (int) h3.LeadingNonZeroDigit;
 
-                if (LocalIj.FAILED_DIRECTIONS[originLeadingDigit, indexLeadingDigit])
+                if (LocalIJ.FAILED_DIRECTIONS[originLeadingDigit, indexLeadingDigit])
                 {
                     // TODO: We may be unfolding the pentagon incorrectly in this case;
                     // return an error code until this is guaranteed to be correct.
@@ -305,7 +305,7 @@ namespace H3Lib.Extensions
                 }
 
                 int withinPentagonRotations =
-                    LocalIj.PENTAGON_ROTATIONS[originLeadingDigit,indexLeadingDigit];
+                    LocalIJ.PENTAGON_ROTATIONS[originLeadingDigit,indexLeadingDigit];
 
                 for (var i = 0; i < withinPentagonRotations; i++)
                 {
@@ -351,7 +351,6 @@ namespace H3Lib.Extensions
             return h;
         }
 
-        
         /// <summary>
         /// Rotate an H3Index 60 degrees clockwise about a pentagonal center.
         /// </summary>
@@ -451,7 +450,7 @@ namespace H3Lib.Extensions
             // center base cell hierarchy is entirely on this face
             var possibleOverage = 1;
 
-            if (!BaseCells.IsBaseCellPentagon( h.BaseCell) &&
+            if (!h.BaseCell.IsBaseCellPentagon() &&
                 (res == 0 || ijk == empty))
             {
                 possibleOverage = 0;
@@ -506,7 +505,7 @@ namespace H3Lib.Extensions
                        ? (0, coordIjk.ToIj())
                        : (result, new CoordIj());
         }
-        
+
         /// <summary>
         /// Produces the grid distance between the two indexes.
         /// 
@@ -544,7 +543,7 @@ namespace H3Lib.Extensions
 
             return originIjk.DistanceTo(h3Ijk);
         }
-        
+
         /// <summary>
         /// Number of indexes in a line from the start index to the end index,
         /// to be used for allocating memory. Returns a negative number if the
@@ -677,7 +676,7 @@ namespace H3Lib.Extensions
                 if (!foundFirstNonZeroDigit && digit != Direction.CENTER_DIGIT) 
                 {
                     foundFirstNonZeroDigit = true;
-                    if (BaseCells.IsBaseCellPentagon(baseCell) &&
+                    if (baseCell.IsBaseCellPentagon() &&
                         digit == Direction.K_AXES_DIGIT)
                     {
                         return false;
@@ -737,7 +736,7 @@ namespace H3Lib.Extensions
             }
             return parentH;
         }
-     
+
         /// <summary>
         /// MaxChildrenSize returns the maximum number of children possible for a
         /// given child level.
@@ -794,7 +793,7 @@ namespace H3Lib.Extensions
         /// -->
         public static bool IsPentagon(this H3Index h)
         {
-            return BaseCells.IsBaseCellPentagon(h.BaseCell) &&
+            return h.BaseCell.IsBaseCellPentagon() &&
                    h.LeadingNonZeroDigit == Direction.CENTER_DIGIT;
         }
 
@@ -833,7 +832,7 @@ namespace H3Lib.Extensions
             int baseCell = h.BaseCell;
             // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
             // to be adjusted (and some of sub-sequence 4 below)
-            if (BaseCells.IsBaseCellPentagon(baseCell) && h.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT)
+            if (baseCell.IsBaseCellPentagon() && h.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT)
             {
                 h = h.Rotate60Clockwise();
             }
@@ -864,7 +863,7 @@ namespace H3Lib.Extensions
             // a pentagon base cell with a leading 4 digit requires special handling
             int pentLeading4 =
                 
-                BaseCells.IsBaseCellPentagon(baseCell) &&
+                baseCell.IsBaseCellPentagon() &&
                 h.LeadingNonZeroDigit == Direction.I_AXES_DIGIT
                     ? 1
                     : 0;
@@ -875,7 +874,7 @@ namespace H3Lib.Extensions
             {
                 // if the base cell is a pentagon we have the potential for secondary
                 // overages
-                if (BaseCells.IsBaseCellPentagon(baseCell))
+                if (baseCell.IsBaseCellPentagon())
                 {
                     while (fijk.AdjustOverageClassIi(res,0,0).Item1 != Overage.NO_OVERAGE)
                     {
@@ -898,7 +897,7 @@ namespace H3Lib.Extensions
 
             return fijk;
         }
-        
+
         /// <summary>
         /// Find all icosahedron faces intersected by a given H3 index, represented
         /// as integers from 0-19. The array is sparse; since 0 is a valid value,
@@ -1149,9 +1148,9 @@ namespace H3Lib.Extensions
             var cellLeadingDigit = (int) cell.LeadingNonZeroDigit;
 
             // get the base cell face
-            var baseFijk = BaseCells.ToFaceIjk(baseCell);
+            var baseFijk = baseCell.ToFaceIjk();
 
-            int ccwRot60 = BaseCells.ToCounterClockwiseRotate60(baseCell, fijk.Face);
+            int ccwRot60 = baseCell.ToCounterClockwiseRotate60(fijk.Face);
 
             if (!baseCell.IsBaseCellPentagon())
             {
@@ -1188,7 +1187,7 @@ namespace H3Lib.Extensions
             };
             return ccwRot60;
         }
-        
+
         /// <summary>
         /// Get the first vertex number for a given direction. The neighbor in this
         /// direction is located between this vertex number and the next number in
@@ -1300,9 +1299,7 @@ namespace H3Lib.Extensions
             }
 
             // Otherwise, we have to determine the neighbor relationship the "hard" way.
-            var neighborRing = Enumerable.Range(1, 7).Select(s => new H3Index(0)).ToList();
-            //  TODO: Circle around to this after retrofitting Algos.cs
-            Algos.kRing(origin,1, ref neighborRing);
+            var neighborRing = origin.KRing(1);
 
             // return if any match
             return neighborRing.Any(nr => nr == destination);
@@ -1339,8 +1336,9 @@ namespace H3Lib.Extensions
                  direction <  Direction.NUM_DIGITS; direction++)
             {
                 // TODO: Circle back after retrofitting Algos.cs
-                var rotations = 0;
-                H3Index neighbor = Algos.h3NeighborRotations(origin,direction, ref rotations);
+                int rotations = 0;
+                (H3Index neighbor, _) = origin.NeighborRotations(direction, rotations);
+                    //Algos.h3NeighborRotations(origin,direction, ref rotations);
                 if (neighbor != destination)
                 {
                     continue;
@@ -1389,11 +1387,8 @@ namespace H3Lib.Extensions
 
             Direction direction = (Direction) edge.ReservedBits;
             int rotations = 0;
-            // TODO: Circle back after retrofitting Algos.cs
-            H3Index destination =
-                Algos.h3NeighborRotations(
-                                          edge.OriginFromUniDirectionalEdge(),
-                                          direction, ref rotations);
+            (var destination, _) = edge.OriginFromUniDirectionalEdge()
+                                       .NeighborRotations(direction, rotations);
             return destination;
         }
 
@@ -1555,7 +1550,7 @@ namespace H3Lib.Extensions
             (int status, List<(H3Index, int)> values) = origin.HexRangeDistances(k);
             return (status, values.Select(v => v.Item1).ToList());
         }
-        
+
         /// <summary>
         /// Produce cells within grid distance k of the origin cell.
         ///
@@ -1576,7 +1571,7 @@ namespace H3Lib.Extensions
         {
             return origin.KRingDistances(k).Keys.ToList();
         }
-        
+
         /// <summary>
         /// Produce cells and their distances from the given origin cell, up to
         /// distance k
@@ -1670,7 +1665,7 @@ namespace H3Lib.Extensions
 
             return results;
         }
-        
+
         /// <summary>
         /// Returns the hexagon index neighboring the origin, in the direction dir.
         ///
@@ -1781,17 +1776,10 @@ namespace H3Lib.Extensions
                         // on how we got here.
                         // check for a cw/ccw offset face; default is ccw
 
-                        if (BaseCells.IsClockwiseOffset
-                            (newBaseCell, StaticData.BaseCells.BaseCellData[oldBaseCell].HomeFijk.Face))
-                        {
-                            outHex=outHex.Rotate60Clockwise();                            
-                        }
-                        else
-                        {
-                            // See cwOffsetPent in testKRing.c for why this is
-                            // unreachable.
-                            outHex=outHex.Rotate60CounterClockwise();
-                        }
+                        outHex = newBaseCell.IsClockwiseOffset
+                                     (StaticData.BaseCells.BaseCellData[oldBaseCell].HomeFijk.Face)
+                                     ? outHex.Rotate60Clockwise()
+                                     : outHex.Rotate60CounterClockwise();
                         alreadyAdjustedKSubsequence = true;
                     }
                     else
@@ -1839,7 +1827,7 @@ namespace H3Lib.Extensions
                 if (oldBaseCell != newBaseCell)
                 {
                     // TODO: Place this and related in H3LibExtensions
-                    if (BaseCells.IsBaseCellPolarPentagon(newBaseCell))
+                    if (newBaseCell.IsBaseCellPolarPentagon())
                     {
                         // 'polar' base cells behave differently because they have all
                         // i neighbors.

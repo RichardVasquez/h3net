@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using H3Lib.Extensions;
 
 namespace H3Lib
 {
     /// <summary>
     /// H3Index utility functions
     /// </summary>
-    [DebuggerDisplay("Value: {H3Value}")]
+    [DebuggerDisplay("Value: {H3Value} => {ToString()}")]
     public class H3Index
     {
     #region base value and constructors

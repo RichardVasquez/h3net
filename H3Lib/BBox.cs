@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using H3Lib.Extensions;
 
 namespace H3Lib
 {
     /// <summary>
     /// Geographic bounding box with coordinates defined in radians
     /// </summary>
-    public class BBox
+    public readonly struct BBox:IEquatable<BBox>
     {
-        public double North;
-        public double South;
-        public double East;
-        public double West;
+        public readonly double North;
+        public readonly double South;
+        public readonly double East;
+        public readonly double West;
 
         /// <summary>
         /// Whether the given bounding box crosses the antimeridian
@@ -32,220 +29,17 @@ namespace H3Lib
             West = w;
         }
 
-        public BBox()
-        {
-            North = 0;
-            South = 0;
-            East = 0;
-            West = 0;
-        }
-        /// <summary>
-        /// Create a bounding box from a simple polygon defined as an array of vertices.
-        ///
-        /// Known limitations:
-        /// - Does not support polygons with two adjacent points &gt; 180 degrees of
-        ///   longitude apart. These will be interpreted as crossing the antimeridian.
-        /// - Does not currently support polygons containing a pole.
-        /// </summary>
-        /// <param name="verts">Array of vertices</param>
-        /// <param name="numVerts">Number of vertices</param>
-        /// <param name="bbox">Output box</param>
-        static void BboxFromVertices(List<GeoCoord> verts, int numVerts, ref BBox bbox) 
-        {
-            // Early exit if there are no vertices
-            if (numVerts == 0) {
-                bbox.North = 0;
-                bbox.South = 0;
-                bbox.East = 0;
-                bbox.West = 0;
-                return;
-            }
-            double lat;
-            double lon;
-
-            bbox.South = double.MaxValue;
-            bbox.West = double.MaxValue;
-            bbox.North = -double.MaxValue;
-            bbox.East = -double.MaxValue;
-            bool isTransmeridian = false;
-
-            for (int i = 0; i < numVerts; i++) {
-                lat = verts[i].Latitude;
-                lon = verts[i].Longitude;
-                if (lat < bbox.South) bbox.South = lat;
-                if (lon < bbox.West) bbox.West = lon;
-                if (lat > bbox.North) bbox.North = lat;
-                if (lon > bbox.East) bbox.East = lon;
-                // check for arcs > 180 degrees longitude, flagging as transmeridian
-                if (Math.Abs( lon - verts[(i + 1) % numVerts].Longitude) > Constants.M_PI)
-                {
-                    isTransmeridian = true;
-                }
-            }
-            // Swap east and west if transmeridian
-            if (isTransmeridian)
-            {
-                double tmp = bbox.East;
-                bbox.East = bbox.West;
-                bbox.West = tmp;
-            }
-        }
-
-        /// <summary>
-        /// Create a bounding box from a Geofence
-        /// </summary>
-        /// <param name="geoFence">Input <see cref="GeoFence"/></param>
-        /// <param name="bbox">Output bbox</param>
-        public static void bboxFromGeofence(GeoFence geoFence, ref BBox bbox) {
-            BboxFromVertices(geoFence.Verts.ToList() , geoFence.NumVerts, ref bbox);
-        }
-
-        /// <summary>
-        /// Create a bounding box from a GeoPolygon
-        /// </summary>
-        /// <param name="polygon">Input <see cref="GeoPolygon"/></param>
-        /// <param name="bboxes">Output bboxes, one for the outer loop and one for each hole</param>
-        void bboxesFromGeoPolygon(GeoPolygon polygon, ref List<BBox> bboxes)
-        {
-            var bb = bboxes[0];
-            bboxFromGeofence(polygon.GeoFence, ref bb);
-            bboxes[0] = bb;
-            for (int i = 0; i < polygon.NumHoles; i++)
-            {
-                bb = bboxes[i + 1];
-                bboxFromGeofence(polygon.Holes[i], ref bb);
-                bboxes[i + 1] = bb;
-            }
-        }
-
-        /// <summary>
-        /// Whether the given bounding box cross the antimeridian
-        /// </summary>
-        /// <param name="bbox">bounding box to inspect</param>
-        /// <returns>true if transmeridian</returns>
-        public static bool bboxIsTransmeridian(BBox bbox)
-        {
-            return bbox.East < bbox.West;
-        }
-
-        /// <summary>
-        /// Gets the center of a bounding box
-        /// </summary>
-        /// <param name="bbox">Input bounding box</param>
-        /// <param name="center">Output center coordinate</param>
-        public static void bboxCenter(BBox bbox, ref GeoCoord center)
-        {
-            center.Latitude = (bbox.North + bbox.South) / 2.0;
-            // If the bbox crosses the antimeridian, shift east 360 degrees
-            double east = bboxIsTransmeridian(bbox)
-                ? bbox.East + Constants.M_2PI
-                : bbox.East;
-            center.Longitude = GeoCoord.ConstrainLongitude((east + bbox.West) / 2.0);
-        }
-
-        /// <summary>
-        /// Whether the bounding box contains a given point
-        /// </summary>
-        /// <param name="bbox">Bounding box</param>
-        /// <param name="point">Point to test</param>
-        /// <returns>true is point is contained</returns>
-        public static bool bboxContains(BBox bbox, GeoCoord point)
-        {
-            return 
-                point.Latitude >= bbox.South && 
-                point.Latitude <= bbox.North &&
-                (
-                    bboxIsTransmeridian(bbox)
-                    // transmeridian case
-                    ? point.Longitude >= bbox.West || point.Longitude <= bbox.East
-                    // standard case
-                    : point.Longitude >= bbox.West && point.Longitude <= bbox.East
-                );
-        }
-
-        /// <summary>
-        /// Determines if two bounding boxes are strictly equal
-        /// </summary>
-        /// <param name="b1">Bounding box 1</param>
-        /// <param name="b2">Bounding box 2</param>
-        /// <returns>True if the boxes are equal</returns>
-        public static bool bboxEquals(BBox b1, BBox b2)
-        {
-            return Math.Abs(b1.North - b2.North) < Constants.EPSILON &&
-                   Math.Abs(b1.South - b2.South) < Constants.EPSILON &&
-                   Math.Abs(b1.East - b2.East) < Constants.EPSILON &&
-                   Math.Abs(b1.West - b2.West) < Constants.EPSILON;
-        }
-
-        /// <summary>
-        /// Returns the radius of a given hexagon in kilometers
-        /// </summary>
-        /// <param name="h3">Index of the hexagon</param>
-        /// <returns>radius of hexagon in kilometers</returns>
-        static double _hexRadiusKm(H3Index h3)
-        {
-            // There is probably a cheaper way to determine the radius of a
-            // hexagon, but this way is conceptually simple
-            GeoCoord h3Center = new GeoCoord();
-            GeoBoundary h3Boundary = new GeoBoundary();
-            h3Center = h3.ToGeoCoord();
-            h3Boundary = h3.ToGeoBoundary();
-            return GeoCoord._geoDistKm(h3Center,   h3Boundary.Verts);
-        }
-
-        /// <summary>
-        /// Radius of bounding box in hexagons.  i.e., the radius of a k-ring centered
-        /// on the bbox center and covering the entire bbox.
-        /// </summary>
-        /// <param name="bbox">Bounding box to measure</param>
-        /// <param name="res">Resolution of hexagons to use in measurement</param>
-        /// <returns>Radius in hexagons</returns>
-        public static int bboxHexRadius(BBox bbox, int res)
-        {
-            // Determine the center of the bounding box
-            GeoCoord center = new GeoCoord();
-            bboxCenter(bbox, ref center);
-
-            // Use a vertex on the side closest to the equator, to ensure the longest
-            // radius in cases with significant distortion. East/west is arbitrary.
-            double lat =
-                Math.Abs( bbox.North) > Math.Abs(bbox.South)
-                    ? bbox.South
-                    : bbox.North;
-
-            GeoCoord vertex = new GeoCoord {Latitude = lat, Longitude = bbox.East};
-
-            // Determine the length of the bounding box "radius" to then use
-            // as a circle on the earth that the k-rings must be greater than
-            double bboxRadiusKm = GeoCoord._geoDistKm(center, new []{vertex});
-
-            // Determine the radius of the center hexagon
-            double centerHexRadiusKm = _hexRadiusKm(H3Index.geoToH3(ref center, res));
-
-            // The closest point along a hexagon drawn through the center points
-            // of a k-ring aggregation is exactly 1.5 radii of the hexagon. For
-            // any orientation of the GeoJSON encased in a circle defined by the
-            // bounding box radius and center, it is guaranteed to fit in this k-ring
-            // Rounded *up* to guarantee containment
-            return (int)Math.Ceiling(bboxRadiusKm / (1.5 * centerHexRadiusKm));
-        }
-        
         public bool Equals(BBox other)
         {
-            return Math.Abs(North - other.North) < double.Epsilon &&
-                   Math.Abs(South - other.South) < double.Epsilon &&
-                   Math.Abs(East - other.East) < double.Epsilon &&
-                   Math.Abs(West - other.West) < double.Epsilon;
+            return North.Equals(other.North) &&
+                   South.Equals(other.South) &&
+                   East.Equals(other.East) &&
+                   West.Equals(other.West);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            return obj is BBox ijk && Equals(ijk);
+            return obj is BBox other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -255,12 +49,12 @@ namespace H3Lib
 
         public static bool operator ==(BBox left, BBox right)
         {
-            return Equals(left, right);
+            return left.Equals(right);
         }
 
         public static bool operator !=(BBox left, BBox right)
         {
-            return !Equals(left, right);
+            return !left.Equals(right);
         }
     }
 }

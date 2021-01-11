@@ -6,6 +6,61 @@ namespace H3Lib.Extensions
     public static class BBoxExtensions
     {
         /// <summary>
+        /// Returns a new BBox with the new North value.
+        /// </summary>
+        /// <param name="box">box to replace</param>
+        /// <param name="n">North Value</param>
+        public static BBox ReplaceNorth(this BBox box, double n)
+        {
+            return new BBox(n, box.South, box.East, box.West);
+        }
+
+        /// <summary>
+        /// Returns a new BBox with the new South value.
+        /// </summary>
+        /// <param name="box">box to replace</param>
+        /// <param name="s">South Value</param>
+        public static BBox ReplaceSouth(this BBox box, double s)
+        {
+            return new BBox(box.North, s, box.East, box.West);
+        }
+
+        /// <summary>
+        /// Returns a new BBox with the new East value.
+        /// </summary>
+        /// <param name="box">box to replace</param>
+        /// <param name="e">East Value</param>
+        public static BBox ReplaceEast(this BBox box, double e)
+        {
+            return new BBox(box.North, box.South, e, box.West);
+        }
+
+        /// <summary>
+        /// Returns a new BBox with the new West value.
+        /// </summary>
+        /// <param name="box">box to replace</param>
+        /// <param name="w">West Value</param>
+        public static BBox ReplaceWest(this BBox box, double w)
+        {
+            return new BBox(box.North, box.South, box.East, w);
+        }
+        
+        /// <summary>
+        /// Returns a new BBox with replaced East/West values.
+        ///
+        /// Relevant for Transmeridian issues. 
+        /// </summary>
+        /// <param name="box">box to replace</param>
+        /// <param name="e">East value</param>
+        /// <param name="w">West value</param>
+        /// <returns></returns>
+        public static BBox ReplaceEW(this BBox box, double e, double w)
+        {
+            return new BBox(box.North, box.South, e, w);
+        }
+        
+
+        /// <summary>
         /// Gets the center of a bounding box
         /// </summary>
         /// <param name="box">input bounding box</param>

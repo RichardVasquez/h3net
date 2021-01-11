@@ -194,22 +194,22 @@ namespace H3Lib.Extensions
                 lon = coord.Longitude;
                 if (lat < box.South)
                 {
-                    box.South = lat;
+                    box = box.ReplaceSouth(lat);
                 }
 
                 if (lon < box.West)
                 {
-                    box.West = lon;
+                    box = box.ReplaceWest(lon);
                 }
 
                 if (lat > box.North)
                 {
-                    box.North = lat;
+                    box = box.ReplaceNorth(lat);
                 }
 
                 if (lon > box.East)
                 {
-                    box.East = lon;
+                    box = box.ReplaceEast(lon);
                 }
                 // Save the min positive and max negative longitude for
                 // use in the transmeridian case
@@ -231,8 +231,7 @@ namespace H3Lib.Extensions
             // Swap east and west if transmeridian
             if (isTransmeridian)
             {
-                box.East = maxNegLon;
-                box.West = minPosLon;
+                box = box.ReplaceEW(maxNegLon, minPosLon);
             }
 
             return box;

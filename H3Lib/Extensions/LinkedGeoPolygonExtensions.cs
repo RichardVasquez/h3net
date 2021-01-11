@@ -29,17 +29,17 @@ namespace H3Lib.Extensions
             if (root.Next != null)
             {
                 //  TODO: Check the constant location and update
-                return (LinkedGeo.NormalizationErrMultiplePolygons, root);
+                return (StaticData.LinkedGeo.NormalizationErrMultiplePolygons, root);
             }
 
             // Count loops, exiting early if there's only one
             int loopCount = root.CountLoops();
             if (loopCount <= 1)
             {
-                return (LinkedGeo.NormalizationSuccess, root);
+                return (StaticData.LinkedGeo.NormalizationSuccess, root);
             }
 
-            int resultCode = LinkedGeo.NormalizationSuccess;
+            int resultCode = StaticData.LinkedGeo.NormalizationSuccess;
             LinkedGeoPolygon polygon = null;
             LinkedGeoLoop next;
             int innerCount = 0;
@@ -97,7 +97,7 @@ namespace H3Lib.Extensions
                     // been unlinked from the root and the caller will no longer have
                     // a way to destroy it with destroyLinkedPolygon.
                     innerLoops[i].Clear();
-                    resultCode = LinkedGeo.NormalizationErrUnassignedHoles;
+                    resultCode = StaticData.LinkedGeo.NormalizationErrUnassignedHoles;
                 }
             }
             // Free allocated memory
