@@ -7,9 +7,9 @@ namespace H3Lib
     /// </summary>
     public class GeoPolygon
     {
-        public Geofence Geofence;
+        public GeoFence GeoFence;
         public int NumHoles;
-        public List<Geofence> Holes;
+        public List<GeoFence> Holes;
     }
 
 }

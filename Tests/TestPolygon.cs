@@ -34,23 +34,23 @@ namespace Tests
         [Test]
         public void PointInsideGeofence()
         {
-            Geofence geofence = new Geofence {NumVerts = 6, Verts = SfVerts.ToArray()};
+            GeoFence geoFence = new GeoFence {NumVerts = 6, Verts = SfVerts.ToArray()};
 
             GeoCoord inside = new GeoCoord(0.659, -2.136);
             GeoCoord somewhere = new GeoCoord(1, 2);
 
             BBox bbox = new BBox();
-            BBox.bboxFromGeofence(geofence, ref bbox);
+            BBox.bboxFromGeofence(geoFence, ref bbox);
 
             var v0 = SfVerts[0];
-            Assert.True(!Polygon.pointInsideGeofence(ref geofence, ref bbox, ref v0),
+            Assert.True(!Polygon.pointInsideGeofence(ref geoFence, ref bbox, ref v0),
                      "contains exact");
             var v4 = SfVerts[4];
-            Assert.True(Polygon.pointInsideGeofence(ref geofence, ref bbox, ref v4),
+            Assert.True(Polygon.pointInsideGeofence(ref geoFence, ref bbox, ref v4),
                      "contains exact 4");
-            Assert.True(Polygon.pointInsideGeofence(ref geofence, ref bbox, ref inside),
+            Assert.True(Polygon.pointInsideGeofence(ref geoFence, ref bbox, ref inside),
                      "contains point inside");
-            Assert.True(!Polygon.pointInsideGeofence(ref geofence, ref bbox, ref somewhere),
+            Assert.True(!Polygon.pointInsideGeofence(ref geoFence, ref bbox, ref somewhere),
                      "contains somewhere else");
         }
 
@@ -65,7 +65,7 @@ namespace Tests
                     new GeoCoord(-0.01, Constants.M_PI - 0.01),
                     new GeoCoord(-0.01, -Constants.M_PI + 0.01)
                 };
-            Geofence transMeridianGeofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
+            GeoFence transMeridianGeoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
 
             GeoCoord eastPoint = new GeoCoord(0.001, -Constants.M_PI + 0.001);
             GeoCoord eastPointOutside = new GeoCoord(.001, -Constants.M_PI + 0.1);
@@ -73,23 +73,23 @@ namespace Tests
             GeoCoord westPointOutside = new GeoCoord(.001, Constants.M_PI - 0.1);
 
             BBox bbox = new BBox();
-            BBox.bboxFromGeofence(transMeridianGeofence, ref bbox);
+            BBox.bboxFromGeofence(transMeridianGeoFence, ref bbox);
 
             Assert.True
                 (
-                 Polygon.pointInsideGeofence(ref transMeridianGeofence, ref bbox, ref westPoint),
+                 Polygon.pointInsideGeofence(ref transMeridianGeoFence, ref bbox, ref westPoint),
                  "contains point to the west of the antimeridian"
                 );
             Assert.True
                 (
-                 Polygon.pointInsideGeofence(ref transMeridianGeofence, ref bbox, ref eastPoint),
+                 Polygon.pointInsideGeofence(ref transMeridianGeoFence, ref bbox, ref eastPoint),
                  "contains point to the east of the antimeridian"
                 );
             Assert.True
                 (
                  !Polygon.pointInsideGeofence
                      (
-                      ref transMeridianGeofence, ref bbox,
+                      ref transMeridianGeoFence, ref bbox,
                       ref westPointOutside
                      ),
                  "does not contain outside point to the west of the antimeridian"
@@ -98,7 +98,7 @@ namespace Tests
                 (
                  !Polygon.pointInsideGeofence
                      (
-                      ref transMeridianGeofence, ref bbox,
+                      ref transMeridianGeoFence, ref bbox,
                       ref eastPointOutside
                      ),
                  "does not contain outside point to the east of the antimeridian"
@@ -137,12 +137,12 @@ namespace Tests
                     new GeoCoord(1.0, 0.2)
 
                 };
-            Geofence geofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
+            GeoFence geoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
 
             BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
 
             BBox result = new BBox();
-            Polygon.bboxFromGeofence(ref geofence, ref result);
+            Polygon.bboxFromGeofence(ref geoFence, ref result);
             Assert.True(BBox.bboxEquals(result, expected), "Got expected bbox");
         }
 
@@ -159,7 +159,7 @@ namespace Tests
                     new GeoCoord(-0.1, -Constants.M_PI + 0.1),
                     new GeoCoord(-0.05, -Constants.M_PI + 0.2)
                 };
-            Geofence geofence = new Geofence {NumVerts = 6, Verts = verts.ToArray()};
+            GeoFence geoFence = new GeoFence {NumVerts = 6, Verts = verts.ToArray()};
 
             BBox expected = new BBox
                             {
@@ -168,7 +168,7 @@ namespace Tests
                             };
 
             BBox result = new BBox();
-            Polygon.bboxFromGeofence(ref geofence, ref result);
+            Polygon.bboxFromGeofence(ref geoFence, ref result);
             Assert.True
                 (
                  BBox.bboxEquals(result, expected),
@@ -179,12 +179,12 @@ namespace Tests
         [Test]
         public void BboxFromGeofenceNoVertices()
         {
-            Geofence geofence = new Geofence {NumVerts = 0, Verts = null};
+            GeoFence geoFence = new GeoFence {NumVerts = 0, Verts = null};
 
             BBox expected = new BBox{North = 0.0, South = 0.0, East = 0.0, West = 0.0};
 
             BBox result = new BBox();
-            Polygon.bboxFromGeofence(ref geofence, ref result);
+            Polygon.bboxFromGeofence(ref geoFence, ref result);
 
             Assert.True(BBox.bboxEquals(result, expected), "Got expected bbox");
         }
@@ -201,8 +201,8 @@ namespace Tests
                     new GeoCoord(1.1, 0.7),
                     new GeoCoord(1.0, 0.2)
                 };
-            Geofence geofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
-            GeoPolygon polygon = new GeoPolygon {Geofence = geofence, NumHoles = 0};
+            GeoFence geoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
+            GeoPolygon polygon = new GeoPolygon {GeoFence = geoFence, NumHoles = 0};
 
             BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
 
@@ -222,7 +222,7 @@ namespace Tests
                     new GeoCoord(1.1, 0.7),
                     new GeoCoord(1.0, 0.2)
                 };
-            Geofence geofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
+            GeoFence geoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
 
             // not a real hole, but doesn't matter for the test
             List<GeoCoord> holeVerts =
@@ -233,13 +233,13 @@ namespace Tests
                     new GeoCoord(1.0, 0.7),
                     new GeoCoord(0.9, 0.3)
                 };
-            List<Geofence> holeGeofence =
-                new List<Geofence>
+            List<GeoFence> holeGeofence =
+                new List<GeoFence>
                 {
-                    new Geofence {NumVerts = 4, Verts = holeVerts.ToArray()}
+                    new GeoFence {NumVerts = 4, Verts = holeVerts.ToArray()}
                 };
 
-            GeoPolygon polygon = new GeoPolygon {Geofence = geofence, NumHoles = 1, Holes = holeGeofence};
+            GeoPolygon polygon = new GeoPolygon {GeoFence = geoFence, NumHoles = 1, Holes = holeGeofence};
 
             BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
             BBox expectedHole = new BBox {North = 1.0, South = 0.9, East = 0.7, West = 0.3};
@@ -294,11 +294,11 @@ namespace Tests
                 {
                     new GeoCoord(0, 0), new GeoCoord(0.1, 0.1), new GeoCoord(0, 0.1)
                 };
-            Geofence geofence = new Geofence {NumVerts = 3, Verts = verts.ToArray()};
+            GeoFence geoFence = new GeoFence {NumVerts = 3, Verts = verts.ToArray()};
 
             Assert.True
                 (
-                 Polygon.isClockwiseGeofence(geofence),
+                 Polygon.isClockwiseGeofence(geoFence),
                  "Got true for clockwise geofence"
                 );
         }
@@ -349,11 +349,11 @@ namespace Tests
                     new GeoCoord(-0.4, -Constants.M_PI + 0.1),
                     new GeoCoord(0.4, Constants.M_PI - 0.1)
                 };
-            Geofence geofence = new Geofence {NumVerts = 4, Verts = verts.ToArray()};
+            GeoFence geoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
 
             Assert.True
                 (
-                 Polygon.isClockwiseGeofence(geofence),
+                 Polygon.isClockwiseGeofence(geoFence),
                  "Got true for clockwise geofence"
                 );
         }

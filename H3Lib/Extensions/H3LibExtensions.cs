@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace H3Lib.Extensions
 {
@@ -563,6 +564,97 @@ namespace H3Lib.Extensions
 
             return graph;
         }
+
+        /// <summary>
+        /// Normalize longitude, dealing with transmeridian arcs
+        /// </summary>
+        /// <!--
+        /// polygonAlgos.h
+        /// #define NORMALIZE_LON
+        /// -->
+        public static double NormalizeLongitude(this double longitude, bool isTransmeridian)
+        {
+            return isTransmeridian && longitude < 0
+                       ? longitude + Constants.M_2PI
+                       : longitude;
+        }
+
+        /// <summary>
+        /// Create a LinkedGeoPolygon describing the outline(s) of a set of  hexagons.
+        /// Polygon outlines will follow GeoJSON MultiPolygon order: Each polygon will
+        /// have one outer loop, which is first in the list, followed by any holes.
+        /// 
+        /// It is the responsibility of the caller to call destroyLinkedPolygon on the
+        /// populated linked geo structure, or the memory for that structure will
+        /// not be freed.
+        /// 
+        /// It is expected that all hexagons in the set have the same resolution and
+        /// that the set contains no duplicates. Behavior is undefined if duplicates
+        /// or multiple resolutions are present, and the algorithm may produce
+        /// unexpected or invalid output.
+        /// </summary>
+        /// <param name="h3Set">Set of Hexagons</param>
+        /// <returns>Output polygon</returns>
+        /// <!--
+        /// algos.c
+        /// void H3_EXPORT(h3SetToLinkedGeo)
+        /// -->
+        public static LinkedGeoPolygon ToLinkedGeoPolygon(this List<H3Index> h3Set)
+        {
+            var graph = h3Set.ToVertexGraph();
+            var temp = graph.ToLinkedGeoPolygon();
+
+            // TODO: The return value, possibly indicating an error, is discarded here -
+            // we should use this when we update the API to return a value
+            var (_, result) = temp.NormalizeMultiPolygon();
+            graph.Clear();
+            return result;
+        }
+
+        /// <summary>
+        /// Given a list of nested containers, find the one most deeply nested.
+        /// </summary>
+        /// <param name="polygons">Polygon containers to check</param>
+        /// <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
+        /// <param name="polygonCount">Number of polygons in the list</param>
+        /// <returns>Deepest container, or null if list is empty</returns>
+        /// <!--
+        /// linkedGeo.c
+        /// static const LinkedGeoPolygon* findDeepestContainer
+        /// -->
+        public static LinkedGeoPolygon FindDeepestContainer(
+                this List<LinkedGeoPolygon> polygons, List<BBox> boxes,
+                int polygonCount
+            )
+        {
+            // Set the initial return value to the first candidate
+            var parent = polygons.Count > 0
+                             ? polygons[0]
+                             : null;
+
+            // If we have multiple polygons, they must be nested inside each other.
+            // Find the innermost polygon by taking the one with the most containers
+            // in the list.
+            if (polygons.Count <= 1)
+            {
+                return parent;
+            }
+            int max = -1;
+            foreach (var poly in polygons)
+            {
+                int count = poly.First.CountContainers(polygons, boxes);
+                if (count <= max)
+                {
+                    continue;
+                }
+                parent = poly;
+                max = count;
+            }
+
+            return parent;
+            
+        }
+        
         
     }
 }

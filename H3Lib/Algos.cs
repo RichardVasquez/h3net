@@ -757,7 +757,7 @@ namespace H3Lib
         {
             // Get the bounding box for the GeoJSON-like struct
             BBox bbox = new BBox();
-            Polygon.bboxFromGeofence(ref geoPolygon.Geofence, ref bbox);
+            Polygon.bboxFromGeofence(ref geoPolygon.GeoFence, ref bbox);
             int minK = BBox.bboxHexRadius(bbox, res);
 
             // The total number of hexagons to allocate can now be determined by

@@ -1,11 +1,13 @@
 namespace H3Lib
 {
-    public class Geofence
+    public class GeoFence
     {
         public int NumVerts;
         public GeoCoord[] Verts;
 
-        public Geofence()
+        public bool IsEmpty => NumVerts == 0;
+
+        public GeoFence()
         {
             Verts = new[]
                     {

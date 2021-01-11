@@ -23,7 +23,22 @@ namespace H3Lib
         /// bboxIsTransmeridian
         /// -->
         public bool IsTransmeridian => East < West;
-        
+
+        public BBox(double n, double s, double e, double w)
+        {
+            North = n;
+            South = s;
+            East = e;
+            West = w;
+        }
+
+        public BBox()
+        {
+            North = 0;
+            South = 0;
+            East = 0;
+            West = 0;
+        }
         /// <summary>
         /// Create a bounding box from a simple polygon defined as an array of vertices.
         ///
@@ -79,10 +94,10 @@ namespace H3Lib
         /// <summary>
         /// Create a bounding box from a Geofence
         /// </summary>
-        /// <param name="Geofence">Input <see cref="Geofence"/></param>
+        /// <param name="geoFence">Input <see cref="GeoFence"/></param>
         /// <param name="bbox">Output bbox</param>
-        public static void bboxFromGeofence(Geofence Geofence, ref BBox bbox) {
-            BboxFromVertices(Geofence.Verts.ToList() , Geofence.NumVerts, ref bbox);
+        public static void bboxFromGeofence(GeoFence geoFence, ref BBox bbox) {
+            BboxFromVertices(geoFence.Verts.ToList() , geoFence.NumVerts, ref bbox);
         }
 
         /// <summary>
@@ -93,7 +108,7 @@ namespace H3Lib
         void bboxesFromGeoPolygon(GeoPolygon polygon, ref List<BBox> bboxes)
         {
             var bb = bboxes[0];
-            bboxFromGeofence(polygon.Geofence, ref bb);
+            bboxFromGeofence(polygon.GeoFence, ref bb);
             bboxes[0] = bb;
             for (int i = 0; i < polygon.NumHoles; i++)
             {

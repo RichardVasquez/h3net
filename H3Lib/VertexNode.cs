@@ -2,6 +2,9 @@ using System;
 
 namespace H3Lib
 {
+    /// <summary>
+    /// A single node in a vertex graph, part of a linked list
+    /// </summary>
     public readonly struct VertexNode : IEquatable<VertexNode>
     {
         public readonly GeoCoord From;

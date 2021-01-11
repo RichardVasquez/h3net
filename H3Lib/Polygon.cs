@@ -31,7 +31,7 @@ namespace H3Lib
         /// <param name="loop">Loop of coordinates</param>
         /// <param name="bbox">Output bbox</param>
         /// <!-- Based off 3.1.1 -->
-        public static void bboxFromGeofence(ref Geofence loop, ref BBox bbox)
+        public static void bboxFromGeofence(ref GeoFence loop, ref BBox bbox)
         {
             // Early exit if there are no vertices
             if (loop.NumVerts == 0) {
@@ -100,7 +100,7 @@ namespace H3Lib
         /// <param name="coord">The coordinate to check</param>
         /// <returns>Whether the point is contained</returns>
         /// <!-- Based off 3.1.1 -->
-        public static bool pointInsideGeofence(ref Geofence loop, ref BBox bbox, ref GeoCoord coord)
+        public static bool pointInsideGeofence(ref GeoFence loop, ref BBox bbox, ref GeoCoord coord)
         {
             // fail fast if we're outside the bounding box
             if (!BBox .bboxContains(bbox, coord)) {
@@ -180,7 +180,7 @@ namespace H3Lib
         /// <param name="isTransmeridian">Whether the loop crosses the antimeridian</param>
         /// <returns>Whether the loop is clockwise</returns>
         /// <!-- Based off 3.1.1 -->
-        public static bool isClockwiseNormalizedGeofence(Geofence loop, bool isTransmeridian)
+        public static bool isClockwiseNormalizedGeofence(GeoFence loop, bool isTransmeridian)
         {
             double sum = 0;
             GeoCoord a;
@@ -221,7 +221,7 @@ namespace H3Lib
         /// <param name="loop">The loop to check</param>
         /// <returns>Whether the loop is clockwise</returns>
         /// <!-- Based off 3.1.1 -->
-        public static bool isClockwiseGeofence(Geofence loop)
+        public static bool isClockwiseGeofence(GeoFence loop)
         {
             return isClockwiseNormalizedGeofence( loop, false);
         }
@@ -235,7 +235,7 @@ namespace H3Lib
         public static void bboxesFromGeoPolygon(GeoPolygon polygon,ref List<BBox> bboxes)
         {
             var bbox0 = bboxes[0];
-            bboxFromGeofence(ref polygon.Geofence, ref bbox0);
+            bboxFromGeofence(ref polygon.GeoFence, ref bbox0);
             bboxes[0] = bbox0;
             for (int i = 0; i < polygon.NumHoles; i++)
             {
@@ -261,7 +261,7 @@ namespace H3Lib
             // Start with contains state of primary Geofence
             var tempBox = bboxes[0];
             bool contains = pointInsideGeofence(
-                ref geoPolygon.Geofence,
+                ref geoPolygon.GeoFence,
                 ref tempBox, ref coord);
             bboxes[0] = tempBox;
 

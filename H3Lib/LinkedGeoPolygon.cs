@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace H3Lib
 {
@@ -11,6 +13,8 @@ namespace H3Lib
         public LinkedGeoLoop Last;
         public LinkedGeoPolygon Next;
 
+        public LinkedList<LinkedGeoLoop> Loop = new LinkedList<LinkedGeoLoop>();
+        
         public LinkedGeoPolygon()
         {
             First = null;
@@ -45,9 +49,16 @@ namespace H3Lib
         /// Add a new linked loop to the current polygon
         /// </summary>
         /// <returns>Reference to new loop</returns>
+        /// <!--
+        /// linkedGeo.c
+        /// LinkedGeoLoop* addNewLinkedLoop
+        /// -->
         public LinkedGeoLoop AddNewLoop()
         {
-            return AddLinkedLoop(new LinkedGeoLoop());
+            var loop = new LinkedGeoLoop();
+            Loop.AddLast(loop);
+            return loop;
+            //return AddLinkedLoop(new LinkedGeoLoop());
         }
 
         /// <summary>
@@ -56,8 +67,15 @@ namespace H3Lib
         /// <param name="loop">loop to add</param>
         /// <returns>Reference to loop</returns>
         /// <exception cref="Exception">First should be null if last is null</exception>
+        /// <!--
+        /// linkedGeo.c
+        /// LinkedGeoLoop* addLinkedLoop
+        /// -->
         public LinkedGeoLoop AddLinkedLoop(LinkedGeoLoop loop)
         {
+            Loop.AddLast(loop);
+            return loop;
+            /*
             var last = Last;
 
             if (last == null)
@@ -78,7 +96,53 @@ namespace H3Lib
             //  Above in the else condition, aren't we overwriting
             //  Last.Next with the following assignment?
             Last = loop;
-            return loop;
+            return loop;*/
+        }
+
+        /// <summary>
+        /// Going to try C# capabilities only in this.
+        ///
+        /// Clear all the geoLoops, then clear the linked list.
+        /// </summary>
+        /// <!--
+        /// linkedGeo.c
+        /// void H3_EXPORT(destroyLinkedPolygon)
+        /// -->
+        public void Clear()
+        {
+            foreach (var geoLoop in Loop)
+            {
+                geoLoop.Clear();
+            }
+            Loop.Clear();
+        }
+
+        /// <summary>
+        /// Going to try C# capabilities only in this.
+        ///
+        /// Count the number of polygons in a linked list
+        /// </summary>
+        /// <!--
+        /// linkedGeo.c
+        /// int countLinkedPolygons
+        /// -->
+        public int Count()
+        {
+            return Loop.Count;
+        }
+
+        /// <summary>
+        /// Going to try C# capabilities only in this.
+        ///
+        /// Count the number of loops in all the polygons.
+        /// </summary>
+        /// <!--
+        /// linkedGeo.c
+        /// int countLinkedLoops
+        /// -->
+        public int CountLoops()
+        {
+            return Loop.Sum(geoLoop => geoLoop.Count);
         }
     }
 }
