@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace H3Lib
@@ -6,7 +7,7 @@ namespace H3Lib
     /// H3Index utility functions
     /// </summary>
     [DebuggerDisplay("Value: {H3Value} => {ToString()}")]
-    public class H3Index
+    public class H3Index:IEquatable<H3Index>,IEquatable<ulong>
     {
     #region base value and constructors
         /// <summary>
@@ -136,6 +137,7 @@ namespace H3Lib
             
         #endregion
 
+
         /// <summary>
         /// Converts an H3 index into a string representation.
         /// </summary>
@@ -147,107 +149,49 @@ namespace H3Lib
         }
 
 #region
-        private bool Equals(H3Index other)
-        {
-            return H3Value == other.H3Value;
-        }
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
 
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            return obj.GetType() == GetType() && Equals((H3Index) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return H3Value.GetHashCode();
-        }
-
-        public static bool operator ==(H3Index h1, int i2)
-        {
-            if (ReferenceEquals(h1, null))
-            {
-                return false;
-            }
-            return h1.H3Value == (ulong)i2;
-        }
-
-        public static bool operator !=(H3Index h1, int i2)
-        {
-            return !(h1==i2);
-        }
-
-        public static bool operator ==(int i1, H3Index h2)
-        {
-            if (ReferenceEquals(h2, null))
-            {
-                return false;
-            }
-            return h2.H3Value == (ulong)i1;
-        }
-
-        public static bool operator !=(int i1, H3Index h2)
-        {
-            return !(i1==h2);
-        }
-
-
-        public static bool operator ==(H3Index h1, H3Index h2)
-        {
-            if (ReferenceEquals(h1, null) || ReferenceEquals(h2,null))
-            {
-                return false;
-            }
-
-            return h1.H3Value == h2.H3Value;
-        }
-
-        public static bool operator !=(H3Index h1, H3Index h2)
-        {
-            return !(h1 == h2);
-        }
-
-        public static bool operator ==(H3Index h1, ulong u2)
-        {
-            if (ReferenceEquals(h1, null))
-            {
-                return false;
-            }
-
-            return h1.H3Value == u2;
-        }
-
-        public static bool operator !=(H3Index  u1, ulong u2)
-        {
-            return !(u1 == u2);
-        }
-
-        public static bool operator ==(ulong u1, H3Index h2)
-        {
-            if (ReferenceEquals(h2, null))
-            {
-                return false;
-            }
-
-            return h2.H3Value == u1;
-        }
-
-        public static bool operator !=(ulong  u1, H3Index h2)
-        {
-            return !(u1 == h2);
-        }
         
         public static implicit operator H3Index(ulong u) => new H3Index(u);
         public static implicit operator ulong(H3Index h3) => h3.H3Value;
 
 #endregion
+
+    public override int GetHashCode()
+    {
+        return H3Value.GetHashCode();
+    }
+
+    public static bool operator ==(H3Index left, H3Index right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(H3Index left, H3Index right)
+    {
+        return !Equals(left, right);
+    }
+
+    public bool Equals(H3Index other)
+    {
+        if (ReferenceEquals(null, other))
+            return false;
+        if (ReferenceEquals(this, other))
+            return true;
+        return H3Value == other.H3Value;
+    }
+
+    public bool Equals(ulong other)
+    {
+        return H3Value == other;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj))
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        return Equals((H3Index) obj);
+    }
     }
 }

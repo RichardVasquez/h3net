@@ -388,5 +388,6 @@ namespace H3Lib.Extensions
                        ? longitude + Constants.M_2PI
                        : longitude;
         }
+
     }
 }

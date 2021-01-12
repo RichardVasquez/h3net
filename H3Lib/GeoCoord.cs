@@ -108,7 +108,9 @@ namespace H3Lib
 
         public bool Equals(GeoCoord other)
         {
-            return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude);
+            return
+                Math.Abs(Latitude - other.Latitude) < Constants.EPSILON_RAD &&
+                Math.Abs(Longitude - other.Longitude) < Constants.EPSILON_RAD;
         }
 
         public override bool Equals(object obj)

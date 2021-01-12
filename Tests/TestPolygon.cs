@@ -1,852 +1,344 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using H3Lib;
+using H3Lib.Extensions;
 using NUnit.Framework;
+using GeoCoord=H3Lib.GeoCoord;
 
 namespace Tests
 {
     [TestFixture]
     public class TestPolygon
     {
-        private static readonly List<GeoCoord> SfVerts =
-            new List<GeoCoord>
-            {
-                new GeoCoord(0.659966917655, -2.1364398519396),
-                new GeoCoord(0.6595011102219, -2.1359434279405),
-                new GeoCoord(0.6583348114025, -2.1354884206045),
-                new GeoCoord(0.6581220034068, -2.1382437718946),
-                new GeoCoord(0.6594479998527, -2.1384597563896),
-                new GeoCoord(0.6599990002976, -2.1376771158464)
-            };
-
-        private static void CreateLinkedLoop(
-                ref LinkedGeo.LinkedGeoLoop loop, List<GeoCoord> verts, int numVerts)
+        private static readonly GeoCoord[] SfVerts =
         {
-            loop ??= new LinkedGeo.LinkedGeoLoop();
-            for (int i = 0; i < numVerts; i++)
+            new GeoCoord(0.659966917655, -2.1364398519396), new GeoCoord(0.6595011102219, -2.1359434279405),
+            new GeoCoord(0.6583348114025, -2.1354884206045), new GeoCoord(0.6581220034068, -2.1382437718946),
+            new GeoCoord(0.6594479998527, -2.1384597563896), new GeoCoord(0.6599990002976, -2.1376771158464)
+        };
+
+        private static GeoCoord[] MakeGeoCoordArray(double[,] coords)
+        {
+            var results = new List<GeoCoord>();
+
+            for (var gc = 0; gc < coords.GetLength(0); gc++)
             {
-                var vi = verts[i];
-                LinkedGeo.AddLinkedCoord(ref loop, ref vi);
+                results.Add(new GeoCoord(coords[gc,0], coords[gc,1]));
             }
+
+            return results.ToArray();
+        }
+
+        private static BBox MakeBox(IReadOnlyList<double> directions)
+        {
+            return new BBox(directions[0], directions[1], directions[2], directions[3]);
+        }
+        
+        private static LinkedGeoLoop CreateLinkedLoop(IEnumerable<GeoCoord> verts)
+        {
+            var loop = new LinkedGeoLoop();
+            foreach (var geoCoord in verts)
+            {
+                loop.AddLinkedCoord(geoCoord);
+            }
+
+            return loop;
         }
 
         [Test]
         public void PointInsideGeofence()
         {
-            GeoFence geoFence = new GeoFence {NumVerts = 6, Verts = SfVerts.ToArray()};
+            var geofence = new GeoFence {NumVerts = 6, Verts = SfVerts};
 
-            GeoCoord inside = new GeoCoord(0.659, -2.136);
-            GeoCoord somewhere = new GeoCoord(1, 2);
+            var inside = new GeoCoord(0.659, -2.136);
+            var somewhere= new GeoCoord(1, 2);
 
-            BBox bbox = new BBox();
-            BBox.bboxFromGeofence(geoFence, ref bbox);
+            BBox bbox = geofence.ToBBox();
 
-            var v0 = SfVerts[0];
-            Assert.True(!Polygon.pointInsideGeofence(ref geoFence, ref bbox, ref v0),
-                     "contains exact");
-            var v4 = SfVerts[4];
-            Assert.True(Polygon.pointInsideGeofence(ref geoFence, ref bbox, ref v4),
-                     "contains exact 4");
-            Assert.True(Polygon.pointInsideGeofence(ref geoFence, ref bbox, ref inside),
-                     "contains point inside");
-            Assert.True(!Polygon.pointInsideGeofence(ref geoFence, ref bbox, ref somewhere),
-                     "contains somewhere else");
+            Assert.IsFalse(geofence.PointInside(bbox, SfVerts[0]));
+            Assert.IsTrue(geofence.PointInside(bbox, SfVerts[4]));
+            Assert.IsTrue(geofence.PointInside(bbox, inside));
+            Assert.IsFalse(geofence.PointInside(bbox, somewhere));
         }
 
         [Test]
         public void PointInsideGeofenceTransmeridian()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.01, -Constants.M_PI + 0.01),
-                    new GeoCoord(0.01, Constants.M_PI - 0.01),
-                    new GeoCoord(-0.01, Constants.M_PI - 0.01),
-                    new GeoCoord(-0.01, -Constants.M_PI + 0.01)
-                };
-            GeoFence transMeridianGeoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
+            var verts = new[]
+                        {
+                            new GeoCoord(0.01, -Constants.M_PI + 0.01),
+                            new GeoCoord(0.01, Constants.M_PI - 0.01),
+                            new GeoCoord(-0.01, Constants.M_PI - 0.01),
+                            new GeoCoord(-0.01, -Constants.M_PI + 0.01)
+                        };
 
-            GeoCoord eastPoint = new GeoCoord(0.001, -Constants.M_PI + 0.001);
-            GeoCoord eastPointOutside = new GeoCoord(.001, -Constants.M_PI + 0.1);
-            GeoCoord westPoint = new GeoCoord(.001, Constants.M_PI - 0.001);
-            GeoCoord westPointOutside = new GeoCoord(.001, Constants.M_PI - 0.1);
+            var transMeridianGeofence = new GeoFence{NumVerts = 4, Verts = verts};
 
-            BBox bbox = new BBox();
-            BBox.bboxFromGeofence(transMeridianGeoFence, ref bbox);
+            var eastPoint = new GeoCoord(0.001, -Constants.M_PI + 0.001);
+            var eastPointOutside = new GeoCoord(0.001, -Constants.M_PI + 0.1);
+            var westPoint = new GeoCoord(0.001, Constants.M_PI - 0.001);
+            var westPointOutside =new GeoCoord(0.001, Constants.M_PI - 0.1);
 
-            Assert.True
-                (
-                 Polygon.pointInsideGeofence(ref transMeridianGeoFence, ref bbox, ref westPoint),
-                 "contains point to the west of the antimeridian"
-                );
-            Assert.True
-                (
-                 Polygon.pointInsideGeofence(ref transMeridianGeoFence, ref bbox, ref eastPoint),
-                 "contains point to the east of the antimeridian"
-                );
-            Assert.True
-                (
-                 !Polygon.pointInsideGeofence
-                     (
-                      ref transMeridianGeoFence, ref bbox,
-                      ref westPointOutside
-                     ),
-                 "does not contain outside point to the west of the antimeridian"
-                );
-            Assert.True
-                (
-                 !Polygon.pointInsideGeofence
-                     (
-                      ref transMeridianGeoFence, ref bbox,
-                      ref eastPointOutside
-                     ),
-                 "does not contain outside point to the east of the antimeridian"
-                );
+            var bbox = transMeridianGeofence.ToBBox();
+
+            Assert.IsTrue(transMeridianGeofence.PointInside(bbox,westPoint));
+            Assert.IsTrue(transMeridianGeofence.PointInside(bbox,eastPoint));
+            Assert.IsFalse(transMeridianGeofence.PointInside(bbox,westPointOutside));
+            Assert.IsFalse(transMeridianGeofence.PointInside(bbox,eastPointOutside));
         }
 
         [Test]
-        public void PointInsideLinkedGeoLoop() 
+        public void PointInsideLinkedGeoLoop()
         {
-            GeoCoord somewhere = new GeoCoord(1, 2);
-            GeoCoord inside = new GeoCoord(0.659, -2.136);
+            var somewhere = new GeoCoord(1, 2);
+            var inside = new GeoCoord(0.659, -2.136);
 
-            LinkedGeo.LinkedGeoLoop loop = new LinkedGeo.LinkedGeoLoop();
-            CreateLinkedLoop(ref loop, SfVerts, 6);
+            var loop = CreateLinkedLoop(SfVerts);
 
-            BBox bbox = new BBox();
-            LinkedGeo.BboxFromLinkedGeoLoop(ref loop, ref bbox);
+            var box = loop.ToBBox();
 
-            Assert.True(LinkedGeo.PointInsideLinkedGeoLoop(ref loop, ref bbox, ref inside),
-                     "contains exact4");
-            Assert.True(!LinkedGeo.PointInsideLinkedGeoLoop(ref loop, ref bbox, ref somewhere),
-                     "contains somewhere else");
+            Assert.IsTrue(loop.PointInside(box, inside));
+            Assert.IsFalse(loop.PointInside(box, somewhere));
 
-            LinkedGeo.DestroyLinkedGeoLoop(ref loop);
+            loop.Clear();
         }
 
         [Test]
         public void BboxFromGeofence()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.8, 0.3),
-                    new GeoCoord(0.7, 0.6),
-                    new GeoCoord(1.1, 0.7),
-                    new GeoCoord(1.0, 0.2)
+            var verts = new[]
+            {
+                new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
+                new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2)
+            };
+            
+            var geofence = new GeoFence{NumVerts = 4, Verts = verts};
 
-                };
-            GeoFence geoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
+            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
 
-            BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
-
-            BBox result = new BBox();
-            Polygon.bboxFromGeofence(ref geoFence, ref result);
-            Assert.True(BBox.bboxEquals(result, expected), "Got expected bbox");
+            BBox result = geofence.ToBBox();
+            Assert.AreEqual(result, expected);
         }
 
         [Test]
         public void BboxFromGeofenceTransmeridian()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
+            var verts =
+                new[]
                 {
-                    new GeoCoord(0.1, -Constants.M_PI + 0.1),
-                    new GeoCoord(0.1, Constants.M_PI - 0.1),
-                    new GeoCoord(0.05, Constants.M_PI - 0.2),
-                    new GeoCoord(-0.1, Constants.M_PI - 0.1),
-                    new GeoCoord(-0.1, -Constants.M_PI + 0.1),
-                    new GeoCoord(-0.05, -Constants.M_PI + 0.2)
+                    new GeoCoord(0.1, -Constants.M_PI + 0.1), new GeoCoord(0.1, Constants.M_PI - 0.1),
+                    new GeoCoord(0.05, Constants.M_PI - 0.2), new GeoCoord(-0.1, Constants.M_PI - 0.1),
+                    new GeoCoord(-0.1, -Constants.M_PI + 0.1), new GeoCoord(-0.05, -Constants.M_PI + 0.2)
                 };
-            GeoFence geoFence = new GeoFence {NumVerts = 6, Verts = verts.ToArray()};
 
-            BBox expected = new BBox
-                            {
-                                North = 0.1, South = -0.1, East = -Constants.M_PI + 0.2,
-                                West = Constants.M_PI - 0.2
-                            };
+            var geofence = new GeoFence {NumVerts = 6, Verts = verts};
 
-            BBox result = new BBox();
-            Polygon.bboxFromGeofence(ref geoFence, ref result);
-            Assert.True
-                (
-                 BBox.bboxEquals(result, expected),
-                 "Got expected transmeridian bbox"
-                );
+            var expected = new BBox( 0.1, -0.1, -Constants.M_PI + 0.2, Constants.M_PI - 0.2);
+
+            var result = geofence.ToBBox();
+            Assert.AreEqual(result, expected);
         }
 
         [Test]
         public void BboxFromGeofenceNoVertices()
         {
-            GeoFence geoFence = new GeoFence {NumVerts = 0, Verts = null};
+            var geofence = new GeoFence();
 
-            BBox expected = new BBox{North = 0.0, South = 0.0, East = 0.0, West = 0.0};
+            var expected = new BBox(0.0, 0.0, 0.0, 0.0);
 
-            BBox result = new BBox();
-            Polygon.bboxFromGeofence(ref geoFence, ref result);
-
-            Assert.True(BBox.bboxEquals(result, expected), "Got expected bbox");
+            var result = geofence.ToBBox();
+            Assert.AreEqual(result, expected);
         }
-        
-        
+
         [Test]
         public void BboxesFromGeoPolygon()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.8, 0.3),
-                    new GeoCoord(0.7, 0.6),
-                    new GeoCoord(1.1, 0.7),
-                    new GeoCoord(1.0, 0.2)
-                };
-            GeoFence geoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
-            GeoPolygon polygon = new GeoPolygon {GeoFence = geoFence, NumHoles = 0};
+            var verts = new[]
+                        {
+                            new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
+                            new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2)
+                        };
 
-            BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
+            var geofence = new GeoFence{NumVerts = 4, Verts = verts};
+            var  polygon = new GeoPolygon {GeoFence = geofence, NumHoles = 0};
 
-            List<BBox> result = new List<BBox> {new BBox()};
-            Polygon.bboxesFromGeoPolygon(polygon, ref result);
-            Assert.True(BBox.bboxEquals(result[0], expected), "Got expected bbox");
+            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
+
+            var result = polygon.ToBBoxes();
+            Assert.AreEqual(result[0], expected);
         }
 
         [Test]
         public void BboxesFromGeoPolygonHole()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.8, 0.3),
-                    new GeoCoord(0.7, 0.6),
-                    new GeoCoord(1.1, 0.7),
-                    new GeoCoord(1.0, 0.2)
-                };
-            GeoFence geoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
+            var verts = new[]
+                        {
+                            new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
+                            new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2)
+                        };
+
+            var geofence = new GeoFence {NumVerts = 4, Verts = verts};
 
             // not a real hole, but doesn't matter for the test
-            List<GeoCoord> holeVerts =
-                new List<GeoCoord>
+            var holeVerts = new[]
+                            {
+                                new GeoCoord(0.9, 0.3), new GeoCoord(0.9, 0.5),
+                                new GeoCoord(1.0, 0.7), new GeoCoord(0.9, 0.3)
+                            };
+
+            var holeGeofence = new GeoFence {NumVerts = 4, Verts = holeVerts};
+
+            var polygon =
+                new GeoPolygon
                 {
-                    new GeoCoord(0.9, 0.3),
-                    new GeoCoord(0.9, 0.5),
-                    new GeoCoord(1.0, 0.7),
-                    new GeoCoord(0.9, 0.3)
-                };
-            List<GeoFence> holeGeofence =
-                new List<GeoFence>
-                {
-                    new GeoFence {NumVerts = 4, Verts = holeVerts.ToArray()}
+                    GeoFence = geofence,
+                    NumHoles = 1,
+                    Holes = new List<GeoFence> {holeGeofence}
                 };
 
-            GeoPolygon polygon = new GeoPolygon {GeoFence = geoFence, NumHoles = 1, Holes = holeGeofence};
+            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
+            var expectedHole = new BBox(1.0, 0.9, 0.7, 0.3);
 
-            BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
-            BBox expectedHole = new BBox {North = 1.0, South = 0.9, East = 0.7, West = 0.3};
+            //BBox* result = calloc(sizeof(BBox), 2);
+            var result = polygon.ToBBoxes();
 
-            List<BBox> result = new List<BBox> {new BBox(), new BBox()};
-
-            Polygon.bboxesFromGeoPolygon(polygon, ref result);
-            Assert.True(BBox.bboxEquals(result[0], expected), "Got expected bbox");
-            Assert.True(BBox.bboxEquals(result[1], expectedHole), "Got expected hole bbox");
+            Assert.AreEqual(result[0], expected);
+            Assert.AreEqual(result[1],expectedHole);
         }
 
         [Test]
         public void BboxFromLinkedGeoLoop()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.8, 0.3),
-                    new GeoCoord(0.7, 0.6),
-                    new GeoCoord(1.1, 0.7),
-                    new GeoCoord( 1.0, 0.2)
-                };
+            var verts = new[]
+                        {
+                            new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
+                            new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2),
+                        };
 
-            LinkedGeo.LinkedGeoLoop loop = new LinkedGeo.LinkedGeoLoop();
-            CreateLinkedLoop(ref loop, verts, 4);
+            var loop = CreateLinkedLoop(verts);
 
-            BBox expected = new BBox {North = 1.1, South = 0.7, East = 0.7, West = 0.2};
+            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
 
-            BBox result = new BBox();
-            LinkedGeo.BboxFromLinkedGeoLoop(ref loop, ref result);
-            Assert.True(BBox.bboxEquals(result, expected), "Got expected bbox");
+            var result = loop.ToBBox();
+            Assert.AreEqual(result, expected);
+
+            loop.Clear();
         }
 
         [Test]
         public void BboxFromLinkedGeoLoopNoVertices()
         {
-            LinkedGeo.LinkedGeoLoop loop = new LinkedGeo.LinkedGeoLoop();
+            var loop = new LinkedGeoLoop();
+            var expected = new BBox(0.0, 0.0, 0.0, 0.0);
 
-            BBox expected = new BBox {North = 0.0, South = 0.0, East = 0.0, West = 0.0};
+            var result = loop.ToBBox();
+            Assert.AreEqual(result,expected);
 
-            BBox result = new BBox();
-            LinkedGeo.BboxFromLinkedGeoLoop(ref loop, ref result);
-
-            Assert.True(BBox.bboxEquals(result, expected), "Got expected bbox");
+            loop.Clear();
         }
 
         [Test]
         public void IsClockwiseGeofence()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0, 0), new GeoCoord(0.1, 0.1), new GeoCoord(0, 0.1)
-                };
-            GeoFence geoFence = new GeoFence {NumVerts = 3, Verts = verts.ToArray()};
+            var verts = new[]
+                        {
+                            new GeoCoord(0,0), new GeoCoord(0.1,0.1),
+                            new GeoCoord(0,0.1)
+                        };
 
-            Assert.True
-                (
-                 Polygon.isClockwiseGeofence(geoFence),
-                 "Got true for clockwise geofence"
-                );
+            var geofence = new GeoFence {NumVerts = 3, Verts = verts};
+
+            Assert.IsTrue(geofence.IsClockwise());
         }
 
         [Test]
         public void IsClockwiseLinkedGeoLoop()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.1, 0.1),
-                    new GeoCoord(0.2, 0.2),
-                    new GeoCoord(0.1, 0.2)
-                };
-            LinkedGeo.LinkedGeoLoop loop = new LinkedGeo.LinkedGeoLoop();
-            CreateLinkedLoop(ref loop, verts, 3);
-
-            Assert.True
-                (
-                 LinkedGeo.IsClockwiseLinkedGeoLoop(loop),
-                 "Got true for clockwise loop"
-                );
+            var verts = MakeGeoCoordArray(new[,]{{0.1, 0.1}, {0.2, 0.2}, {0.1, 0.2}});
+            var loop = CreateLinkedLoop(verts);
+            Assert.IsTrue(loop.IsClockwise());
+            loop.Clear();
         }
 
         [Test]
         public void IsNotClockwiseLinkedGeoLoop()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0, 0), new GeoCoord(0, 0.4), new GeoCoord(0.4, 0.4), new GeoCoord(0.4, 0)
-                };
-            LinkedGeo.LinkedGeoLoop loop = new LinkedGeo.LinkedGeoLoop();
-            CreateLinkedLoop(ref loop, verts, 4);
-
-            Assert.False(LinkedGeo.IsClockwiseLinkedGeoLoop(loop),
-                     "Got false for counter-clockwise loop");
+            var verts = MakeGeoCoordArray(new[,] {{0, 0}, {0, 0.4}, {0.4, 0.4}, {0.4, 0}});
+            var loop = CreateLinkedLoop(verts);
+            Assert.IsFalse(loop.IsClockwise());
+            loop.Clear();
         }
 
         [Test]
         public void IsClockwiseGeofenceTransmeridian()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.4, Constants.M_PI - 0.1),
-                    new GeoCoord(0.4, -Constants.M_PI + 0.1),
-                    new GeoCoord(-0.4, -Constants.M_PI + 0.1),
-                    new GeoCoord(0.4, Constants.M_PI - 0.1)
-                };
-            GeoFence geoFence = new GeoFence {NumVerts = 4, Verts = verts.ToArray()};
+            double[,] raw = {
+                                {0.4, Constants.M_PI - 0.1},
+                                {0.4, -Constants.M_PI + 0.1},
+                                {-0.4, -Constants.M_PI + 0.1},
+                                {-0.4, Constants.M_PI - 0.1}
+                            };
+            var verts = MakeGeoCoordArray(raw);
+            var geofence = new GeoFence{NumVerts = 4, Verts = verts};
 
-            Assert.True
-                (
-                 Polygon.isClockwiseGeofence(geoFence),
-                 "Got true for clockwise geofence"
-                );
+            Assert.IsTrue(geofence.IsClockwise());
         }
 
         [Test]
         public void IsClockwiseLinkedGeoLoopTransmeridian()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.4, Constants.M_PI - 0.1),
-                    new GeoCoord(0.4, -Constants.M_PI + 0.1),
-                    new GeoCoord(-0.4, -Constants.M_PI + 0.1),
-                    new GeoCoord(-0.4, Constants.M_PI - 0.1)
-                };
-            LinkedGeo.LinkedGeoLoop loop = new LinkedGeo.LinkedGeoLoop();
-            CreateLinkedLoop(ref loop, verts, 4);
+            double[,] raw =
+            {
+                {0.4, Constants.M_PI - 0.1},
+                {0.4, -Constants.M_PI + 0.1},
+                {-0.4, -Constants.M_PI + 0.1},
+                {-0.4, Constants.M_PI - 0.1}
+            };
 
-            Assert.True(LinkedGeo.IsClockwiseLinkedGeoLoop(loop),
-                     "Got true for clockwise transmeridian loop");
+            var verts = MakeGeoCoordArray(raw);
+            var loop = CreateLinkedLoop(verts);
+
+            Assert.IsTrue(loop.IsClockwise());
+            loop.Clear();
         }
 
         [Test]
         public void IsNotClockwiseLinkedGeoLoopTransmeridian()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.4, Constants.M_PI - 0.1),
-                    new GeoCoord(-0.4, Constants.M_PI - 0.1),
-                    new GeoCoord(-0.4, -Constants.M_PI + 0.1),
-                    new GeoCoord(0.4, -Constants.M_PI + 0.1)
-                };
-            LinkedGeo.LinkedGeoLoop loop = new LinkedGeo.LinkedGeoLoop();
-            CreateLinkedLoop(ref loop, verts, 4);
+            double[,] raw =
+            {
+                {0.4, Constants.M_PI - 0.1},
+                {-0.4, Constants.M_PI - 0.1},
+                {-0.4, -Constants.M_PI + 0.1},
+                {0.4, -Constants.M_PI + 0.1}
+            };
 
-            Assert.False(LinkedGeo.IsClockwiseLinkedGeoLoop(loop),
-                     "Got false for counter-clockwise transmeridian loop");
+            var verts = MakeGeoCoordArray(raw);
+            var loop = CreateLinkedLoop(verts);
+
+            Assert.IsFalse(loop.IsClockwise());
+
+            loop.Clear();
         }
 
         [Test]
         public void NormalizeMultiPolygonSingle()
         {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0, 0),
-                    new GeoCoord(0, 1),
-                    new GeoCoord(1, 1)
-                };
+            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 1}, {1, 1}});
 
-            LinkedGeo.LinkedGeoLoop outer = new LinkedGeo.LinkedGeoLoop();
-            Assert.True(outer != null);
-            CreateLinkedLoop(ref outer, verts, 3);
+            var outer = CreateLinkedLoop(verts);
 
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer);
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(outer);
 
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
+            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(polygon.Count(), 1);
+            Assert.AreEqual(polygon.CountLoops(), 1);
+            Assert.AreEqual(polygon.First, outer);
 
-            Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 1, "Polygon count correct");
-            Assert.True(LinkedGeo.CountLinkedLoops(ref polygon) == 1, "Loop count correct");
-            Assert.True(polygon.First == outer, "Got expected loop");
-        }
-
-        [Test]
-        public void NormalizeMultiPolygonTwoOuterLoops()
-        {
-            List<GeoCoord> verts1 =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0, 0), new GeoCoord(0, 1), new GeoCoord(1, 1)
-                };
-
-            LinkedGeo.LinkedGeoLoop outer1 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer1);
-            CreateLinkedLoop(ref outer1, verts1, 3);
-
-            List<GeoCoord> verts2 =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(2, 2), new GeoCoord(2, 3), new GeoCoord(3, 3)
-                };
-
-            LinkedGeo.LinkedGeoLoop outer2 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer2);
-            CreateLinkedLoop(ref outer2, verts2, 3);
-
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer1);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer2);
-
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
-
-            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
-
-            Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 2, "Polygon count correct");
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedLoops(ref polygon) == 1,
-                 "Loop count on first polygon correct"
-                );
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedLoops(ref polygon.Next) == 1,
-                 "Loop count on second polygon correct"
-                );
-        }
-
-        [Test]
-        public void normalizeMultiPolygonOneHole()
-        {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0, 0), new GeoCoord(0, 3),
-                    new GeoCoord(3, 3), new GeoCoord(3, 0)
-                };
-
-            LinkedGeo.LinkedGeoLoop outer = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer);
-            CreateLinkedLoop(ref outer, verts, 4);
-
-            List<GeoCoord> verts2 =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(1, 1), new GeoCoord(2, 2), new GeoCoord(1, 2)
-                };
-
-            LinkedGeo.LinkedGeoLoop inner = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(inner);
-            CreateLinkedLoop(ref inner, verts2, 3);
-
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref inner);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer);
-
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
-
-            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
-
-            Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 1, "Polygon count correct");
-            Assert.True(LinkedGeo.CountLinkedLoops(ref polygon) == 2,
-                     "Loop count on first polygon correct");
-            Assert.True(polygon.First == outer, "Got expected outer loop");
-            Assert.True(polygon.First.Next == inner, "Got expected inner loop");
-        }
-
-        [Test]
-        public void NormalizeMultiPolygonTwoHoles()
-        {
-            List<GeoCoord> verts =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0, 0),
-                    new GeoCoord(0, 0.4),
-                    new GeoCoord(0.4, 0.4),
-                    new GeoCoord(0.4, 0)
-                };
-
-            LinkedGeo.LinkedGeoLoop outer = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer);
-            CreateLinkedLoop(ref outer, verts, 4);
-
-            List<GeoCoord> verts2 =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.1, 0.1),
-                    new GeoCoord(0.2, 0.2),
-                    new GeoCoord(0.1, 0.2)
-                };
-
-            LinkedGeo.LinkedGeoLoop inner1 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(inner1);
-            CreateLinkedLoop(ref inner1, verts2, 3);
-
-            List<GeoCoord> verts3 =
-                new List<GeoCoord>
-                {
-                    new GeoCoord(0.2, 0.2),
-                    new GeoCoord(0.3, 0.3),
-                    new GeoCoord(0.2, 0.3)
-                };
-
-            LinkedGeo.LinkedGeoLoop inner2 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(inner2);
-            CreateLinkedLoop(ref inner2, verts3, 3);
-
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref inner2);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref inner1);
-
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
-
-            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
-
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedPolygons(ref polygon) == 1,
-                 "Polygon count correct for 2 holes"
-                );
-            Assert.True(polygon.First == outer, "Got expected outer loop");
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedLoops(ref polygon) == 3,
-                 "Loop count on first polygon correct"
-                );
-        }
-
-        [Test]
-        public void NormalizeMultiPolygonTwoDonuts()
-        {
-            GeoCoord[] verts =
-            {
-                new GeoCoord(0, 0),
-                new GeoCoord(0, 3),
-                new GeoCoord(3, 3),
-                new GeoCoord(3, 0)
-            };
-            LinkedGeo.LinkedGeoLoop outer = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer);
-            CreateLinkedLoop(ref outer, verts.ToList(), 4);
-
-            GeoCoord[] verts2 =
-            {
-                new GeoCoord(1, 1),
-                new GeoCoord(2, 2),
-                new GeoCoord(1, 2)
-            };
-            LinkedGeo.LinkedGeoLoop inner = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(inner);
-            CreateLinkedLoop(ref inner, verts2.ToList(), 3);
-
-            GeoCoord[] verts3 =
-            {
-                new GeoCoord(0, 0),
-                new GeoCoord(0, -3),
-                new GeoCoord(-3, -3),
-                new GeoCoord(-3, 0)
-            };
-            LinkedGeo.LinkedGeoLoop outer2 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer2);
-            CreateLinkedLoop(ref outer2, verts3.ToList(), 4);
-
-            GeoCoord[] verts4 =
-            {
-                new GeoCoord(-1, -1),
-                new GeoCoord(-2, -2),
-                new GeoCoord(-1, -2)
-            };
-            LinkedGeo.LinkedGeoLoop inner2 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(inner2);
-            CreateLinkedLoop(ref inner2, verts4.ToList(), 3);
-
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref inner2);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref inner);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer2);
-
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
-
-            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
-
-            Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 2, "Polygon count correct");
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedLoops(ref polygon) == 2,
-                 "Loop count on first polygon correct"
-                );
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedCoords(ref polygon.First) == 4,
-                 "Got expected outer loop"
-                );
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedCoords(ref polygon.First.Next) == 3,
-                 "Got expected inner loop"
-                );
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedLoops(ref polygon.Next) == 2,
-                 "Loop count on second polygon correct"
-                );
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedCoords(ref polygon.Next.First) == 4,
-                 "Got expected outer loop"
-                );
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedCoords(ref polygon.Next.First.Next) == 3,
-                 "Got expected inner loop"
-                );
-        }
-
-        [Test]
-        public void NormalizeMultiPolygonNestedDonuts()
-        {
-            GeoCoord[] verts =
-            {
-                new GeoCoord(0.2, 0.2),
-                new GeoCoord(0.2, -0.2),
-                new GeoCoord(-0.2, -0.2),
-                new GeoCoord(-0.2, 0.2)
-            };
-            LinkedGeo.LinkedGeoLoop outer =new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer);
-            CreateLinkedLoop(ref outer, verts.ToList(), 4);
-
-            GeoCoord[] verts2 =
-            {
-                new GeoCoord(0.1, 0.1),
-                new GeoCoord(-0.1, 0.1),
-                new GeoCoord(-0.1, -0.1),
-                new GeoCoord(0.1, -0.1)
-            };
-            LinkedGeo.LinkedGeoLoop inner =new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(inner);
-            CreateLinkedLoop(ref inner, verts2.ToList(), 4);
-
-            GeoCoord[] verts3 =
-            {
-                new GeoCoord(0.6, 0.6),
-                new GeoCoord(0.6, -0.6),
-                new GeoCoord(-0.6, -0.6),
-                new GeoCoord(-0.6, 0.6)
-            };
-            LinkedGeo.LinkedGeoLoop outerBig =new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outerBig);
-            CreateLinkedLoop(ref outerBig, verts3.ToList(), 4);
-
-            GeoCoord[] verts4 =
-            {
-                new GeoCoord(0.5, 0.5),
-                new GeoCoord(-0.5, 0.5),
-                new GeoCoord(-0.5, -0.5),
-                new GeoCoord(0.5, -0.5)
-            };
-            LinkedGeo.LinkedGeoLoop innerBig =new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(innerBig);
-            CreateLinkedLoop(ref innerBig, verts4.ToList(), 4);
-
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref inner);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outerBig);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref innerBig);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer);
-
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
-
-            Assert.True(result == H3Lib.StaticData.LinkedGeo.NormalizationSuccess, "No error code returned");
-
-            Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 2, "Polygon count correct");
-            Assert.True(LinkedGeo.CountLinkedLoops(ref polygon) == 2,
-                     "Loop count on first polygon correct");
-            Assert.True(polygon.First == outerBig, "Got expected outer loop");
-            Assert.True(polygon.First.Next == innerBig, "Got expected inner loop");
-            Assert.True(LinkedGeo.CountLinkedLoops(ref polygon.Next) == 2,
-                     "Loop count on second polygon correct");
-            Assert.True(polygon.Next.First == outer, "Got expected outer loop");
-            Assert.True(polygon.Next.First.Next == inner, "Got expected inner loop");
-        }
-
-        [Test]
-        public void NormalizeMultiPolygonNoOuterLoops()
-        {
-            GeoCoord[] verts1 =
-            {
-                new GeoCoord(0, 0),
-                new GeoCoord(1, 1),
-                new GeoCoord(0, 1)
-            };
-
-            LinkedGeo.LinkedGeoLoop outer1 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer1);
-            CreateLinkedLoop(ref outer1, verts1.ToList(), 3);
-
-            GeoCoord[] verts2 =
-            {
-                new GeoCoord(2, 2),
-                new GeoCoord(3, 3),
-                new GeoCoord(2, 3)
-            };
-
-            LinkedGeo.LinkedGeoLoop outer2 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer2);
-            CreateLinkedLoop(ref outer2, verts2.ToList(), 3);
-
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer1);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer2);
-
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
-
-            Assert.True
-                (
-                 result == H3Lib.StaticData.LinkedGeo.NormalizationErrUnassignedHoles,
-                 "Expected error code returned"
-                );
-
-            Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 1,
-                        "Polygon count correct");
-            Assert.True
-                (
-                 LinkedGeo.CountLinkedLoops(ref polygon) == 0,
-                 "Loop count as expected with invalid input"
-                );
-        }
-
-        [Test]
-        public void NormalizeMultiPolygonAlreadyNormalized()
-        {
-            GeoCoord[] verts1 =
-            {
-                new GeoCoord(0, 0),
-                new GeoCoord(0, 1),
-                new GeoCoord(1, 1)
-            };
-
-            LinkedGeo.LinkedGeoLoop outer1 = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer1);
-            CreateLinkedLoop(ref outer1, verts1.ToList(), 3);
-
-            GeoCoord[] verts2 =
-            {
-                new GeoCoord(2, 2),
-                new GeoCoord(2, 3),
-                new GeoCoord(3, 3)
-            };
-
-            LinkedGeo.LinkedGeoLoop outer2 =new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer2);
-            CreateLinkedLoop(ref outer2, verts2.ToList(), 3);
-
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer1);
-            LinkedGeo.LinkedGeoPolygon next = LinkedGeo.AddNewLinkedPolygon(ref polygon);
-            LinkedGeo.AddLinkedLoop(ref next, ref outer2);
-
-            // Should be a no-op
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
-
-            Assert.True(result ==H3Lib.StaticData.LinkedGeo. NormalizationErrMultiplePolygons,
-                     "Expected error code returned");
-
-            Assert.True(LinkedGeo.CountLinkedPolygons(ref polygon) == 2, "Polygon count correct");
-            Assert.True(LinkedGeo.CountLinkedLoops(ref polygon) == 1,
-                     "Loop count on first polygon correct");
-            Assert.True(polygon.First == outer1, "Got expected outer loop");
-            Assert.True(LinkedGeo.CountLinkedLoops(ref polygon.Next) == 1,
-                     "Loop count on second polygon correct");
-            Assert.True(polygon.Next.First == outer2, "Got expected outer loop");
-        }
-
-        [Test]
-        public void NormalizeMultiPolygonUnassignedHole()
-        {
-            GeoCoord[] verts =
-            {
-                new GeoCoord(0, 0),
-                new GeoCoord(0, 1),
-                new GeoCoord(1, 1),
-                new GeoCoord(1, 0)
-            };
-            
-            LinkedGeo.LinkedGeoLoop outer = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(outer);
-            CreateLinkedLoop(ref outer, verts.ToList(), 4);
-
-            GeoCoord[] verts2 =
-            {
-                new GeoCoord(2, 2),
-                new GeoCoord(3, 3),
-                new GeoCoord(2, 3)
-            };
-
-            LinkedGeo.LinkedGeoLoop inner = new LinkedGeo.LinkedGeoLoop();
-            Assert.NotNull(inner);
-            CreateLinkedLoop(ref inner, verts2.ToList(), 3);
-
-            LinkedGeo.LinkedGeoPolygon polygon = new LinkedGeo.LinkedGeoPolygon();
-            LinkedGeo.AddLinkedLoop(ref polygon, ref inner);
-            LinkedGeo.AddLinkedLoop(ref polygon, ref outer);
-
-            int result = LinkedGeo.NormalizeMultiPolygon(ref polygon);
-            
-            // Expected error code returned
-            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationErrUnassignedHoles);
+            polygon.Clear();
         }
     }
 }

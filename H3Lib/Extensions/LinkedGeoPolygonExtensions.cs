@@ -26,7 +26,7 @@ namespace H3Lib.Extensions
         {
             // We assume that the input is a single polygon with loops;
             // if it has multiple polygons, don't touch it
-            if (root.Next != null)
+            if (root.Loop.First != null)
             {
                 //  TODO: Check the constant location and update
                 return (StaticData.LinkedGeo.NormalizationErrMultiplePolygons, root);

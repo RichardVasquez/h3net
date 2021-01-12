@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace H3Lib.Extensions
 {
     public static class BaseCellsExtensions
@@ -80,17 +82,17 @@ namespace H3Lib.Extensions
                 return StaticData.BaseCells.InvalidRotations;
             }
 
-            var cellRotations = (BaseCellRotation[,,]) StaticData.BaseCells.FaceIjkBaseCells.GetValue(face);
-            if (cellRotations == null)
+            for (var i = 0; i < 3; i++)
             {
-                return StaticData.BaseCells.InvalidRotations;
-            }
-
-            foreach (var rotation in cellRotations)
-            {
-                if (rotation.BaseCell == baseCell)
+                for (var j = 0; j < 3; j++)
                 {
-                    return rotation.CounterClockwiseRotate60;
+                    for (var k = 0; k < 3; k++)
+                    {
+                        if (StaticData.BaseCells.FaceIjkBaseCells[face,i,j,k].BaseCell == baseCell)
+                        {
+                            return StaticData.BaseCells.FaceIjkBaseCells[face, i, j, k].CounterClockwiseRotate60;
+                        }
+                    }
                 }
             }
 
@@ -119,6 +121,23 @@ namespace H3Lib.Extensions
         public static bool IsClockwiseOffset(this int baseCell, int testFace)
         {
             return StaticData.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[0] == testFace || StaticData.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[1] == testFace;
+        }
+        
+        public static int Res0IndexCount => Constants.NUM_BASE_CELLS;
+
+        /// <summary>
+        /// getRes0Indexes generates all base cells
+        /// </summary>
+        public static List<H3Index> GetRes0Indexes()
+        {
+            var results = new List<H3Index>();
+            for (var bc = 0; bc < Constants.NUM_BASE_CELLS; bc++)
+            {
+                var baseCell = new H3Index(StaticData.H3Index.H3_INIT) {Mode = H3Mode.Hexagon, BaseCell = bc};
+                results.Add(baseCell);
+            }
+
+            return results;
         }
     }
 }
