@@ -206,15 +206,13 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="polygons">Polygon containers to check</param>
         /// <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
-        /// <param name="polygonCount">Number of polygons in the list</param>
         /// <returns>Deepest container, or null if list is empty</returns>
         /// <!--
         /// linkedGeo.c
         /// static const LinkedGeoPolygon* findDeepestContainer
         /// -->
         public static LinkedGeoPolygon FindDeepestContainer(
-                this List<LinkedGeoPolygon> polygons, List<BBox> boxes,
-                int polygonCount
+                this List<LinkedGeoPolygon> polygons, List<BBox> boxes
             )
         {
             // Set the initial return value to the first candidate
@@ -232,7 +230,11 @@ namespace H3Lib.Extensions
             int max = -1;
             foreach (var poly in polygons)
             {
-                int count = poly.First.CountContainers(polygons, boxes);
+                if (poly.LinkedGeoList.First == null)
+                {
+                    continue;
+                }
+                int count = poly.LinkedGeoList.First.Value.CountContainers(polygons, boxes);
                 if (count <= max)
                 {
                     continue;

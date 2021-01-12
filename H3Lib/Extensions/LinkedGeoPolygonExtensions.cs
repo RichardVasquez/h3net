@@ -22,11 +22,15 @@ namespace H3Lib.Extensions
         /// Item1 - 0 on success, or an error code > 0 for invalid input
         /// Item2 - Normalized LinkedGeoPolygon
         /// </returns>
+        /// <!--
+        /// linkedGeo.c
+        /// int normalizeMultiPolygon
+        /// -->
         public static (int, LinkedGeoPolygon) NormalizeMultiPolygon(this LinkedGeoPolygon root)
         {
             // We assume that the input is a single polygon with loops;
             // if it has multiple polygons, don't touch it
-            if (root.Loop.First != null)
+            if (root.Next != null)
             {
                 //  TODO: Check the constant location and update
                 return (StaticData.LinkedGeo.NormalizationErrMultiplePolygons, root);
@@ -45,18 +49,39 @@ namespace H3Lib.Extensions
             int innerCount = 0;
             int outerCount = 0;
 
+
             // Create an array to hold all of the inner loops. Note that
             // this array will never be full, as there will always be fewer
             // inner loops than outer loops.
-            var innerLoops = Enumerable.Range(1, loopCount).Select(s => new LinkedGeoLoop()).ToList();
-
+            var innerLoops = new List<LinkedGeoLoop>();
             // Create an array to hold the bounding boxes for the outer loops
-            var bboxes = Enumerable.Range(1, loopCount).Select(s => new BBox()).ToList();
+            var bboxes = new List<BBox>();
 
             // Get the first loop and unlink it from root
-            var loop = root.First;
+            var loop = root.LinkedGeoList.First;
+
+            var testLoops = root.LinkedGeoList.ToList();
             root = new LinkedGeoPolygon();
 
+            foreach (LinkedGeoLoop geoLoop in testLoops)
+            {
+                if (geoLoop.IsClockwise())
+                {
+                    innerLoops.Add(geoLoop);
+                    innerCount++;
+                }
+                else
+                {
+                    polygon = polygon == null
+                                  ? root
+                                  : polygon.AddNew();
+                    polygon.AddLinkedLoop(geoLoop);
+                    bboxes.Add(geoLoop.ToBBox());
+                    outerCount++;
+                }
+            }
+            
+            /*
             // Iterate over all loops, moving inner loops into an array and
             // assigning outer loops to new polygons
             // TODO: Make sure you're not confusing LinkedList references
@@ -81,7 +106,8 @@ namespace H3Lib.Extensions
                 loop.Next = null;
                 loop = next;
             }
-
+            */
+            
             // Find polygon for each inner loop and assign the hole to it
             for (int i = 0; i < innerCount; i++)
             {
@@ -104,7 +130,7 @@ namespace H3Lib.Extensions
             innerLoops.Clear();
             bboxes.Clear();
 
-            return (resultCode,polygon);
+            return (resultCode, root);
         }
 
         /// <summary>
@@ -140,18 +166,21 @@ namespace H3Lib.Extensions
             while (polygon != null)
             {
                 // We are guaranteed not to overlap, so just test the first point
-                if (polygon.First.PointInside(boxes[index], loop.First.Vertex))
+                if(polygon.LinkedGeoList.First!=null && loop.GeoCoordList.First!=null)
                 {
-                    candidates[candidateCount] = polygon;
-                    candidateBoxes[candidateCount] = boxes[index];
-                    candidateCount++;
+                    if (polygon.LinkedGeoList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value))
+                    {
+                        candidates[candidateCount] = polygon;
+                        candidateBoxes[candidateCount] = boxes[index];
+                        candidateCount++;
+                    }
                 }
                 polygon = polygon.Next;
                 index++;
             }
 
             // The most deeply nested container is the immediate parent
-            var parent = candidates.FindDeepestContainer(boxes, candidateCount);
+            var parent = candidates.FindDeepestContainer(boxes);
 
             // Free allocated memory
             candidates.Clear();

@@ -10,16 +10,24 @@ namespace H3Lib
     /// </summary>
     public class LinkedGeoPolygon
     {
-        public LinkedGeoLoop First;
-        public LinkedGeoLoop Last;
         public LinkedGeoPolygon Next;
 
-        public LinkedList<LinkedGeoLoop> Loop = new LinkedList<LinkedGeoLoop>();
+        public LinkedList<LinkedGeoLoop> LinkedGeoList;
         
+        /// <summary>
+        /// Count the number of polygons in a linked list
+        /// </summary>
+        /// <!--
+        /// linkedGeo.c
+        /// int countLinkedPolygons
+        /// -->
+        public int Count => LinkedGeoList.Count;
+
+        public bool IsEmpty => LinkedGeoList.Count == 0;
+
         public LinkedGeoPolygon()
         {
-            First = null;
-            Last = null;
+            LinkedGeoList = new LinkedList<LinkedGeoLoop>();
             Next = null;
         }
 
@@ -57,9 +65,8 @@ namespace H3Lib
         public LinkedGeoLoop AddNewLoop()
         {
             var loop = new LinkedGeoLoop();
-            Loop.AddLast(loop);
+            LinkedGeoList.AddLast(loop);
             return loop;
-            //return AddLinkedLoop(new LinkedGeoLoop());
         }
 
         /// <summary>
@@ -74,30 +81,8 @@ namespace H3Lib
         /// -->
         public LinkedGeoLoop AddLinkedLoop(LinkedGeoLoop loop)
         {
-            Loop.AddLast(loop);
+            LinkedGeoList.AddLast(loop);
             return loop;
-            /*
-            var last = Last;
-
-            if (last == null)
-            {
-                if (First != null)
-                {
-                    throw new Exception("assert(polygon->first == NULL)");
-                }
-
-                First = loop;
-            }
-            else
-            {
-                Last.Next = loop;
-            }
-
-            //  TODO: Check to make sure we're not creating a memory leak.
-            //  Above in the else condition, aren't we overwriting
-            //  Last.Next with the following assignment?
-            Last = loop;
-            return loop;*/
         }
 
         /// <summary>
@@ -111,27 +96,33 @@ namespace H3Lib
         /// -->
         public void Clear()
         {
-            foreach (var geoLoop in Loop)
+            foreach (var geoLoop in LinkedGeoList)
             {
                 geoLoop.Clear();
             }
-            Loop.Clear();
+            LinkedGeoList.Clear();
         }
 
         /// <summary>
-        /// Going to try C# capabilities only in this.
-        ///
-        /// Count the number of polygons in a linked list
+        /// Count the number of polygons in a linked list, starting from this
         /// </summary>
         /// <!--
         /// linkedGeo.c
-        /// int countLinkedPolygons
+        /// countLinkedPolygons
         /// -->
-        public int Count()
+        public int CountPolygons()
         {
-            return Loop.Count;
-        }
+            var sum = 1;
+            var next = Next;
+            while (next != null)
+            {
+                sum++;
+                next = next.Next;
+            }
 
+            return sum;
+        }
+        
         /// <summary>
         /// Going to try C# capabilities only in this.
         ///
@@ -143,7 +134,16 @@ namespace H3Lib
         /// -->
         public int CountLoops()
         {
-            return Loop.Sum(geoLoop => geoLoop.Count);
+            return LinkedGeoList.Count;
+/*
+            int sum = 0;
+            foreach (var geoLoop in LinkedGeoList)
+            {
+                sum += geoLoop.Count;
+            }
+
+            return sum;
+*/
         }
     }
 }

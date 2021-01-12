@@ -13,59 +13,26 @@ namespace H3Lib.Extensions
             {
                 return false;
             }
+            
+            //  Gonna add another test here for quick fail, as we need a triangle+ to have an inside
+            if (loop.GeoCoordList.Count < 3)
+            {
+                return false;
+            }
 
             bool isTransmeridian = box.IsTransmeridian;
             bool contains = false;
 
-            double lat = coord.Latitude;
-            double lng = coord.Longitude.NormalizeLongitude(isTransmeridian);
+            double targetLatitude = coord.Latitude;
+            double targetLongitude = coord.Longitude.NormalizeLongitude(isTransmeridian);
 
-            LinkedListNode<GeoCoord> currentCoord = null;
-
-            // INIT_ITERATION
-            //      LinkedGeoCoord* currentCoord = NULL; \
-            //      LinkedGeoCoord* nextCoord = NULL
-            //
-            //      LinkedListNode<GeoCoord> currentCoord = null;
-            //      LinkedListNode<GeoCoord> nextCoord = null;
-
-            while (true) {
-
+            //  If I've got this right, I may be able to make this part of an abstract
+            var nodes = loop.GeoCoordList.ToList();
+            for (int idx = 0; idx < nodes.Count; idx++)
+            {
+                var a = nodes[idx];
+                var b = nodes[(idx + 1) % nodes.Count];
                 
-                //GET_NEXT_COORD(loop, coordToCheck) \
-                //  coordToCheck == null
-                //      ? loop.Loop.First
-                //      : currentCoord-.Next;
-                //
-                //ITERATE(loop, a, b); =>
-                //ITERATE_LINKED_LOOP(loop, vertexA, vertexB)
-                //
-                //      currentCoord = GET_NEXT_COORD(loop, currentCoord);    \
-                //      if (currentCoord == NULL) break;                      \
-                //      vertexA = currentCoord->vertex;                       \
-                //      nextCoord = GET_NEXT_COORD(loop, currentCoord->next); \
-                //      vertexB = nextCoord->vertex
-
-                
-                
-                currentCoord = currentCoord == null
-                                   ? loop.Loop.First
-                                   : currentCoord.Next;
-
-                if (currentCoord == null)
-                {
-                    break;
-                }
-
-                var a = currentCoord.Value;
-
-                var nextCoord = (currentCoord.Next == null)
-                                    ? loop.Loop.First
-                                    : currentCoord.Next;
-
-                // ReSharper disable once PossibleNullReferenceException
-                var b = nextCoord.Value;
-
                 // Ray casting algo requires the second point to always be higher
                 // than the first, so swap if needed
                 if (a.Latitude > b.Latitude)
@@ -77,7 +44,7 @@ namespace H3Lib.Extensions
 
                 // If we're totally above or below the latitude ranges, the test
                 // ray cannot intersect the line segment, so let's move on
-                if (lat < a.Latitude || lat > b.Latitude)
+                if (targetLatitude < a.Latitude || targetLatitude > b.Latitude)
                 {
                     continue;
                 }
@@ -87,10 +54,10 @@ namespace H3Lib.Extensions
 
                 // Rays are cast in the longitudinal direction, in case a point
                 // exactly matches, to decide tiebreakers, bias westerly
-                if (Math.Abs(aLng - lng) < double.Epsilon ||
-                    Math.Abs(bLng - lng) < double.Epsilon)
+                if (Math.Abs(aLng - targetLongitude) < double.Epsilon ||
+                    Math.Abs(bLng - targetLongitude) < double.Epsilon)
                 {
-                    lng -= Constants.DBL_EPSILON;
+                    targetLongitude -= Constants.DBL_EPSILON;
                 }
 
                 // For the latitude of the point, compute the longitude of the
@@ -98,12 +65,12 @@ namespace H3Lib.Extensions
                 // This is done by computing the percent above a the lat is,
                 // and traversing the same percent in the longitudinal direction
                 // of a to b
-                double ratio = (lat - a.Latitude ) / (b.Latitude  - a.Latitude);
+                double ratio = (targetLatitude - a.Latitude ) / (b.Latitude  - a.Latitude);
                 double testLng =
                     (aLng + (bLng - aLng) * ratio).NormalizeLongitude(isTransmeridian);
 
                 // Intersection of the ray
-                if (testLng > lng)
+                if (testLng > targetLongitude)
                 {
                     contains = !contains;
                 }
@@ -126,70 +93,13 @@ namespace H3Lib.Extensions
 
             double lat;
             double lon;
-            GeoCoord coord;
-            GeoCoord next;
 
-            //INIT_ITERATION
-            LinkedListNode<GeoCoord> currentCoord = null;
-            LinkedListNode<GeoCoord> nextCoord = null;
+            var nodes = loop.GeoCoordList.ToList();
+            for (int idx = 0; idx < nodes.Count; idx++)
+            {
+                var coord = nodes[idx];
+                var next = nodes[(idx + 1) % nodes.Count];
 
-            while (true) {
-                //GET_NEXT_COORD(loop, coordToCheck) \
-                //  coordToCheck == null
-                //      ? loop.Loop.First
-                //      : currentCoord.Next;
-                //
-                //ITERATE_LINKED_LOOP(loop, vertexA, vertexB)
-                //
-                //      currentCoord = GET_NEXT_COORD(loop, currentCoord);    \
-                //      if (currentCoord == NULL) break;                      \
-                //      vertexA = currentCoord->vertex;                       \
-                //      nextCoord = GET_NEXT_COORD(loop, currentCoord->next); \
-                //      vertexB = nextCoord->vertex
-
-                currentCoord = currentCoord == null
-                                   ? loop.Loop.First
-                                   : currentCoord.Next;
-                if (currentCoord == null)
-                {
-                    break;
-                }
-
-                coord = currentCoord.Value;
-                nextCoord = currentCoord.Next ?? loop.Loop.First;
-
-                // ReSharper disable once PossibleNullReferenceException
-                next = nextCoord.Value;
-                
-                //GET_NEXT_COORD(loop, coordToCheck) \
-                //  coordToCheck == null
-                //      ? loop.Loop.First
-                //      : currentCoord.Next;
-                //
-                //ITERATE_LINKED_LOOP(loop, vertexA, vertexB)
-                //
-                //      currentCoord = GET_NEXT_COORD(loop, currentCoord);    \
-                //      if (currentCoord == NULL) break;                      \
-                //      vertexA = currentCoord->vertex;                       \
-                //      nextCoord = GET_NEXT_COORD(loop, currentCoord->next); \
-                //      vertexB = nextCoord->vertex
-
-                /*
-                    currentCoord = currentCoord == null
-                                   ? loop.Loop.First
-                                   : currentCoord.Next;
-                    if (currentCoord == null)
-                    {
-                        break;
-                    }
-
-                    coord = currentCoord.Value;
-                    nextCoord = currentCoord.Next ?? loop.Loop.First;
-
-                    // ReSharper disable once PossibleNullReferenceException
-                    next = nextCoord.Value;
-                 */
-                
                 lat = coord.Latitude;
                 lon = coord.Longitude;
                 if (lat < box.South)
@@ -233,34 +143,18 @@ namespace H3Lib.Extensions
             {
                 box = box.ReplaceEW(maxNegLon, minPosLon);
             }
-
             return box;
         }
 
         public static bool IsClockwiseNormalized(this LinkedGeoLoop loop, bool isTransmeridian)
         {
             double sum = 0;
-            GeoCoord a;
-            GeoCoord b;
 
-            LinkedListNode<GeoCoord> currentCoord = null;
-            LinkedListNode<GeoCoord> nextCoord = null;
-
-            while (true) 
+            var nodes = loop.GeoCoordList.ToList();
+            for (int idx = 0; idx < nodes.Count; idx++)
             {
-                currentCoord = currentCoord == null
-                                   ? loop.Loop.First
-                                   : currentCoord.Next;
-                if (currentCoord == null)
-                {
-                    break;
-                }
-
-                a = currentCoord.Value;
-                nextCoord = currentCoord.Next ?? loop.Loop.First;
-
-                // ReSharper disable once PossibleNullReferenceException
-                b = nextCoord.Value;
+                var a = nodes[idx];
+                var b = nodes[(idx + 1) % nodes.Count];
 
                 // If we identify a transmeridian arc (> 180 degrees longitude),
                 // start over with the transmeridian flag set
@@ -289,16 +183,43 @@ namespace H3Lib.Extensions
         /// <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
         /// <returns>Number of polygons containing the loop</returns>
         /// <!--
-        /// linkedGoe.c
+        /// linkedGeo.c
         /// static int countContainers
         /// -->
         public static int CountContainers(this LinkedGeoLoop loop, List<LinkedGeoPolygon> polygons, List<BBox> boxes)
         {
             return polygons
-                  .Where(
-                         (t, i) => loop != t.First &&
-                                   t.First.PointInside(boxes[i], loop.First.Vertex))
+                  .Where
+                       (
+                        (poly, index) =>
+                            poly.LinkedGeoList.First != null &&
+                            loop.GeoCoordList.First != null &&
+                            loop != poly.LinkedGeoList.First.Value &&
+                            poly.LinkedGeoList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value)
+                       )
                   .Count();
+
+            /*
+            int containerCount = 0;
+            for (int i = 0; i < polygons.Count; i++)
+            {
+                if(polygons[i].LinkedGeoList.First!=null && loop.GeoCoordList.First!=null)
+                {
+                    if (loop != polygons[i].LinkedGeoList.First.Value &&
+                        polygons[i].LinkedGeoList.First.Value.PointInside(boxes[i], loop.GeoCoordList.First.Value))
+                    {
+                        containerCount++;
+                    }
+                }
+            }
+            return containerCount;
+         
+*/
+            //            return polygons
+            //                  .Where(
+            //                         (t, i) => loop != t.First &&
+            //                                   t.First.PointInside(boxes[i], loop.First.Vertex))
+            //                 .Count();
         }
     }
 }

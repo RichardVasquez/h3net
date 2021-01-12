@@ -23,11 +23,11 @@ namespace H3Lib.Extensions
             var edge = graph.FirstNode();
             while (edge.HasValue)
             {
-                result.Loop.AddLast(loop);
+                result.LinkedGeoList.AddLast(loop);
                 // Walk the graph to get the outline
                 do
                 {
-                    loop.Loop.AddLast(edge.Value.From);
+                    loop.GeoCoordList.AddLast(edge.Value.From);
                     var nextVertex = edge.Value.To;
                     // Remove frees the node, so we can't use edge after this
                     graph.RemoveNode(edge.Value);

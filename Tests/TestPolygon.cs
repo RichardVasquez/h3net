@@ -334,9 +334,36 @@ namespace Tests
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
             Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
-            Assert.AreEqual(polygon.Count(), 1);
+            Assert.AreEqual(polygon.Count, 1);
             Assert.AreEqual(polygon.CountLoops(), 1);
-            Assert.AreEqual(polygon.First, outer);
+            if (polygon.LinkedGeoList.First != null)
+            {
+                Assert.AreEqual(polygon.LinkedGeoList.First.Value, outer);
+            }
+
+            polygon.Clear();
+        }
+
+        [Test]
+        public void NormalizeMultiPolygonTwoOuterLoops()
+        {
+            var verts1 = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 1}, {1, 1}});
+            var outer1= CreateLinkedLoop(verts1);
+
+            var verts2 = MakeGeoCoordArray(new double[,] {{2, 2}, {2, 3}, {3, 3}});
+            var outer2 = CreateLinkedLoop(verts2);
+
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(outer1);
+            polygon.AddLinkedLoop(outer2);
+
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
+
+            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(polygon.CountPolygons(), 2);
+            Assert.AreEqual(polygon.CountLoops(), 1);
+            Assert.AreEqual(polygon.Next.CountLoops(), 1);
 
             polygon.Clear();
         }

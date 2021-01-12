@@ -9,16 +9,25 @@ namespace H3Lib
     /// </summary>
     public class LinkedGeoLoop
     {
-        public LinkedGeoCoord First;
-        public LinkedGeoCoord Last;
-        public LinkedGeoLoop Next;
+        public LinkedList<GeoCoord> GeoCoordList;
 
-        public LinkedList<GeoCoord> Loop = new LinkedList<GeoCoord>();
+        /// <summary>
+        /// Count the number of coordinates in a loop
+        /// </summary>
+        /// <returns>Count</returns>
+        /// <!--
+        /// linkedGeo.c
+        /// int countLinkedCoords
+        /// -->
+        public int Count => GeoCoordList.Count;
 
-        public int Count => Loop.Count;
+        public bool IsEmpty => GeoCoordList.Count == 0;
 
-        public bool IsEmpty => Loop.Count == 0;
-
+        public LinkedGeoLoop()
+        {
+            GeoCoordList = new LinkedList<GeoCoord>();
+        }
+        
         /// <summary>
         /// Add a new linked coordinate to the current loop
         /// </summary>
@@ -32,27 +41,7 @@ namespace H3Lib
         //public LinkedGeoCoord AddLinkedCoord(GeoCoord vertex)
         public void AddLinkedCoord(GeoCoord vertex)
         {
-            Loop.AddLast(vertex);
-            /*
-            var coord = new LinkedGeoCoord() {Vertex = vertex, Next = null};
-            var last = Last;
-            if (last == null)
-            {
-                if (First == null)
-                {
-                    throw new Exception("assert(loop->first == NULL)");
-                }
-
-                First = coord;
-            }
-            else
-            {
-                Last.Next = coord;
-            }
-            //  TODO: Again check for memory leaks.
-            Last = coord;
-            return coord;*/
-            
+            GeoCoordList.AddLast(vertex);
         }
 
         /// <summary>
@@ -64,37 +53,7 @@ namespace H3Lib
         /// -->
         public void Clear()
         {
-            Loop.Clear();
-            LinkedGeoCoord nextCoord;
-            for (var currentCoord = First;
-                 currentCoord != null;
-                 currentCoord = nextCoord)
-            {
-                nextCoord = currentCoord.Next;
-                currentCoord = null;
-            }
-        }
-
-        /// <summary>
-        /// Count the number of coordinates in a loop
-        /// </summary>
-        /// <returns>Count</returns>
-        /// <!--
-        /// linkedGeo.c
-        /// int countLinkedCoords
-        /// -->
-        public int CountNodes()
-        {
-            return Loop.Count;
-            /*            var coord = First;
-                        var count = 0;
-                        while (coord != null)
-                        {
-                            count++;
-                            coord = coord.Next;
-                        }
-                        return count;
-                        */
+            GeoCoordList.Clear();
         }
     }
 }
