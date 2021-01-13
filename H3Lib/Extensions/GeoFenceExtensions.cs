@@ -1,7 +1,5 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace H3Lib.Extensions
 {
@@ -21,6 +19,8 @@ namespace H3Lib.Extensions
             double lat = coord.Latitude;
             double lng = coord.Longitude.NormalizeLongitude(isTransmeridian);
 
+            // TODO: Incorporate equivalent from LinkedGeoLoopExtensions.cs
+            
             GeoCoord a;
             GeoCoord b;
 

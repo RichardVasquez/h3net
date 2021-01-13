@@ -14,15 +14,6 @@ namespace H3Lib
 
         public LinkedList<LinkedGeoLoop> LinkedGeoList;
         
-        /// <summary>
-        /// Count the number of polygons in a linked list
-        /// </summary>
-        /// <!--
-        /// linkedGeo.c
-        /// int countLinkedPolygons
-        /// -->
-        public int Count => LinkedGeoList.Count;
-
         public bool IsEmpty => LinkedGeoList.Count == 0;
 
         public LinkedGeoPolygon()

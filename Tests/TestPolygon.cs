@@ -334,7 +334,7 @@ namespace Tests
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
             Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
-            Assert.AreEqual(polygon.Count, 1);
+            Assert.AreEqual(polygon.CountPolygons(), 1);
             Assert.AreEqual(polygon.CountLoops(), 1);
             if (polygon.LinkedGeoList.First != null)
             {
@@ -367,5 +367,234 @@ namespace Tests
 
             polygon.Clear();
         }
+
+        [Test]
+        public void NormalizeMultiPolygonOneHole()
+        {
+            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 3}, {3, 3}, {3, 0}});
+            var outer = CreateLinkedLoop(verts);
+
+            var verts2 = MakeGeoCoordArray(new double[,] {{1, 1}, {2, 2}, {1, 2}});
+            var inner = CreateLinkedLoop(verts2);
+
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(inner);
+            polygon.AddLinkedLoop(outer);
+
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
+
+            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(polygon.CountPolygons(), 1);
+            Assert.AreEqual(polygon.CountLoops(), 2);
+            
+            Assert.IsNotNull(polygon.LinkedGeoList.First);
+            Assert.AreEqual(polygon.LinkedGeoList.First.Value, outer);
+
+            Assert.IsNotNull(polygon.LinkedGeoList.First?.Next);
+            Assert.AreEqual(polygon.LinkedGeoList.First.Next.Value, inner);
+
+            polygon.Clear();
+        }
+
+        [Test]
+        public void NormalizeMultiPolygonTwoHoles()
+        {
+            var verts = MakeGeoCoordArray(new[,] {{0, 0}, {0, 0.4}, {0.4, 0.4}, {0.4, 0}});
+            var outer = CreateLinkedLoop(verts);
+
+            var verts2 = MakeGeoCoordArray(new[,] {{0.1, 0.1}, {0.2, 0.2}, {0.1, 0.2}});
+            var inner1 = CreateLinkedLoop(verts2);
+
+            var verts3 = MakeGeoCoordArray(new[,] {{0.2, 0.2}, {0.3, 0.3}, {0.2, 0.3}});
+            var inner2 = CreateLinkedLoop(verts3);
+
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(inner2);
+            polygon.AddLinkedLoop(outer);
+            polygon.AddLinkedLoop(inner1);
+
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
+
+            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(polygon.CountPolygons(), 1);
+            
+            Assert.IsNotNull(polygon.LinkedGeoList.First);
+            Assert.AreEqual(polygon.LinkedGeoList.First.Value, outer);
+
+            Assert.AreEqual(polygon.CountLoops(), 3);
+
+            polygon.Clear();
+        }
+
+        [Test]
+        public void NormalizeMultiPolygonTwoDonuts()
+        {
+            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 3}, {3, 3}, {3, 0}});
+            var outer = CreateLinkedLoop(verts);
+
+            var verts2 = MakeGeoCoordArray(new double[,] {{1, 1}, {2, 2}, {1, 2}});
+            var inner = CreateLinkedLoop(verts2);
+
+            var verts3 = MakeGeoCoordArray(new double[,] {{0, 0}, {0, -3}, {-3, -3}, {-3, 0}});
+            var outer2 = CreateLinkedLoop(verts3);
+
+            var verts4 = MakeGeoCoordArray(new double[,] {{-1, -1}, {-2, -2}, {-1, -2}});
+            var inner2 = CreateLinkedLoop(verts4);
+
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(inner2);
+            polygon.AddLinkedLoop(inner);
+            polygon.AddLinkedLoop(outer);
+            polygon.AddLinkedLoop(outer2);
+
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
+
+            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(polygon.CountPolygons(), 2);
+            Assert.AreEqual(polygon.CountLoops(), 2);
+
+            Assert.IsNotNull(polygon.LinkedGeoList.First);
+            Assert.AreEqual(polygon.LinkedGeoList.First.Value.CountCoords, 4);
+
+            Assert.IsNotNull(polygon.LinkedGeoList.First.Next);
+            Assert.AreEqual(polygon.LinkedGeoList.First.Next.Value.CountCoords, 3);
+
+            Assert.AreEqual(polygon.Next.CountLoops(), 2);
+            
+            Assert.IsNotNull(polygon.Next.LinkedGeoList.First);
+            Assert.AreEqual(polygon.Next.LinkedGeoList.First.Value.CountCoords, 4);
+
+            Assert.IsNotNull(polygon.Next.LinkedGeoList.First.Next);
+            Assert.AreEqual(polygon.Next.LinkedGeoList.First.Next.Value.GeoCoordList.Count, 3);
+
+            polygon.Clear();
+        }
+
+        [Test]
+        public void NormalizeMultiPolygonNestedDonuts()
+        {
+            var verts = MakeGeoCoordArray(new[,] {{0.2, 0.2}, {0.2, -0.2}, {-0.2, -0.2}, {-0.2, 0.2}});
+            var outer = CreateLinkedLoop(verts);
+
+            var verts2 = MakeGeoCoordArray(new[,] {{0.1, 0.1}, {-0.1, 0.1}, {-0.1, -0.1}, {0.1, -0.1}});
+            var inner = CreateLinkedLoop(verts2);
+
+            var verts3 = MakeGeoCoordArray(new[,] {{0.6, 0.6}, {0.6, -0.6}, {-0.6, -0.6}, {-0.6, 0.6}});
+            var outerBig = CreateLinkedLoop(verts3);
+
+            var verts4 = MakeGeoCoordArray(new[,] {{0.5, 0.5}, {-0.5, 0.5}, {-0.5, -0.5}, {0.5, -0.5}});
+            var innerBig = CreateLinkedLoop(verts4);
+
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(inner);
+            polygon.AddLinkedLoop(outerBig);
+            polygon.AddLinkedLoop(innerBig);
+            polygon.AddLinkedLoop(outer);
+
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
+
+            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(polygon.CountPolygons(), 2);
+            Assert.AreEqual(polygon.CountLoops(), 2);
+
+            Assert.IsNotNull(polygon.LinkedGeoList.First);
+            Assert.AreEqual(polygon.LinkedGeoList.First.Value, outerBig);
+
+            Assert.IsNotNull(polygon.LinkedGeoList.First.Next);
+            Assert.AreEqual(polygon.LinkedGeoList.First.Next.Value, innerBig);
+
+            Assert.AreEqual(polygon.Next.CountLoops(), 2);
+
+            Assert.IsNotNull(polygon.Next.LinkedGeoList.First);
+            Assert.AreEqual(polygon.Next.LinkedGeoList.First.Value, outer);
+
+            Assert.IsNotNull(polygon.Next.LinkedGeoList.First.Next);
+            Assert.AreEqual(polygon.Next.LinkedGeoList.First.Next.Value, inner);
+
+            polygon.Clear();
+        }
+
+        [Test]
+        public void NormalizeMultiPolygonNoOuterLoops()
+        {
+            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {1, 1}, {0, 1}});
+            var outer1 = CreateLinkedLoop(verts);
+
+            var verts2 = MakeGeoCoordArray(new double[,] {{2, 2}, {3, 3}, {2, 3}});
+            var outer2 = CreateLinkedLoop(verts2);
+
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(outer1);
+            polygon.AddLinkedLoop(outer2);
+
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
+
+            Assert.AreEqual(H3Lib.StaticData.LinkedGeo.NormalizationErrUnassignedHoles, result);
+
+            Assert.AreEqual(1, polygon.CountPolygons());
+            Assert.AreEqual(0, polygon.CountLoops());
+
+            //polygon.Clear();
+        }
+
+        [Test]
+        public void NormalizeMultiPolygonAlreadyNormalized()
+        {
+            var verts1 = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 1}, {1, 1}});
+            var outer1 = CreateLinkedLoop(verts1);
+
+            var verts2 = MakeGeoCoordArray(new double[,] {{2, 2}, {2, 3}, {3, 3}});
+            var outer2 = CreateLinkedLoop(verts2);
+
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(outer1);
+            var next = polygon.AddNew();
+            next.AddLinkedLoop(outer2);
+
+            // Should be a no-op
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
+
+            Assert.AreEqual(H3Lib.StaticData.LinkedGeo.NormalizationErrMultiplePolygons, result);
+
+            Assert.AreEqual(2, polygon.CountPolygons());
+            Assert.AreEqual(1, polygon.CountLoops());
+
+            Assert.IsNotNull(polygon.LinkedGeoList.First);
+            Assert.AreEqual(outer1, polygon.LinkedGeoList.First.Value);
+
+            Assert.AreEqual(1, polygon.Next.CountLoops());
+            Assert.IsNotNull(polygon.Next.LinkedGeoList.First);
+            Assert.AreEqual(outer2, polygon.Next.LinkedGeoList.First.Value);
+
+            polygon.Clear();
+        }
+
+        [Test]
+        public void NormalizeMultiPolygonUnassignedHole()
+        {
+            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 1}, {1, 1}, {1, 0}});
+            var outer = CreateLinkedLoop(verts);
+
+            var verts2 = MakeGeoCoordArray(new double[,] {{2, 2}, {3, 3}, {2, 3}});
+            var inner = CreateLinkedLoop(verts2);
+
+            var polygon = new LinkedGeoPolygon();
+            polygon.AddLinkedLoop(inner);
+            polygon.AddLinkedLoop(outer);
+
+            int result;
+            (result, polygon) = polygon.NormalizeMultiPolygon();
+
+            Assert.AreEqual(H3Lib.StaticData.LinkedGeo.NormalizationErrUnassignedHoles, result);
+            polygon.Clear();
+        }
+
+
     }
 }

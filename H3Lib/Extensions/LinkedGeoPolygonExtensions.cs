@@ -60,7 +60,10 @@ namespace H3Lib.Extensions
             // Get the first loop and unlink it from root
             var loop = root.LinkedGeoList.First;
 
-            var testLoops = root.LinkedGeoList.ToList();
+            var linkedGeoArray = new LinkedGeoLoop[root.LinkedGeoList.Count];
+            root.LinkedGeoList.CopyTo(linkedGeoArray,0);
+
+            var testLoops = linkedGeoArray.ToList();// root.LinkedGeoList.ToList();
             root = new LinkedGeoPolygon();
 
             foreach (LinkedGeoLoop geoLoop in testLoops)
@@ -185,7 +188,9 @@ namespace H3Lib.Extensions
             // Free allocated memory
             candidates.Clear();
             candidateBoxes.Clear();
-            return parent;
+            return (parent.IsEmpty)
+                       ? null
+                       : parent;
         }
     }
 }

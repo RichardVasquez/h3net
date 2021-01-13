@@ -19,7 +19,7 @@ namespace H3Lib
         /// linkedGeo.c
         /// int countLinkedCoords
         /// -->
-        public int Count => GeoCoordList.Count;
+        public int CountCoords => GeoCoordList.Count;
 
         public bool IsEmpty => GeoCoordList.Count == 0;
 
