@@ -255,13 +255,14 @@ namespace H3Lib.Extensions
         /// <returns>status code and compacted hexes</returns>
         /// <remarks>
         /// Gonna do this a bit differently, allowing for varying
-        /// resolutions in input data
+        /// resolutions in input data.  Also, this is a front for <see cref="FlexiCompact"/>
+        /// that tries to maintain the same restrictions the original H3 compact enforces.
         /// </remarks>
         /// <!--
         /// h3index.c
         /// int H3_EXPORT(compact)
         /// -->
-        public static (int, List<H3Index>) Compact(List<H3Index> h3Set)
+        public static (int, List<H3Index>) Compact(this List<H3Index> h3Set)
         {
             if (h3Set == null || h3Set.Count == 0)
             {
@@ -271,94 +272,116 @@ namespace H3Lib.Extensions
             if (h3Set.All(h => h.Resolution == 0))
             {
                 // No compaction possible, just copy the set to output
-                return (StaticData.H3Index.COMPACT_SUCCESS, new List<H3Index>(h3Set));
+                return (StaticData.H3Index.COMPACT_SUCCESS, h3Set);
             }
 
-            //  Here's our results
-            var results = new HashSet<ulong>();
-            var copy = new List<H3Index>(h3Set);
-            //  Move the 0 res to the results.
-            if (h3Set.Any(h => h.Resolution == 0))
+            //  Compact assumes that all cells are the same resolution and uses first cell
+            var testResolution = h3Set[0].Resolution;
+            if (h3Set.Any(h => h.Resolution != testResolution))
             {
-                results.UnionWith(h3Set.Where(h => h.Resolution == 0).Select(s=>s.H3Value));
-                copy.RemoveAll(r => r.Resolution == 0);
+                return (StaticData.H3Index.COMPACT_BAD_DATA, h3Set);
             }
 
-            //  What our highest resolution is.
-            int currentRes = copy.Select(r => r.Resolution).Max();
-            //  Get the remaining set with all the dupes stripped out.
-            var baseNumbers = new HashSet<ulong>(copy.Select(s => s.H3Value)).ToList();
-
-            //  Now we've got our base cells
-            var pool = new HashSet<H3Index>(baseNumbers.Select(h=>(H3Index) h));
-
-            while (pool.Count > 0)
+            if (h3Set.Distinct().Count() != h3Set.Count)
             {
-                var cluster = new Dictionary<ulong, List<ulong>>();
-                //  Get the cells at the current resolution and collect in parents.
-                foreach (var index in pool.Where(p => p.Resolution == currentRes))
+                return (StaticData.H3Index.COMPACT_DUPLICATE, h3Set);
+            }
+
+            return h3Set.FlexiCompact();
+        }
+        
+        
+
+        /// A slightly different approach to the problem of compacting with some
+        /// flexibility.  All resolutions are handled, duplicates are avoided,
+        /// and we shouldn't have overlapping children in case the parent was
+        /// provided in the original data.
+        public static (int, List<H3Index>) FlexiCompact(this List<H3Index> h3Set)
+        {
+            if (h3Set == null || h3Set.Count == 0)
+            {
+                return (StaticData.H3Index.COMPACT_SUCCESS, new List<H3Index>());
+            }
+
+            if (h3Set.All(h => h.Resolution == 0))
+            {
+                // No compaction possible, just copy the set to output
+                return (StaticData.H3Index.COMPACT_SUCCESS, h3Set);
+            }
+
+            var finalPool = new HashSet<H3Index>();
+            var testPool = new HashSet<H3Index>();
+
+            foreach (var index in h3Set)
+            {
+                var fakePool = index.Resolution == 0
+                               ? finalPool
+                               : testPool;
+                fakePool.Add(index);
+            }
+
+            var maxResolution = testPool.Select(h => h.Resolution).Max();
+            while (testPool.Count > 0)
+            {
+                //  Grab the cells of a resolution from the testpool, and remove them as we're going
+                //  to process them.
+                var currentCells = testPool.Where(h => h.Resolution == maxResolution).ToList();
+                foreach (var cell in currentCells)
                 {
-                    var parent = index.ToParent(currentRes - 1);
-                    if (!cluster.ContainsKey(parent.H3Value))
+                    testPool.Remove(cell);
+                }
+
+                var tally = new Dictionary<H3Index, List<H3Index>>();
+
+                //  Get the parent of each cell, and use that as a key pointing to siblings
+                foreach (var cell in currentCells)
+                {
+                    var parent = cell.ToParent(maxResolution - 1);
+                    if (!tally.ContainsKey(parent))
                     {
-                        cluster[parent.H3Value] = new List<ulong>();
+                        tally[parent] = new List<H3Index>();
                     }
 
-                    cluster[parent.H3Value].Add(index);
+                    tally[parent].Add(cell);
                 }
-                
-                //  Check the parent keys for the amount of children
-                foreach (ulong key in cluster.Keys)
+
+                foreach (var key in tally.Keys)
                 {
-                    if (!((H3Index) key).IsValid())
+                    if (!key.IsValid())
                     {
                         return (StaticData.H3Index.COMPACT_BAD_DATA, new List<H3Index>());
                     }
-                    int countChildren = cluster[key].Count;
-                    
-                    if (((H3Index) key).IsPentagon())
+
+                    var neededChildren = key.IsPentagon()
+                                             ? 6
+                                             : 7;
+
+                    if (tally[key].Count == neededChildren)
                     {
-                        //  Complete set of children, dump kids, add parent to pool
-                        if (countChildren == 6)
-                        {
-                            pool.Add(key);
-                        }
-                        else
-                        {
-                            results.UnionWith(cluster[key]);
-                            pool.ExceptWith(cluster[key].Select(h=>(H3Index) h));
-                        }
+                        //  We've got all the children of a cell. Place parent in testpool
+                        //  for possible further compression.
+                        testPool.Add(key);
                     }
                     else
                     {
-                        //  Complete set of children, dump kids, add parent to pool
-                        if (countChildren == 7)
+                        //  Don't have all the children. What we have, we place in final,
+                        //  so long as the parent didn't sneak in earlier (duplicate data
+                        //  or resolution 0 that got yanked out at the beginning)
+                        if (testPool.Contains(key))
                         {
-                            pool.Add(key);
+                            continue;
                         }
-                        else
+                        foreach (var index in tally[key])
                         {
-                            results.UnionWith(cluster[key]);
-                            pool.ExceptWith(cluster[key].Select(h=>(H3Index) h));
+                            finalPool.Add(index);
                         }
                     }
                 }
 
-                //  Let's get ready for the next round.
-                cluster.Clear();
-                currentRes--;
-                if (currentRes != 0)
-                {
-                    continue;
-                }
-
-                //  We're down to res 0, clear the p0ol to jump out.
-                results.UnionWith(pool.Select(p => p.H3Value));
-                pool.Clear();
+                maxResolution--;
             }
 
-            return (StaticData.H3Index.COMPACT_SUCCESS,
-                    results.Select(r => (H3Index) r).ToList());
+            return (StaticData.H3Index.COMPACT_SUCCESS, finalPool.ToList());
         }
 
         /// <summary>

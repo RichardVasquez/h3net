@@ -375,7 +375,8 @@ namespace H3Lib.Extensions
 
             // This logic is very similar to faceIjkToH3
             // initialize the index
-            var outH3 = new H3Index() {Mode = H3Mode.Hexagon, Resolution = res};
+
+            var outH3 = new H3Index().SetMode(H3Mode.Hexagon).SetResolution(res);
 
             // check for res 0/base cell
             if (res == 0) 
@@ -394,8 +395,7 @@ namespace H3Lib.Extensions
                     return (1, new H3Index());
                 }
 
-                outH3.BaseCell = newBaseCell;
-                return (0, outH3);
+                return (0, outH3.SetBaseCell(newBaseCell));
             }
 
             // we need to find the correct base cell offset (if any) for this H3 index;

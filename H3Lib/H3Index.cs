@@ -6,27 +6,21 @@ namespace H3Lib
     /// <summary>
     /// H3Index utility functions
     /// </summary>
-    [DebuggerDisplay("Value: {H3Value} => {ToString()}")]
-    public class H3Index:IEquatable<H3Index>,IEquatable<ulong>
+    [DebuggerDisplay("Value: {Value} => 0x{ToString().ToLower()}")]
+    public readonly struct H3Index:IEquatable<H3Index>,IComparable<H3Index>
     {
     #region base value and constructors
         /// <summary>
         /// Where the actual index is stored.
         /// </summary>
-        public ulong H3Value;
+        public readonly ulong Value;
 
         public H3Index(ulong val) 
         {
-            H3Value = val;
-        }
-
-        public H3Index()
-        {
-            H3Value = 0;
+            Value = val;
         }
         #endregion
 
-        #region Properties
         /// <summary>
         /// Integer resolution of an H3 index.  
         /// </summary>
@@ -34,12 +28,8 @@ namespace H3Lib
         /// h3index.c
         /// int H3_EXPORT(h3GetResolution)(H3Index h)
         /// -->
-        public int Resolution
-        {
-            get => (int) ((H3Value & StaticData.H3Index.H3_RES_MASK) >> StaticData.H3Index.H3_RES_OFFSET);
-            set => H3Value = (H3Value & StaticData.H3Index.H3_RES_MASK_NEGATIVE) |
-                             ((ulong)value << StaticData.H3Index.H3_RES_OFFSET);
-        }
+        public int Resolution =>
+            (int) ((Value & StaticData.H3Index.H3_RES_MASK) >> StaticData.H3Index.H3_RES_OFFSET);
 
         /// <summary>
         /// Integer base cell of H3
@@ -48,12 +38,8 @@ namespace H3Lib
         /// h3index.c
         /// int H3_EXPORT(h3GetBaseCell)
         /// -->
-        public int BaseCell
-        {
-            get => (int)((H3Value & StaticData.H3Index.H3_BC_MASK) >> StaticData.H3Index.H3_BC_OFFSET);
-            set => H3Value = (H3Value & StaticData.H3Index.H3_BC_MASK_NEGATIVE) |
-                             ((ulong)value << StaticData.H3Index.H3_BC_OFFSET);
-        }
+        public int BaseCell =>
+            (int) ((Value & StaticData.H3Index.H3_BC_MASK) >> StaticData.H3Index.H3_BC_OFFSET);
 
         /// <summary>
         /// Returns the highest resolution non-zero digit in an H3Index.
@@ -81,42 +67,26 @@ namespace H3Lib
         /// <summary>
         /// Integer mode of H3
         /// </summary>
-        public H3Mode Mode
-        {
-            get => (H3Mode) ((H3Value & StaticData.H3Index.H3_MODE_MASK) >> StaticData.H3Index.H3_MODE_OFFSET);
-            set => H3Value = H3Value & StaticData.H3Index.H3_MODE_MASK_NEGATIVE |
-                             ((ulong)value << StaticData.H3Index.H3_MODE_OFFSET);
-        }
+        public H3Mode Mode =>
+            (H3Mode) ((Value & StaticData.H3Index.H3_MODE_MASK) >> StaticData.H3Index.H3_MODE_OFFSET);
 
         /// <summary>
         /// High bit of H3
         /// </summary>
-        public int HighBit
-        {
-            get => (int) ((H3Value & StaticData.H3Index.H3_HIGH_BIT_MASK) >> StaticData.H3Index.H3_MAX_OFFSET);
-            set => H3Value = (H3Value & StaticData.H3Index.H3_HIGH_BIT_MASK_NEGATIVE) |
-                             ((ulong) value << StaticData.H3Index.H3_MAX_OFFSET);
-        }
+        public int HighBit =>
+            (int) ((Value & StaticData.H3Index.H3_HIGH_BIT_MASK) >> StaticData.H3Index.H3_MAX_OFFSET);
 
-        public int ReservedBits
-        {
-            get => (int) ((H3Value & StaticData.H3Index.H3_RESERVED_MASK) >> StaticData.H3Index.H3_RESERVED_OFFSET);
-            set => H3Value = (H3Value & StaticData.H3Index.H3_RESERVED_MASK_NEGATIVE) | ((ulong) value << StaticData.H3Index.H3_RESERVED_OFFSET);
-        }
+        public int ReservedBits =>
+            (int) ((Value & StaticData.H3Index.H3_RESERVED_MASK) >> StaticData.H3Index.H3_RESERVED_OFFSET);
 
         /// <summary>
         /// Gets the resolution res integer digit (0-7) of h3.
         /// </summary>
         public Direction GetIndexDigit(int res)
         {
-            return (Direction) ((H3Value >> ((Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET)) & StaticData.H3Index.H3_DIGIT_MASK);
+            return (Direction) ((Value >> ((Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET)) & StaticData.H3Index.H3_DIGIT_MASK);
         }
 
-        public void SetIndexDigit(int res, ulong digit)
-        {
-            H3Value = (H3Value & ~(StaticData.H3Index.H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET))) |
-                      (digit << (Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET);
-        }
 
         /// <summary>
         /// returns the number of pentagons (same at any resolution)
@@ -134,9 +104,6 @@ namespace H3Lib
         /// int H3_EXPORT(h3IsResClassIII)
         /// -->
         public bool IsResClassIii => Resolution % 2 == 1;
-            
-        #endregion
-
 
         /// <summary>
         /// Converts an H3 index into a string representation.
@@ -144,54 +111,41 @@ namespace H3Lib
         /// <returns>The string representation of the H3 index as a hexadecimal number</returns>
         public override string ToString()
         {
-            string s = H3Value.ToString("X").PadLeft(16, '0');
+            string s = Value.ToString("X").PadLeft(16, '0');
             return s.Substring(s.Length - 16, 16);
         }
 
-#region
-
-        
         public static implicit operator H3Index(ulong u) => new H3Index(u);
-        public static implicit operator ulong(H3Index h3) => h3.H3Value;
+        public static implicit operator ulong(H3Index h3) => h3.Value;
 
-#endregion
+        public bool Equals(H3Index other)
+        {
+            return Value == other.Value;
+        }
 
-    public override int GetHashCode()
-    {
-        return H3Value.GetHashCode();
-    }
+        public override bool Equals(object obj)
+        {
+            return obj is H3Index other && Equals(other);
+        }
 
-    public static bool operator ==(H3Index left, H3Index right)
-    {
-        return Equals(left, right);
-    }
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
 
-    public static bool operator !=(H3Index left, H3Index right)
-    {
-        return !Equals(left, right);
-    }
+        public static bool operator ==(H3Index left, H3Index right)
+        {
+            return left.Equals(right);
+        }
 
-    public bool Equals(H3Index other)
-    {
-        if (ReferenceEquals(null, other))
-            return false;
-        if (ReferenceEquals(this, other))
-            return true;
-        return H3Value == other.H3Value;
-    }
+        public static bool operator !=(H3Index left, H3Index right)
+        {
+            return !left.Equals(right);
+        }
 
-    public bool Equals(ulong other)
-    {
-        return H3Value == other;
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (ReferenceEquals(null, obj))
-            return false;
-        if (ReferenceEquals(this, obj))
-            return true;
-        return Equals((H3Index) obj);
-    }
+        public int CompareTo(H3Index other)
+        {
+            return Value.CompareTo(other.Value);
+        }
     }
 }

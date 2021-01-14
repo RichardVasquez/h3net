@@ -321,8 +321,7 @@ namespace H3Lib.Extensions
         {
             // initialize the index
             H3Index h = StaticData.H3Index.H3_INIT;
-            h.Mode = H3Mode.Hexagon;
-            h.Resolution = res;
+            h = h.SetMode(H3Mode.Hexagon).SetResolution(res);
 
             // check for res 0/base cell
             if (res == 0)
@@ -335,8 +334,7 @@ namespace H3Lib.Extensions
                     return StaticData.H3Index.H3_NULL;
                 }
 
-                h.BaseCell = fijk.ToBaseCell();
-                return h;
+                return h.SetBaseCell(fijk.ToBaseCell());
             }
 
             // we need to find the correct base cell FaceIJK for this H3 index;
@@ -384,7 +382,7 @@ namespace H3Lib.Extensions
 
             // lookup the correct base cell
             int baseCell = fijkBc.ToBaseCell();
-            h.BaseCell = baseCell;
+            h = h.SetBaseCell(baseCell);
 
             // rotate if necessary to get canonical base cell orientation
             // for this base cell

@@ -729,10 +729,10 @@ namespace H3Lib.Extensions
                 return StaticData.H3Index.H3_NULL;
             }
 
-            var parentH = new H3Index(h) {Resolution = parentRes};
+            var parentH = new H3Index(h).SetResolution(parentRes);
             for (int i = parentRes + 1; i <= childRes; i++)
             {
-                parentH.SetIndexDigit(i, StaticData.H3Index.H3_DIGIT_MASK);
+                parentH = parentH.SetIndexDigit(i, StaticData.H3Index.H3_DIGIT_MASK);
             }
             return parentH;
         }
@@ -770,13 +770,11 @@ namespace H3Lib.Extensions
         public static H3Index SetIndex(this H3Index hp, int res, int baseCell, Direction initDigit)
         {
             H3Index h = StaticData.H3Index.H3_INIT;
-            h.Mode = H3Mode.Hexagon;
-            h.Resolution = res;
-            h.BaseCell = baseCell;
+            h = h.SetMode(H3Mode.Hexagon).SetResolution(res).SetBaseCell(baseCell);
 
             for (var r = 1; r <= res; r++)
             {
-                h.SetIndexDigit(r, (ulong) initDigit);
+                h = h.SetIndexDigit(r, (ulong) initDigit);
             }
 
             return h;
@@ -813,8 +811,7 @@ namespace H3Lib.Extensions
         {
             int childRes = h.Resolution + 1;
             var childH = h;
-            childH.Resolution = childRes;
-            childH.SetIndexDigit(childRes, (ulong) cellNumber);
+            childH = childH.SetResolution(childRes).SetIndexDigit(childRes, (ulong) cellNumber);
             return childH;
         }
 
@@ -1057,8 +1054,7 @@ namespace H3Lib.Extensions
                     }
                 }
 
-                current = new List<H3Index>
-                    (realChildren.Where(c => c.H3Value != StaticData.H3Index.H3_INVALID_INDEX));
+                current = new List<H3Index>(realChildren.Where(c => c.Value != StaticData.H3Index.H3_INVALID_INDEX));
                 currentRes++;
             }
 
@@ -1088,11 +1084,11 @@ namespace H3Lib.Extensions
             }
 
             var child = h;
-            child.Resolution = childRes;
+            child = child.SetResolution(childRes);
             
             for (int i = parentRes + 1; i <= childRes; i++)
             {
-                child.SetIndexDigit(i, 0);
+                child = child.SetIndexDigit(i, 0);
             }
             return child;
         }
@@ -1159,16 +1155,16 @@ namespace H3Lib.Extensions
 
             // Find the appropriate direction-to-face mapping
             int[] dirFaces = { };
-            if (StaticData.Vertex.PentagonDirectionFaces.Any(pd => pd.BaseCell == baseCell))
+            if (Vertex.PentagonDirectionFaces.Any(pd => pd.BaseCell == baseCell))
             {
-                dirFaces = StaticData.Vertex.PentagonDirectionFaces
-                                     .First(pd => pd.BaseCell == baseCell).Faces;
+                dirFaces = Vertex.PentagonDirectionFaces
+                                 .First(pd => pd.BaseCell == baseCell).Faces;
             }
 
             // additional CCW rotation for polar neighbors or IK neighbors
             if (fijk.Face != baseFijk.Face &&
                 (baseCell.IsBaseCellPentagon() ||
-                 fijk.Face == dirFaces[(int)Direction.IK_AXES_DIGIT - StaticData.Vertex.DIRECTION_INDEX_OFFSET])
+                 fijk.Face == dirFaces[(int)Direction.IK_AXES_DIGIT - Vertex.DIRECTION_INDEX_OFFSET])
                 )
             {
                 ccwRot60 = (ccwRot60 + 1) % 6;
@@ -1178,10 +1174,10 @@ namespace H3Lib.Extensions
             {
                 // Check whether the cell crosses a deleted pentagon subsequence
                 (int) Direction.JK_AXES_DIGIT when
-                    fijk.Face == dirFaces[(int) Direction.IK_AXES_DIGIT - StaticData.Vertex.DIRECTION_INDEX_OFFSET]
+                    fijk.Face == dirFaces[(int) Direction.IK_AXES_DIGIT - Vertex.DIRECTION_INDEX_OFFSET]
                     => (ccwRot60 + 5) % 6,
                 (int) Direction.IK_AXES_DIGIT when
-                    fijk.Face == dirFaces[(int) Direction.JK_AXES_DIGIT - StaticData.Vertex.DIRECTION_INDEX_OFFSET]
+                    fijk.Face == dirFaces[(int) Direction.JK_AXES_DIGIT - Vertex.DIRECTION_INDEX_OFFSET]
                     => (ccwRot60 + 1) % 6,
                 _ => ccwRot60
             };
@@ -1209,7 +1205,7 @@ namespace H3Lib.Extensions
                 direction >= Direction.INVALID_DIGIT ||
                 (isPentagon && direction == Direction.K_AXES_DIGIT))
             {
-                return StaticData.Vertex.INVALID_VERTEX_NUM;
+                return Vertex.INVALID_VERTEX_NUM;
             }
 
             // Determine the vertex rotations for this cell
@@ -1218,12 +1214,12 @@ namespace H3Lib.Extensions
             // Find the appropriate vertex, rotating CCW if necessary
             if (isPentagon)
             {
-                return (StaticData.Vertex.DirectionToVertexNumPent[(int) direction] +
+                return (Vertex.DirectionToVertexNumPent[(int) direction] +
                         Constants.NUM_PENT_VERTS - rotations) %
                        Constants.NUM_PENT_VERTS;
             }
 
-            return (StaticData.Vertex.DirectionToVertexNumHex[(int) direction] +
+            return (Vertex.DirectionToVertexNumHex[(int) direction] +
                     Constants.NUM_HEX_VERTS - rotations) %
                    Constants.NUM_HEX_VERTS;
         }
@@ -1324,8 +1320,7 @@ namespace H3Lib.Extensions
             }
 
             // Otherwise, determine the IJK direction from the origin to the destination
-            var output = origin;
-            output.Mode = H3Mode.UniEdge;
+            var output = origin.SetMode(H3Mode.UniEdge);
 
             bool isPentagon = origin.IsPentagon();
 
@@ -1343,8 +1338,8 @@ namespace H3Lib.Extensions
                 {
                     continue;
                 }
-                output.ReservedBits = (int) direction;
-                return output;
+
+                return output.SetReservedBits((int) direction);
             }
 
             // This should be impossible, return H3_NULL in this case;
@@ -1364,7 +1359,7 @@ namespace H3Lib.Extensions
         {
             return edge.Mode != H3Mode.UniEdge
                        ? (H3Index) StaticData.H3Index.H3_NULL
-                       : new H3Index(edge) {Mode = H3Mode.Hexagon, ReservedBits = 0};
+                       : new H3Index(edge).SetMode(H3Mode.Hexagon).SetReservedBits(0);
         }
 
         /// <summary>
@@ -1473,7 +1468,7 @@ namespace H3Lib.Extensions
                         results.Add(StaticData.H3Index.H3_NULL);
                         break;
                     default:
-                        results.Add(new H3Index(origin) {Mode = H3Mode.UniEdge, ReservedBits = i + 1});
+                        results.Add(new H3Index(origin).SetMode(H3Mode.UniEdge).SetReservedBits(1));
                         break;
                 }
             }
@@ -1500,7 +1495,7 @@ namespace H3Lib.Extensions
             
             // Get the start vertex for the edge
             int startVertex = origin.VertexNumForDirection(direction);
-            if (startVertex == StaticData.Vertex.INVALID_VERTEX_NUM)
+            if (startVertex == Vertex.INVALID_VERTEX_NUM)
             {
                 // This is not actually an edge (i.e. no valid direction),
                 // so return no vertices.
@@ -1655,7 +1650,7 @@ namespace H3Lib.Extensions
             for (var i = 0; i < 6; i++)
             {
                 const int rotations = 0;
-                (origin, _) = origin.NeighborRotations(StaticData.Algos.Directions[i], rotations);
+                (origin, _) = origin.NeighborRotations(Algos.Directions[i], rotations);
                 var recurseResults = origin.KRingInternal(k, currentK + 1, results);
                 foreach ((var key, int value) in recurseResults)
                 {
@@ -1692,7 +1687,7 @@ namespace H3Lib.Extensions
         /// -->
         public static (H3Index, int) NeighborRotations(this H3Index origin, Direction dir, int rotations)
         {
-            H3Index outHex = origin;
+            H3Index outHex = new H3Index(origin);
             int outRotations = rotations;
 
             for (int i = 0; i < outRotations; i++)
@@ -1710,7 +1705,8 @@ namespace H3Lib.Extensions
             {
                 if (r == -1)
                 {
-                    outHex.BaseCell = StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) dir];
+                    outHex =
+                        outHex.SetBaseCell(StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) dir]);
                     newRotations =
                         StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) dir];
 
@@ -1718,8 +1714,8 @@ namespace H3Lib.Extensions
                     {
                         // Adjust for the deleted k vertex at the base cell level.
                         // This edge actually borders a different neighbor.
-                        outHex.BaseCell =
-                            StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) Direction.IK_AXES_DIGIT];
+                        outHex = outHex.SetBaseCell(
+                            StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) Direction.IK_AXES_DIGIT]);
 
                         newRotations =
                             StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation
@@ -1738,13 +1734,13 @@ namespace H3Lib.Extensions
                     Direction nextDir;
                     if((r+1).IsResClassIii())
                     {
-                        outHex.SetIndexDigit(r + 1, (ulong) StaticData.Algos.NewDigitIi[(int) oldDigit, (int) dir]);
-                        nextDir = StaticData.Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
+                        outHex = outHex.SetIndexDigit(r + 1, (ulong) Algos.NewDigitIi[(int) oldDigit, (int) dir]);
+                        nextDir = Algos.NewAdjustmentIi[(int) oldDigit, (int) dir];
                     }
                     else
                     {
-                        outHex.SetIndexDigit(r + 1, (ulong) StaticData.Algos.NewDigitIii[(int) oldDigit, (int) dir]);
-                        nextDir = StaticData.Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
+                        outHex = outHex.SetIndexDigit(r + 1, (ulong) Algos.NewDigitIii[(int) oldDigit, (int) dir]);
+                        nextDir = Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
                     }
 
                     if (nextDir != Direction.CENTER_DIGIT)
@@ -1843,7 +1839,6 @@ namespace H3Lib.Extensions
                         // account for distortion introduced to the 5 neighbor by the
                         // deleted k subsequence.
                         outRotations++;
-                
                     }
                 }
             }
@@ -1899,7 +1894,7 @@ namespace H3Lib.Extensions
 
             if (origin.IsPentagon())
             {
-                return (StaticData.Algos.HexRangePentagon, results);
+                return (Algos.HexRangePentagon, results);
             }
 
             // 0 < ring <= k, current ring
@@ -1918,28 +1913,28 @@ namespace H3Lib.Extensions
                 {
                     // Not putting in the output set as it will be done later, at
                     // the end of this ring.
-                    (origin, rotations) = origin.NeighborRotations(StaticData.Algos.NextRingDirection, rotations);
+                    (origin, rotations) = origin.NeighborRotations(Algos.NextRingDirection, rotations);
 
                     if (origin == 0)
                     {
                         // Should not be possible because `origin` would have to be a
                         // pentagon
-                        return (StaticData.Algos.HexRangeKSubsequence, results);
+                        return (Algos.HexRangeKSubsequence, results);
                     }
 
                     if(origin.IsPentagon())
                     {
                         // Pentagon was encountered; bail out as user doesn't want this.
-                        return (StaticData.Algos.HexRangePentagon, results);
+                        return (Algos.HexRangePentagon, results);
                     }
                 }
 
-                (origin, rotations) = origin.NeighborRotations(StaticData.Algos.Directions[direction], rotations);
+                (origin, rotations) = origin.NeighborRotations(Algos.Directions[direction], rotations);
                 if (origin == 0)
                 {
                     // Should not be possible because `origin` would have to be a
                     // pentagon
-                    return (StaticData.Algos.HexRangeKSubsequence, results);
+                    return (Algos.HexRangeKSubsequence, results);
                 }
 
                 results.Add((origin, ring));
@@ -1961,11 +1956,11 @@ namespace H3Lib.Extensions
                 if (origin.IsPentagon())
                 {
                     // Pentagon was encountered; bail out as user doesn't want this.
-                    return (StaticData.Algos.HexRangePentagon, results);
+                    return (Algos.HexRangePentagon, results);
                 }
             }
 
-            return (StaticData.Algos.HexRangeSuccess, results);
+            return (Algos.HexRangeSuccess, results);
         }
 
         /// <summary>
@@ -2004,23 +1999,23 @@ namespace H3Lib.Extensions
             if (origin.IsPentagon())
             {
                 // Pentagon was encountered; bail out as user doesn't want this.
-                return (StaticData.Algos.HexRangePentagon, new List<H3Index>());
+                return (Algos.HexRangePentagon, new List<H3Index>());
             }
 
             for (var ring = 0; ring < k; ring++)
             {
-                (origin, rotations) = origin.NeighborRotations(StaticData.Algos.NextRingDirection, rotations);
+                (origin, rotations) = origin.NeighborRotations(Algos.NextRingDirection, rotations);
 
                 if (origin == 0)
                 {
                     // Should not be possible because `origin` would have to be a
                     // pentagon
-                    return (StaticData.Algos.HexRangeKSubsequence, new List<H3Index>());
+                    return (Algos.HexRangeKSubsequence, new List<H3Index>());
                 }
 
                 if (origin.IsPentagon())
                 {
-                    return (StaticData.Algos.HexRangePentagon, new List<H3Index>());
+                    return (Algos.HexRangePentagon, new List<H3Index>());
                 }
             }
 
@@ -2029,13 +2024,13 @@ namespace H3Lib.Extensions
             {
                 for (var pos = 0; pos < k; pos++)
                 {
-                    (origin, rotations) = origin.NeighborRotations(StaticData.Algos.Directions[direction], rotations);
+                    (origin, rotations) = origin.NeighborRotations(Algos.Directions[direction], rotations);
 
                     if (origin == 0) 
                     {
                         // Should not be possible because `origin` would have to be a
                         // pentagon
-                        return (StaticData.Algos.HexRangeKSubsequence, new List<H3Index>());
+                        return (Algos.HexRangeKSubsequence, new List<H3Index>());
                     }
 
                     // Skip the very last index, it was already added. We do
@@ -2046,7 +2041,7 @@ namespace H3Lib.Extensions
                         results.Add(origin);
                         if (origin.IsPentagon())
                         {
-                            return (StaticData.Algos.HexRangePentagon, new List<H3Index>());
+                            return (Algos.HexRangePentagon, new List<H3Index>());
                         }
                     }
                 }
@@ -2056,8 +2051,8 @@ namespace H3Lib.Extensions
             // it indicates pentagonal distortion occurred and we should report
             // failure.
             return lastIndex != origin
-                       ? (StaticData.Algos.HexRangePentagon, new List<H3Index>())
-                       : (StaticData.Algos.HexRangeSuccess, results);
+                       ? (Algos.HexRangePentagon, new List<H3Index>())
+                       : (Algos.HexRangeSuccess, results);
         }
 
         /// <summary>
@@ -2077,5 +2072,48 @@ namespace H3Lib.Extensions
             var h3Boundary = h3.ToGeoBoundary();
             return h3Center.DistanceToKm(h3Boundary.Verts.First());
         }
+        
+        
+        
+        //---------------------------------------------------------------------------
+        //  Field "Modifiers" - This is not going to be fun
+
+        public static H3Index SetResolution(this H3Index h3Index, int resolution)
+        {
+            return (h3Index & StaticData.H3Index.H3_RES_MASK_NEGATIVE) |
+                   ((ulong) resolution << StaticData.H3Index.H3_RES_OFFSET);
+        }
+        
+        public static H3Index SetBaseCell(this H3Index cell, int baseCell)
+        {
+            return (cell & StaticData.H3Index.H3_BC_MASK_NEGATIVE) |
+                   ((ulong)baseCell << StaticData.H3Index.H3_BC_OFFSET);
+            
+        }
+
+        public static H3Index SetMode(this H3Index cell, H3Mode mode)
+        {
+            return cell  & StaticData.H3Index.H3_MODE_MASK_NEGATIVE |
+                   ((ulong)mode << StaticData.H3Index.H3_MODE_OFFSET);
+        }
+
+        public static H3Index SetHighBit(this H3Index cell, int value)
+        {
+            return  (cell & StaticData.H3Index.H3_HIGH_BIT_MASK_NEGATIVE) |
+                    ((ulong) value << StaticData.H3Index.H3_MAX_OFFSET);
+        }
+
+        public static H3Index SetReservedBits(this H3Index cell, int value)
+        {
+            return  (cell & StaticData.H3Index.H3_RESERVED_MASK_NEGATIVE) | ((ulong) value << StaticData.H3Index.H3_RESERVED_OFFSET);
+        }
+
+        public static H3Index SetIndexDigit(this H3Index cell, int res, ulong digit)
+        {
+            return  (cell & ~(StaticData.H3Index.H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET))) |
+                      (digit << (Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET);
+        }
+
+
     }
 }

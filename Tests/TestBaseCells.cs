@@ -10,8 +10,8 @@ namespace Tests
         public void GetRes0Indexes()
         {
             var indexes = BaseCellsExtensions.GetRes0Indexes();
-            Assert.AreEqual(indexes[0],   0x8001fffffffffffU);
-            Assert.AreEqual(indexes[121], 0x80f3fffffffffffU);
+            Assert.AreEqual(indexes[0].Value,   0x8001fffffffffffUL);
+            Assert.AreEqual(indexes[121].Value, 0x80f3fffffffffffUL);
         }
 
         [Test]

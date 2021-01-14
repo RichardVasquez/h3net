@@ -32,6 +32,11 @@ namespace H3Lib.Extensions
                 return (-2, new List<H3Index>());
             }
 
+            if (compactedSet.Any(cs => !cs.Resolution.IsValidChildRes(res)))
+            {
+                return (-2, compactedSet);
+            }
+
             // setup the grind
 
             var pool = new HashSet<H3Index>();
@@ -76,7 +81,7 @@ namespace H3Lib.Extensions
                 }
 
                 int currentRes = hex.Resolution;
-                if (currentRes > res)
+                if (!currentRes.IsValidChildRes(res))
                 {
                     // Nonsensical. Abort.
                     return -1;
@@ -89,7 +94,6 @@ namespace H3Lib.Extensions
                 else
                 {
                     // Bigger hexagon to reduce in size
-                    
                     maxCount += hex.MaxChildrenSize(res);
                 }
             }

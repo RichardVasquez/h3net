@@ -120,7 +120,8 @@ namespace H3Lib.Extensions
         /// -->
         public static bool IsClockwiseOffset(this int baseCell, int testFace)
         {
-            return StaticData.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[0] == testFace || StaticData.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[1] == testFace;
+            return StaticData.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[0] == testFace ||
+                   StaticData.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[1] == testFace;
         }
         
         public static int Res0IndexCount => Constants.NUM_BASE_CELLS;
@@ -133,7 +134,7 @@ namespace H3Lib.Extensions
             var results = new List<H3Index>();
             for (var bc = 0; bc < Constants.NUM_BASE_CELLS; bc++)
             {
-                var baseCell = new H3Index(StaticData.H3Index.H3_INIT) {Mode = H3Mode.Hexagon, BaseCell = bc};
+                var baseCell = new H3Index(StaticData.H3Index.H3_INIT).SetMode(H3Mode.Hexagon).SetBaseCell(bc);
                 results.Add(baseCell);
             }
 
