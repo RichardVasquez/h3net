@@ -331,7 +331,7 @@ namespace H3Lib.Extensions
                     fijk.Coord.K > StaticData.BaseCells.MaxFaceCoord)
                 {
                     // out of range input
-                    return StaticData.H3Index.H3_NULL;
+                    return StaticData.H3Index.H3_INVALID_INDEX;
                 }
 
                 return h.SetBaseCell(fijk.ToBaseCell());
@@ -377,7 +377,7 @@ namespace H3Lib.Extensions
                 fijkBc.Coord.K > StaticData.BaseCells.MaxFaceCoord)
             {
                 // out of range input
-                return StaticData.H3Index.H3_NULL;
+                return StaticData.H3Index.H3_INVALID_INDEX;
             }
 
             // lookup the correct base cell

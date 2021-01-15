@@ -242,7 +242,7 @@ namespace H3Lib.Extensions
         public static FaceIjk ToFaceIjk(this GeoCoord g, int res)
         {
             // first convert to hex2d
-            (int newFace, var v) = g.ToHex2d(res, 0);
+            (int newFace, var v) = g.ToHex2d(res);
             var newCoord = v.ToCoordIjk();
 
             return new FaceIjk(newFace, newCoord);
@@ -254,7 +254,6 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="g">The spherical coordinates to encode.</param>
         /// <param name="res">The desired H3 resolution for the encoding.</param>
-        /// <param name="face">The icosahedral face containing the spherical coordinates.</param>
         /// <returns>
         /// Tuple
         /// Item1: The resulting face (can later get rid of <see cref="face"/> parameter.
@@ -264,7 +263,7 @@ namespace H3Lib.Extensions
         /// faceijk.c
         /// void _geoToHex2d
         /// -->
-        public static (int, Vec2d) ToHex2d(this GeoCoord g, int res, int face)
+        public static (int, Vec2d) ToHex2d(this GeoCoord g, int res)
         {
             Vec3d v3d = g.ToVec3d();
             int newFace = 0;
@@ -284,9 +283,9 @@ namespace H3Lib.Extensions
             }
 
             // cos(r) = 1 - 2 * sin^2(r/2) = 1 - 2 * (sqd / 4) = 1 - sqd/2
-            double r = Math.Acos(1 - sqd / 2);
+            double r = Math.Acos(1 - sqd / 2.0);
 
-            if (r < double.Epsilon)
+            if (r < Constants.EPSILON)
             {
                 return (newFace, new Vec2d());
             }
@@ -358,12 +357,14 @@ namespace H3Lib.Extensions
         /// -->
         public static H3Index ToH3Index(this GeoCoord g, int res)
         {
-            if (res < 0 || res > Constants.MAX_H3_RES) {
-                return StaticData.H3Index.H3_NULL;
+            if (res < 0 || res > Constants.MAX_H3_RES)
+            {
+                return StaticData.H3Index.H3_INVALID_INDEX;
             }
+            
             if (!double.IsFinite(g.Latitude) || !double.IsFinite(g.Longitude))
             {
-                return StaticData.H3Index.H3_NULL;
+                return StaticData.H3Index.H3_INVALID_INDEX;
             }
 
             return g.ToFaceIjk(res).ToH3(res);

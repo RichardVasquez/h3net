@@ -15,7 +15,7 @@ namespace H3Lib.Extensions
         /// -->
         public static double PointSquareDistance(this Vec3d v1, Vec3d v2)
         {
-            return (v1.X - v2.X).Square() + (v2.Y - v2.Y).Square() + (v1.Z - v2.Z).Square();
+            return (v1.X - v2.X).Square() + (v1.Y - v2.Y).Square() + (v1.Z - v2.Z).Square();
         }
 
         public static Vec3d SetX(this Vec3d v3, double x)

@@ -1611,23 +1611,27 @@ namespace H3Lib.Extensions
         /// <param name="origin">Origin cell</param>
         /// <param name="k">Maximum distance to move from the origin</param>
         /// <param name="currentK">Current distance from the origin</param>
-        /// <param name="outData">Dictionary passing information beween recursions</param>
+        /// <param name="outData">Dictionary passing information between recursions</param>
         /// <returns>
         /// Dictionary of cells
         /// Key - element either an H3Index or 0
         /// Value - indicate ijk distance from the origin cell to Item2
         /// </returns>
+        /// <remarks>
+        /// NOTE: You _should_ be able to just call this with h3.KRingInternal(k).  We'll see.
+        /// </remarks>
         /// <!--
         /// algos.c
         /// void _kRingInternal
         /// -->
-        public static Dictionary<H3Index, int> KRingInternal(this H3Index origin, int k, int currentK, Dictionary<H3Index, int> outData)
+        public static Dictionary<H3Index, int> KRingInternal(this H3Index origin, int k, int currentK=0, Dictionary<H3Index, int> outData=null)
         {
             if (origin == 0)
             {
                 return null;
             }
 
+            outData ??= new Dictionary<H3Index, int>();
             var results = new Dictionary<H3Index, int>(outData);
 
             // If we already have the origin h3index in the dictionary, and

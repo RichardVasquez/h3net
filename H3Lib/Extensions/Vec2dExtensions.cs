@@ -77,13 +77,13 @@ namespace H3Lib.Extensions
                 {
                     long axisI = (long)h.J / 2;
                     long diff = h.I - axisI;
-                    h = h.SetI((int) (h.I - 2.0 * diff));
+                    h = h.SetI( h.I - (int)(2.0 * diff));
                 }
                 else
                 {
                     long axisI = (long)(h.J + 1) / 2;
                     long diff = h.I - axisI;
-                    h = h.SetI((int) (2.0 * diff + 1));
+                    h = h.SetI(h.I-(int) (2.0 * diff + 1));
                 }
             }
 
