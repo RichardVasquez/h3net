@@ -2073,7 +2073,29 @@ namespace H3Lib.Extensions
             return h3Center.DistanceToKm(h3Boundary.Verts.First());
         }
         
-        
+        /// <summary>
+        /// Lets you get the maxUncompactSize from a single cell instead of
+        /// requiring wrapping it in a List
+        /// </summary>
+        /// <param name="singleCell">Cell that will be uncompacted</param>
+        /// <param name="res">resolution to uncompact to</param>
+        /// <returns>How many hexagons to expect</returns>
+        public static long MaxUncompactSize(this H3Index singleCell, int res)
+        {
+            return new List<H3Index> {singleCell}.MaxUncompactSize(res);
+        }
+
+        /// <summary>
+        /// Run uncompact on a single cell
+        /// </summary>
+        /// <param name="singleCell">cell to uncompact</param>
+        /// <param name="res">resolution to uncompact to</param>
+        /// <returns><see cref="CollectionExtensions.Uncompact"/> for details</returns>
+        public static (int, List<H3Index>) Uncompact(this H3Index singleCell, int res)
+        {
+            return new List<H3Index> {singleCell}.Uncompact(res);
+        }
+
         
         //---------------------------------------------------------------------------
         //  Field "Modifiers" - This is not going to be fun

@@ -241,5 +241,51 @@ namespace Tests
             Assert.AreEqual(1,compacted.Count);
             Assert.AreEqual(compacted[0], origin);
         }
+        
+        //  Since I'm hanging as much of the H3 API on static extensions at this point,
+        //  it's not really possible to test uncompact with a null value, so no
+        //  UncompactEmpty analog
+
+        [Test]
+        public void UncompactOnlyZero()
+        {
+            // maxUncompactSize and uncompact both permit 0 indexes
+            // in the input array, and skip them. When only a zero is
+            // given, it's a no-op.
+
+            var origin = new List<H3Index> {new H3Index(0)};
+
+            (int status, _) = origin.Uncompact(2);
+            Assert.AreEqual(0, status);
+        }
+
+        [Test]
+        public void UncompactWithZero()
+        {
+            // maxUncompactSize and uncompact both permit 0 indexes
+            // in the input array, and skip them.
+
+            var childrenSz = uncompactableWithZero.ToList().MaxUncompactSize(10);
+
+            var (status, result) = uncompactable.ToList().Uncompact(10);
+            Assert.AreEqual(0, status);
+
+            Assert.AreEqual(childrenSz,result.Count);
+        }
+
+        [Test]
+        public void Pentagon()
+        {
+            var pentagon = new H3Index().SetIndex(1, 4, Direction.CENTER_DIGIT);
+
+            (int status1, var result1) = pentagon.Uncompact(2);
+            Assert.AreEqual(0, status1);
+
+            (int status2, List<H3Index> result2) = result1.Compact();
+            Assert.AreEqual(0, status2);
+
+            Assert.AreEqual(1, result2.Count);
+            Assert.AreEqual(result2[0], pentagon);
+        }
     }
 }

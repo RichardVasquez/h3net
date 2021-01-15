@@ -11,6 +11,7 @@ namespace H3Lib.Extensions
     /// </summary>
     public static class CollectionExtensions
     {
+       
         /// <summary>
         /// uncompact takes a compressed set of hexagons and expands back to the
         /// original set of hexagons.
@@ -31,7 +32,7 @@ namespace H3Lib.Extensions
             {
                 return (-2, new List<H3Index>());
             }
-
+            
             if (compactedSet.Any(cs => !cs.Resolution.IsValidChildRes(res)))
             {
                 return (-2, compactedSet);
@@ -39,21 +40,25 @@ namespace H3Lib.Extensions
 
             // setup the grind
 
-            var pool = new HashSet<H3Index>();
+            var testPool = new HashSet<H3Index>();
 
-            foreach (var index in compactedSet)
+            var validCheck = compactedSet.Where(h => h.IsValid());
+
+            foreach (var index in validCheck)
             {
                 if (index.Resolution == res)
                 {
-                    pool.Add(index);
+                    testPool.Add(index);
+                    continue;
                 }
-                else
+
+                var children = index.ToChildren(res);
+                foreach (var child in children)
                 {
-                    pool.UnionWith(index.ToChildren(res));
+                    testPool.Add(child);
                 }
             }
-
-            return (0, pool.ToList());
+            return (0, testPool.ToList());
         }
 
         /// <summary>
