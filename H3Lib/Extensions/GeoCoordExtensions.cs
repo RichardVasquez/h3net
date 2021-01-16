@@ -115,6 +115,10 @@ namespace H3Lib.Extensions
         /// -->
         public static double AzimuthRadiansTo(this GeoCoord p1, GeoCoord p2)
         {
+            Console.WriteLine("AzimuthRadiansTo");
+            Console.WriteLine($"\tp1 {p1}");
+            Console.WriteLine($"\tp2 {p2}");
+            
             return
                 Math.Atan2
                     (
@@ -241,10 +245,28 @@ namespace H3Lib.Extensions
         /// -->
         public static FaceIjk ToFaceIjk(this GeoCoord g, int res)
         {
+            Console.WriteLine();
+            Console.WriteLine("In ToFaceIjk");
+
             // first convert to hex2d
             (int newFace, var v) = g.ToHex2d(res);
+           
+            Console.WriteLine("-Did ToHex2d");
+            Console.WriteLine("\tpost h");
+            Console.WriteLine($"\t     face - {newFace}");
+            Console.WriteLine("\tv");
+            Console.WriteLine($"\t    xy - {v.X} {v.Y}");
+            Console.WriteLine();
             var newCoord = v.ToCoordIjk();
 
+            var result = new FaceIjk(newFace, newCoord);
+            //return new FaceIjk(newFace, newCoord);
+            Console.WriteLine("-Did ToCoordIjk");
+            Console.WriteLine("\tpost h");
+            Console.WriteLine($"\t     face - {result.Face}");
+            Console.WriteLine("\tv");
+            Console.WriteLine($"\t    coord - {result.Coord}");
+            Console.WriteLine();
             return new FaceIjk(newFace, newCoord);
         }
 
@@ -265,7 +287,11 @@ namespace H3Lib.Extensions
         /// -->
         public static (int, Vec2d) ToHex2d(this GeoCoord g, int res)
         {
+            Console.WriteLine("[------ ToHex2d START ------]");
+            Console.WriteLine($"  g: {g}");
             Vec3d v3d = g.ToVec3d();
+            Console.WriteLine($"v3d: {v3d}");
+            
             int newFace = 0;
 
             // determine the icosahedron face
@@ -274,6 +300,9 @@ namespace H3Lib.Extensions
             for (int f = 1; f < Constants.NUM_ICOSA_FACES; f++)
             {
                 double sqdT = v3d.PointSquareDistance(StaticData.FaceIjk.FaceCenterPoint[f]);
+                Console.WriteLine($"f = {f}:");
+                Console.WriteLine($"     sqd: {sqd}");
+                Console.WriteLine($"    sqdT: {sqdT}");
                 if (!(sqdT < sqd))
                 {
                     continue;
@@ -281,6 +310,10 @@ namespace H3Lib.Extensions
                 newFace = f;
                 sqd = sqdT;
             }
+            
+            Console.WriteLine("End f");
+            Console.WriteLine($"     sqd:     {sqd}");
+            Console.WriteLine($"     newFace: {newFace}");
 
             // cos(r) = 1 - 2 * sin^2(r/2) = 1 - 2 * (sqd / 4) = 1 - sqd/2
             double r = Math.Acos(1 - sqd / 2.0);
@@ -290,12 +323,29 @@ namespace H3Lib.Extensions
                 return (newFace, new Vec2d());
             }
 
+            //  Temp to delete later
+            var art1 = StaticData.FaceIjk.FaceCenterGeo[newFace];
+            var art2 = art1.AzimuthRadiansTo(g);
+            var art3 = art2.NormalizeRadians();
+            var art4 = StaticData.FaceIjk.FaceAxesAzRadsCii[newFace, 0] - art3;
+            var art5 = art4.NormalizeRadians();
+            Console.WriteLine($"FaceCenterGeo[newFace] {art1}");
+            Console.WriteLine($"g.AzimuthRadiansTo(^)  {art2}");
+            Console.WriteLine($"^.NormalizeRadians()   {art3}");
+            Console.WriteLine($"FaceAxesAzRadsCii - ^  {art4}");
+            Console.WriteLine($"^.NormalizeRadians()   {art5}");
+            
             // now have face and r, now find CCW theta from CII i-axis
             double theta =
                 (
                     StaticData.FaceIjk.FaceAxesAzRadsCii[newFace, 0] -
-                    g.AzimuthRadiansTo(StaticData.FaceIjk.FaceCenterGeo[newFace]).NormalizeRadians()
+                    StaticData.FaceIjk.FaceCenterGeo[newFace].AzimuthRadiansTo(g)
+                    // g
+                    //    .AzimuthRadiansTo(StaticData.FaceIjk.FaceCenterGeo[newFace])
+                       .NormalizeRadians()
                 ).NormalizeRadians();
+            
+            Console.WriteLine($"Initial theta: {theta}");
             
             // adjust theta for Class III (odd resolutions)
             if (res.IsResClassIii())
@@ -312,6 +362,14 @@ namespace H3Lib.Extensions
             {
                 r *= StaticData.FaceIjk.MSqrt7;
             }
+            
+            Console.WriteLine($"Face: {newFace}");
+            Console.WriteLine($"   X: {r * Math.Cos(theta)}");
+            Console.WriteLine($"   Y: {r * Math.Sin(theta)}");
+            
+            Console.WriteLine("[------ ToHex2d END ------]");
+
+            //  NOTE: SEEMS TO MATCH Old FaceIJK._geoToHex2d
 
             // we now have (r, theta) in hex2d with theta ccw from x-axes
             // convert to local x,y
@@ -366,6 +424,14 @@ namespace H3Lib.Extensions
             {
                 return StaticData.H3Index.H3_INVALID_INDEX;
             }
+
+            var tfijk = g.ToFaceIjk(res);
+            Console.WriteLine();
+            Console.WriteLine("In ToH3Index:");
+            Console.WriteLine("\ttfijk");
+            Console.WriteLine($"\t    Face     - {tfijk.Face}");
+            Console.WriteLine($"\t    CoordIjk - {tfijk.Coord.I} {tfijk.Coord.J} {tfijk.Coord.K}");
+            Console.WriteLine();
 
             return g.ToFaceIjk(res).ToH3(res);
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace H3Lib
 {
@@ -16,6 +17,11 @@ namespace H3Lib
             X = x;
             Y = y;
             Z = z;
+        }
+
+        public override string ToString()
+        {
+            return $"Vec3d (X,Y,Z) {X:F3}..., {Y:F3}..., {Z:F3}...";
         }
 
         public bool Equals(Vec3d other)

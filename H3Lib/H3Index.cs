@@ -1,13 +1,14 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace H3Lib
 {
     /// <summary>
     /// H3Index utility functions
     /// </summary>
-    [DebuggerDisplay("Value: {Value} => 0x{ToString().ToLower()}")]
-    public readonly struct H3Index:IEquatable<H3Index>,IComparable<H3Index>
+    [DebuggerDisplay("Value: {Value} => 0x{ToString()}")]
+    public readonly struct H3Index:IEquatable<H3Index>,IEquatable<ulong>,IComparable<H3Index>
     {
     #region base value and constructors
         /// <summary>
@@ -29,7 +30,8 @@ namespace H3Lib
         /// int H3_EXPORT(h3GetResolution)(H3Index h)
         /// -->
         public int Resolution =>
-            (int) ((Value & StaticData.H3Index.H3_RES_MASK) >> StaticData.H3Index.H3_RES_OFFSET);
+            (int) ((Value & StaticData.H3Index.H3_RES_MASK) >>
+                   StaticData.H3Index.H3_RES_OFFSET);
 
         /// <summary>
         /// Integer base cell of H3
@@ -39,7 +41,8 @@ namespace H3Lib
         /// int H3_EXPORT(h3GetBaseCell)
         /// -->
         public int BaseCell =>
-            (int) ((Value & StaticData.H3Index.H3_BC_MASK) >> StaticData.H3Index.H3_BC_OFFSET);
+            (int) ((Value & StaticData.H3Index.H3_BC_MASK) >>
+                   StaticData.H3Index.H3_BC_OFFSET);
 
         /// <summary>
         /// Returns the highest resolution non-zero digit in an H3Index.
@@ -59,7 +62,7 @@ namespace H3Lib
                         return GetIndexDigit(r);
                     }
                 }
-
+                
                 return Direction.CENTER_DIGIT;
             }
         }
@@ -68,23 +71,29 @@ namespace H3Lib
         /// Integer mode of H3
         /// </summary>
         public H3Mode Mode =>
-            (H3Mode) ((Value & StaticData.H3Index.H3_MODE_MASK) >> StaticData.H3Index.H3_MODE_OFFSET);
+            (H3Mode) ((Value & StaticData.H3Index.H3_MODE_MASK) >>
+                      StaticData.H3Index.H3_MODE_OFFSET);
 
         /// <summary>
         /// High bit of H3
         /// </summary>
         public int HighBit =>
-            (int) ((Value & StaticData.H3Index.H3_HIGH_BIT_MASK) >> StaticData.H3Index.H3_MAX_OFFSET);
+            (int) ((Value & StaticData.H3Index.H3_HIGH_BIT_MASK) >>
+                   StaticData.H3Index.H3_MAX_OFFSET);
 
         public int ReservedBits =>
-            (int) ((Value & StaticData.H3Index.H3_RESERVED_MASK) >> StaticData.H3Index.H3_RESERVED_OFFSET);
+            (int) ((Value & StaticData.H3Index.H3_RESERVED_MASK) >>
+                   StaticData.H3Index.H3_RESERVED_OFFSET);
 
         /// <summary>
         /// Gets the resolution res integer digit (0-7) of h3.
         /// </summary>
         public Direction GetIndexDigit(int res)
         {
-            return (Direction) ((Value >> ((Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET)) & StaticData.H3Index.H3_DIGIT_MASK);
+            return (Direction)
+                ((Value >>
+                  ((Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET)) &
+                 StaticData.H3Index.H3_DIGIT_MASK);
         }
 
 
@@ -112,7 +121,7 @@ namespace H3Lib
         public override string ToString()
         {
             string s = Value.ToString("X").PadLeft(16, '0');
-            return s.Substring(s.Length - 16, 16);
+            return s.Substring(s.Length - 16, 16).ToLower();
         }
 
         public static implicit operator H3Index(ulong u) => new H3Index(u);
@@ -121,11 +130,6 @@ namespace H3Lib
         public bool Equals(H3Index other)
         {
             return Value == other.Value;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is H3Index other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -146,6 +150,16 @@ namespace H3Lib
         public int CompareTo(H3Index other)
         {
             return Value.CompareTo(other.Value);
+        }
+
+        public bool Equals(ulong other)
+        {
+            return Value == other;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is H3Index other && Equals(other);
         }
     }
 }

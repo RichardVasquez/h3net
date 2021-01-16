@@ -1650,17 +1650,22 @@ namespace H3Lib.Extensions
                 return results;
             }
             
+            Console.WriteLine("Begin KRingInternal");
+            var holdOrigin = origin;
             // Recurse to all neighbors in no particular order.
             for (var i = 0; i < 6; i++)
             {
-                const int rotations = 0;
-                (origin, _) = origin.NeighborRotations(Algos.Directions[i], rotations);
-                var recurseResults = origin.KRingInternal(k, currentK + 1, results);
+                Console.WriteLine($"i: {i}");
+                int rotations = 0;
+                var (tempOrigin, _) = origin.NeighborRotations(Algos.Directions[i], rotations);
+                Console.WriteLine($"origin: {origin}");
+                var recurseResults = tempOrigin.KRingInternal(k, currentK + 1, results);
                 foreach ((var key, int value) in recurseResults)
                 {
                     results[key] = value;
                 }
             }
+            Console.WriteLine("End KRingInternal");
 
             return results;
         }
@@ -1691,6 +1696,8 @@ namespace H3Lib.Extensions
         /// -->
         public static (H3Index, int) NeighborRotations(this H3Index origin, Direction dir, int rotations)
         {
+            Console.WriteLine("######## h3NeighborRotations");
+
             H3Index outHex = new H3Index(origin);
             int outRotations = rotations;
 
@@ -1709,11 +1716,17 @@ namespace H3Lib.Extensions
             {
                 if (r == -1)
                 {
+                    Console.WriteLine($"r == -1 :0       outHex : {outHex}");
+                    Console.WriteLine($"r == -1 :0 newRotations : {newRotations}");
+
                     outHex =
                         outHex.SetBaseCell(StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) dir]);
                     newRotations =
                         StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) dir];
 
+                    Console.WriteLine($"r == -1 :1       outHex : {outHex}");
+                    Console.WriteLine($"r == -1 :1 newRotations : {newRotations}");
+                    
                     if(outHex.BaseCell == StaticData.BaseCells.InvalidBaseCell)
                     {
                         // Adjust for the deleted k vertex at the base cell level.
@@ -1724,6 +1737,9 @@ namespace H3Lib.Extensions
                         newRotations =
                             StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation
                                 [oldBaseCell, (int) Direction.IK_AXES_DIGIT];
+
+                        Console.WriteLine($"baseCell == InValidBaseCell :       outHex : {outHex}");
+                        Console.WriteLine($"baseCell == InValidBaseCell : newRotations : {newRotations}");
 
                         // perform the adjustment for the k-subsequence we're skipping
                         // over.
@@ -1740,11 +1756,18 @@ namespace H3Lib.Extensions
                     {
                         outHex = outHex.SetIndexDigit(r + 1, (ulong) Algos.NewDigitIi[(int) oldDigit, (int) dir]);
                         nextDir = Algos.NewAdjustmentIi[(int) oldDigit, (int) dir];
+
+                        Console.WriteLine($"r+1 IsResClassIII :  outHex : {outHex}");
+                        Console.WriteLine($"r+1 IsResClassIII : nextDir : {nextDir.ToString()}");
+
                     }
                     else
                     {
                         outHex = outHex.SetIndexDigit(r + 1, (ulong) Algos.NewDigitIii[(int) oldDigit, (int) dir]);
                         nextDir = Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
+
+                        Console.WriteLine($"r+1 !IsResClassIII :  outHex : {outHex}");
+                        Console.WriteLine($"r+1 !IsResClassIII : nextDir : {nextDir.ToString()}");
                     }
 
                     if (nextDir != Direction.CENTER_DIGIT)
@@ -1781,6 +1804,8 @@ namespace H3Lib.Extensions
                                      ? outHex.Rotate60Clockwise()
                                      : outHex.Rotate60CounterClockwise();
                         alreadyAdjustedKSubsequence = true;
+                        Console.WriteLine($"oldBaseCell != newBaseCell : outHex : {outHex}");
+
                     }
                     else
                     {

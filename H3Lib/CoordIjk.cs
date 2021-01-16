@@ -40,6 +40,11 @@ namespace H3Lib
             K = coord.K;
         }
 
+        public override string ToString()
+        {
+            return $"CoordIjk (IJK) {I}, {J}, {K}";
+        }
+
         /// <summary>
         /// Given cube coords as doubles, round to valid integer coordinates. Algorithm
         /// from https://www.redblobgames.com/grids/hexagons/#rounding

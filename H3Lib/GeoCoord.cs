@@ -25,6 +25,11 @@ namespace H3Lib
             Longitude = gc.Longitude;
         }
 
+        public override string ToString()
+        {
+            return $"GeoCoord: (Lat,Lng) {Latitude:F4}..., {Longitude:F4}...";
+        }
+
         /*
          * The following functions provide meta information about the H3 hexagons at
          * each zoom level. Since there are only 16 total levels, these are current
