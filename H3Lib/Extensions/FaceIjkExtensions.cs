@@ -337,10 +337,13 @@ namespace H3Lib.Extensions
                 return h.SetBaseCell(fijk.ToBaseCell());
             }
 
+            Console.WriteLine("$$$$$$ ToH3 Start $$$$$$");
             // we need to find the correct base cell FaceIJK for this H3 index;
             // start with the passed in face and resolution res ijk coordinates
             // in that face's coordinate system
             var fijkBc = new FaceIjk(fijk);
+            Console.WriteLine($"  fijk:     {fijk}");
+            Console.WriteLine($"fijkBc:     {fijkBc}");
 
             // build the H3Index from finest res up
             // adjust r for the fact that the res 0 base cell offsets the indexing
@@ -348,24 +351,34 @@ namespace H3Lib.Extensions
             var ijk = new CoordIjk(fijkBc.Coord);
             for (int r = res - 1; r >= 0; r--)
             {
+                Console.WriteLine($"{res-1}/{r}");
                 var lastIjk = new CoordIjk(ijk);
+                Console.WriteLine($"lastIJK:   {lastIjk}");
                 CoordIjk lastCenter;
                 if ((r + 1).IsResClassIii())
                 {
+                    Console.WriteLine($"\tr + 1 IsResClassIii");
                     // rotate ccw
+                    Console.WriteLine("\tijk       : {ijk}");
                     ijk = ijk.UpAp7();
+                    Console.WriteLine("\tijk UpAp7 : {ijk}");
                     lastCenter = new CoordIjk(ijk).DownAp7();
+                    Console.WriteLine("\tlastCenter DownAp7 : {lastCenter}");
                 }
                 else
                 {
+                    Console.WriteLine($"r + 1 IsResClassIii");
                     // rotate cw
+                    Console.WriteLine("\tijk       : {ijk}");
                     ijk = ijk.UpAp7R();
+                    Console.WriteLine("\tijk UpAp7R : {ijk}");
                     lastCenter = new CoordIjk(ijk).DownAp7R();
+                    Console.WriteLine("\tlastCenter DownAp7 : {lastCenter}");
                 }
 
-                var diff = lastIjk - lastCenter;
-
-                h.SetIndexDigit(r + 1, (ulong) diff.ToDirection());
+                var diff = (lastIjk - lastCenter).Normalized();
+                Console.WriteLine($"diff : {diff}");
+                h = h.SetIndexDigit(r + 1, (ulong) diff.ToDirection());
             }
 
             fijkBc = fijkBc.ReplaceCoord(ijk);

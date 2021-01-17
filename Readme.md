@@ -2,78 +2,74 @@
 
 H3Net is a geospatial indexing system using hexagonal grid that can be (approximately) subdivided into finer and finer hexagonal grids, combining the benefits of a hexagonal grid with [S2](https://code.google.com/archive/p/s2-geometry-library/)'s hierarchical subdivisions, mostly translated from the original C code from [Uber](https://github.com/uber)'s [H3](https://github.com/uber/h3) project.
 
-# Caveat Emptor
+## Why? There's already a version in C!
 
-I have a personal project I'm working on that needs hexagons all over the world, and I've been using [DGGRID](http://www.discreteglobalgrids.org/software/) for generating patches of data across the globe.  Seeing this code come out, and pre-oriented for [Dymaxion project](https://en.wikipedia.org/wiki/Dymaxion_map), I did the conversion to C# for various reasons, accepting the tradeoff in speed.  
+1. Because I can.
+    * I also wanted to refresh and expand my knowledge of C.
+    * I am building a mobile game, and it's using Unity, and
+      when I first started it, building C extensions wasn't
+      working for me when going from desktop to Android.
+2. Because I want to.
+    * I've wanted to go beyond my Asp.Net/MVC web experience.
+      While I also do [Project Euler](https://projecteuler.net)
+      and [Advent of Code](https://adventodcode.com) mostly in
+      C#, those are "one offs", as it were.
+    * Besides the game I'm working on, I like 
+      [hexagons](https://www.youtube.com/watch?v=thOifuHs6eY),
+      I like tilings, and while this isn't tiling, but partitioning,
+      on a local scale, it's pretty close.
 
-As such, this code does what **I NEED IT TO DO**, and it may not be what you're looking for.  I've tried to make it approachable for others, but I can't guarantee that.
+## History
+* Current - Sometime soon.  It'll have the capabilities of
+  3.7.1, and I'm going to try to make the stock H3 API work.
+  I'm also going to start deprecating my old API, **and**
+  implement my new API based on fluid operations.
+* Version 2 - A horrible attempt to implement H3 v3.2.1, and
+  I've removed the branch for it.
+* Version 1 - According to my Git repository, I pushed it on
+  November 16, 2018.  It has the capability of Uber H3 3.1.1,
+  but it has a [horrible API](OldApi.md).
 
-Updates will be provided as I tweak things, but the main project using this library needs to be worked on for a while now that I've got a decent tool to generate hexes.
+## Caveat Emptor
+This doesn't work *exactly* like H3, especially under the hood,
+but it's close enough for most work, I feel.
 
-Additionally, you should probably familiarize yourself with the h3net.Api structs contained in Structs.cs as that's what the API returns its results in, and the initial structs and data classes will eventually be deprecated.
+Most data types used and returned are readonly structs, though
+I have provided functions that will provide a mutated *copy*
+of the original type.
+
+The exceptions are the polygon functions, since they have to be
+modifiable to some degree, though I've done some tinkering with
+the internals to use actual the .Net LinkedList, but since most
+of that's internal, it shouldn't really affect end users.
+
+Starting from 3.7.1, I'll be throwing methods, fields, properties,
+etc. into the appropriate scopes of private, internal, and public
+so that entry points make sense, and people can't blow things up
+easily.
+
+In other words, I'm turning this from a proof of concept to a
+designed tool.
+
 
 ## Testing
-I've converted the basic test suites under the project h3tests using [Nunit](https://github.com/nunit).  polyfillTransmeridianComplex doesn't work.  PRs that address that one test will get my attention the quickest.
+For the most part, I've converted the unit tests from the original H3
+project to work in h3net.  They were extremely helpful with the
+architecture change going from 3.1.1 to 3.7.1.
 
-## Installing
+Some corner cases weren't convertible as they tested for null objects
+while h3net uses primarily extension methods on readonly structs.
+Where this has come up, I've documented it in the appropriate unit test
+file.
 
-In the solution, build the h3net project into a DLL.  You can then use the h3net.Api namespace to access the following list.  See [Uber's H3 API](https://uber.github.io/h3/#/documentation/api-reference/indexing) for pointers regarding use.  There's some signature differences explained after the list.
+## Roadmap
+For the 3.* version, it will likely just be bug fixes and code cleaning.
 
-- Api.H3Index GeoToH3(Code.GeoCoord gc, int res)
-- Api.GeoCoord H3ToGeo(Code.H3Index h3)
-- Api.GeoBoundary H3ToGeoBoundary(Code.H3Index h3)
-- int MaxKringSize(int k)
-- HexRangeResult HexRange(Code.H3Index origin, int k)
-- HexRangeDistancesResult HexRangeDistances(Code.H3Index origin, int k)
-- HexRangeResult HexRanges(IEnumerable<Code.H3Index> h3Set, int k)
-- HexRangeResult HexRanges(Code.H3Index h3Set, int k)
-- H3Index[] Kring(Code.H3Index origin, int k)
-- HexRangeDistancesResult KringDistances(Code.H3Index origin, int k)
-- HexRangeResult HexRing(Code.H3Index origin, int k)
-- int MaxPolyFillSize(Code.GeoPolygon geoPolygon, int res)
-- H3Index[] PolyFill(Code.GeoPolygon geoPolygon, int res)
-- LinkedGeoPolygon H3SetToLinkedGeo(IEnumerable<Code.H3Index> h3Set)
-- void DestroyLinkedPolygon(ref LinkedGeoPolygon polygon)
-- double DegreesToRadians(double degrees)
-- double RadiansToDegrees(double radians)
-- double HexAreaKm2(int res)
-- double HexAreaM2(int res)
-- double EdgeLengthKm(int res)
-- double EdgeLengthM(int res)
-- long NumberHexagons(int res)
-- int H3GetResolution(Code.H3Index h3)
-- int H3GetBaseCell(Code.H3Index h3)
-- H3Index StringToH3(string s)
-- string H3ToString(Code.H3Index h3)
-- int H3IsValid(Code.H3Index h3)
-- H3Index H3ToParent(Code.H3Index h3, int parentRes)
-- int MaxH3ToChildrenSize(Code.H3Index h3, int childRes)
-- H3Index[] H3ToChildren(Code.H3Index h3, int childRes)
-- HexRangeResult Compact(List<Code.H3Index> h3Set)
-- int MaxUncompactSize(List<Code.H3Index> h3Set, int res)
-- HexRangeResult Uncompact(List<Code.H3Index> compactedSet, int res)
-- int H3IsResClassIII(Code.H3Index h3)
-- bool IsResClassIII(Code.H3Index h3)
-- int H3IsPentagon(Code.H3Index h3)
-- bool IsPentagon(Code.H3Index h3)
-- int H3IndexesAreNeighbors(Code.H3Index origin, Code.H3Index destination)
-- bool AreNeighbors(Code.H3Index origin, Code.H3Index destination)
-- H3Index GetUniDirectionalEdge(Code.H3Index origin, Code.H3Index destination)
-- int H3UniDirectionalEdgeIsValid(Code.H3Index edge)
-- bool UniDirectionalEdgeIsValid(Code.H3Index edge)
-- H3Index GetOriginH3FromUniDirectionalEdge(Code.H3Index edge)
-- H3Index GetDestinationH3FromUniDirectionalEdge(Code.H3Index edge)
-- H3Index[] GetH3IndexesFromUnidirectionalEdge(Code.H3Index edge)
-- H3Index[] GetH3UniDirectionalEdgesFromHexagon(Code.H3Index origin)
-- GeoBoundary GetH3UnidirectionalEdgeBoundary(Code.H3Index edge)
-- int H3Distance(Code.H3Index origin, Code.H3Index h3)
-- ExperimentalIJ ExperimentalH3ToLocalIj(Code.H3Index origin, Code.H3Index h3)
-- HexRangeResult experimentalLocalIjToH3(Code.H3Index origin, Code.LocalIJ.CoordIJ ij)
+The H3 library is moving to Version 4, and I'll likely try to keep up
+with them, but I'll always be lagging in that regards.
 
-The primary difference between my API implementation and Uber's is that I'm not expecting pointers to preallocated memory to store the results.  Barring the linked data types, you're going to receive a single instance/array collection of a C# value type.  Immutable, if it's a struct.
+## Version
+I will be keeping the version number the same as the functionality of
+H3 that I'm matching.
 
-### Roadmap
-There's a **lot** of code in the h3net.Code namespace where I just used ref and passed around blobs of data, and then had to finesse accesing an indexed value by duplicating it, feeding it through the translated code, then putting it back into the original collection.  I'm not proud of that, and that's likely the first part that gets steam cleaned.
-
-#### Version
-I will be keeping the version number the same as the functionality of H3 that I'm matching.
+Currently: 3.7.1

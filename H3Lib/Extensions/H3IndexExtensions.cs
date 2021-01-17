@@ -326,12 +326,13 @@ namespace H3Lib.Extensions
         /// -->
         public static H3Index RotatePent60CounterClockwise(this H3Index h)
         {
+            Console.WriteLine("-=-=-=-=-= RotatePent60CounterClockwise =-=-=-=-=-");
             // rotate in place; skips any leading 1 digits (k-axis)
             var foundFirstNonZeroDigit = 0;
             for (int r = 1, res = h.Resolution; r <= res; r++)
             {
                 // rotate this digit
-                h.SetIndexDigit(r, (ulong) h.GetIndexDigit(r).Rotate60CounterClockwise());
+                h = h.SetIndexDigit(r, (ulong) h.GetIndexDigit(r).Rotate60CounterClockwise());
 
                 // look for the first non-zero digit so we
                 // can adjust for deleted k-axes sequence
@@ -366,7 +367,7 @@ namespace H3Lib.Extensions
             for (int r = 1, res = h.Resolution; r <= res; r++)
             {
                 // rotate this digit
-                h.SetIndexDigit(r, (ulong) h.GetIndexDigit(r).Rotate60Clockwise());
+                h=h.SetIndexDigit(r, (ulong) h.GetIndexDigit(r).Rotate60Clockwise());
 
                 // look for the first non-zero digit so we
                 // can adjust for deleted k-axes sequence
@@ -400,7 +401,7 @@ namespace H3Lib.Extensions
             for (int r = 1, res = h.Resolution; r <= res; r++)
             {
                 var oldDigit = h.GetIndexDigit(r);
-                h.SetIndexDigit(r, (ulong) oldDigit.Rotate60CounterClockwise());
+                h = h.SetIndexDigit(r, (ulong) oldDigit.Rotate60CounterClockwise());
             }
 
             return h;
@@ -419,7 +420,7 @@ namespace H3Lib.Extensions
             for (int r = 1, res = h.Resolution; r <= res; r++)
             {
                 var oldDigit = h.GetIndexDigit(r);
-                h.SetIndexDigit(r, (ulong) oldDigit.Rotate60Clockwise());
+                h = h.SetIndexDigit(r, (ulong) oldDigit.Rotate60Clockwise());
             }
             return h;
         }
@@ -769,7 +770,8 @@ namespace H3Lib.Extensions
         /// -->
         public static H3Index SetIndex(this H3Index hp, int res, int baseCell, Direction initDigit)
         {
-            H3Index h = StaticData.H3Index.H3_INIT;
+            H3Index h = new H3Index(StaticData.H3Index.H3_INIT);
+                //.H3Index.H3_INIT;
             h = h.SetMode(H3Mode.Hexagon).SetResolution(res).SetBaseCell(baseCell);
 
             for (var r = 1; r <= res; r++)
@@ -1322,24 +1324,29 @@ namespace H3Lib.Extensions
             // Otherwise, determine the IJK direction from the origin to the destination
             var output = origin.SetMode(H3Mode.UniEdge);
 
-            bool isPentagon = origin.IsPentagon();
+            //bool isPentagon = origin.IsPentagon();
 
             // Checks each neighbor, in order, to determine which direction the
             // destination neighbor is located. Skips CENTER_DIGIT since that
             // would be this index.
-            for (var direction = isPentagon ? Direction.J_AXES_DIGIT : Direction.K_AXES_DIGIT;
-                 direction <  Direction.NUM_DIGITS; direction++)
+            //            for (var direction = isPentagon ? Direction.J_AXES_DIGIT : Direction.K_AXES_DIGIT;
+            //                 direction <  Direction.NUM_DIGITS; direction++)
+            for (Direction direction = Direction.K_AXES_DIGIT;
+                 direction < Direction.NUM_DIGITS;
+                 direction++)
             {
-                // TODO: Circle back after retrofitting Algos.cs
-                int rotations = 0;
-                (H3Index neighbor, _) = origin.NeighborRotations(direction, rotations);
-                    //Algos.h3NeighborRotations(origin,direction, ref rotations);
-                if (neighbor != destination)
                 {
-                    continue;
-                }
+                    // TODO: Circle back after retrofitting Algos.cs
+                    int rotations = 0;
+                    (H3Index neighbor, _) = origin.NeighborRotations(direction, rotations);
+                    //Algos.h3NeighborRotations(origin,direction, ref rotations);
+                    if (neighbor != destination)
+                    {
+                        continue;
+                    }
 
-                return output.SetReservedBits((int) direction);
+                    return output.SetReservedBits((int) direction);
+                }
             }
 
             // This should be impossible, return H3_NULL in this case;
@@ -1411,7 +1418,14 @@ namespace H3Lib.Extensions
             }
 
             var origin = edge.OriginFromUniDirectionalEdge();
-            return (!origin.IsPentagon() || neighborDirection != Direction.K_AXES_DIGIT) && origin.IsValid();
+            //return (!origin.IsPentagon() || neighborDirection != Direction.K_AXES_DIGIT) && origin.IsValid();
+            
+            if(origin.IsPentagon() && neighborDirection == Direction.K_AXES_DIGIT)
+            {
+                return false;
+            }
+
+            return origin.IsValid();
         }
 
         /// <summary>
@@ -1658,8 +1672,14 @@ namespace H3Lib.Extensions
                 Console.WriteLine($"i: {i}");
                 int rotations = 0;
                 var (tempOrigin, _) = origin.NeighborRotations(Algos.Directions[i], rotations);
-                Console.WriteLine($"origin: {origin}");
+
+                Console.WriteLine($"Resulting origin: {tempOrigin}");
+
                 var recurseResults = tempOrigin.KRingInternal(k, currentK + 1, results);
+                if (recurseResults == null)
+                {
+                    continue;
+                }
                 foreach ((var key, int value) in recurseResults)
                 {
                     results[key] = value;
@@ -1696,14 +1716,18 @@ namespace H3Lib.Extensions
         /// -->
         public static (H3Index, int) NeighborRotations(this H3Index origin, Direction dir, int rotations)
         {
-            Console.WriteLine("######## h3NeighborRotations");
+            Console.WriteLine("######## Begin h3NeighborRotations");
 
+            Console.WriteLine($"dir : {(int) dir} : {dir.ToString()}");
+            Console.WriteLine($"rotations: {rotations}");
             H3Index outHex = new H3Index(origin);
             int outRotations = rotations;
 
             for (int i = 0; i < outRotations; i++)
             {
+                Console.WriteLine($"\t{i}/{outRotations} -- {dir.ToString()}");
                 dir = dir.Rotate60CounterClockwise();
+                Console.WriteLine($"\t-- {dir.ToString()} {i}/{outRotations}");
             }
 
             int newRotations = 0;
@@ -1716,19 +1740,22 @@ namespace H3Lib.Extensions
             {
                 if (r == -1)
                 {
-                    Console.WriteLine($"r == -1 :0       outHex : {outHex}");
-                    Console.WriteLine($"r == -1 :0 newRotations : {newRotations}");
+                    Console.WriteLine($"r == -1 :       outHex > {outHex}");
+                    Console.WriteLine($"r == -1 : newRotations > {newRotations}");
 
                     outHex =
                         outHex.SetBaseCell(StaticData.BaseCells.BaseCellNeighbors[oldBaseCell, (int) dir]);
                     newRotations =
                         StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[oldBaseCell, (int) dir];
 
-                    Console.WriteLine($"r == -1 :1       outHex : {outHex}");
-                    Console.WriteLine($"r == -1 :1 newRotations : {newRotations}");
+                    Console.WriteLine($"r == -1 :       outHex < {outHex}");
+                    Console.WriteLine($"r == -1 : newRotations < {newRotations}");
                     
                     if(outHex.BaseCell == StaticData.BaseCells.InvalidBaseCell)
                     {
+                        Console.WriteLine($"baseCell == InValidBaseCell >       outHex : {outHex}");
+                        Console.WriteLine($"baseCell == InValidBaseCell > newRotations : {newRotations}");
+
                         // Adjust for the deleted k vertex at the base cell level.
                         // This edge actually borders a different neighbor.
                         outHex = outHex.SetBaseCell(
@@ -1738,36 +1765,50 @@ namespace H3Lib.Extensions
                             StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation
                                 [oldBaseCell, (int) Direction.IK_AXES_DIGIT];
 
-                        Console.WriteLine($"baseCell == InValidBaseCell :       outHex : {outHex}");
-                        Console.WriteLine($"baseCell == InValidBaseCell : newRotations : {newRotations}");
+                        Console.WriteLine($"baseCell == InValidBaseCell <       outHex : {outHex}");
+                        Console.WriteLine($"baseCell == InValidBaseCell < newRotations : {newRotations}");
 
                         // perform the adjustment for the k-subsequence we're skipping
                         // over.
+                        
+                        Console.WriteLine($"baseCell == InValidBaseCell R60CCW >       outHex > {outHex}");
+                        Console.WriteLine($"baseCell == InValidBaseCell R60CCW > outRotations > {outRotations}");
                         outHex=outHex.Rotate60CounterClockwise();
                         outRotations++;
+                        Console.WriteLine($"baseCell == InValidBaseCell R60CCW <       outHex > {outHex}");
+                        Console.WriteLine($"baseCell == InValidBaseCell R60CCW < outRotations > {outRotations}");
                     }
                     break;
                 }
                 else
                 {
                     Direction oldDigit = outHex.GetIndexDigit(r + 1);
-                    Direction nextDir;
+                    Direction nextDir = Direction.CENTER_DIGIT;
+                    Console.WriteLine($"oldDigit : {(int)oldDigit} : {oldDigit.ToString()}");
+                    Console.WriteLine($"nextDir  : {(int)nextDir} : {nextDir.ToString()}");
+                    
                     if((r+1).IsResClassIii())
                     {
-                        outHex = outHex.SetIndexDigit(r + 1, (ulong) Algos.NewDigitIi[(int) oldDigit, (int) dir]);
+                        Console.WriteLine($"r+1 IsResClassIII >  outHex : {outHex}");
+                        Console.WriteLine($"r+1 IsResClassIII > nextDir : {nextDir.ToString()}");
+                        outHex = outHex.SetIndexDigit
+                            (r + 1, (ulong) Algos.NewDigitIi[(int) oldDigit, (int) dir]);
                         nextDir = Algos.NewAdjustmentIi[(int) oldDigit, (int) dir];
 
-                        Console.WriteLine($"r+1 IsResClassIII :  outHex : {outHex}");
-                        Console.WriteLine($"r+1 IsResClassIII : nextDir : {nextDir.ToString()}");
+                        Console.WriteLine($"r+1 IsResClassIII <  outHex : {outHex}");
+                        Console.WriteLine($"r+1 IsResClassIII < nextDir : {nextDir.ToString()}");
 
                     }
                     else
                     {
+                        Console.WriteLine($"r+1 !IsResClassIII :  outHex > {outHex}");
+                        Console.WriteLine($"r+1 !IsResClassIII : nextDir > {nextDir.ToString()}");
+
                         outHex = outHex.SetIndexDigit(r + 1, (ulong) Algos.NewDigitIii[(int) oldDigit, (int) dir]);
                         nextDir = Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
 
-                        Console.WriteLine($"r+1 !IsResClassIII :  outHex : {outHex}");
-                        Console.WriteLine($"r+1 !IsResClassIII : nextDir : {nextDir.ToString()}");
+                        Console.WriteLine($"r+1 !IsResClassIII :  outHex < {outHex}");
+                        Console.WriteLine($"r+1 !IsResClassIII : nextDir < {nextDir.ToString()}");
                     }
 
                     if (nextDir != Direction.CENTER_DIGIT)
@@ -1791,20 +1832,23 @@ namespace H3Lib.Extensions
                 // force rotation out of missing k-axes sub-sequence
                 if (outHex.LeadingNonZeroDigit == Direction.K_AXES_DIGIT)
                 {
+                    Console.WriteLine("outHex.LeadingNonZeroDigit == Direction.K_AXES_DIGIT");
                     if (oldBaseCell != newBaseCell)
                     {
+                        Console.WriteLine("oldBaseCell != newBaseCell");
                         // in this case, we traversed into the deleted
                         // k subsequence of a pentagon base cell.
                         // We need to rotate out of that case depending
                         // on how we got here.
                         // check for a cw/ccw offset face; default is ccw
 
+                        Console.WriteLine($"oldBaseCell != newBaseCell < outHex : {outHex}");
                         outHex = newBaseCell.IsClockwiseOffset
                                      (StaticData.BaseCells.BaseCellData[oldBaseCell].HomeFijk.Face)
                                      ? outHex.Rotate60Clockwise()
                                      : outHex.Rotate60CounterClockwise();
                         alreadyAdjustedKSubsequence = true;
-                        Console.WriteLine($"oldBaseCell != newBaseCell : outHex : {outHex}");
+                        Console.WriteLine($"oldBaseCell != newBaseCell > outHex : {outHex}");
 
                     }
                     else
@@ -1814,6 +1858,7 @@ namespace H3Lib.Extensions
                         // base cell.
                         if (oldLeadingDigit == Direction.CENTER_DIGIT)
                         {
+                            Console.WriteLine("Return on oldLeadingDigit == Direction.CENTER_DIGIT");
                             // Undefined: the k direction is deleted from here
                             return (StaticData.H3Index.H3_NULL, outRotations);
                         }
@@ -1823,7 +1868,10 @@ namespace H3Lib.Extensions
                             // Rotate out of the deleted k subsequence
                             // We also need an additional change to the direction we're
                             // moving in
+                            Console.WriteLine("oldLeadingDigit == Direction.JK_AXES_DIGIT");
+                            Console.WriteLine($"\toutHex < {outHex}");
                             outHex = outHex.Rotate60CounterClockwise();
+                            Console.WriteLine($"\toutHex > {outHex}");
                             outRotations++;
                         }
                         else if (oldLeadingDigit == Direction.IK_AXES_DIGIT)
@@ -1831,11 +1879,14 @@ namespace H3Lib.Extensions
                             // Rotate out of the deleted k subsequence
                             // We also need an additional change to the direction we're
                             // moving in
+                            Console.WriteLine($"oldLeadingDigit == Direction.IK_AXES_DIGIT outHex < {outHex}");
                             outHex = outHex.Rotate60Clockwise();
+                            Console.WriteLine($"oldLeadingDigit == Direction.IK_AXES_DIGIT outHex > {outHex}");
                             outRotations += 5;
                         }
                         else
                         {
+                            Console.WriteLine("SHOULD NEVER HAPPEN!!!");
                             // Should never occur
                             return (StaticData.H3Index.H3_NULL, outRotations);
                         }
@@ -1844,27 +1895,37 @@ namespace H3Lib.Extensions
 
                 for (var i = 0; i < newRotations; i++)
                 {
+                    Console.WriteLine($"Doing {newRotations} Rotate60Ccw [#1]");
+                    Console.WriteLine($"\toutHex < {outHex}");
                     outHex = outHex.RotatePent60CounterClockwise();  
+                    Console.WriteLine($"\toutHex > {outHex}");
                 } 
 
                 // Account for differing orientation of the base cells (this edge
                 // might not follow properties of some other edges.)
                 if (oldBaseCell != newBaseCell)
                 {
+                    Console.WriteLine("OLD BASE CELL != NEW BASE CELL");
                     // TODO: Place this and related in H3LibExtensions
                     if (newBaseCell.IsBaseCellPolarPentagon())
                     {
+                        Console.WriteLine("BASE CELL IS POLAR PENTAGON");
                         // 'polar' base cells behave differently because they have all
                         // i neighbors.
                         if (oldBaseCell != 118 && oldBaseCell != 8 &&
                             outHex.LeadingNonZeroDigit!=Direction.JK_AXES_DIGIT)
                         {
+                            Console.WriteLine($"old basecell !=118 && != 8 => {oldBaseCell}");
+                            Console.WriteLine($"outHex.LeadingNonZeroDigit!=Direction.JK_AXES_DIGIT => {outHex.LeadingNonZeroDigit.ToString()}");
+                            Console.WriteLine($"\toutRotations > {outRotations}");
                             outRotations++;
+                            Console.WriteLine($"\toutRotations < {outRotations}");
                         }
                     }
                     else if (outHex.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT &&
                        !alreadyAdjustedKSubsequence)
                     {
+                        Console.WriteLine("Add some debug info here");
                         // account for distortion introduced to the 5 neighbor by the
                         // deleted k subsequence.
                         outRotations++;
@@ -1873,13 +1934,19 @@ namespace H3Lib.Extensions
             }
             else
             {
+                Console.WriteLine($"Doing {newRotations} Rotate60Ccw [#2]");
                 for (int i = 0; i < newRotations; i++)
                 {
+                    Console.WriteLine($"\t{i+1}/{newRotations} < {outHex}");
                     outHex = outHex.Rotate60CounterClockwise();
+                    Console.WriteLine($"\t{i+1}/{newRotations} > {outHex}");
                 }
             }
 
+            Console.WriteLine("Final exit");
             outRotations = (outRotations + newRotations) % 6;
+            Console.WriteLine($"Final outRotations : {outRotations}");
+            Console.WriteLine($"Final       outHex : {outHex}");
             return (outHex, outRotations);
         }
 
@@ -2014,11 +2081,11 @@ namespace H3Lib.Extensions
         /// -->
         public static (int, List<H3Index>) HexRing(this H3Index origin, int k)
         {
-            var results = new List<H3Index> {origin};
+            var results = new List<H3Index>();
             // Short-circuit on 'identity' ring
             if (k == 0)
             {
-                return (0, results);
+                return (0, new List<H3Index>{origin});
             }
 
             // Number of 60 degree ccw rotations to perform on the direction (based on
@@ -2049,6 +2116,8 @@ namespace H3Lib.Extensions
             }
 
             var lastIndex = origin;
+            results.Add(origin);
+            
             for (var direction = 0; direction < 6; direction++)
             {
                 for (var pos = 0; pos < k; pos++)

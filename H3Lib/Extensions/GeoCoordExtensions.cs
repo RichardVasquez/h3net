@@ -250,14 +250,15 @@ namespace H3Lib.Extensions
 
             // first convert to hex2d
             (int newFace, var v) = g.ToHex2d(res);
+            var newCoord = v.ToCoordIjk();
            
             Console.WriteLine("-Did ToHex2d");
             Console.WriteLine("\tpost h");
             Console.WriteLine($"\t     face - {newFace}");
+            Console.WriteLine($"\t    coord - {newCoord}");
             Console.WriteLine("\tv");
             Console.WriteLine($"\t    xy - {v.X} {v.Y}");
             Console.WriteLine();
-            var newCoord = v.ToCoordIjk();
 
             var result = new FaceIjk(newFace, newCoord);
             //return new FaceIjk(newFace, newCoord);

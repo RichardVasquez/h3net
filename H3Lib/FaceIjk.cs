@@ -32,6 +32,11 @@ namespace H3Lib
             Coord = new CoordIjk(fijk.Coord);
         }
 
+        public override string ToString()
+        {
+            return $"FaceIjk: Face: {Face} Coord: {Coord}";
+        }
+
         public bool Equals(FaceIjk other)
         {
             return Face == other.Face && Coord.Equals(other.Coord);

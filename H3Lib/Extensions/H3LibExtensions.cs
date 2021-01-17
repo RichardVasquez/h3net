@@ -245,13 +245,24 @@ namespace H3Lib.Extensions
         /// -->
         public static List<H3Index> GetPentagonIndexes(this int res)
         {
-            var cells = Enumerable
-                       .Range(0, Constants.NUM_BASE_CELLS)
-                       .Where(t => t.IsBaseCellPentagon());
-            
-            return cells
-                  .Select(cell => new H3Index().SetIndex(res, cell, Direction.CENTER_DIGIT))
-                  .ToList();
+            var results = new List<H3Index>();
+            for (int bc = 0; bc < Constants.NUM_BASE_CELLS; bc++)
+            {
+                if (bc.IsBaseCellPentagon())
+                {
+                    H3Index pentagon = new H3Index().SetIndex(res, bc, 0);
+                    results.Add(pentagon);
+                }
+            }
+
+            return results;
+            // var cells = Enumerable
+            //            .Range(0, Constants.NUM_BASE_CELLS)
+            //            .Where(t => t.IsBaseCellPentagon());
+            //
+            // return cells
+            //       .Select(cell => new H3Index().SetIndex(res, cell, Direction.CENTER_DIGIT))
+            //       .ToList();
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using H3Lib.Extensions;
 
 namespace H3Lib
 {
@@ -10,7 +11,7 @@ namespace H3Lib
     [DebuggerDisplay("Value: {Value} => 0x{ToString()}")]
     public readonly struct H3Index:IEquatable<H3Index>,IEquatable<ulong>,IComparable<H3Index>
     {
-    #region base value and constructors
+        #region base value and constructors
         /// <summary>
         /// Where the actual index is stored.
         /// </summary>
@@ -20,6 +21,28 @@ namespace H3Lib
         {
             Value = val;
         }
+
+        /// <summary>
+        /// This came about from getting tired of two stepping
+        /// constructors for unit tests.
+        /// </summary>
+        /// <param name="res"></param>
+        /// <param name="baseCell"></param>
+        /// <param name="initDigit"></param>
+        public H3Index(int res, int baseCell, Direction initDigit)
+        {
+            H3Index h = StaticData.H3Index.H3_INIT;
+            h = h.SetIndex(res, baseCell, initDigit);
+            Value = h.Value;
+        }
+        
+        public H3Index(int res, int baseCell, int initDigit)
+        {
+            H3Index h = StaticData.H3Index.H3_INIT;
+            h = h.SetIndex(res, baseCell, (Direction) initDigit);
+            Value = h.Value;
+        }
+
         #endregion
 
         /// <summary>
@@ -55,7 +78,7 @@ namespace H3Lib
         {
             get
             {
-                for (var r = 1; r < Resolution; r++)
+                for (var r = 1; r <= Resolution; r++)
                 {
                     if (GetIndexDigit(r) > 0)
                     {
