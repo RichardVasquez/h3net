@@ -141,6 +141,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h3Set">Set of hexagons</param>
         /// <returns>Output graph</returns>
+        /// <!--
+        /// algos.c
+        /// h3SetToVertexGraph
+        /// -->
         public static VertexGraph ToVertexGraph(this List<H3Index> h3Set)
         {
             if (h3Set.Count<1)
@@ -152,27 +156,38 @@ namespace H3Lib.Extensions
 
             var graph = new VertexGraph();
 
+            int res = h3Set[0].Resolution;
+
             // Iterate through every hexagon
-            foreach (var vertices in h3Set.Select(cell => cell.ToGeoBoundary()))
+            foreach (var vertices in h3Set
+                                    .Where(w=>w!=StaticData.H3Index.H3_NULL)
+                                    .Select(cell => cell.ToGeoBoundary()))
             {
-                // iterate through every edge
-                for (var j = 0; j < vertices.NumVerts; j++)
+                for (int j = 0; j < vertices.NumVerts; j++)
                 {
                     var fromVtx = vertices.Verts[j];
                     var toVtx = vertices.Verts[(j + 1) % vertices.NumVerts];
-
-                    // If we've seen this edge already, it will be reversed
-                    var edge = graph.FindEdge(toVtx, fromVtx);
-                    if (edge != null)
-                    {
-                        // If we've seen it, drop it. No edge is shared by more than 2
-                        // hexagons, so we'll never see it again.
-                        graph.RemoveNode(edge.Value);
-                    } else {
-                        // Add a new node for this edge
-                        graph.AddNode(fromVtx, toVtx);
-                    }
+                    graph.AddNode(fromVtx, toVtx);
                 }
+                
+                // // iterate through every edge
+                // for (var j = 0; j < vertices.NumVerts; j++)
+                // {
+                //     var fromVtx = vertices.Verts[j];
+                //     var toVtx = vertices.Verts[(j + 1) % vertices.NumVerts];
+                //
+                //     // If we've seen this edge already, it will be reversed
+                //     var edge = graph.FindEdge(toVtx, fromVtx);
+                //     if (edge != null)
+                //     {
+                //         // If we've seen it, drop it. No edge is shared by more than 2
+                //         // hexagons, so we'll never see it again.
+                //         graph.RemoveNode(edge.Value);
+                //     } else {
+                //         // Add a new node for this edge
+                //         graph.AddNode(fromVtx, toVtx);
+                //     }
+                //}
             }
 
             return graph;

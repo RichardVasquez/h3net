@@ -10,6 +10,8 @@ namespace H3Lib
     {
         private readonly HashSet<VertexNode> _pool;
         public readonly int Resolution;
+
+        public int Count => _pool.Count;
         
         /// <summary>
         /// Initialize a new VertexGraph
@@ -73,15 +75,35 @@ namespace H3Lib
         /// vertexGraph.c
         /// VertexNode* addVertexNode
         /// -->
+        /// <remarks>
+        /// Gonna try some tomfoolery here, and if you add
+        /// a node that already exists (in either direction)
+        /// then remove it in both directions.
+        /// </remarks>
         public VertexNode AddNode(GeoCoord fromNode, GeoCoord toNode)
         {
-            var edge = InitNode(fromNode, toNode);
-            if (!_pool.Contains(edge))
+            var edge1 = InitNode(toNode, fromNode);
+            var edge2 = InitNode(fromNode, toNode);
+
+            if (!_pool.Contains(edge1) && !_pool.Contains(edge2))
             {
-                _pool.Add(edge);
+                _pool.Add(edge1);
+            }
+            else
+            {
+                _pool.Remove(edge1);
+                _pool.Remove(edge2);
             }
 
-            return edge;
+            return edge1;
+            
+            // var edge = InitNode(fromNode, toNode);
+            // if (!_pool.Contains(edge))
+            // {
+            //     _pool.Add(edge);
+            // }
+            //
+            // return edge;
         }
         
         /// <summary>
@@ -96,7 +118,8 @@ namespace H3Lib
         /// -->
         public bool RemoveNode(VertexNode vn)
         {
-            int lookFor = _pool.Count(p => p.From == vn.From && p.To == vn.To);
+            int lookFor = _pool
+               .Count(p => p.From == vn.From && p.To == vn.To);
             if (lookFor != 1)
             {
                 return false;
@@ -117,13 +140,33 @@ namespace H3Lib
         /// -->
         public VertexNode? FindEdge(GeoCoord fromNode, GeoCoord? toNode)
         {
-            int lookFor = _pool.Select(p => p.From == fromNode && p.To == toNode).Count();
-            if (lookFor == 0)
+            var possibles = _pool.Where(p => p.From == fromNode).ToList();
+            if (possibles.Count == 0)
             {
                 return null;
             }
 
-            return _pool.First(p => p.From == fromNode && p.To == toNode);
+            if (toNode == null)
+            {
+                return possibles.First();//good luck!
+            }
+
+            IEnumerable<VertexNode> answer = possibles.Where(p => p.To == toNode);
+            return answer.First();
+            //
+            // if (toNode == null)
+            // {
+            //     if(_pool.Count)
+            // }
+            //
+            // int lookFor = _pool
+            //    .Count(p => p.From == fromNode && p.To == toNode);
+            // if (lookFor == 0)
+            // {
+            //     return null;
+            // }
+            //
+            // return _pool.First(p => p.From == fromNode && p.To == toNode);
         }
 
         /// <summary>Find a Vertex node starting at the given vertex</summary>

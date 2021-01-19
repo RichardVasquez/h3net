@@ -4,7 +4,7 @@ using H3Lib.StaticData;
 
 namespace H3Lib.Extensions
 {
-    public static    class GeoCoordExtensions
+    public static class GeoCoordExtensions
     {
         /// <summary>
         /// Set the components of spherical coordinates in decimal degrees.
@@ -49,6 +49,16 @@ namespace H3Lib.Extensions
             return gc;
         }
 
+        public static GeoCoord SetLatitude(this GeoCoord gc, double latitude)
+        {
+            return new GeoCoord(latitude, gc.Longitude);
+        }
+
+        public static GeoCoord SetLongitude(this GeoCoord gc, double longitude)
+        {
+            return new GeoCoord(gc.Latitude, longitude);
+        }
+
         /// <summary>
         /// The great circle distance in radians between two spherical coordinates.
         /// This function uses the Haversine formula.
@@ -60,7 +70,7 @@ namespace H3Lib.Extensions
         /// <param name="b">the second lat/lng pair (in radians)</param>
         /// <returns>
         /// the great circle distance in radians between a and b
-        /// </
+        /// </returns>
         /// <!--
         /// geoCoord.c
         /// double H3_EXPORT(pointDistRads)
@@ -124,7 +134,8 @@ namespace H3Lib.Extensions
                     (
                      Math.Cos(p2.Latitude) * Math.Sin(p2.Longitude - p1.Longitude),
                      Math.Cos(p1.Latitude) * Math.Sin(p2.Latitude) -
-                     Math.Sin(p1.Latitude) * Math.Cos(p2.Latitude) * Math.Cos(p2.Longitude - p1.Longitude)
+                     Math.Sin(p1.Latitude) * Math.Cos(p2.Latitude) *
+                     Math.Cos(p2.Longitude - p1.Longitude)
                     );
         }
 
@@ -144,41 +155,41 @@ namespace H3Lib.Extensions
         {
             if (distance < Constants.EPSILON)
             {
-                return new GeoCoord(p1);
+                return p1;
             }
 
-            double tempLatitude;
-            double tempLongitude = 0;
-            azimuth = azimuth.NormalizeRadians();// _posAngleRads(az);
+            azimuth = azimuth.NormalizeRadians();
+            var p2 = new GeoCoord();
 
             // check for due north/south azimuth
-            if (azimuth < Constants.EPSILON || 
-                Math.Abs(azimuth - Constants.M_PI) < Constants.EPSILON)
+            if (azimuth < Constants.EPSILON || Math.Abs(azimuth - Constants.M_PI) < Constants.EPSILON)
             {
-                tempLatitude = azimuth < Constants.EPSILON
-                                   ? p1.Latitude + distance     // due north
-                                   : p1.Latitude - distance;    // due south
-
-                if (Math.Abs(tempLatitude - Constants.M_PI_2) < Constants.EPSILON) // north pole
+                if (azimuth < Constants.EPSILON) // due north
                 {
-                    tempLatitude = Constants.M_PI_2;
-                    tempLongitude = 0.0;
+                    p2 = p2.SetLatitude(p1.Latitude + distance);
                 }
-                else if (Math.Abs(tempLatitude + Constants.M_PI_2) < Constants.EPSILON) // south pole
+                else // due south
                 {
-                    tempLatitude = -Constants.M_PI_2;
-                    tempLongitude = 0.0;
+                    p2 = p2.SetLatitude(p1.Latitude - distance);
+                }
+
+                if (Math.Abs(p2.Latitude - Constants.M_PI_2) < Constants.EPSILON) // north pole
+                {
+                    p2 = new GeoCoord(Constants.M_PI_2, 0.0);
+                }
+                else if (Math.Abs(p2.Latitude + Constants.M_PI_2) < Constants.EPSILON) // south pole
+                {
+                    p2 = new GeoCoord(-Constants.M_PI_2, 0.0);
                 }
                 else
                 {
-                    tempLongitude = tempLongitude.ConstrainLongitude();
+                    p2 = p2.SetLongitude(p1.Longitude.ConstrainLongitude());
                 }
             }
-            else // not due north or south
+            else // Not due north or south
             {
                 double sinLatitude = Math.Sin(p1.Latitude) * Math.Cos(distance) +
-                                     Math.Cos(p1.Latitude) * Math.Sin(distance) *
-                                     Math.Cos(azimuth);
+                                Math.Cos(p1.Latitude) * Math.Sin(distance) * Math.Cos(azimuth);
                 if (sinLatitude > 1.0)
                 {
                     sinLatitude = 1.0;
@@ -186,24 +197,24 @@ namespace H3Lib.Extensions
 
                 if (sinLatitude < -1.0)
                 {
-                    sinLatitude = -1.0;
+                    sinLatitude = 1.0;
                 }
-                tempLatitude = Math.Asin(sinLatitude);
-                if (Math.Abs(tempLatitude - Constants.M_PI_2) < Constants.EPSILON) // north pole
+
+                p2 = p2.SetLatitude(Math.Asin(sinLatitude));
+
+                if (Math.Abs(p2.Latitude - Constants.M_PI_2) < Constants.EPSILON) // north pole
                 {
-                    tempLatitude = Constants.M_PI_2;
-                    tempLongitude = 0.0;
+                    p2 = new GeoCoord(Constants.M_PI_2, 0.0);
                 }
-                else if (Math.Abs(tempLatitude + Constants.M_PI_2) < Constants.EPSILON) // south pole
+                else if (Math.Abs(p2.Latitude + Constants.M_PI_2) < Constants.EPSILON) // south pole
                 {
-                    tempLatitude = -Constants.M_PI_2;
-                    tempLongitude = 0.0;
+                    p2 = new GeoCoord(-Constants.M_PI_2, 0.0);
                 }
                 else
                 {
-                    double sinLongitude = Math.Sin(azimuth) * Math.Sin(distance) / Math.Cos(tempLatitude);
-                    double cosLongitude = (Math.Cos(distance) - Math.Sin(p1.Latitude) * Math.Sin(tempLatitude)) /
-                                          Math.Cos(p1.Latitude) / Math.Cos(tempLatitude);
+                    double sinLongitude = Math.Sin(azimuth) * Math.Sin(distance) / Math.Cos(p2.Latitude);
+                    double cosLongitude = (Math.Cos(distance) - Math.Sin(p1.Latitude) * Math.Sin(p2.Latitude)) /
+                                    Math.Cos(p1.Latitude) / Math.Cos(p2.Latitude);
                     if (sinLongitude > 1.0)
                     {
                         sinLongitude = 1.0;
@@ -216,20 +227,19 @@ namespace H3Lib.Extensions
 
                     if (cosLongitude > 1.0)
                     {
-                        sinLongitude = 1.0;
+                        cosLongitude = 1.0;
                     }
 
                     if (cosLongitude < -1.0)
                     {
-                        sinLongitude = -1.0;
+                        cosLongitude = -1.0;
                     }
 
-                    tempLongitude =
-                        (p1.Longitude + Math.Atan2(sinLongitude, cosLongitude))
-                       .ConstrainLongitude();
+                    p2 = p2.SetLongitude((p1.Longitude + Math.Atan2(sinLongitude, cosLongitude)).ConstrainLongitude());
                 }
-            }   
-            return new GeoCoord(tempLatitude, tempLongitude);
+            }
+
+            return p2;            
         }
 
         /// <summary>

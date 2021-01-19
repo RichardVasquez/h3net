@@ -88,13 +88,15 @@ namespace H3Lib.Extensions
             (int failure, var result) = polygon.PolyFillInternal(res);
             if (failure == 0)
             {
-                return result;
+                return result.Where(r => r != 0).ToList();
             }
             // The polyfill algorithm can theoretically fail if the allocated memory is
             // not large enough for the polygon, but this should be impossible given the
             // conservative overestimation of the number of hexagons possible.
             int numHexagons = polygon.MaxPolyFillSize(res);
-            return Enumerable.Range(1, numHexagons).Select(r => (H3Index) StaticData.H3Index.H3_NULL).ToList();
+            return Enumerable.Range(1, numHexagons)
+                             .Select(r => (H3Index) StaticData.H3Index.H3_NULL)
+                             .ToList();
         }
         
         /// <summary>
@@ -188,8 +190,8 @@ namespace H3Lib.Extensions
 
             // Some metadata for tracking the state of the search and found memory
             // blocks
-            int numSearchHexes = 0;
-            int numFoundHexes = 0;
+            var numSearchHexes = 0;
+            var numFoundHexes = 0;
 
             // 1. Trace the hexagons along the polygon defining the outer geofence and
             // add them to the search hash. The hexagon containing the geofence point
@@ -197,7 +199,9 @@ namespace H3Lib.Extensions
             // point may be outside of the boundary.)
             var geofence = geoPolygon.GeoFence;
 
-            int failure = geofence.GetEdgeHexagons(numHexagons, res, ref numSearchHexes, ref search, ref found);
+            //  TODO: Get rid of these refs if at all possible
+            int failure = geofence
+               .GetEdgeHexagons(numHexagons, res, ref numSearchHexes, ref search, ref found);
 
             // If this branch is reached, we have exceeded the maximum number of
             // hexagons possible and need to clean up the allocated memory.
@@ -218,7 +222,9 @@ namespace H3Lib.Extensions
             for (int i = 0; i < geoPolygon.NumHoles; i++)
             {
                 var hole = geoPolygon.Holes[i];
-                failure = hole.GetEdgeHexagons( numHexagons, res, ref numSearchHexes, ref search, ref found);
+                //  TODO: Get rid of these refs is possible.
+                failure = hole
+                   .GetEdgeHexagons( numHexagons, res, ref numSearchHexes, ref search, ref found);
 
                 // If this branch is reached, we have exceeded the maximum number of
                 // hexagons possible and need to clean up the allocated memory.
@@ -250,6 +256,10 @@ namespace H3Lib.Extensions
                 {
                     H3Index searchHex = search[i];
                     var ring = searchHex.KRing(1);
+                    for (var kr = ring.Count; kr < StaticData.Algos.MaxOneRingSize; kr++)
+                    {
+                        ring.Add(0);
+                    }
 
                     for (int j = 0; j < StaticData.Algos.MaxOneRingSize; j++)
                     {
@@ -264,7 +274,7 @@ namespace H3Lib.Extensions
                         // A simple hash to store the hexagon, or move to another place
                         // if needed. This MUST be done before the point-in-poly check
                         // since that's far more expensive
-                        int loc = (int)(hex % (ulong)numHexagons);
+                        int loc = (int) (hex % (ulong) numHexagons);
                         int loopCount = 0;
                         while (results[loc] != 0)
                         {

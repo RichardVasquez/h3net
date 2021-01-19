@@ -51,7 +51,9 @@ namespace H3Lib.Extensions
         /// -->
         public static double CellAreaKm2(this H3Index h)
         {
-            return h.CellAreaRadians2() * Constants.EARTH_RADIUS_KM * Constants.EARTH_RADIUS_KM;
+            return h.CellAreaRadians2() * 
+                   Constants.EARTH_RADIUS_KM *
+                   Constants.EARTH_RADIUS_KM;
         }
 
         /// <summary>
@@ -381,7 +383,6 @@ namespace H3Lib.Extensions
                 // adjust for deleted k-axes sequence
                 if (h.LeadingNonZeroDigit == Direction.K_AXES_DIGIT)
                 {
-
                     h = h.Rotate60Clockwise();
                 }
             }
@@ -831,67 +832,65 @@ namespace H3Lib.Extensions
             int baseCell = h.BaseCell;
             // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
             // to be adjusted (and some of sub-sequence 4 below)
-            if (baseCell.IsBaseCellPentagon() && h.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT)
+            if (baseCell.IsBaseCellPentagon() && 
+                h.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT)
             {
                 h = h.Rotate60Clockwise();
             }
 
-           
             // start with the "home" face and ijk+ coordinates for the base cell of c
-            var fijk = new FaceIjk(StaticData.BaseCells.BaseCellData[baseCell].HomeFijk);
-            (int result, var faceIjk) = h.ToFaceIjkWithInitializedFijk(fijk);
+            var fijk = StaticData.BaseCells.BaseCellData[baseCell].HomeFijk;
+            int result;
+            (result, fijk) = h.ToFaceIjkWithInitializedFijk(fijk);
             if (result == 0)
             {
-                return faceIjk; // no overage is possible; h lies on this face
+                return fijk; // no overage is possible; h lies on this face
             }
 
             // if we're here we have the potential for an "overage"; i.e., it is
             // possible that c lies on an adjacent face
-            var origIJK = new CoordIjk(fijk.Coord);
+            var origIJK = fijk.Coord;
 
             // if we're in Class III, drop into the next finer Class II grid
             int res = h.Resolution;
             if(res.IsResClassIii())
             {
                 // Class III
-                fijk = new FaceIjk(fijk.Face, fijk.Coord.DownAp7R());
+                fijk = fijk.ReplaceCoord(fijk.Coord.DownAp7R());
                 res++;
             }
 
             // adjust for overage if needed
             // a pentagon base cell with a leading 4 digit requires special handling
             int pentLeading4 =
-                
                 baseCell.IsBaseCellPentagon() &&
                 h.LeadingNonZeroDigit == Direction.I_AXES_DIGIT
                     ? 1
                     : 0;
 
-            var test = fijk.AdjustOverageClassIi(res, pentLeading4, 0);
-            
-            if (test.Item1 != Overage.NO_OVERAGE)
+            Overage overage;
+            (overage, fijk) = fijk.AdjustOverageClassIi(res, pentLeading4, 0);
+            if (overage != Overage.NO_OVERAGE)
             {
                 // if the base cell is a pentagon we have the potential for secondary
                 // overages
                 if (baseCell.IsBaseCellPentagon())
                 {
-                    while (fijk.AdjustOverageClassIi(res,0,0).Item1 != Overage.NO_OVERAGE)
+                    while (overage != Overage.NO_OVERAGE)
                     {
-                        //TODO: HUH?
-                        continue;
+                        (overage, fijk) =
+                            fijk.AdjustOverageClassIi(res, pentLeading4, 0);
                     }
                 }
 
-                if (res == h.Resolution)
+                if (res != h.Resolution)
                 {
-                    return fijk;
+                    fijk = fijk.ReplaceCoord(fijk.Coord.UpAp7R());
                 }
-                var fCoord = new CoordIjk(fijk.Coord).UpAp7R();
-                fijk = new FaceIjk(fijk.Face, fCoord);
             }
             else if (res != h.Resolution)
             {
-                fijk = new FaceIjk(fijk.Face, origIJK);
+                fijk = fijk.ReplaceCoord(origIJK);
             }
 
             return fijk;
@@ -1122,6 +1121,11 @@ namespace H3Lib.Extensions
         {
             var fijk = h3.ToFaceIjk();
             
+            var old = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"h3ToGeoBoundary (toFaceIjk) ){h3} => {fijk}");
+            Console.ForegroundColor = old;
+
             var gb = h3.IsPentagon()
                      ? fijk.PentToGeoBoundary(h3.Resolution, 0, Constants.NUM_PENT_VERTS)
                      : fijk.ToGeoBoundary(h3.Resolution, 0, Constants.NUM_HEX_VERTS);

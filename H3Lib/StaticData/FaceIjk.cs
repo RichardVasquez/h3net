@@ -51,7 +51,7 @@ namespace H3Lib.StaticData
             new H3Lib.GeoCoord(-0.491715428198773866, -2.739604450678486295), // face 16
             new H3Lib.GeoCoord(-0.803582649718989942, -1.893195233972397139), // face 17
             new H3Lib.GeoCoord(-1.307747883455638156, -0.604647643711872080), // face 18
-            new H3Lib.GeoCoord(-1.054751253523952054, 1.794075294689396615) // face 19
+            new H3Lib.GeoCoord(-1.054751253523952054, 1.794075294689396615), // face 19        };
         };
 
         /// <summary>

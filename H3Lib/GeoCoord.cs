@@ -27,7 +27,7 @@ namespace H3Lib
 
         public override string ToString()
         {
-            return $"GeoCoord: (Lat,Lng) {Latitude:F4}..., {Longitude:F4}...";
+            return $"GeoCoord: (Lat,Lng) {Latitude:F9}, {Longitude:F9}";
         }
 
         /*

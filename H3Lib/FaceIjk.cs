@@ -29,7 +29,7 @@ namespace H3Lib
         public FaceIjk(FaceIjk fijk)
         {
             Face = fijk.Face;
-            Coord = new CoordIjk(fijk.Coord);
+            Coord = fijk.Coord;
         }
 
         public override string ToString()

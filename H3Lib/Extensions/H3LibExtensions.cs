@@ -29,26 +29,15 @@ namespace H3Lib.Extensions
         /// -->
         public static double NormalizeRadians(this double rads, double limit = Constants.M_2PI)
         {
-            var tmp = rads < 0.0
-                          ? rads + Constants.M_2PI
-                          : rads;
+            double tmp = rads < 0.0
+                             ? rads + Constants.M_2PI
+                             : rads;
             if (rads >= Constants.M_2PI)
             {
                 tmp -= Constants.M_2PI;
             }
 
             return tmp;
-            // if (rads < 0.0)
-            // {
-            //     rads += Math.Ceiling(Math.Abs(rads / limit)) * limit;
-            // }
-            //
-            // while (rads >= limit)
-            // {
-            //     rads -= limit;
-            // }
-            //
-            // return rads;
         }
 
         /// <summary>

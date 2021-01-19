@@ -74,11 +74,15 @@ namespace H3Lib.Extensions
                 {
                     if (ijk.J > 0) // jk "quadrant"
                     {
-                        fijkOrient = StaticData.FaceIjk.FaceNeighbors[fijk.Face, StaticData.FaceIjk.JK];
+                        fijkOrient = StaticData
+                                    .FaceIjk
+                                    .FaceNeighbors[fijk.Face, StaticData.FaceIjk.JK];
                     }
                     else // ik "quadrant"
                     {
-                        fijkOrient = StaticData.FaceIjk.FaceNeighbors[fijk.Face, StaticData.FaceIjk.KI];
+                        fijkOrient = StaticData
+                                    .FaceIjk
+                                    .FaceNeighbors[fijk.Face, StaticData.FaceIjk.KI];
 
                         // adjust for the pentagonal missing sequence
                         if (pentLeading4 != 0)
@@ -90,20 +94,25 @@ namespace H3Lib.Extensions
                             tmp = tmp.Rotate60Clockwise();
                             // translate the origin back to the center of the triangle
                             ijk = tmp + origin;
+                            fijk = fijk.ReplaceCoord(ijk);
                         }
                     }
                 }
                 else // ij "quadrant"
                 {
-                    fijkOrient = StaticData.FaceIjk.FaceNeighbors[fijk.Face, StaticData.FaceIjk.IJ];
+                    fijkOrient = StaticData
+                                .FaceIjk
+                                .FaceNeighbors[fijk.Face, StaticData.FaceIjk.IJ];
                 }
 
-                fijk = new FaceIjk(fijkOrient.Face, fijk.Coord);
+                fijk = fijk.ReplaceFace(fijkOrient.Face);
+                //fijk = new FaceIjk(fijkOrient.Face, fijk.Coord);
 
                 // rotate and translate for adjacent face
                 for (int i = 0; i < fijkOrient.Ccw60Rotations; i++)
                 {
                     ijk = ijk.Rotate60CounterClockwise();
+                    fijk = fijk.ReplaceCoord(ijk);
                 }
 
                 var transVec = fijkOrient.Translate;
@@ -116,6 +125,7 @@ namespace H3Lib.Extensions
                 transVec *= unitScale;
                 ijk += transVec;
                 ijk = ijk.Normalized();
+                fijk = fijk.ReplaceCoord(ijk);
 
                 // overage points on pentagon boundaries can end up on edges
                 if (substrate != 0 && ijk.I + ijk.J + ijk.K == maxDim) // on edge
@@ -141,13 +151,21 @@ namespace H3Lib.Extensions
         public static (Overage, FaceIjk) AdjustPentOverage(this FaceIjk fijk, int res)
         {
             const int pentLeading4 = 0;
+            int count = 0;
             Overage overage;
             do
             {
                 (overage, fijk) = fijk.AdjustOverageClassIi(res, pentLeading4, 1);
+                if (count % 1000 == 0)
+                {
+                    Console.Write($"{count}\t");
+                }
+
+                count++;
 
             } while (overage == Overage.NEW_FACE);
 
+            Console.WriteLine();
             return (overage, fijk);
         }
 
@@ -299,9 +317,9 @@ namespace H3Lib.Extensions
             // to each vertex to translate the vertices to that cell.
             for (int v = 0; v < Constants.NUM_HEX_VERTS; v++)
             {
-                int newFace = fijk.Face;
-                var newCoord = (fijk.Coord + verts[v]).Normalized();
-                fijkVerts[v] = new FaceIjk(newFace, newCoord);
+                fijkVerts[v] = fijkVerts[v]
+                              .ReplaceFace(fijk.Face)
+                              .ReplaceCoord((fijk.Coord + verts[v]).Normalized());
             }
 
             return (fijk, res, fijkVerts);
@@ -503,14 +521,12 @@ namespace H3Lib.Extensions
         {
             var gb = new GeoBoundary();
 
-            var centerIjk = new FaceIjk(h);
-            var fijkVerts = Enumerable.Range(1, Constants.NUM_HEX_VERTS)
-                                      .Select(i => new FaceIjk())
-                                      .ToArray();
-            (var tempFaceIjk, int tempRes, var tempVerts) = centerIjk.ToVerts(res, fijkVerts);
-            centerIjk = tempFaceIjk;
-            int adjRes = tempRes;
-            fijkVerts = tempVerts.ToArray();
+            int adjRes = res;
+            var centerIjk = h;
+            IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.NUM_HEX_VERTS)
+                                                 .Select(i => new FaceIjk())
+                                                 .ToArray();
+            (centerIjk, adjRes, fijkVerts) = centerIjk.ToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
             // of a distortion vertex on the last edge
@@ -532,8 +548,8 @@ namespace H3Lib.Extensions
                 var fijk = fijkVerts[v];
                 const int pentLeading4 = 0;
 
-                var (overage, tmpFijk) = fijk.AdjustOverageClassIi(adjRes, pentLeading4, 1);
-                fijk = tmpFijk;
+                Overage overage;
+                (overage, fijk) = fijk.AdjustOverageClassIi(adjRes, pentLeading4, 1);
 
                 /*
                 Check for edge-crossing. Each face of the underlying icosahedron is a
@@ -634,11 +650,9 @@ namespace H3Lib.Extensions
         {
             var gb = new GeoBoundary();
             int adjRes = res;
-            var centerIjk = new FaceIjk(h);
-            var fijkVerts = Enumerable.Range(1, Constants.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
-            (_, int tempRes, var tempVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
-            adjRes = tempRes;
-            fijkVerts = tempVerts.ToArray();
+            var centerIjk = h;
+            IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
+            (_, adjRes, fijkVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
             // of a distortion vertex on the last edge
@@ -649,16 +663,14 @@ namespace H3Lib.Extensions
             // convert each vertex to lat/lon
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
-
             gb.NumVerts = 0;
-            var lastFijk = new FaceIjk();
+            var lastFijk = new FaceIjk();   // NOTE: Not quite happy about this, but we'll see where it goes from here.
 
             for (int vert = start; vert < start + length + additionalIteration; vert++)
             {
                 int v = vert % Constants.NUM_PENT_VERTS;
-
-                (_, fijkVerts[v]) = fijkVerts[v].AdjustPentOverage(adjRes); 
                 var fijk = fijkVerts[v];
+                (_, fijk) = fijk.AdjustPentOverage(adjRes); 
                 
                 // all Class III pentagon edges cross icosahedron edges
                 // note that Class II pentagons have vertices on the edge,
@@ -666,7 +678,7 @@ namespace H3Lib.Extensions
                 if (res.IsResClassIii() && vert > start)
                 {
                     // find hex2d of the two vertexes on the last face
-                    var tmpFijk = new FaceIjk(fijk);
+                    var tmpFijk = fijk;
 
                     var orig2d0 = lastFijk.Coord.ToHex2d();
 
@@ -674,8 +686,9 @@ namespace H3Lib.Extensions
 
                     var fijkOrient = StaticData.FaceIjk.FaceNeighbors[tmpFijk.Face, currentToLastDir];
 
-                    tmpFijk.ReplaceFace(fijkOrient.Face);
-                    var ijk = new CoordIjk(tmpFijk.Coord);
+                    tmpFijk = tmpFijk.ReplaceFace(fijkOrient.Face);
+                    //  Borrow ijk
+                    var ijk = tmpFijk.Coord;
 
                     // rotate and translate for adjacent face
                     for (var i = 0; i < fijkOrient.Ccw60Rotations; i++)
@@ -686,6 +699,7 @@ namespace H3Lib.Extensions
                     ijk = (ijk + fijkOrient.Translate * 3).Normalized();
 
                     var orig2d1 = ijk.ToHex2d();
+                    //  Give it back.
                     tmpFijk = tmpFijk.ReplaceCoord(ijk);
 
                     // find the appropriate icosahedron face edge vertexes
@@ -700,12 +714,12 @@ namespace H3Lib.Extensions
                     switch (StaticData.FaceIjk.AdjacentFaceDir[tmpFijk.Face, fijk.Face])
                     {
                         case StaticData.FaceIjk.IJ:
-                            edge0 = new Vec2d(v0.X, v0.Y);
-                            edge1 = new Vec2d(v1.X, v1.Y);
+                            edge0 = v0;// new Vec2d(v0.X, v0.Y);
+                            edge1 = v1;//new Vec2d(v1.X, v1.Y);
                             break;
                         case StaticData.FaceIjk.JK:
-                            edge0 = new Vec2d(v1.X, v1.Y);
-                            edge1 = new Vec2d(v2.X, v2.Y);
+                            edge0 = v1;//new Vec2d(v1.X, v1.Y);
+                            edge1 = v2;//new Vec2d(v2.X, v2.Y);
                             break;
                         default:
                             if (StaticData.FaceIjk.AdjacentFaceDir[tmpFijk.Face, fijk.Face] != StaticData.FaceIjk.KI)
@@ -713,8 +727,8 @@ namespace H3Lib.Extensions
                                 throw new Exception("assert(adjacentFaceDir[tmpFijk.face][fijk.face] == KI);");
                             }
 
-                            edge0 = new Vec2d(v2.X, v2.Y);
-                            edge1 = new Vec2d(v0.X, v0.Y);
+                            edge0 = v2;//new Vec2d(v2.X, v2.Y);
+                            edge1 = v0;//new Vec2d(v0.X, v0.Y);
                             break;
                     }
 

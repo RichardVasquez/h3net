@@ -61,7 +61,7 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="coord">The ijk coordinates to normalize.</param>
         /// <!--
-        /// coordijk,c
+        /// coordijk.c
         /// void _ijkNormalize
         /// -->
         public static CoordIjk Normalized(this CoordIjk coord)
@@ -88,7 +88,7 @@ namespace H3Lib.Extensions
             }
 
             // remove the min value if needed
-            int min = new[]{i,j,k}.Min();
+            int min = new[] {i, j, k}.Min();
             
             return min <= 0
                        ? new CoordIjk(i, j, k)
@@ -132,7 +132,7 @@ namespace H3Lib.Extensions
             int i = ijk.I - ijk.K;
             int j = ijk.J - ijk.K;
 
-            var newI =(int) Math.Round((3 * i - j) / 7.0, MidpointRounding.AwayFromZero);
+            var newI = (int) Math.Round((3 * i - j) / 7.0, MidpointRounding.AwayFromZero);
             var newJ = (int) Math.Round((i + 2 * j) / 7.0, MidpointRounding.AwayFromZero);
 
             return new CoordIjk(newI, newJ, 0).Normalized();
@@ -153,8 +153,8 @@ namespace H3Lib.Extensions
             int i = ijk.I - ijk.K;
             int j = ijk.J - ijk.K;
 
-            var newI = (int) Math.Round(((2 * i + j) / 7.0d), MidpointRounding.AwayFromZero);
-            var newJ = (int)Math.Round(((3 * j - i) / 7.0d), MidpointRounding.AwayFromZero);
+            var newI = (int) Math.Round((2 * i + j) / 7.0, MidpointRounding.AwayFromZero);
+            var newJ = (int) Math.Round((3 * j - i) / 7.0, MidpointRounding.AwayFromZero);
 
             return new CoordIjk(newI, newJ, 0).Normalized();
         }
@@ -331,7 +331,7 @@ namespace H3Lib.Extensions
         public static CoordIjk ToCube(this CoordIjk ijk)
         {
             (int i, int j, int k) = (ijk.I, ijk.J, ijk.K);
-            i  =-i + k;
+            i = -i + k;
             j -= k;
             k = -i - j;
 

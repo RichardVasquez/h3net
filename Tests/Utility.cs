@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using H3Lib;
 using H3Lib.Extensions;
@@ -54,6 +55,15 @@ namespace Tests
             }
             
             children.Clear();
+        }
+
+        /// <summary>
+        /// Returns the number of non-invalid indexes in the collection.
+        /// </summary>
+        public static int CountActualHexagons(List<H3Index> hexagons)
+        {
+            return hexagons
+               .Count(hexagon => hexagon != H3Lib.StaticData.H3Index.H3_NULL);
         }
     }
 }

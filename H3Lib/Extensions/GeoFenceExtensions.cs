@@ -12,6 +12,7 @@ namespace H3Lib.Extensions
             {
                 return false;
             }
+            
 
             bool isTransmeridian = box.IsTransmeridian;
             var contains = false;
@@ -87,6 +88,17 @@ namespace H3Lib.Extensions
             return contains;
         }
         
+        /// <summary>
+        /// Create a bounding box from a simple polygon loop
+        /// </summary>
+        /// <remarks>
+        /// Known limitations:
+        /// - Does not support polygons with two adjacent points > 180 degrees of
+        ///   longitude apart. These will be interpreted as crossing the antimeridian.
+        /// - Does not currently support polygons containing a pole.
+        /// </remarks>
+        /// <param name="loop">Loop of coordinates</param>
+        /// <returns>output box</returns>
         public static BBox ToBBox(this GeoFence loop)
         {
             if (loop.IsEmpty)
@@ -94,7 +106,11 @@ namespace H3Lib.Extensions
                 return new BBox(0, 0, 0, 0);
             }
 
-            var box = new BBox(-double.MaxValue, double.MaxValue, -double.MaxValue, double.MaxValue);
+            var box = new BBox(
+                               -double.MaxValue,
+                               double.MaxValue,
+                               -double.MaxValue,
+                               double.MaxValue);
             double minPosLon = double.MaxValue;
             double maxNegLon = -double.MaxValue;
             bool isTransmeridian = false;
@@ -104,12 +120,14 @@ namespace H3Lib.Extensions
             GeoCoord coord;
             GeoCoord next;
 
-            //INIT_ITERATION
+            // INIT_ITERATION => INIT_ITERATION_GEOFENCE
             int loopIndex = -1;
+            // INIT_ITERATION END
 
 
             while (true)
             {
+                // ITERATE(loop, coord, next) => ITERATE_GEOFENCE(geofence, vertexA, vertexB)
                 if (++loopIndex >= loop.NumVerts)
                 {
                     break;
@@ -117,7 +135,7 @@ namespace H3Lib.Extensions
 
                 coord = loop.Verts[loopIndex];
                 next = loop.Verts[(loopIndex + 1) % loop.NumVerts];
-
+                // ITERATE END
                 
                 lat = coord.Latitude;
                 lon = coord.Longitude;

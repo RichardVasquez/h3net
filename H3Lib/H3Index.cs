@@ -11,14 +11,15 @@ namespace H3Lib
     [DebuggerDisplay("Value: {Value} => 0x{ToString()}")]
     public readonly struct H3Index:IEquatable<H3Index>,IEquatable<ulong>,IComparable<H3Index>
     {
-        #region base value and constructors
         /// <summary>
         /// Where the actual index is stored.
         /// </summary>
         public readonly ulong Value;
 
-        public H3Index(ulong val) 
+        public H3Index(ulong val) :this()
         {
+            // Consider using IsValid() tests in here
+            
             Value = val;
         }
 
@@ -43,7 +44,6 @@ namespace H3Lib
             Value = h.Value;
         }
 
-        #endregion
 
         /// <summary>
         /// Integer resolution of an H3 index.  

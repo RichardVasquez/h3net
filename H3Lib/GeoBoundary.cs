@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 
 namespace H3Lib
 {
@@ -15,5 +16,16 @@ namespace H3Lib
             }
         }
 
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"GeoBoundary: {NumVerts} Vertices").AppendLine();
+            for (var i = 0; i < NumVerts; i++)
+            {
+                sb.AppendLine($"\t{Verts[i]}");
+            }
+
+            return sb.ToString();
+        }
     }
 }
