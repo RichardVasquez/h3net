@@ -336,9 +336,9 @@ namespace Tests
             Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons(), 1);
             Assert.AreEqual(polygon.CountLoops(), 1);
-            if (polygon.LinkedGeoList.First != null)
+            if (polygon.GeoLoopList.First != null)
             {
-                Assert.AreEqual(polygon.LinkedGeoList.First.Value, outer);
+                Assert.AreEqual(polygon.GeoLoopList.First.Value, outer);
             }
 
             polygon.Clear();
@@ -388,11 +388,11 @@ namespace Tests
             Assert.AreEqual(polygon.CountPolygons(), 1);
             Assert.AreEqual(polygon.CountLoops(), 2);
             
-            Assert.IsNotNull(polygon.LinkedGeoList.First);
-            Assert.AreEqual(polygon.LinkedGeoList.First.Value, outer);
+            Assert.IsNotNull(polygon.GeoLoopList.First);
+            Assert.AreEqual(polygon.GeoLoopList.First.Value, outer);
 
-            Assert.IsNotNull(polygon.LinkedGeoList.First?.Next);
-            Assert.AreEqual(polygon.LinkedGeoList.First.Next.Value, inner);
+            Assert.IsNotNull(polygon.GeoLoopList.First?.Next);
+            Assert.AreEqual(polygon.GeoLoopList.First.Next.Value, inner);
 
             polygon.Clear();
         }
@@ -420,8 +420,8 @@ namespace Tests
             Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons(), 1);
             
-            Assert.IsNotNull(polygon.LinkedGeoList.First);
-            Assert.AreEqual(polygon.LinkedGeoList.First.Value, outer);
+            Assert.IsNotNull(polygon.GeoLoopList.First);
+            Assert.AreEqual(polygon.GeoLoopList.First.Value, outer);
 
             Assert.AreEqual(polygon.CountLoops(), 3);
 
@@ -456,19 +456,19 @@ namespace Tests
             Assert.AreEqual(polygon.CountPolygons(), 2);
             Assert.AreEqual(polygon.CountLoops(), 2);
 
-            Assert.IsNotNull(polygon.LinkedGeoList.First);
-            Assert.AreEqual(polygon.LinkedGeoList.First.Value.CountCoords, 4);
+            Assert.IsNotNull(polygon.GeoLoopList.First);
+            Assert.AreEqual(polygon.GeoLoopList.First.Value.CountCoords, 4);
 
-            Assert.IsNotNull(polygon.LinkedGeoList.First.Next);
-            Assert.AreEqual(polygon.LinkedGeoList.First.Next.Value.CountCoords, 3);
+            Assert.IsNotNull(polygon.GeoLoopList.First.Next);
+            Assert.AreEqual(polygon.GeoLoopList.First.Next.Value.CountCoords, 3);
 
             Assert.AreEqual(polygon.Next.CountLoops(), 2);
             
-            Assert.IsNotNull(polygon.Next.LinkedGeoList.First);
-            Assert.AreEqual(polygon.Next.LinkedGeoList.First.Value.CountCoords, 4);
+            Assert.IsNotNull(polygon.Next.GeoLoopList.First);
+            Assert.AreEqual(polygon.Next.GeoLoopList.First.Value.CountCoords, 4);
 
-            Assert.IsNotNull(polygon.Next.LinkedGeoList.First.Next);
-            Assert.AreEqual(polygon.Next.LinkedGeoList.First.Next.Value.GeoCoordList.Count, 3);
+            Assert.IsNotNull(polygon.Next.GeoLoopList.First.Next);
+            Assert.AreEqual(polygon.Next.GeoLoopList.First.Next.Value.GeoCoordList.Count, 3);
 
             polygon.Clear();
         }
@@ -501,19 +501,19 @@ namespace Tests
             Assert.AreEqual(polygon.CountPolygons(), 2);
             Assert.AreEqual(polygon.CountLoops(), 2);
 
-            Assert.IsNotNull(polygon.LinkedGeoList.First);
-            Assert.AreEqual(polygon.LinkedGeoList.First.Value, outerBig);
+            Assert.IsNotNull(polygon.GeoLoopList.First);
+            Assert.AreEqual(polygon.GeoLoopList.First.Value, outerBig);
 
-            Assert.IsNotNull(polygon.LinkedGeoList.First.Next);
-            Assert.AreEqual(polygon.LinkedGeoList.First.Next.Value, innerBig);
+            Assert.IsNotNull(polygon.GeoLoopList.First.Next);
+            Assert.AreEqual(polygon.GeoLoopList.First.Next.Value, innerBig);
 
             Assert.AreEqual(polygon.Next.CountLoops(), 2);
 
-            Assert.IsNotNull(polygon.Next.LinkedGeoList.First);
-            Assert.AreEqual(polygon.Next.LinkedGeoList.First.Value, outer);
+            Assert.IsNotNull(polygon.Next.GeoLoopList.First);
+            Assert.AreEqual(polygon.Next.GeoLoopList.First.Value, outer);
 
-            Assert.IsNotNull(polygon.Next.LinkedGeoList.First.Next);
-            Assert.AreEqual(polygon.Next.LinkedGeoList.First.Next.Value, inner);
+            Assert.IsNotNull(polygon.Next.GeoLoopList.First.Next);
+            Assert.AreEqual(polygon.Next.GeoLoopList.First.Next.Value, inner);
 
             polygon.Clear();
         }
@@ -565,12 +565,12 @@ namespace Tests
             Assert.AreEqual(2, polygon.CountPolygons());
             Assert.AreEqual(1, polygon.CountLoops());
 
-            Assert.IsNotNull(polygon.LinkedGeoList.First);
-            Assert.AreEqual(outer1, polygon.LinkedGeoList.First.Value);
+            Assert.IsNotNull(polygon.GeoLoopList.First);
+            Assert.AreEqual(outer1, polygon.GeoLoopList.First.Value);
 
             Assert.AreEqual(1, polygon.Next.CountLoops());
-            Assert.IsNotNull(polygon.Next.LinkedGeoList.First);
-            Assert.AreEqual(outer2, polygon.Next.LinkedGeoList.First.Value);
+            Assert.IsNotNull(polygon.Next.GeoLoopList.First);
+            Assert.AreEqual(outer2, polygon.Next.GeoLoopList.First.Value);
 
             polygon.Clear();
         }

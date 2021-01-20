@@ -31,7 +31,7 @@ namespace H3Lib.Extensions
 
                 if (loop.CountCoords > 0)
                 {
-                    result.LinkedGeoList.AddLast(loop);
+                    result.GeoLoopList.AddLast(loop);
                 }
             }
             

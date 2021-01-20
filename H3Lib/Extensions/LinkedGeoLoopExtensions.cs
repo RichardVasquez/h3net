@@ -192,10 +192,10 @@ namespace H3Lib.Extensions
                   .Where
                        (
                         (poly, index) =>
-                            poly.LinkedGeoList.First != null &&
+                            poly.GeoLoopList.First != null &&
                             loop.GeoCoordList.First != null &&
-                            loop != poly.LinkedGeoList.First.Value &&
-                            poly.LinkedGeoList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value)
+                            loop != poly.GeoLoopList.First.Value &&
+                            poly.GeoLoopList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value)
                        )
                   .Count();
 

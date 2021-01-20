@@ -254,11 +254,11 @@ namespace H3Lib.Extensions
             int max = -1;
             foreach (var poly in polygons)
             {
-                if (poly.LinkedGeoList.First == null)
+                if (poly.GeoLoopList.First == null)
                 {
                     continue;
                 }
-                int count = poly.LinkedGeoList.First.Value.CountContainers(polygons, boxes);
+                int count = poly.GeoLoopList.First.Value.CountContainers(polygons, boxes);
                 if (count <= max)
                 {
                     continue;

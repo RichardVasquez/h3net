@@ -24,8 +24,8 @@ namespace Tests
             var polygon = set.ToLinkedGeoPolygon();
 
             Assert.AreEqual(1,polygon.CountPolygons());
-            Assert.IsNotNull(polygon.LinkedGeoList.First);
-            Assert.AreEqual(6, polygon.LinkedGeoList.First.Value.CountCoords);
+            Assert.IsNotNull(polygon.GeoLoopList.First);
+            Assert.AreEqual(6, polygon.GeoLoopList.First.Value.CountCoords);
 
             polygon.Clear();
         }
@@ -37,8 +37,8 @@ namespace Tests
             LinkedGeoPolygon polygon = set.ToLinkedGeoPolygon();
 
             Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.LinkedGeoList.First);
-            Assert.AreEqual(10,polygon.LinkedGeoList.First.Value.CountCoords);
+            Assert.IsNotNull(polygon.GeoLoopList.First);
+            Assert.AreEqual(10,polygon.GeoLoopList.First.Value.CountCoords);
 
             polygon.Clear();
         }
@@ -78,8 +78,8 @@ namespace Tests
             LinkedGeoPolygon polygon = set.ToLinkedGeoPolygon();
 
             Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.LinkedGeoList.First);
-            Assert.AreEqual(12, polygon.LinkedGeoList.First.Value.CountCoords);
+            Assert.IsNotNull(polygon.GeoLoopList.First);
+            Assert.AreEqual(12, polygon.GeoLoopList.First.Value.CountCoords);
 
             polygon.Clear();
         }

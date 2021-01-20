@@ -58,10 +58,10 @@ namespace H3Lib.Extensions
             var bboxes = new List<BBox>();
 
             // Get the first loop and unlink it from root
-            var loop = root.LinkedGeoList.First;
+            var loop = root.GeoLoopList.First;
 
-            var linkedGeoArray = new LinkedGeoLoop[root.LinkedGeoList.Count];
-            root.LinkedGeoList.CopyTo(linkedGeoArray,0);
+            var linkedGeoArray = new LinkedGeoLoop[root.GeoLoopList.Count];
+            root.GeoLoopList.CopyTo(linkedGeoArray,0);
 
             var testLoops = linkedGeoArray.ToList();// root.LinkedGeoList.ToList();
             root = new LinkedGeoPolygon();
@@ -169,9 +169,9 @@ namespace H3Lib.Extensions
             while (polygon != null)
             {
                 // We are guaranteed not to overlap, so just test the first point
-                if(polygon.LinkedGeoList.First!=null && loop.GeoCoordList.First!=null)
+                if(polygon.GeoLoopList.First!=null && loop.GeoCoordList.First!=null)
                 {
-                    if (polygon.LinkedGeoList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value))
+                    if (polygon.GeoLoopList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value))
                     {
                         candidates[candidateCount] = polygon;
                         candidateBoxes[candidateCount] = boxes[index];

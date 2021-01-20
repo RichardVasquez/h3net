@@ -9,7 +9,7 @@ namespace H3Lib
     /// </summary>
     public class LinkedGeoLoop
     {
-        public LinkedList<GeoCoord> GeoCoordList;
+        public readonly LinkedList<GeoCoord> GeoCoordList;
 
         /// <summary>
         /// Count the number of coordinates in a loop

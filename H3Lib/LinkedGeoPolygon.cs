@@ -12,13 +12,13 @@ namespace H3Lib
     {
         public LinkedGeoPolygon Next;
 
-        public LinkedList<LinkedGeoLoop> LinkedGeoList;
+        public readonly LinkedList<LinkedGeoLoop> GeoLoopList;
         
-        public bool IsEmpty => LinkedGeoList.Count == 0;
+        public bool IsEmpty => GeoLoopList.Count == 0;
 
         public LinkedGeoPolygon()
         {
-            LinkedGeoList = new LinkedList<LinkedGeoLoop>();
+            GeoLoopList = new LinkedList<LinkedGeoLoop>();
             Next = null;
         }
 
@@ -56,7 +56,7 @@ namespace H3Lib
         public LinkedGeoLoop AddNewLoop()
         {
             var loop = new LinkedGeoLoop();
-            LinkedGeoList.AddLast(loop);
+            GeoLoopList.AddLast(loop);
             return loop;
         }
 
@@ -72,7 +72,7 @@ namespace H3Lib
         /// -->
         public LinkedGeoLoop AddLinkedLoop(LinkedGeoLoop loop)
         {
-            LinkedGeoList.AddLast(loop);
+            GeoLoopList.AddLast(loop);
             return loop;
         }
 
@@ -87,11 +87,11 @@ namespace H3Lib
         /// -->
         public void Clear()
         {
-            foreach (var geoLoop in LinkedGeoList)
+            foreach (var geoLoop in GeoLoopList)
             {
                 geoLoop.Clear();
             }
-            LinkedGeoList.Clear();
+            GeoLoopList.Clear();
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace H3Lib
         /// -->
         public int CountLoops()
         {
-            return LinkedGeoList.Count;
+            return GeoLoopList.Count;
 /*
             int sum = 0;
             foreach (var geoLoop in LinkedGeoList)
