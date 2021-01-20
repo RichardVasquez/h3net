@@ -58,7 +58,19 @@ namespace H3Lib.Extensions
 
             return latitude;
         }
+
         
+        public static double ConstrainLatitude(this int latitude)
+        {
+            var newLatitude = (double) latitude;
+            while (newLatitude > Constants.M_PI_2)
+            {
+                newLatitude -= Constants.M_PI;
+            }
+
+            return newLatitude;
+        }
+
         /// <summary>
         /// Makes sure longitudes are in the proper bounds
         /// </summary>
@@ -83,6 +95,21 @@ namespace H3Lib.Extensions
             return longitude;
         }
 
+        public static double ConstrainLongitude(this int longitude)
+        {
+            var newLongitude = (double) longitude;
+            while (newLongitude > Constants.M_PI)
+            {
+                newLongitude -= 2 * Constants.M_PI;
+            }
+
+            while (newLongitude < -Constants.M_PI)
+            {
+                newLongitude += 2 * Constants.M_PI;
+            }
+
+            return newLongitude;
+        }
 
         /// <summary>
         /// Convert from decimal degrees to radians.
@@ -94,6 +121,11 @@ namespace H3Lib.Extensions
         /// double H3_EXPORT(degsToRads)
         /// -->
         public static double DegreesToRadians(this double degrees)
+        {
+            return degrees * Constants.M_PI_180;
+        }
+
+        public static double DegreesToRadians(this int degrees)
         {
             return degrees * Constants.M_PI_180;
         }
@@ -150,7 +182,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// int64_t H3_EXPORT(numHexagons)
         /// -->
-        public static long NumHexagons(int res)
+        public static long NumHexagons(this int res)
         {
             return 2 + 120 * 7L.Power(res);
         }
