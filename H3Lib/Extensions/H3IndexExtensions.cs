@@ -169,7 +169,7 @@ namespace H3Lib.Extensions
                 }
             }
 
-            int originOnPent = baseCell.IsBaseCellPentagon()
+            int originOnPent = originBaseCell.IsBaseCellPentagon()
                                    ? 1
                                    : 0;
             int indexOnPent = baseCell.IsBaseCellPentagon()
@@ -192,7 +192,7 @@ namespace H3Lib.Extensions
 
                         if (revDir == Direction.K_AXES_DIGIT)
                         {
-                            revDir = revDir.Rotate60CounterClockwise();
+                            revDir = revDir.Rotate60Clockwise();
                         }
                     }
                 }
@@ -247,6 +247,7 @@ namespace H3Lib.Extensions
                         // TODO: We may be unfolding the pentagon incorrectly in this
                         // case; return an error code until this is guaranteed to be
                         // correct.
+                        return (4, new CoordIjk());
                     }
 
                     pentagonRotations = LocalIJ.PENTAGON_ROTATIONS[(int)revDir, indexLeadingDigit];

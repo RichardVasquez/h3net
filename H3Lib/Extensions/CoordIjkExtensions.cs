@@ -376,18 +376,19 @@ namespace H3Lib.Extensions
             // This logic is very similar to faceIjkToH3
             // initialize the index
 
-            var outH3 = new H3Index().SetMode(H3Mode.Hexagon).SetResolution(res);
+            var outH3 = new H3Index(StaticData.H3Index.H3_INIT);
+            outH3 = outH3.SetMode(H3Mode.Hexagon).SetResolution(res);
 
             // check for res 0/base cell
             if (res == 0) 
             {
-                if (ijk.I > 1 && ijk.J > 1 && ijk.K > 1)
+                if (ijk.I > 1 || ijk.J > 1 || ijk.K > 1)
                 {
                     return (1, outH3);
                 }
 
-                Direction dir1 = ijk.ToDirection();
-                int newBaseCell = originBaseCell.GetNeighbor(dir1);
+                Direction dir = ijk.ToDirection();
+                int newBaseCell = originBaseCell.GetNeighbor(dir);
             
                 if (newBaseCell == StaticData.BaseCells.InvalidBaseCell)
                 {
@@ -426,7 +427,7 @@ namespace H3Lib.Extensions
                 }
 
                 var diff = (lastIJK - lastCenter).Normalized();
-                outH3.SetIndexDigit(r + 1, (ulong) diff.ToDirection());
+                outH3 = outH3.SetIndexDigit(r + 1, (ulong) diff.ToDirection());
             }
 
             // ijkCopy should now hold the IJK of the base cell in the
@@ -443,9 +444,13 @@ namespace H3Lib.Extensions
             // If baseCell is invalid, it must be because the origin base cell is a
             // pentagon, and because pentagon base cells do not border each other,
             // baseCell must not be a pentagon.
-            bool indexOnPent =
-                baseCell != StaticData.BaseCells.InvalidBaseCell &&
-                baseCell.IsBaseCellPentagon();
+            int indexOnPent =
+                baseCell == StaticData.BaseCells.InvalidBaseCell
+                    ? 0
+                    : baseCell.IsBaseCellPentagon()
+                        ? 1
+                        : 0;
+            
 
             if (dir2 != Direction.CENTER_DIGIT)
             {
@@ -497,7 +502,7 @@ namespace H3Lib.Extensions
                 // should be in the right location, so now we need to rotate the index
                 // back. We might not need to check for errors since we would just be
                 // double mapping.
-                if (indexOnPent)
+                if (indexOnPent !=0)
                 {
                     var revDir = baseCell.GetBaseCellDirection(originBaseCell);
                     if (revDir == Direction.INVALID_DIGIT)
@@ -515,7 +520,7 @@ namespace H3Lib.Extensions
 
                     var indexLeadingDigit = outH3.LeadingNonZeroDigit;
                     pentagonRotations =
-                        baseCell.IsBaseCellPentagon()
+                        baseCell.IsBaseCellPolarPentagon()
                             ? LocalIJ.PENTAGON_ROTATIONS_REVERSE_POLAR[(int) revDir, (int) indexLeadingDigit]
                             : LocalIJ.PENTAGON_ROTATIONS_REVERSE_NONPOLAR[(int) revDir, (int) indexLeadingDigit];
 
@@ -549,7 +554,7 @@ namespace H3Lib.Extensions
                     }
                 }
             }
-            else if (originOnPent && indexOnPent)
+            else if (originOnPent && indexOnPent!=0)
             {
                 var originLeadingDigit = (int)origin.LeadingNonZeroDigit;
                 var indexLeadingDigit = (int) outH3.LeadingNonZeroDigit;
@@ -567,9 +572,9 @@ namespace H3Lib.Extensions
                 }
             }
 
-            if (!indexOnPent)
+            if (indexOnPent==0)
             {
-                return (0, outH3);
+                return (0, outH3.SetBaseCell(baseCell));
             }
 
             // TODO: There are cases in h3ToLocalIjk which are failed but not
@@ -577,7 +582,7 @@ namespace H3Lib.Extensions
             // invalid.
             return outH3.LeadingNonZeroDigit == Direction.K_AXES_DIGIT
                        ? (4, new H3Index())
-                       : (0, outH3);
+                       : (0, outH3.SetBaseCell(baseCell));
         }
         
     }

@@ -4,6 +4,16 @@ namespace H3Lib.Extensions
 {
     public static class CoordIjExtensions
     {
+        public static CoordIj ReplaceI(this CoordIj ij, int i)
+        {
+            return new CoordIj(i, ij.J);
+        }
+        
+        public static CoordIj ReplaceJ(this CoordIj ij, int j)
+        {
+            return new CoordIj(ij.I, j);
+        }
+        
         /// <summary>
         /// Transforms coordinates from the IJ coordinate system to the IJK+ coordinate system
         /// </summary>

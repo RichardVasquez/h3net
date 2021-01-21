@@ -7,7 +7,7 @@ namespace H3Lib.StaticData
         /// <summary>
         /// CoordIJK unit vectors corresponding to the 7 H3 digits.
         /// </summary>
-        public static readonly H3Lib.CoordIjk[] XUnitVecs =
+        public static readonly H3Lib.CoordIjk[] UnitVecs =
         {
             new H3Lib.CoordIjk(0, 0, 0),  // direction 0
             new H3Lib.CoordIjk(0, 0, 1),  // direction 1
