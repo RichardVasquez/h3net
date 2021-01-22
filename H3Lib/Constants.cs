@@ -4,7 +4,6 @@ namespace H3Lib
     /// <summary>
     /// Collection of constants used throughout the library.
     /// </summary>
-    /// <!-- Based off 3.1.1 -->
     public static class Constants
     {
         /// <summary>
@@ -32,14 +31,13 @@ namespace H3Lib
         /// </summary>
         public const double M_PI_180 = 0.0174532925199432957692369076848861271111;
         /// <summary>
-        /// Pi * 180
+        /// 180 / Pi
         /// </summary>
-        /// <!-- BUT IT'S NOT?!?!?! -->
         public const double M_180_PI = 57.29577951308232087679815481410517033240547;
         /// <summary>
         /// Threshold epsilon
         /// </summary>
-        public const double EPSILON = 0.0000000001;
+        public const double EPSILON = 0.0000000000000001;
         /// <summary>
         /// Sqrt(3) / 2.0
         /// </summary>

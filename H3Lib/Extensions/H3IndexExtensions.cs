@@ -1014,52 +1014,32 @@ namespace H3Lib.Extensions
         /// <returns>The list of H3Index children</returns>
         /// <!--
         /// h3index.c
+        /// void H3_EXPORT(h3ToChildren)
         /// -->
         public static List<H3Index> ToChildren(this H3Index h, int childRes)
         {
-            var children = new List<H3Index>();
             int parentRes = h.Resolution;
-
-            if (parentRes > childRes)
+            if (!parentRes.IsValidChildRes(childRes))
             {
-                return children;
+                return new List<H3Index>();
             }
 
             if (parentRes == childRes)
             {
-                children.Add(h);
-                return children;
+                return new List<H3Index> {h};
             }
 
-            int goalRes = childRes;
-            int currentRes = parentRes;
-            var current = new List<H3Index> {h};
-            var realChildren = new List<H3Index>();
-            while (currentRes < goalRes)
+            var result = new List<H3Index>();
+            bool isAPentagon = h.IsPentagon();
+            for (Direction i = Direction.CENTER_DIGIT; i < Direction.NUM_DIGITS; i++)
             {
-                realChildren.Clear();
-                foreach (var index in current)
+                if (!isAPentagon || i != Direction.K_AXES_DIGIT)
                 {
-                    bool isPentagon = index.IsPentagon();
-                    for (int m = 0; m < 7; m++)
-                    {
-                        if (isPentagon && m == (int) Direction.K_AXES_DIGIT)
-                        {
-                            realChildren.Add(StaticData.H3Index.H3_INVALID_INDEX);
-                        }
-                        else
-                        {
-                            var child = index.MakeDirectChild(m);
-                            realChildren.Add(child);
-                        }
-                    }
+                    result.AddRange(h.MakeDirectChild((int) i).ToChildren(childRes));
                 }
-
-                current = new List<H3Index>(realChildren.Where(c => c.Value != StaticData.H3Index.H3_INVALID_INDEX));
-                currentRes++;
             }
 
-            return current;
+            return result;
         }
 
         /// <summary>
