@@ -44,7 +44,7 @@ namespace H3Lib.Extensions
         /// </returns>
         /// <!--
         /// faceijk.c
-        /// _adjustOverageClassII
+        /// Overage _adjustOverageClassII
         /// -->
         public static (Overage, FaceIjk) AdjustOverageClassIi(
                 this FaceIjk fijk, int res, int pentLeading4, int substrate
@@ -94,7 +94,8 @@ namespace H3Lib.Extensions
                             tmp = tmp.Rotate60Clockwise();
                             // translate the origin back to the center of the triangle
                             ijk = tmp + origin;
-                            fijk = fijk.ReplaceCoord(ijk);
+                            //let's move it back in, later
+                            //fijk = fijk.ReplaceCoord(ijk);
                         }
                     }
                 }
@@ -112,7 +113,7 @@ namespace H3Lib.Extensions
                 for (int i = 0; i < fijkOrient.Ccw60Rotations; i++)
                 {
                     ijk = ijk.Rotate60CounterClockwise();
-                    fijk = fijk.ReplaceCoord(ijk);
+                    //fijk = fijk.ReplaceCoord(ijk);
                 }
 
                 var transVec = fijkOrient.Translate;
@@ -151,12 +152,10 @@ namespace H3Lib.Extensions
         public static (Overage, FaceIjk) AdjustPentOverage(this FaceIjk fijk, int res)
         {
             const int pentLeading4 = 0;
-            int count = 0;
             Overage overage;
             do
             {
                 (overage, fijk) = fijk.AdjustOverageClassIi(res, pentLeading4, 1);
-                count++;
 
             } while (overage == Overage.NEW_FACE);
 
@@ -217,15 +216,19 @@ namespace H3Lib.Extensions
 
             // adjust the center point to be in an aperture 33r substrate grid
             // these should be composed for speed
-            fijk = fijk.ReplaceCoord(fijk.Coord.DownAp3().DownAp3R());
+            var tempCoord = fijk.Coord.DownAp3().DownAp3R();
+            //fijk = fijk.ReplaceCoord(fijk.Coord.DownAp3().DownAp3R());
 
             // if res is Class III we need to add a cw aperture 7 to get to
             // icosahedral Class II
             if (res.IsResClassIii())
             {
-                fijk = fijk.ReplaceCoord(fijk.Coord.DownAp7R());
+                tempCoord = tempCoord.DownAp7R();
+                //fijk = fijk.ReplaceCoord(fijk.Coord.DownAp7R());
                 res++;
             }
+
+            fijk = fijk.ReplaceCoord(tempCoord);
 
             // The center point is now in the same substrate grid as the origin
             // cell vertices. Add the center point substrate coordinates
@@ -632,7 +635,7 @@ namespace H3Lib.Extensions
             int adjRes = res;
             var centerIjk = h;
             IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
-            (_, adjRes, fijkVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
+            (centerIjk, adjRes, fijkVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
             // of a distortion vertex on the last edge

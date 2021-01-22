@@ -41,7 +41,7 @@ namespace TestSuite.Lib
         /// Call the callback for every index at the given resolution in a
         /// specific base cell
         /// </summary>
-        private static void IterateBaseCellIndexesAtRes(int res, Action<H3Index> callback, int baseCell)
+        public static void IterateBaseCellIndexesAtRes(int res, Action<H3Index> callback, int baseCell)
         {
             var bc = new H3Index(0, baseCell, 0);
             var (_, children) = bc.Uncompact(res);

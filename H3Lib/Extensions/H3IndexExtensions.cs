@@ -917,7 +917,7 @@ namespace H3Lib.Extensions
             // We can't use the vertex-based approach here for class II pentagons,
             // because all their vertices are on the icosahedron edges. Their
             // direct child pentagons cross the same faces, so use those instead.
-            if (isPentagon && res.IsResClassIii())
+            if (isPentagon && !res.IsResClassIii())
             {
                 // Note that this would not work for res 15, but this is only run on
                 // Class II pentagons, it should never be invoked for a res 15 index.
@@ -940,13 +940,17 @@ namespace H3Lib.Extensions
             
             if (isPentagon)
             {
-                (_, int newRes, var vertexArray) = fijk.PentToVerts(res, fijkVerts);
+                int newRes;
+                IList<FaceIjk> vertexArray;
+                (_, newRes, vertexArray) = fijk.PentToVerts(res, fijkVerts);
                 res = newRes;
                 fijkVerts = vertexArray.ToList();
             }
             else
             {
-                (_, int newRes, var vertexArray) = fijk.ToVerts(res, fijkVerts);
+                int newRes;
+                IList<FaceIjk> vertexArray;
+                (_, newRes, vertexArray) = fijk.ToVerts(res, fijkVerts);
                 res = newRes;
                 fijkVerts = vertexArray.ToList();
             }
@@ -977,11 +981,18 @@ namespace H3Lib.Extensions
                 // Save the face to the output array
                 // Find the first empty output position, or the first position
                 // matching the current face
-                int pos = results.IndexOf(StaticData.FaceIjk.InvalidFace);
-                results[pos] = vert.Face;
-            }
+                int pos = 0;
+                var tempFace = vert.Face;
+                while (results[pos] != StaticData.FaceIjk.InvalidFace && results[pos] != tempFace)
+                {
+                    pos++;
+                }
 
-            results.RemoveAll(r => r == StaticData.FaceIjk.InvalidFace);
+                if (pos < results.Count)
+                {
+                    results[pos] = tempFace;
+                }
+            }
             return results;
         }
 
