@@ -123,7 +123,7 @@ namespace H3Lib
         /// <summary>
         /// returns the number of pentagons (same at any resolution)
         /// </summary>
-        public int PentagonIndexCount => Constants.NUM_PENTAGONS;
+        public static int PentagonIndexCount => Constants.NUM_PENTAGONS;
 
         /// <summary>
         /// IsResClassIII takes a hexagon ID and determines if it is in a
