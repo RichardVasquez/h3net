@@ -2161,7 +2161,5 @@ namespace H3Lib.Extensions
             return  (cell & ~(StaticData.H3Index.H3_DIGIT_MASK << ((Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET))) |
                       (digit << (Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET);
         }
-
-
     }
 }

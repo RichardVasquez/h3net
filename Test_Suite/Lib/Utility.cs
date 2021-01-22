@@ -62,5 +62,58 @@ namespace TestSuite.Lib
             return hexagons
                .Count(hexagon => hexagon != H3Lib.StaticData.H3Index.H3_NULL);
         }
+        
+        /// <summary>
+        /// List of cells at a given resolutions
+        /// </summary>
+        /// <param name="res">resolution</param>
+        private static List<H3Index> GetCellsAtRes(int res)
+        {
+            var (_, resCells) =
+                BaseCellsExtensions.GetRes0Indexes().Uncompact(res);
+            return resCells.Where(c => c.Value != 0).ToList();
+        }
+        
+        public static double mapSumAllCells_double(int res, Func<H3Index, double> callback)
+        {
+            var cells = GetCellsAtRes(res);
+
+            long N = res.NumHexagons();
+
+            double total = 0.0;
+            for (int i = 0; i < N; i++)
+            {
+                total += callback(cells[i]);
+            }
+            cells.Clear();
+
+            return total;
+        }
+        
+        public static void iterateAllUnidirectionalEdgesAtRes(int res, Action<H3Index> callback)
+        {
+            var cells = GetCellsAtRes(res);
+
+            long n = res.NumHexagons();
+
+            for (var i = 0; i < n; i++)
+            {
+                bool isPentagon = cells[i].IsPentagon();
+                var edges = cells[i].GetUniEdgesFromCell();
+
+                for (var j = 0; j < 6; j++)
+                {
+                    if (isPentagon && j == 0)
+                    {
+                        continue;
+                    }
+
+                    callback(edges[j]);
+                }
+            }
+        }
+
+        
+
     }
 }
