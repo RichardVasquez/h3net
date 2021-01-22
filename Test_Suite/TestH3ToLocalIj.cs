@@ -29,25 +29,25 @@ namespace TestSuite
             H3Index origin = 0x8029fffffffffff;
             CoordIj ij = new CoordIj(0, 0);
             
-            (int status, var retrieved) = ij.LocalIjToH3Experimental(origin);
+            (int status, var retrieved) = ij.ToH3Experimental(origin);
             Assert.AreEqual(0, status);
             Assert.AreEqual(0x8029fffffffffff, retrieved.Value);
 
             ij = ij.ReplaceI(1);
-            (status, retrieved) = ij.LocalIjToH3Experimental(origin);
+            (status, retrieved) = ij.ToH3Experimental(origin);
             Assert.AreEqual(0, status);
             Assert.AreEqual(0x8051fffffffffff, retrieved.Value);
 
             ij = ij.ReplaceI(2);
-            (status, retrieved) = ij.LocalIjToH3Experimental(origin);
+            (status, retrieved) = ij.ToH3Experimental(origin);
             Assert.AreNotEqual(0, status);
 
             ij = new CoordIj(0, 2);
-            (status, retrieved) = ij.LocalIjToH3Experimental(origin);
+            (status, retrieved) = ij.ToH3Experimental(origin);
             Assert.AreNotEqual(0, status);
 
             ij = new CoordIj(-2, -2);
-            (status, retrieved) = ij.LocalIjToH3Experimental(origin);
+            (status, retrieved) = ij.ToH3Experimental(origin);
             Assert.AreNotEqual(0, status);
         }
 
@@ -80,7 +80,7 @@ namespace TestSuite
             for (var i = 0; i < numCoords; i++)
             {
                 
-                (int err, var result) = coords[i].LocalIjToH3Experimental(expected[0]);
+                (int err, var result) = coords[i].ToH3Experimental(expected[0]);
 
                 if (expected[i] == H3Lib.StaticData.H3Index.H3_NULL)
                 {
@@ -152,8 +152,8 @@ namespace TestSuite
                                 continue;
                             }
 
-                            (int internalIjFailed2, var internalIndex) = internalIj.LocalIjToH3Experimental(internalOrigin);
-                            (int externalIjFailed2, var externalIndex) = externalIj.LocalIjToH3Experimental(externalOrigin);
+                            (int internalIjFailed2, var internalIndex) = internalIj.ToH3Experimental(internalOrigin);
+                            (int externalIjFailed2, var externalIndex) = externalIj.ToH3Experimental(externalOrigin);
 
                             Assert.AreEqual(externalIjFailed2 != 0, internalIjFailed2 != 0);
 

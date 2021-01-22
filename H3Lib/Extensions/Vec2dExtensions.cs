@@ -22,44 +22,34 @@ namespace H3Lib.Extensions
             // quantize into the ij system and then normalize
             double a1 = Math.Abs(v.X);
             double a2 = Math.Abs(v.Y);
-
-            Console.WriteLine($"a1:a2 {a1}:{a2}");
             
             // first do a reverse conversion
             double x2 = a2 / Constants.M_SIN60;
             double x1 = a1 + x2 / 2.0;
 
-            Console.WriteLine($"x1:x2 {x1}:{x2}");
-            
             // check if we have the center of a hex
             var m1 = (int)x1;
             var m2 = (int)x2;
-            Console.WriteLine($"m1:m2 {m1}:{m2}");
 
             // otherwise round correctly
             double r1 = x1 - m1;
             double r2 = x2 - m2;
-            Console.WriteLine($"r1:r2 {r1}:{r2}");
 
             if (r1 < 0.5) {
                 if (r1 < 1.0 / 3.0)
                 {
-                    Console.WriteLine($"h: {h} A0");
                     h = r2 < (1.0 + r1) / 2.0
                             ? h.SetIJ(m1,m2)
                             : h.SetIJ(m1,m2 + 1);
-                    Console.WriteLine($"h: {h} A");
                 } else
                 {
                     h = r2 < (1.0 - r1)
                             ? h.SetJ(m2)
                             : h.SetJ(m2 + 1);
-                    Console.WriteLine($"h: {h} B");
 
                     h = (1.0 - r1) <= r2 && r2 < (2.0 * r1)
                             ? h.SetI(m1 + 1)
                             : h.SetI(m1);
-                    Console.WriteLine($"h: {h} C");
                 }
             } else {
                 if (r1 < 2.0 / 3.0)
@@ -67,20 +57,16 @@ namespace H3Lib.Extensions
                     h = r2 < (1.0 - r1)
                             ? h.SetJ( m2)
                             : h.SetJ(m2 + 1);
-                    Console.WriteLine($"h: {h} D");
 
                     h = (2.0 * r1 - 1.0) < r2 && r2 < (1.0 - r1)
                             ? h.SetI(m1)
                             : h.SetI(m1 + 1);
-                    Console.WriteLine($"h: {h} E");
                 }
                 else
                 {
-                    Console.WriteLine($"h: {h} F-");
                     h = r2 < (r1 / 2.0)
                             ? h.SetIJ(m1 + 1, m2)
                             : h.SetIJ(m1 + 1, m2 + 1);
-                    Console.WriteLine($"h: {h} F+");
                 }
             }
 
@@ -92,27 +78,19 @@ namespace H3Lib.Extensions
                     long axisI = (long)h.J / 2;
                     long diff = h.I - axisI;
                     h = h.SetI( h.I - (int)(2.0 * diff));
-                    Console.WriteLine($"h: {h} G");
                 }
                 else
                 {
-                    Console.WriteLine($"h: {h} H-");
                     long axisI = (long)(h.J + 1) / 2;
                     long diff = h.I - axisI;
                     h = h.SetI(h.I-(int) (2.0 * diff + 1));
-                    Console.WriteLine($"h: {h} H");
                 }
             }
 
             if (v.Y < 0.0)
             {
-                Console.WriteLine($"h: {h} J-");
                 h=h.SetIJ(h.I - (2 * h.J + 1) / 2, -h.J);
-                Console.WriteLine($"h: {h} J");
             }
-
-            var zzz = h.Normalized();
-            Console.WriteLine($"zzz: {zzz}");
 
             return h.Normalized();
         }

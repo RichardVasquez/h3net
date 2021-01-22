@@ -54,5 +54,21 @@ namespace H3Lib
         {
             return !left.Equals(right);
         }
+        
+        public static CoordIj operator+(CoordIj c1,CoordIj c2)
+        {
+            return new CoordIj(c1.I + c2.I, c1.J + c2.J);
+        }
+
+        public static CoordIj operator-(CoordIj c1,CoordIj c2)
+        {
+            return new CoordIj(c1.I - c2.I, c1.J - c2.J);
+        }
+
+        public static CoordIj operator *(CoordIj c, int scalar)
+        {
+            return new CoordIj(c.I * scalar, c.J * scalar);
+        }
+
     }
 }

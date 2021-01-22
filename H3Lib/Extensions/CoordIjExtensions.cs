@@ -50,7 +50,7 @@ namespace H3Lib.Extensions
         /// localij,c
         /// int H3_EXPORT(experimentalLocalIjToH3)
         /// -->
-        public static (int, H3Index) LocalIjToH3Experimental(this CoordIj ij, H3Index origin)
+        public static (int, H3Index) ToH3Experimental(this CoordIj ij, H3Index origin)
         {
             // This function is currently experimental. Once ready to be part of the
             // non-experimental API, this function (with the experimental prefix) will

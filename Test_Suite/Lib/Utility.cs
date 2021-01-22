@@ -17,7 +17,7 @@ namespace TestSuite.Lib
         /// </summary>
         public static void IterateAllIndexesAtRes(int res, Action<H3Index> callback)
         {
-            IterateAllIndexesAtResPartial(res, callback, H3Lib.Constants.NUM_BASE_CELLS);
+            IterateAllIndexesAtResPartial(res, callback, Constants.NUM_BASE_CELLS);
         }
 
         /// <summary>
@@ -27,15 +27,12 @@ namespace TestSuite.Lib
         /// <param name="res"></param>
         /// <param name="callback"></param>
         /// <param name="baseCells"></param>
-        private static void IterateAllIndexesAtResPartial(int res, Action<H3Index> callback, int baseCells)
+        public static void IterateAllIndexesAtResPartial(int res, Action<H3Index> callback, int baseCells)
         {
             Assert.LessOrEqual(baseCells, Constants.NUM_BASE_CELLS);
             for (var i = 0; i < baseCells; i++)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"IterateAllIndexesAtRes: RES: {res} BASECELL: {i}");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                IterateBasCellIndexesAtRes(res, callback, i);
+                IterateBaseCellIndexesAtRes(res, callback, i);
             }
 
         }
@@ -44,7 +41,7 @@ namespace TestSuite.Lib
         /// Call the callback for every index at the given resolution in a
         /// specific base cell
         /// </summary>
-        private static void IterateBasCellIndexesAtRes(int res, Action<H3Index> callback, int baseCell)
+        private static void IterateBaseCellIndexesAtRes(int res, Action<H3Index> callback, int baseCell)
         {
             var bc = new H3Index(0, baseCell, 0);
             var (_, children) = bc.Uncompact(res);
