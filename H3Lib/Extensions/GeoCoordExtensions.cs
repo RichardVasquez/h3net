@@ -298,14 +298,6 @@ namespace H3Lib.Extensions
             {
                 return (newFace, new Vec2d());
             }
-
-            //  Temp to delete later
-            var art1 = Constants.FaceIjk.FaceCenterGeo[newFace];
-            var art2 = art1.AzimuthRadiansTo(g);
-            var art3 = art2.NormalizeRadians();
-            var art4 = Constants.FaceIjk.FaceAxesAzRadsCii[newFace, 0] - art3;
-            var art5 = art4.NormalizeRadians();
-            
             // now have face and r, now find CCW theta from CII i-axis
             double theta =
                 (

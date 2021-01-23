@@ -64,9 +64,19 @@ namespace H3Lib
                 );
         }
 
+        public bool Equals(Vec2d other, double epsilon)
+        {
+            return
+                Math.Abs(X - other.X) < epsilon &&
+                Math.Abs(Y - other.Y) < epsilon;
+            
+        }
         public bool Equals(Vec2d other)
         {
-            return X.Equals(other.X) && Y.Equals(other.Y);
+            return Equals(other, Constants.H3.DBL_EPSILON);
+//                Math.Abs(X - other.X) < Constants.H3.DBL_EPSILON &&
+//                Math.Abs(Y - other.Y) < Constants.H3.DBL_EPSILON;
+            //X.Equals(other.X) && Y.Equals(other.Y);
         }
 
         public override bool Equals(object obj)

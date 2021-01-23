@@ -274,7 +274,7 @@ namespace H3Lib.Extensions
                 new CoordIjk(0, 2, 1), // 2
                 new CoordIjk(0, 1, 2), // 3
                 new CoordIjk(1, 0, 2), // 4
-                new CoordIjk(2, 0, 1) // 5
+                new CoordIjk(2, 0, 1)  // 5
             };
 
             // the vertexes of an origin-centered cell in a Class III resolution on a
@@ -288,7 +288,7 @@ namespace H3Lib.Extensions
                 new CoordIjk(0, 5, 4), // 2
                 new CoordIjk(0, 1, 5), // 3
                 new CoordIjk(4, 0, 5), // 4
-                new CoordIjk(5, 0, 1) // 5
+                new CoordIjk(5, 0, 1)  // 5
             };
 
             // get the correct set of substrate vertices for this resolution

@@ -111,6 +111,14 @@ namespace H3Lib
                  c.DistanceToRadians(a));
         }
 
+        public bool Equals(GeoCoord  other, double epsilon)
+        {
+            return
+                Math.Abs(Latitude - other.Longitude) < epsilon &&
+                Math.Abs(Longitude - other.Longitude) < epsilon;
+        }
+
+        
         public bool Equals(GeoCoord other)
         {
             return

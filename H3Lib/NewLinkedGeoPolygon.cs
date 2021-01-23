@@ -14,6 +14,7 @@ namespace H3Lib
         public int CountLoops => _geoLoops.Count;
         public int CountPolygons => TotalPolygons();
         public NewLinkedGeoLoop First => GetFirst();
+        public NewLinkedGeoLoop Last => GetLast();
 
         public NewLinkedGeoPolygon Next;
 
@@ -129,5 +130,16 @@ namespace H3Lib
 
             return _geoLoops.First();
         }
+        
+        private NewLinkedGeoLoop GetLast()
+        {
+            if (_geoLoops == null || _geoLoops.Count < 1)
+            {
+                return null;
+            }
+
+            return _geoLoops.Last();
+        }
+
     }
 }

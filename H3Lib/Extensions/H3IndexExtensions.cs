@@ -1326,8 +1326,8 @@ namespace H3Lib.Extensions
             {
                 {
                     // TODO: Circle back after retrofitting Algos.cs
-                    int rotations = 0;
-                    (H3Index neighbor, _) = origin.NeighborRotations(direction, rotations);
+                    const int rotations = 0;
+                    var (neighbor, _) = origin.NeighborRotations(direction, rotations);
                     //Algos.h3NeighborRotations(origin,direction, ref rotations);
                     if (neighbor != destination)
                     {
