@@ -14,7 +14,6 @@ namespace H3Lib
         /// to indicate the functional equivalence of this C# library.
         /// </summary>
         public const int H3_VERSION_MAJOR = 3;
-
         public const int H3_VERSION_MINOR = 7;
         public const int H3_VERSION_PATCH = 1;
 

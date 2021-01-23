@@ -126,15 +126,6 @@ namespace H3Lib
         public int CountLoops()
         {
             return GeoLoopList.Count;
-/*
-            int sum = 0;
-            foreach (var geoLoop in LinkedGeoList)
-            {
-                sum += geoLoop.Count;
-            }
-
-            return sum;
-*/
         }
     }
 }

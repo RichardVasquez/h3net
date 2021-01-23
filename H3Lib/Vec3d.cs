@@ -21,7 +21,7 @@ namespace H3Lib
 
         public override string ToString()
         {
-            return $"Vec3d (X,Y,Z) {X:F3}..., {Y:F3}..., {Z:F3}...";
+            return $"Vec3d (X,Y,Z) {X:F6}, {Y:F6}, {Z:F6}";
         }
 
         public bool Equals(Vec3d other)
