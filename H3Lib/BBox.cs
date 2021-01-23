@@ -32,10 +32,10 @@ namespace H3Lib
         public bool Equals(BBox other)
         {
             return
-                Math.Abs(North - other.North) < Constants.EPSILON_RAD &&
-                Math.Abs(South - other.South) < Constants.EPSILON_RAD &&
-                Math.Abs(East - other.East) < Constants.EPSILON_RAD &&
-                Math.Abs(West - other.West) < Constants.EPSILON_RAD;
+                Math.Abs(North - other.North) < Constants.H3.EPSILON_RAD &&
+                Math.Abs(South - other.South) < Constants.H3.EPSILON_RAD &&
+                Math.Abs(East - other.East) < Constants.H3.EPSILON_RAD &&
+                Math.Abs(West - other.West) < Constants.H3.EPSILON_RAD;
         }
 
         public override bool Equals(object obj)

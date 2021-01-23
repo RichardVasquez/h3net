@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace H3Lib.Extensions
 {
-    public static class LinkedGeoLoopExtensions
+    public static class NewLinkedGeoLoopExtensions
     {
-        public static bool PointInside(this LinkedGeoLoop loop, BBox box, GeoCoord coord)
+        public static bool PointInside(this NewLinkedGeoLoop geoLoop, BBox box, GeoCoord coord)
         {
             // fail fast if we're outside the bounding box
             if(!box.Contains(coord))
@@ -15,19 +15,19 @@ namespace H3Lib.Extensions
             }
             
             //  Gonna add another test here for quick fail, as we need a triangle+ to have an inside
-            if (loop.GeoCoordList.Count < 3)
+            if (geoLoop.Count < 3)
             {
                 return false;
             }
 
             bool isTransmeridian = box.IsTransmeridian;
-            bool contains = false;
+            var contains = false;
 
             double targetLatitude = coord.Latitude;
             double targetLongitude = coord.Longitude.NormalizeLongitude(isTransmeridian);
 
-            var nodes = loop.GeoCoordList.ToList();
-            for (int idx = 0; idx < nodes.Count; idx++)
+            var nodes = geoLoop.Nodes;
+            for (var idx = 0; idx < nodes.Count; idx++)
             {
                 var a = nodes[idx];
                 var b = nodes[(idx + 1) % nodes.Count];
@@ -78,29 +78,26 @@ namespace H3Lib.Extensions
             return contains;
         }
 
-        public static BBox ToBBox(this LinkedGeoLoop loop)
+        public static BBox ToBBox(this NewLinkedGeoLoop geoLoop)
         {
-            if (loop.IsEmpty)
+            if (geoLoop.IsEmpty)
             {
                 return new BBox();
             }
 
             var box = new BBox(-double.MaxValue, double.MaxValue, -double.MaxValue, double.MaxValue);
-            double minPosLon = double.MaxValue;
+            var minPosLon = double.MaxValue;
             double maxNegLon = -double.MaxValue;
-            bool isTransmeridian = false;
+            var isTransmeridian = false;
 
-            double lat;
-            double lon;
-
-            var nodes = loop.GeoCoordList.ToList();
+            var nodes = geoLoop.Nodes;
             for (int idx = 0; idx < nodes.Count; idx++)
             {
                 var coord = nodes[idx];
                 var next = nodes[(idx + 1) % nodes.Count];
 
-                lat = coord.Latitude;
-                lon = coord.Longitude;
+                double lat = coord.Latitude;
+                double lon = coord.Longitude;
                 if (lat < box.South)
                 {
                     box = box.ReplaceSouth(lat);
@@ -144,12 +141,12 @@ namespace H3Lib.Extensions
             }
             return box;
         }
-
-        public static bool IsClockwiseNormalized(this LinkedGeoLoop loop, bool isTransmeridian)
+        
+        public static bool IsClockwiseNormalized(this NewLinkedGeoLoop geoLoop, bool isTransmeridian)
         {
             double sum = 0;
 
-            var nodes = loop.GeoCoordList.ToList();
+            var nodes = geoLoop.Nodes;
             for (int idx = 0; idx < nodes.Count; idx++)
             {
                 var a = nodes[idx];
@@ -159,66 +156,105 @@ namespace H3Lib.Extensions
                 // start over with the transmeridian flag set
                 if (!isTransmeridian && Math.Abs(a.Longitude - b.Longitude) > Constants.H3.M_PI)
                 {
-                    return loop.IsClockwiseNormalized(true);
+                    return geoLoop.IsClockwiseNormalized(true);
                 }
                 sum += (b.Longitude.NormalizeLongitude(isTransmeridian) -
                         a.Longitude.NormalizeLongitude( isTransmeridian)) *
-                        (b.Latitude + a.Latitude);
+                       (b.Latitude + a.Latitude);
             }
 
             return sum > 0;
         }
 
-        public static bool IsClockwise(this LinkedGeoLoop loop)
+        public static bool IsClockwise(this NewLinkedGeoLoop geoLoop)
         {
-            return loop.IsClockwiseNormalized(false);
+            return geoLoop.IsClockwiseNormalized(false);
         }
 
-        /// <summary>
-        /// Count the number of polygons containing a given loop.
-        /// </summary>
-        /// <param name="loop">Loop to count containers for</param>
-        /// <param name="polygons">Polygons to test</param>
-        /// <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
-        /// <returns>Number of polygons containing the loop</returns>
-        /// <!--
-        /// linkedGeo.c
-        /// static int countContainers
-        /// -->
-        public static int CountContainers(this LinkedGeoLoop loop, List<LinkedGeoPolygon> polygons, List<BBox> boxes)
+        public static int CountContainers
+            (this NewLinkedGeoLoop geoLoop, IList<NewLinkedGeoPolygon> polygons, IList<BBox> bboxes)
         {
             return polygons
-                  .Where
-                       (
-                        (poly, index) =>
-                            poly.GeoLoopList.First != null &&
-                            loop.GeoCoordList.First != null &&
-                            loop != poly.GeoLoopList.First.Value &&
-                            poly.GeoLoopList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value)
-                       )
+                  .Where((t, i) => 
+                             geoLoop != t.First &&
+                             t.First.PointInside(bboxes[i], geoLoop.First.Vertex))
                   .Count();
 
-            /*
-            int containerCount = 0;
-            for (int i = 0; i < polygons.Count; i++)
-            {
-                if(polygons[i].LinkedGeoList.First!=null && loop.GeoCoordList.First!=null)
-                {
-                    if (loop != polygons[i].LinkedGeoList.First.Value &&
-                        polygons[i].LinkedGeoList.First.Value.PointInside(boxes[i], loop.GeoCoordList.First.Value))
-                    {
-                        containerCount++;
-                    }
-                }
-            }
-            return containerCount;
-         
-*/
-            //            return polygons
-            //                  .Where(
-            //                         (t, i) => loop != t.First &&
-            //                                   t.First.PointInside(boxes[i], loop.First.Vertex))
-            //                 .Count();
+            // var containerCount = 0;
+            // for (var i = 0; i < polygons.Count; i++)
+            // {
+            //     if (geoLoop != polygons[i].First &&
+            //         polygons[i].First.PointInside(bboxes[i], geoLoop.First.Vertex))
+            //     {
+            //         containerCount++;
+            //     }
+            // }
+            // return containerCount;
         }
+
+        public static NewLinkedGeoPolygon FindDeepestContainer
+            (this NewLinkedGeoLoop geoLoop, IList<NewLinkedGeoPolygon> polygons, IList<BBox> bboxes)
+        {
+            // Set the initial return value to the first candidate
+            var parent = polygons.Count > 0
+                             ? polygons[0]
+                             : null;
+            if (polygons.Count <= 1)
+            {
+                return parent;
+            }
+
+            // If we have multiple polygons, they must be nested inside each other.
+            // Find the innermost polygon by taking the one with the most containers
+            // in the list.
+            int max = -1;
+            foreach (var poly in polygons)
+            {
+                int count = poly.First.CountContainers(polygons, bboxes);
+
+                if (count <= max)
+                {
+                    continue;
+                }
+                parent = poly;
+                max = count;
+            }
+            return parent;
+        }
+
+        public static NewLinkedGeoPolygon FindPolygonForHole
+            (this NewLinkedGeoLoop geoLoop, in NewLinkedGeoPolygon polygon, IList<BBox> bboxes)
+        {
+            if (polygon == null || polygon.CountPolygons == 0)
+            {
+                return null;
+            }
+
+            // Initialize arrays for candidate loops and their bounding boxes
+            var candidates = new List<NewLinkedGeoPolygon>();
+            var candidateBBoxes = new List<BBox>();
+
+            // Find all polygons that contain the loop
+            var polyList = polygon.LinkedPolygons;
+            var index = 0;
+            foreach (var geoPolygon in polyList)
+            {
+                if (geoPolygon.First.PointInside(bboxes[index], geoLoop.First.Vertex))
+                {
+                    candidates.Add(geoPolygon);
+                    candidateBBoxes.Add(bboxes[index]);
+                }
+
+                index++;
+            }
+            // The most deeply nested container is the immediate parent
+            var parent = geoLoop.FindDeepestContainer(candidates, candidateBBoxes);
+
+            return parent;
+        }
+        
+
     }
+    
+    
 }

@@ -32,14 +32,14 @@ namespace H3Lib
         /// <param name="initDigit"></param>
         public H3Index(int res, int baseCell, Direction initDigit)
         {
-            H3Index h = StaticData.H3Index.H3_INIT;
+            H3Index h = Constants.H3Index.H3_INIT;
             h = h.SetIndex(res, baseCell, initDigit);
             Value = h.Value;
         }
         
         public H3Index(int res, int baseCell, int initDigit)
         {
-            H3Index h = StaticData.H3Index.H3_INIT;
+            H3Index h = Constants.H3Index.H3_INIT;
             h = h.SetIndex(res, baseCell, (Direction) initDigit);
             Value = h.Value;
         }
@@ -53,8 +53,8 @@ namespace H3Lib
         /// int H3_EXPORT(h3GetResolution)(H3Index h)
         /// -->
         public int Resolution =>
-            (int) ((Value & StaticData.H3Index.H3_RES_MASK) >>
-                   StaticData.H3Index.H3_RES_OFFSET);
+            (int) ((Value & Constants.H3Index.H3_RES_MASK) >>
+                   Constants.H3Index.H3_RES_OFFSET);
 
         /// <summary>
         /// Integer base cell of H3
@@ -64,8 +64,8 @@ namespace H3Lib
         /// int H3_EXPORT(h3GetBaseCell)
         /// -->
         public int BaseCell =>
-            (int) ((Value & StaticData.H3Index.H3_BC_MASK) >>
-                   StaticData.H3Index.H3_BC_OFFSET);
+            (int) ((Value & Constants.H3Index.H3_BC_MASK) >>
+                   Constants.H3Index.H3_BC_OFFSET);
 
         /// <summary>
         /// Returns the highest resolution non-zero digit in an H3Index.
@@ -94,19 +94,19 @@ namespace H3Lib
         /// Integer mode of H3
         /// </summary>
         public H3Mode Mode =>
-            (H3Mode) ((Value & StaticData.H3Index.H3_MODE_MASK) >>
-                      StaticData.H3Index.H3_MODE_OFFSET);
+            (H3Mode) ((Value & Constants.H3Index.H3_MODE_MASK) >>
+                      Constants.H3Index.H3_MODE_OFFSET);
 
         /// <summary>
         /// High bit of H3
         /// </summary>
         public int HighBit =>
-            (int) ((Value & StaticData.H3Index.H3_HIGH_BIT_MASK) >>
-                   StaticData.H3Index.H3_MAX_OFFSET);
+            (int) ((Value & Constants.H3Index.H3_HIGH_BIT_MASK) >>
+                   Constants.H3Index.H3_MAX_OFFSET);
 
         public int ReservedBits =>
-            (int) ((Value & StaticData.H3Index.H3_RESERVED_MASK) >>
-                   StaticData.H3Index.H3_RESERVED_OFFSET);
+            (int) ((Value & Constants.H3Index.H3_RESERVED_MASK) >>
+                   Constants.H3Index.H3_RESERVED_OFFSET);
 
         /// <summary>
         /// Gets the resolution res integer digit (0-7) of h3.
@@ -115,15 +115,15 @@ namespace H3Lib
         {
             return (Direction)
                 ((Value >>
-                  ((Constants.MAX_H3_RES - res) * StaticData.H3Index.H3_PER_DIGIT_OFFSET)) &
-                 StaticData.H3Index.H3_DIGIT_MASK);
+                  ((Constants.H3.MAX_H3_RES - res) * Constants.H3Index.H3_PER_DIGIT_OFFSET)) &
+                 Constants.H3Index.H3_DIGIT_MASK);
         }
 
 
         /// <summary>
         /// returns the number of pentagons (same at any resolution)
         /// </summary>
-        public static int PentagonIndexCount => Constants.NUM_PENTAGONS;
+        public static int PentagonIndexCount => Constants.H3.NUM_PENTAGONS;
 
         /// <summary>
         /// IsResClassIII takes a hexagon ID and determines if it is in a

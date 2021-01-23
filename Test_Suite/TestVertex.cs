@@ -11,12 +11,12 @@ namespace TestSuite
         public void VertexNumForDirectionHex()
         {
             H3Index origin = 0x823d6ffffffffff;
-            var vertexNums = new int[Constants.NUM_HEX_VERTS];
+            var vertexNums = new int[Constants.H3.NUM_HEX_VERTS];
 
             for (var dir = Direction.K_AXES_DIGIT; dir < Direction.NUM_DIGITS; dir++)
             {
                 int vertexNum = origin.VertexNumForDirection(dir);
-                Assert.IsTrue(vertexNum>=0 && vertexNum < Constants.NUM_HEX_VERTS);
+                Assert.IsTrue(vertexNum>=0 && vertexNum < Constants.H3.NUM_HEX_VERTS);
                 Assert.AreEqual(0, vertexNums[vertexNum]);
                 vertexNums[vertexNum] = 1;
             }
@@ -26,12 +26,12 @@ namespace TestSuite
         public void VertexNumForDirectionPent()
         {
             H3Index pentagon = 0x823007fffffffff;
-            var vertexNums = new int[Constants.NUM_PENT_VERTS];
+            var vertexNums = new int[Constants.H3.NUM_PENT_VERTS];
             
             for (var dir = Direction .J_AXES_DIGIT; dir < Direction.NUM_DIGITS ; dir++)
             {
                 int vertexNum = pentagon.VertexNumForDirection(dir);
-                Assert.IsTrue(vertexNum>=0 && vertexNum<Constants.NUM_PENT_VERTS);
+                Assert.IsTrue(vertexNum>=0 && vertexNum<Constants.H3.NUM_PENT_VERTS);
                 Assert.AreEqual(0, vertexNums[vertexNum]);
                 vertexNums[vertexNum] = 1;
             }
@@ -43,13 +43,13 @@ namespace TestSuite
             H3Index origin = 0x823007fffffffff;
 
             Assert.AreEqual
-                (origin.VertexNumForDirection(Direction.CENTER_DIGIT), H3Lib.StaticData.Vertex.INVALID_VERTEX_NUM);
+                (origin.VertexNumForDirection(Direction.CENTER_DIGIT), H3Lib.Constants.Vertex.INVALID_VERTEX_NUM);
             Assert.AreEqual
-                (origin.VertexNumForDirection(Direction.INVALID_DIGIT), H3Lib.StaticData.Vertex.INVALID_VERTEX_NUM);
+                (origin.VertexNumForDirection(Direction.INVALID_DIGIT), H3Lib.Constants.Vertex.INVALID_VERTEX_NUM);
 
             H3Index pentagon = 0x823007fffffffff;
             Assert.AreEqual
-                (pentagon.VertexNumForDirection(Direction.K_AXES_DIGIT), H3Lib.StaticData.Vertex.INVALID_VERTEX_NUM);
+                (pentagon.VertexNumForDirection(Direction.K_AXES_DIGIT), H3Lib.Constants.Vertex.INVALID_VERTEX_NUM);
         }
     }
 }

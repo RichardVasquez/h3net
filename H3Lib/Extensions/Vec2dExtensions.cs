@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Concurrent;
-using H3Lib.StaticData;
 
 namespace H3Lib.Extensions
 {
@@ -24,7 +22,7 @@ namespace H3Lib.Extensions
             double a2 = Math.Abs(v.Y);
             
             // first do a reverse conversion
-            double x2 = a2 / Constants.M_SIN60;
+            double x2 = a2 / Constants.H3.M_SIN60;
             double x1 = a1 + x2 / 2.0;
 
             // check if we have the center of a hex
@@ -117,9 +115,9 @@ namespace H3Lib.Extensions
             double r = v.Magnitude;
             bool bSubstrate = substrate != 0;
 
-            if (r < Constants.EPSILON)
+            if (r < Constants.H3.EPSILON)
             {
-                return StaticData.FaceIjk.FaceCenterGeo[face];
+                return Constants.FaceIjk.FaceCenterGeo[face];
             }
 
             double theta = Math.Atan2(v.Y, v.X);
@@ -127,7 +125,7 @@ namespace H3Lib.Extensions
             // scale for current resolution length u
             for (var i = 0; i < res; i++)
             {
-                r /= StaticData.FaceIjk.MSqrt7;
+                r /= Constants.FaceIjk.MSqrt7;
             }
 
             // scale accordingly if this is a substrate grid
@@ -136,11 +134,11 @@ namespace H3Lib.Extensions
                 r /= 3.0;
                 if (res.IsResClassIii())
                 {
-                    r /= StaticData.FaceIjk.MSqrt7;
+                    r /= Constants.FaceIjk.MSqrt7;
                 }
             }
 
-            r *= Constants.RES0_U_GNOMONIC;
+            r *= Constants.H3.RES0_U_GNOMONIC;
 
             // perform inverse gnomonic scaling of r
             r = Math.Atan(r);
@@ -149,14 +147,14 @@ namespace H3Lib.Extensions
             // if a substrate grid, then it's already been adjusted for Class III
             if (!bSubstrate && res.IsResClassIii())
             {
-                theta = (theta + Constants.M_AP7_ROT_RADS).NormalizeRadians();
+                theta = (theta + Constants.H3.M_AP7_ROT_RADS).NormalizeRadians();
             }
 
             // find theta as an azimuth
-            theta = (StaticData.FaceIjk.FaceAxesAzRadsCii[face, 0] - theta).NormalizeRadians();
+            theta = (Constants.FaceIjk.FaceAxesAzRadsCii[face, 0] - theta).NormalizeRadians();
 
             // now find the point at (r,theta) from the face center
-            return StaticData.FaceIjk.FaceCenterGeo[face].GetAzimuthDistancePoint(theta, r);
+            return Constants.FaceIjk.FaceCenterGeo[face].GetAzimuthDistancePoint(theta, r);
         }
         
 

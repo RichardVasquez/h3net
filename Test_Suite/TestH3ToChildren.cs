@@ -109,8 +109,8 @@ namespace TestSuite
         public void ChildResTooFine()
         {
             const int expectedCount = 0;
-            var sfHexMax = sf.ToH3Index(Constants.MAX_H3_RES);
-            var children = sfHexMax.ToChildren(Constants.MAX_H3_RES + 1);
+            var sfHexMax = sf.ToH3Index(Constants.H3.MAX_H3_RES);
+            var children = sfHexMax.ToChildren(Constants.H3.MAX_H3_RES + 1);
             verifyCountAndUniqueness(children, expectedCount);
         }
         

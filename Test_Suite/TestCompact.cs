@@ -56,14 +56,14 @@ namespace TestSuite
         [Test]
         public void Res0()
         {
-            const int hexCount = Constants.NUM_BASE_CELLS;
+            const int hexCount = Constants.H3.NUM_BASE_CELLS;
 
             var res0Hexes = Enumerable.Range(0, hexCount).Select
                 (s => new H3Index().SetIndex(0, s, Direction.CENTER_DIGIT)).ToList();
 
             (int status, var compressed) = res0Hexes.Compact();
 
-            Assert.AreEqual(H3Lib.StaticData.H3Index.COMPACT_SUCCESS, status);
+            Assert.AreEqual(H3Lib.Constants.H3Index.COMPACT_SUCCESS, status);
             for (var i = 0; i < compressed.Count; i++)
             {
                 Assert.AreEqual(compressed[i], res0Hexes[i]);
@@ -121,7 +121,7 @@ namespace TestSuite
             children[^1] = children.First();
             (int result, _) = children.Compact();
 
-            Assert.AreEqual(H3Lib.StaticData.H3Index.COMPACT_DUPLICATE, result);
+            Assert.AreEqual(H3Lib.Constants.H3Index.COMPACT_DUPLICATE, result);
         }
 
         [Test]
@@ -138,7 +138,7 @@ namespace TestSuite
             children[^1] = h3.ToCenterChild(res + 1);
             (var result, var compact) = children.Compact();
 
-            Assert.AreEqual(H3Lib.StaticData.H3Index.COMPACT_DUPLICATE, result);
+            Assert.AreEqual(H3Lib.Constants.H3Index.COMPACT_DUPLICATE, result);
         }
 
         [Test]
@@ -158,7 +158,7 @@ namespace TestSuite
 
             //  NOTE: FlexiCompact takes duplicates. Compact() is more rigid
             var (status, _) = children.FlexiCompact();
-            Assert.AreEqual(H3Lib.StaticData.H3Index.COMPACT_SUCCESS, status);
+            Assert.AreEqual(H3Lib.Constants.H3Index.COMPACT_SUCCESS, status);
         }
 
         [Test]
@@ -207,7 +207,7 @@ namespace TestSuite
             sizeResult = someHexagons.MaxUncompactSize(-1);
             Assert.IsTrue(sizeResult < 0);
 
-            sizeResult = someHexagons.MaxUncompactSize(Constants.MAX_H3_RES + 1);
+            sizeResult = someHexagons.MaxUncompactSize(Constants.H3.MAX_H3_RES + 1);
             Assert.IsTrue(sizeResult < 0);
 
             (int status, _) = someHexagons.Uncompact(0);
@@ -218,10 +218,10 @@ namespace TestSuite
             someHexagons.Clear();
             for(var i =0; i < numHex;i++)
             {
-                someHexagons.Add(new H3Index().SetIndex(Constants.MAX_H3_RES, i, 0));
+                someHexagons.Add(new H3Index().SetIndex(Constants.H3.MAX_H3_RES, i, 0));
             }
 
-            (status, _) = someHexagons.Uncompact(Constants.MAX_H3_RES + 1);
+            (status, _) = someHexagons.Uncompact(Constants.H3.MAX_H3_RES + 1);
             Assert.AreNotEqual(0,status);
         }
 

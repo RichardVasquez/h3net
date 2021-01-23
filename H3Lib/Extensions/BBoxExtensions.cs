@@ -74,7 +74,7 @@ namespace H3Lib.Extensions
             double latitude = (box.North + box.South) / 2.0;
             // If the bbox crosses the antimeridian, shift east 360 degrees
             double east = box.IsTransmeridian
-                              ? box.East + Constants.M_2PI
+                              ? box.East + Constants.H3.M_2PI
                               : box.East;
             double longitude = ((east + box.West) / 2.0).ConstrainLongitude();
             return new GeoCoord(latitude, longitude);

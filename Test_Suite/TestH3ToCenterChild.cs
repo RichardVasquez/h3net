@@ -20,9 +20,9 @@ namespace TestSuite
         [Test]
         public void PropertyTests()
         {
-            for (int res = 0; res <= Constants.MAX_H3_RES - 1; res++)
+            for (int res = 0; res <= Constants.H3.MAX_H3_RES - 1; res++)
             {
-                for (int childRes = res + 1; childRes <= Constants.MAX_H3_RES; childRes++)
+                for (int childRes = res + 1; childRes <= Constants.H3.MAX_H3_RES; childRes++)
                 {
                     var h3 = baseCentroid.ToH3Index(res);
                     var centroid = h3.ToGeoCoord();
@@ -52,7 +52,7 @@ namespace TestSuite
             int res = baseHex.Resolution;
             Assert.AreEqual(0, baseHex.ToCenterChild(res - 1).Value);
             Assert.AreEqual(0, baseHex.ToCenterChild(-1).Value);
-            Assert.AreEqual(0, baseHex.ToCenterChild(Constants.MAX_H3_RES + 1).Value);
+            Assert.AreEqual(0, baseHex.ToCenterChild(Constants.H3.MAX_H3_RES + 1).Value);
         }
 
     }

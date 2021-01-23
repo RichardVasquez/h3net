@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
-using H3Lib.StaticData;
 
 namespace H3Lib.Extensions
 {
@@ -96,7 +94,7 @@ namespace H3Lib.Extensions
         /// -->
         public static double DistanceToKm(this GeoCoord a, GeoCoord b)
         {
-            return a.DistanceToRadians(b) * Constants.EARTH_RADIUS_KM;
+            return a.DistanceToRadians(b) * Constants.H3.EARTH_RADIUS_KM;
         }
         
         /// <summary>
@@ -149,7 +147,7 @@ namespace H3Lib.Extensions
         /// -->
         public static GeoCoord GetAzimuthDistancePoint(this GeoCoord p1, double azimuth, double distance)
         {
-            if (distance < Constants.EPSILON)
+            if (distance < Constants.H3.EPSILON)
             {
                 return p1;
             }
@@ -158,9 +156,9 @@ namespace H3Lib.Extensions
             var p2 = new GeoCoord();
 
             // check for due north/south azimuth
-            if (azimuth < Constants.EPSILON || Math.Abs(azimuth - Constants.M_PI) < Constants.EPSILON)
+            if (azimuth < Constants.H3.EPSILON || Math.Abs(azimuth - Constants.H3.M_PI) < Constants.H3.EPSILON)
             {
-                if (azimuth < Constants.EPSILON) // due north
+                if (azimuth < Constants.H3.EPSILON) // due north
                 {
                     p2 = p2.SetLatitude(p1.Latitude + distance);
                 }
@@ -169,13 +167,13 @@ namespace H3Lib.Extensions
                     p2 = p2.SetLatitude(p1.Latitude - distance);
                 }
 
-                if (Math.Abs(p2.Latitude - Constants.M_PI_2) < Constants.EPSILON) // north pole
+                if (Math.Abs(p2.Latitude - Constants.H3.M_PI_2) < Constants.H3.EPSILON) // north pole
                 {
-                    p2 = new GeoCoord(Constants.M_PI_2, 0.0);
+                    p2 = new GeoCoord(Constants.H3.M_PI_2, 0.0);
                 }
-                else if (Math.Abs(p2.Latitude + Constants.M_PI_2) < Constants.EPSILON) // south pole
+                else if (Math.Abs(p2.Latitude + Constants.H3.M_PI_2) < Constants.H3.EPSILON) // south pole
                 {
-                    p2 = new GeoCoord(-Constants.M_PI_2, 0.0);
+                    p2 = new GeoCoord(-Constants.H3.M_PI_2, 0.0);
                 }
                 else
                 {
@@ -198,13 +196,13 @@ namespace H3Lib.Extensions
 
                 p2 = p2.SetLatitude(Math.Asin(sinLatitude));
 
-                if (Math.Abs(p2.Latitude - Constants.M_PI_2) < Constants.EPSILON) // north pole
+                if (Math.Abs(p2.Latitude - Constants.H3.M_PI_2) < Constants.H3.EPSILON) // north pole
                 {
-                    p2 = new GeoCoord(Constants.M_PI_2, 0.0);
+                    p2 = new GeoCoord(Constants.H3.M_PI_2, 0.0);
                 }
-                else if (Math.Abs(p2.Latitude + Constants.M_PI_2) < Constants.EPSILON) // south pole
+                else if (Math.Abs(p2.Latitude + Constants.H3.M_PI_2) < Constants.H3.EPSILON) // south pole
                 {
-                    p2 = new GeoCoord(-Constants.M_PI_2, 0.0);
+                    p2 = new GeoCoord(-Constants.H3.M_PI_2, 0.0);
                 }
                 else
                 {
@@ -280,11 +278,11 @@ namespace H3Lib.Extensions
             int newFace = 0;
 
             // determine the icosahedron face
-            double sqd = v3d.PointSquareDistance(StaticData.FaceIjk.FaceCenterPoint[0]);
+            double sqd = v3d.PointSquareDistance(Constants.FaceIjk.FaceCenterPoint[0]);
 
-            for (int f = 1; f < Constants.NUM_ICOSA_FACES; f++)
+            for (int f = 1; f < Constants.H3.NUM_ICOSA_FACES; f++)
             {
-                double sqdT = v3d.PointSquareDistance(StaticData.FaceIjk.FaceCenterPoint[f]);
+                double sqdT = v3d.PointSquareDistance(Constants.FaceIjk.FaceCenterPoint[f]);
                 if (!(sqdT < sqd))
                 {
                     continue;
@@ -296,40 +294,40 @@ namespace H3Lib.Extensions
             // cos(r) = 1 - 2 * sin^2(r/2) = 1 - 2 * (sqd / 4) = 1 - sqd/2
             double r = Math.Acos(1 - sqd / 2.0);
 
-            if (r < Constants.EPSILON)
+            if (r < Constants.H3.EPSILON)
             {
                 return (newFace, new Vec2d());
             }
 
             //  Temp to delete later
-            var art1 = StaticData.FaceIjk.FaceCenterGeo[newFace];
+            var art1 = Constants.FaceIjk.FaceCenterGeo[newFace];
             var art2 = art1.AzimuthRadiansTo(g);
             var art3 = art2.NormalizeRadians();
-            var art4 = StaticData.FaceIjk.FaceAxesAzRadsCii[newFace, 0] - art3;
+            var art4 = Constants.FaceIjk.FaceAxesAzRadsCii[newFace, 0] - art3;
             var art5 = art4.NormalizeRadians();
             
             // now have face and r, now find CCW theta from CII i-axis
             double theta =
                 (
-                    StaticData.FaceIjk.FaceAxesAzRadsCii[newFace, 0] -
-                    StaticData.FaceIjk.FaceCenterGeo[newFace].AzimuthRadiansTo(g)
-                       .NormalizeRadians()
+                    Constants.FaceIjk.FaceAxesAzRadsCii[newFace, 0] -
+                    Constants.FaceIjk.FaceCenterGeo[newFace].AzimuthRadiansTo(g)
+                             .NormalizeRadians()
                 ).NormalizeRadians();
             
             // adjust theta for Class III (odd resolutions)
             if (res.IsResClassIii())
             {
-                theta = (theta - Constants.M_AP7_ROT_RADS).NormalizeRadians();
+                theta = (theta - Constants.H3.M_AP7_ROT_RADS).NormalizeRadians();
             }
 
             // perform gnomonic scaling of r
             r = Math.Tan(r);
 
             // scale for current resolution length u
-            r /= Constants.RES0_U_GNOMONIC;
+            r /= Constants.H3.RES0_U_GNOMONIC;
             for (var i = 0; i < res; i++)
             {
-                r *= StaticData.FaceIjk.MSqrt7;
+                r *= Constants.FaceIjk.MSqrt7;
             }
             
             // we now have (r, theta) in hex2d with theta ccw from x-axes
@@ -376,14 +374,14 @@ namespace H3Lib.Extensions
         /// -->
         public static H3Index ToH3Index(this GeoCoord g, int res)
         {
-            if (res < 0 || res > Constants.MAX_H3_RES)
+            if (res < 0 || res > Constants.H3.MAX_H3_RES)
             {
-                return StaticData.H3Index.H3_INVALID_INDEX;
+                return Constants.H3Index.H3_INVALID_INDEX;
             }
             
             if (!double.IsFinite(g.Latitude) || !double.IsFinite(g.Longitude))
             {
-                return StaticData.H3Index.H3_INVALID_INDEX;
+                return Constants.H3Index.H3_INVALID_INDEX;
             }
 
             return g.ToFaceIjk(res).ToH3(res);

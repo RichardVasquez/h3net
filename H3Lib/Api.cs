@@ -7,7 +7,7 @@ namespace H3Lib
     {
         public static int PentagonIndexCount()
         {
-            return Constants.NUM_PENTAGONS;
+            return Constants.H3.NUM_PENTAGONS;
         }
 #region Group GeoToH3
         /// <summary>

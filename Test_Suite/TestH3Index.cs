@@ -49,7 +49,7 @@ namespace TestSuite
         [Test]
         public void H3IsValidAtResolution()
         {
-            for (int i = 0; i <= Constants.MAX_H3_RES; i++)
+            for (int i = 0; i <= Constants.H3.MAX_H3_RES; i++)
             {
                 GeoCoord geoCoord = default;
                 H3Index h3 = geoCoord.ToH3Index(i);
@@ -69,9 +69,9 @@ namespace TestSuite
         [Test]
         public void H3IsValidBaseCell()
         {
-            for (int i = 0; i < Constants. NUM_BASE_CELLS; i++)
+            for (int i = 0; i < Constants. H3.NUM_BASE_CELLS; i++)
             {
-                H3Index h = H3Lib.StaticData.H3Index.H3_INIT;
+                H3Index h = H3Lib.Constants.H3Index.H3_INIT;
                 h = h.SetMode(H3Mode.Hexagon).SetBaseCell(i);
                 Assert.IsTrue(h.IsValid());
                 Assert.AreEqual(i, h.BaseCell);
@@ -81,8 +81,8 @@ namespace TestSuite
         [Test]
         public void H3IsValidBaseCellInvalid()
         {
-            H3Index hWrongBaseCell = H3Lib.StaticData.H3Index.H3_INIT;
-            hWrongBaseCell.SetMode(H3Mode.Hexagon).SetBaseCell(Constants.NUM_BASE_CELLS);
+            H3Index hWrongBaseCell = H3Lib.Constants.H3Index.H3_INIT;
+            hWrongBaseCell.SetMode(H3Mode.Hexagon).SetBaseCell(Constants.H3.NUM_BASE_CELLS);
             Assert.IsFalse(hWrongBaseCell.IsValid());
         }
 
@@ -91,7 +91,7 @@ namespace TestSuite
         {
             for (var i = 0; i <= 15; i++)
             {
-                H3Index h = H3Lib.StaticData.H3Index.H3_INIT;
+                H3Index h = H3Lib.Constants.H3Index.H3_INIT;
                 h = h.SetMode((H3Mode) i);
                 if (i == (int) H3Mode.Hexagon)
                 {
@@ -109,7 +109,7 @@ namespace TestSuite
         {
             for (int i = 0; i < 8; i++)
             {
-                H3Index h = H3Lib.StaticData.H3Index.H3_INIT;
+                H3Index h = H3Lib.Constants.H3Index.H3_INIT;
                 h = h.SetMode(H3Mode.Hexagon).SetReservedBits(i);
 
                 if (i == 0)
@@ -126,7 +126,7 @@ namespace TestSuite
         [Test]
         public void H3IsValidHighBit()
         {
-            H3Index h = H3Lib.StaticData.H3Index.H3_INIT;
+            H3Index h = H3Lib.Constants.H3Index.H3_INIT;
             h = h.SetMode(H3Mode.Hexagon).SetHighBit(1);
             Assert.IsFalse(h.IsValid());
         }
@@ -134,7 +134,7 @@ namespace TestSuite
         [Test]
         public void H3BadDigitInvalid()
         {
-            H3Index h = H3Lib.StaticData.H3Index.H3_INIT;
+            H3Index h = H3Lib.Constants.H3Index.H3_INIT;
             // By default the first index digit is out of range.
             h = h.SetMode(H3Mode.Hexagon).SetResolution(1);
             Assert.IsFalse(h.IsValid());
@@ -201,7 +201,7 @@ namespace TestSuite
                 Assert.AreEqual(1, (int) h.GetIndexDigit(i));
             }
 
-            for (int i = 6; i <= Constants.MAX_H3_RES; i++)
+            for (int i = 6; i <= Constants.H3.MAX_H3_RES; i++)
             {
                 Assert.AreEqual(7, (int) h.GetIndexDigit(i));
             }
@@ -213,7 +213,7 @@ namespace TestSuite
         public void H3IsResClassIii()
         {
             GeoCoord coord = default;
-            for (int i = 0; i <= Constants.MAX_H3_RES; i++)
+            for (int i = 0; i <= Constants.H3.MAX_H3_RES; i++)
             {
                 var h = coord.ToH3Index(i);
                 Assert.AreEqual(h.IsResClassIii, i.IsResClassIii());

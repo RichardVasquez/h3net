@@ -20,7 +20,7 @@ namespace TestSuite
         {
             var (status, ijk) = pent1.ToLocalIjk(bc1);
             Assert.AreEqual(0,status);
-            Assert.AreEqual(H3Lib.StaticData.CoordIjk.UnitVecs[2], ijk);
+            Assert.AreEqual(H3Lib.Constants.CoordIjk.UnitVecs[2], ijk);
         }
 
         [Test]
@@ -72,9 +72,9 @@ namespace TestSuite
                 0x81293ffffffffff,
                 0x8150bffffffffff,
                 0x8151bffffffffff,
-                H3Lib.StaticData.H3Index.H3_NULL,
-                H3Lib.StaticData.H3Index.H3_NULL,
-                H3Lib.StaticData.H3Index.H3_NULL,
+                H3Lib.Constants.H3Index.H3_NULL,
+                H3Lib.Constants.H3Index.H3_NULL,
+                H3Lib.Constants.H3Index.H3_NULL,
             };
 
             for (var i = 0; i < numCoords; i++)
@@ -82,7 +82,7 @@ namespace TestSuite
                 
                 (int err, var result) = coords[i].ToH3Experimental(expected[0]);
 
-                if (expected[i] == H3Lib.StaticData.H3Index.H3_NULL)
+                if (expected[i] == H3Lib.Constants.H3Index.H3_NULL)
                 {
                     Assert.AreNotEqual(0, err);
                 }
@@ -122,9 +122,9 @@ namespace TestSuite
         {
             //  Test that coming from the same direction outside the pentagon is handled
             //  the same as coming from the same direction inside the pentagon.
-            for (var bc = 0; bc < Constants.NUM_BASE_CELLS; bc++)
+            for (var bc = 0; bc < Constants.H3.NUM_BASE_CELLS; bc++)
             {
-                for (var res = 1; res <= Constants.MAX_H3_RES; res++)
+                for (var res = 1; res <= Constants.H3.MAX_H3_RES; res++)
                 {
                     // K_AXES_DIGIT is the first internal direction, and it's also
                     // invalid for pentagons, so skip to next.

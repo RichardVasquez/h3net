@@ -3,7 +3,6 @@ using H3Lib;
 using H3Lib.Extensions;
 using NUnit.Framework;
 using TestSuite.Lib;
-using GeoCoord = H3Lib.StaticData.GeoCoord;
 
 namespace TestSuite
 {
@@ -125,8 +124,8 @@ namespace TestSuite
         public void cell_area_earth()
         {
             // earth area in different units
-            double rads2 = 4 * Constants.M_PI;
-            double km2 = rads2 * Constants.EARTH_RADIUS_KM * Constants.EARTH_RADIUS_KM;
+            double rads2 = 4 * Constants.H3.M_PI;
+            double km2 = rads2 * Constants.H3.EARTH_RADIUS_KM * Constants.H3.EARTH_RADIUS_KM;
             double m2 = km2 * 1000 * 1000;
 
             // Notice the drop in accuracy at resolution 1.

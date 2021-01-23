@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using H3Lib.StaticData;
 
 namespace H3Lib.Extensions
 {
@@ -54,7 +53,7 @@ namespace H3Lib.Extensions
             var ijk = fijk.Coord;
 
             // get the maximum dimension value; scale if a substrate grid
-            int maxDim = StaticData.FaceIjk.MaxDimByCiiRes[res];
+            int maxDim = Constants.FaceIjk.MaxDimByCiiRes[res];
             if (substrate != 0)
             {
                 maxDim *= 3;
@@ -74,15 +73,15 @@ namespace H3Lib.Extensions
                 {
                     if (ijk.J > 0) // jk "quadrant"
                     {
-                        fijkOrient = StaticData
+                        fijkOrient = Constants
                                     .FaceIjk
-                                    .FaceNeighbors[fijk.Face, StaticData.FaceIjk.JK];
+                                    .FaceNeighbors[fijk.Face, Constants.FaceIjk.JK];
                     }
                     else // ik "quadrant"
                     {
-                        fijkOrient = StaticData
+                        fijkOrient = Constants
                                     .FaceIjk
-                                    .FaceNeighbors[fijk.Face, StaticData.FaceIjk.KI];
+                                    .FaceNeighbors[fijk.Face, Constants.FaceIjk.KI];
 
                         // adjust for the pentagonal missing sequence
                         if (pentLeading4 != 0)
@@ -101,9 +100,9 @@ namespace H3Lib.Extensions
                 }
                 else // ij "quadrant"
                 {
-                    fijkOrient = StaticData
+                    fijkOrient = Constants
                                 .FaceIjk
-                                .FaceNeighbors[fijk.Face, StaticData.FaceIjk.IJ];
+                                .FaceNeighbors[fijk.Face, Constants.FaceIjk.IJ];
                 }
 
                 fijk = fijk.ReplaceFace(fijkOrient.Face);
@@ -117,7 +116,7 @@ namespace H3Lib.Extensions
                 }
 
                 var transVec = fijkOrient.Translate;
-                int unitScale = StaticData.FaceIjk.UnitScaleByCiiRes[res];
+                int unitScale = Constants.FaceIjk.UnitScaleByCiiRes[res];
                 if (substrate != 0)
                 {
                     unitScale *= 3;
@@ -233,7 +232,7 @@ namespace H3Lib.Extensions
             // The center point is now in the same substrate grid as the origin
             // cell vertices. Add the center point substrate coordinates
             // to each vertex to translate the vertices to that cell.
-            for (var v = 0; v < Constants.NUM_PENT_VERTS; v++)
+            for (var v = 0; v < Constants.H3.NUM_PENT_VERTS; v++)
             {
                 int newFace = fijk.Face;
                 var newCoord = (fijk.Coord + verts[v]).Normalized();
@@ -312,7 +311,7 @@ namespace H3Lib.Extensions
             // The center point is now in the same substrate grid as the origin
             // cell vertices. Add the center point substrate coordinates
             // to each vertex to translate the vertices to that cell.
-            for (int v = 0; v < Constants.NUM_HEX_VERTS; v++)
+            for (int v = 0; v < Constants.H3.NUM_HEX_VERTS; v++)
             {
                 fijkVerts[v] = fijkVerts[v]
                               .ReplaceFace(fijk.Face)
@@ -335,18 +334,18 @@ namespace H3Lib.Extensions
         public static H3Index ToH3(this FaceIjk fijk, int res)
         {
             // initialize the index
-            H3Index h = StaticData.H3Index.H3_INIT;
+            H3Index h = Constants.H3Index.H3_INIT;
             h = h.SetMode(H3Mode.Hexagon).SetResolution(res);
 
             // check for res 0/base cell
             if (res == 0)
             {
-                if (fijk.Coord.I > StaticData.BaseCells.MaxFaceCoord ||
-                    fijk.Coord.J > StaticData.BaseCells.MaxFaceCoord ||
-                    fijk.Coord.K > StaticData.BaseCells.MaxFaceCoord)
+                if (fijk.Coord.I > Constants.BaseCells.MaxFaceCoord ||
+                    fijk.Coord.J > Constants.BaseCells.MaxFaceCoord ||
+                    fijk.Coord.K > Constants.BaseCells.MaxFaceCoord)
                 {
                     // out of range input
-                    return StaticData.H3Index.H3_INVALID_INDEX;
+                    return Constants.H3Index.H3_INVALID_INDEX;
                 }
 
                 return h.SetBaseCell(fijk.ToBaseCell());
@@ -386,12 +385,12 @@ namespace H3Lib.Extensions
 
             // fijkBC should now hold the IJK of the base cell in the
             // coordinate system of the current face
-            if (fijkBc.Coord.I > StaticData.BaseCells.MaxFaceCoord ||
-                fijkBc.Coord.J > StaticData.BaseCells.MaxFaceCoord ||
-                fijkBc.Coord.K > StaticData.BaseCells.MaxFaceCoord)
+            if (fijkBc.Coord.I > Constants.BaseCells.MaxFaceCoord ||
+                fijkBc.Coord.J > Constants.BaseCells.MaxFaceCoord ||
+                fijkBc.Coord.K > Constants.BaseCells.MaxFaceCoord)
             {
                 // out of range input
-                return StaticData.H3Index.H3_INVALID_INDEX;
+                return Constants.H3Index.H3_INVALID_INDEX;
             }
 
             // lookup the correct base cell
@@ -443,9 +442,9 @@ namespace H3Lib.Extensions
         /// -->
         public static int ToBaseCell(this FaceIjk h)
         {
-            return StaticData.BaseCells
-                             .FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
-                             .BaseCell;
+            return Constants.BaseCells
+                            .FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
+                            .BaseCell;
         }
 
         /// <summary>
@@ -463,9 +462,9 @@ namespace H3Lib.Extensions
         /// -->
         public static int ToBaseCellCounterClockwiseRotate60(this FaceIjk h)
         {
-            return StaticData.BaseCells
-                             .FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
-                             .CounterClockwiseRotate60;
+            return Constants.BaseCells
+                            .FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
+                            .CounterClockwiseRotate60;
         }
 
         /// <summary>
@@ -506,14 +505,14 @@ namespace H3Lib.Extensions
 
             int adjRes = res;
             var centerIjk = h;
-            IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.NUM_HEX_VERTS)
+            IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.H3.NUM_HEX_VERTS)
                                                  .Select(i => new FaceIjk())
                                                  .ToArray();
             (centerIjk, adjRes, fijkVerts) = centerIjk.ToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
             // of a distortion vertex on the last edge
-            int additionalIteration = length == Constants.NUM_HEX_VERTS
+            int additionalIteration = length == Constants.H3.NUM_HEX_VERTS
                                           ? 1
                                           : 0;
 
@@ -527,7 +526,7 @@ namespace H3Lib.Extensions
                  vert < start + length + additionalIteration;
                  vert++)
             {
-                int v = vert % Constants.NUM_HEX_VERTS;
+                int v = vert % Constants.H3.NUM_HEX_VERTS;
                 var fijk = fijkVerts[v];
                 const int pentLeading4 = 0;
 
@@ -547,33 +546,33 @@ namespace H3Lib.Extensions
                     lastOverage != Overage.FACE_EDGE)
                 {
                     // find hex2d of the two vertexes on original face
-                    int lastV = (v + 5) % Constants.NUM_HEX_VERTS;
+                    int lastV = (v + 5) % Constants.H3.NUM_HEX_VERTS;
                     var orig2d0 = fijkVerts[lastV].Coord.ToHex2d();
                     var orig2d1 = fijkVerts[v].Coord.ToHex2d();
 
                     // find the appropriate icosahedron face edge vertexes
-                    int maxDim = StaticData.FaceIjk.MaxDimByCiiRes[adjRes];
+                    int maxDim = Constants.FaceIjk.MaxDimByCiiRes[adjRes];
                     var v0 = new Vec2d(3.0 * maxDim, 0.0);
-                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.M_SQRT3_2 * maxDim);
-                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.M_SQRT3_2 * maxDim);
+                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.H3.M_SQRT3_2 * maxDim);
+                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.H3.M_SQRT3_2 * maxDim);
 
                     int face2 = lastFace == centerIjk.Face
                                     ? fijk.Face
                                     : lastFace;
                     Vec2d edge0;
                     Vec2d edge1;
-                    switch (StaticData.FaceIjk.AdjacentFaceDir[centerIjk.Face, face2])
+                    switch (Constants.FaceIjk.AdjacentFaceDir[centerIjk.Face, face2])
                     {
-                        case StaticData.FaceIjk.IJ:
+                        case Constants.FaceIjk.IJ:
                             edge0 = v0;
                             edge1 = v1;
                             break;
-                        case StaticData.FaceIjk.JK:
+                        case Constants.FaceIjk.JK:
                             edge0 = v1;
                             edge1 = v2;
                             break;
                         default:
-                            if (StaticData.FaceIjk.AdjacentFaceDir[centerIjk.Face, face2] != StaticData.FaceIjk.KI)
+                            if (Constants.FaceIjk.AdjacentFaceDir[centerIjk.Face, face2] != Constants.FaceIjk.KI)
                             {
                                 throw new Exception("adjacentFaceDir[centerIJK.face][face2] == KI");
                             }
@@ -601,7 +600,7 @@ namespace H3Lib.Extensions
                 // convert vertex to lat/lon and add to the result
                 // vert == start + NUM_HEX_VERTS is only used to test for possible
                 // intersection on last edge
-                if (vert < start + Constants.NUM_HEX_VERTS)
+                if (vert < start + Constants.H3.NUM_HEX_VERTS)
                 {
                     gb.Verts[gb.NumVerts] = fijk.Coord
                                                 .ToHex2d()
@@ -634,12 +633,12 @@ namespace H3Lib.Extensions
             var gb = new GeoBoundary();
             int adjRes = res;
             var centerIjk = h;
-            IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
+            IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.H3.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
             (centerIjk, adjRes, fijkVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
             // of a distortion vertex on the last edge
-            int additionalIteration = length == Constants.NUM_PENT_VERTS
+            int additionalIteration = length == Constants.H3.NUM_PENT_VERTS
                                           ? 1
                                           : 0;
 
@@ -651,7 +650,7 @@ namespace H3Lib.Extensions
 
             for (int vert = start; vert < start + length + additionalIteration; vert++)
             {
-                int v = vert % Constants.NUM_PENT_VERTS;
+                int v = vert % Constants.H3.NUM_PENT_VERTS;
                 var fijk = fijkVerts[v];
                 (_, fijk) = fijk.AdjustPentOverage(adjRes); 
                 
@@ -665,9 +664,9 @@ namespace H3Lib.Extensions
 
                     var orig2d0 = lastFijk.Coord.ToHex2d();
 
-                    int currentToLastDir = StaticData.FaceIjk.AdjacentFaceDir[tmpFijk.Face, lastFijk.Face];
+                    int currentToLastDir = Constants.FaceIjk.AdjacentFaceDir[tmpFijk.Face, lastFijk.Face];
 
-                    var fijkOrient = StaticData.FaceIjk.FaceNeighbors[tmpFijk.Face, currentToLastDir];
+                    var fijkOrient = Constants.FaceIjk.FaceNeighbors[tmpFijk.Face, currentToLastDir];
 
                     tmpFijk = tmpFijk.ReplaceFace(fijkOrient.Face);
                     //  Borrow ijk
@@ -686,26 +685,26 @@ namespace H3Lib.Extensions
                     tmpFijk = tmpFijk.ReplaceCoord(ijk);
 
                     // find the appropriate icosahedron face edge vertexes
-                    int maxDim = StaticData.FaceIjk.MaxDimByCiiRes[adjRes];
+                    int maxDim = Constants.FaceIjk.MaxDimByCiiRes[adjRes];
                     var v0 = new Vec2d(3.0 * maxDim, 0.0);
-                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.M_SQRT3_2 * maxDim);
-                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.M_SQRT3_2 * maxDim);
+                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.H3.M_SQRT3_2 * maxDim);
+                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.H3.M_SQRT3_2 * maxDim);
 
                     Vec2d edge0;
                     Vec2d edge1;
 
-                    switch (StaticData.FaceIjk.AdjacentFaceDir[tmpFijk.Face, fijk.Face])
+                    switch (Constants.FaceIjk.AdjacentFaceDir[tmpFijk.Face, fijk.Face])
                     {
-                        case StaticData.FaceIjk.IJ:
+                        case Constants.FaceIjk.IJ:
                             edge0 = v0;// new Vec2d(v0.X, v0.Y);
                             edge1 = v1;//new Vec2d(v1.X, v1.Y);
                             break;
-                        case StaticData.FaceIjk.JK:
+                        case Constants.FaceIjk.JK:
                             edge0 = v1;//new Vec2d(v1.X, v1.Y);
                             edge1 = v2;//new Vec2d(v2.X, v2.Y);
                             break;
                         default:
-                            if (StaticData.FaceIjk.AdjacentFaceDir[tmpFijk.Face, fijk.Face] != StaticData.FaceIjk.KI)
+                            if (Constants.FaceIjk.AdjacentFaceDir[tmpFijk.Face, fijk.Face] != Constants.FaceIjk.KI)
                             {
                                 throw new Exception("assert(adjacentFaceDir[tmpFijk.face][fijk.face] == KI);");
                             }
@@ -724,7 +723,7 @@ namespace H3Lib.Extensions
                 // convert vertex to lat/lon and add to the result
                 // vert == start + NUM_PENT_VERTS is only used to test for possible
                 // intersection on last edge
-                if (vert < start + Constants.NUM_PENT_VERTS)
+                if (vert < start + Constants.H3.NUM_PENT_VERTS)
                 {
                     gb.Verts[gb.NumVerts] = fijk.Coord
                                                 .ToHex2d()

@@ -27,14 +27,14 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double _posAngleRads
         /// -->
-        public static double NormalizeRadians(this double rads, double limit = Constants.M_2PI)
+        public static double NormalizeRadians(this double rads, double limit = Constants.H3.M_2PI)
         {
             double tmp = rads < 0.0
-                             ? rads + Constants.M_2PI
+                             ? rads + Constants.H3.M_2PI
                              : rads;
-            if (rads >= Constants.M_2PI)
+            if (rads >= Constants.H3.M_2PI)
             {
-                tmp -= Constants.M_2PI;
+                tmp -= Constants.H3.M_2PI;
             }
 
             return tmp;
@@ -51,9 +51,9 @@ namespace H3Lib.Extensions
         /// -->
         public static double ConstrainLatitude(this double latitude)
         {
-            while (latitude > Constants.M_PI_2)
+            while (latitude > Constants.H3.M_PI_2)
             {
-                latitude -= Constants.M_PI;
+                latitude -= Constants.H3.M_PI;
             }
 
             return latitude;
@@ -63,9 +63,9 @@ namespace H3Lib.Extensions
         public static double ConstrainLatitude(this int latitude)
         {
             var newLatitude = (double) latitude;
-            while (newLatitude > Constants.M_PI_2)
+            while (newLatitude > Constants.H3.M_PI_2)
             {
-                newLatitude -= Constants.M_PI;
+                newLatitude -= Constants.H3.M_PI;
             }
 
             return newLatitude;
@@ -82,14 +82,14 @@ namespace H3Lib.Extensions
         /// -->
         public static double ConstrainLongitude(this double longitude)
         {
-            while (longitude > Constants.M_PI)
+            while (longitude > Constants.H3.M_PI)
             {
-                longitude -= 2 * Constants.M_PI;
+                longitude -= 2 * Constants.H3.M_PI;
             }
 
-            while (longitude < -Constants.M_PI)
+            while (longitude < -Constants.H3.M_PI)
             {
-                longitude += 2 * Constants.M_PI;
+                longitude += 2 * Constants.H3.M_PI;
             }
 
             return longitude;
@@ -98,14 +98,14 @@ namespace H3Lib.Extensions
         public static double ConstrainLongitude(this int longitude)
         {
             var newLongitude = (double) longitude;
-            while (newLongitude > Constants.M_PI)
+            while (newLongitude > Constants.H3.M_PI)
             {
-                newLongitude -= 2 * Constants.M_PI;
+                newLongitude -= 2 * Constants.H3.M_PI;
             }
 
-            while (newLongitude < -Constants.M_PI)
+            while (newLongitude < -Constants.H3.M_PI)
             {
-                newLongitude += 2 * Constants.M_PI;
+                newLongitude += 2 * Constants.H3.M_PI;
             }
 
             return newLongitude;
@@ -122,12 +122,12 @@ namespace H3Lib.Extensions
         /// -->
         public static double DegreesToRadians(this double degrees)
         {
-            return degrees * Constants.M_PI_180;
+            return degrees * Constants.H3.M_PI_180;
         }
 
         public static double DegreesToRadians(this int degrees)
         {
-            return degrees * Constants.M_PI_180;
+            return degrees * Constants.H3.M_PI_180;
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace H3Lib.Extensions
         /// -->
         public static double RadiansToDegrees(this double radians)
         {
-            return radians * Constants.M_180_PI;
+            return radians * Constants.H3.M_180_PI;
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace H3Lib.Extensions
         public static bool IsValidChildRes(this int parentRes, int childRes)
         {
             return childRes >= parentRes &&
-                   childRes <= Constants.MAX_H3_RES;
+                   childRes <= Constants.H3.MAX_H3_RES;
         }
 
         /// Generates all pentagons at the specified resolution
@@ -267,7 +267,7 @@ namespace H3Lib.Extensions
         public static List<H3Index> GetPentagonIndexes(this int res)
         {
             var results = new List<H3Index>();
-            for (int bc = 0; bc < Constants.NUM_BASE_CELLS; bc++)
+            for (int bc = 0; bc < Constants.H3.NUM_BASE_CELLS; bc++)
             {
                 if (bc.IsBaseCellPentagon())
                 {
@@ -307,25 +307,25 @@ namespace H3Lib.Extensions
         {
             if (h3Set == null || h3Set.Count == 0)
             {
-                return (StaticData.H3Index.COMPACT_SUCCESS, new List<H3Index>());
+                return (Constants.H3Index.COMPACT_SUCCESS, new List<H3Index>());
             }
 
             if (h3Set.All(h => h.Resolution == 0))
             {
                 // No compaction possible, just copy the set to output
-                return (StaticData.H3Index.COMPACT_SUCCESS, h3Set);
+                return (Constants.H3Index.COMPACT_SUCCESS, h3Set);
             }
 
             //  Compact assumes that all cells are the same resolution and uses first cell
             var testResolution = h3Set[0].Resolution;
             if (h3Set.Any(h => h.Resolution != testResolution))
             {
-                return (StaticData.H3Index.COMPACT_BAD_DATA, h3Set);
+                return (Constants.H3Index.COMPACT_BAD_DATA, h3Set);
             }
 
             if (h3Set.Distinct().Count() != h3Set.Count)
             {
-                return (StaticData.H3Index.COMPACT_DUPLICATE, h3Set);
+                return (Constants.H3Index.COMPACT_DUPLICATE, h3Set);
             }
 
             return h3Set.FlexiCompact();
@@ -341,13 +341,13 @@ namespace H3Lib.Extensions
         {
             if (h3Set == null || h3Set.Count == 0)
             {
-                return (StaticData.H3Index.COMPACT_SUCCESS, new List<H3Index>());
+                return (Constants.H3Index.COMPACT_SUCCESS, new List<H3Index>());
             }
 
             if (h3Set.All(h => h.Resolution == 0))
             {
                 // No compaction possible, just copy the set to output
-                return (StaticData.H3Index.COMPACT_SUCCESS, h3Set);
+                return (Constants.H3Index.COMPACT_SUCCESS, h3Set);
             }
 
             var finalPool = new HashSet<H3Index>();
@@ -390,7 +390,7 @@ namespace H3Lib.Extensions
                 {
                     if (!key.IsValid())
                     {
-                        return (StaticData.H3Index.COMPACT_BAD_DATA, new List<H3Index>());
+                        return (Constants.H3Index.COMPACT_BAD_DATA, new List<H3Index>());
                     }
 
                     var neededChildren = key.IsPentagon()
@@ -422,7 +422,7 @@ namespace H3Lib.Extensions
                 maxResolution--;
             }
 
-            return (StaticData.H3Index.COMPACT_SUCCESS, finalPool.ToList());
+            return (Constants.H3Index.COMPACT_SUCCESS, finalPool.ToList());
         }
 
         /// <summary>
@@ -449,7 +449,7 @@ namespace H3Lib.Extensions
         public static double NormalizeLongitude(this double longitude, bool isTransmeridian)
         {
             return isTransmeridian && longitude < 0
-                       ? longitude + Constants.M_2PI
+                       ? longitude + Constants.H3.M_2PI
                        : longitude;
         }
 

@@ -41,25 +41,25 @@ namespace H3Lib
         // geoCoord.c double H3_EXPORT(hexAreaKm2)
         public static double HexAreaKm2(int res)
         {
-            return StaticData.GeoCoord.AreasKm2[res];
+            return Constants.GeoCoord.AreasKm2[res];
         }
 
         // geoCoord.c double H3_EXPORT(hexAreaM2)
         public static double HexAreaM2(int res)
         {
-            return StaticData.GeoCoord.AreasM2[res];
+            return Constants.GeoCoord.AreasM2[res];
         }
 
         // geoCoord.c double H3_EXPORT(edgeLengthKm)
         public static double EdgeLengthKm(int res)
         {
-            return StaticData.GeoCoord.EdgeLengthKm[res];
+            return Constants.GeoCoord.EdgeLengthKm[res];
         }
 
         // geoCoord.c double H3_EXPORT(edgeLengthM)
         public static double EdgeLengthM(int res)
         {
-            return StaticData.GeoCoord.EdgeLengthM[res];
+            return Constants.GeoCoord.EdgeLengthM[res];
         }
 
         /// <summary>
@@ -114,8 +114,8 @@ namespace H3Lib
         public bool Equals(GeoCoord other)
         {
             return
-                Math.Abs(Latitude - other.Latitude) < Constants.EPSILON_RAD &&
-                Math.Abs(Longitude - other.Longitude) < Constants.EPSILON_RAD;
+                Math.Abs(Latitude - other.Latitude) < Constants.H3.EPSILON_RAD &&
+                Math.Abs(Longitude - other.Longitude) < Constants.H3.EPSILON_RAD;
         }
 
         public override bool Equals(object obj)

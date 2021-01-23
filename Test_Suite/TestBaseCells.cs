@@ -26,9 +26,9 @@ namespace TestSuite
         [Test]
         public void BaseCellToCcwRot60Invalid()
         {
-            Assert.AreEqual(16.ToCounterClockwiseRotate60(42), H3Lib.StaticData.BaseCells.InvalidRotations);
-            Assert.AreEqual(16.ToCounterClockwiseRotate60(-1), H3Lib.StaticData.BaseCells.InvalidRotations);
-            Assert.AreEqual(11.ToCounterClockwiseRotate60(0), H3Lib.StaticData.BaseCells.InvalidRotations);
+            Assert.AreEqual(16.ToCounterClockwiseRotate60(42), H3Lib.Constants.BaseCells.InvalidRotations);
+            Assert.AreEqual(16.ToCounterClockwiseRotate60(-1), H3Lib.Constants.BaseCells.InvalidRotations);
+            Assert.AreEqual(11.ToCounterClockwiseRotate60(0), H3Lib.Constants.BaseCells.InvalidRotations);
         }
     }
 }

@@ -1,6 +1,6 @@
 # Old API
 
-This is a promisary note at this point, as the code hasn't
+This is a promissory note at this point, as the code hasn't
 been written and/or checked yet
 
 Building h3net as a DLL will provide the following methods.

@@ -13,7 +13,7 @@ namespace TestSuite
             var v = new Vec2d(3.0, 4.0);
             const double expected = 5.0;
             double mag = v.Magnitude;
-            Assert.IsTrue(Math.Abs(mag-expected) < Constants.DBL_EPSILON);
+            Assert.IsTrue(Math.Abs(mag-expected) < Constants.H3.DBL_EPSILON);
         }
 
         [Test]
@@ -29,8 +29,8 @@ namespace TestSuite
             const double expectedX = 4.0;
             const double expectedY = 4.0;
 
-            Assert.IsTrue(Math.Abs(intersection.X - expectedX) < Constants.DBL_EPSILON);
-            Assert.IsTrue(Math.Abs(intersection.Y - expectedY) < Constants.DBL_EPSILON);
+            Assert.IsTrue(Math.Abs(intersection.X - expectedX) < Constants.H3.DBL_EPSILON);
+            Assert.IsTrue(Math.Abs(intersection.Y - expectedY) < Constants.H3.DBL_EPSILON);
         }
 
         [Test]

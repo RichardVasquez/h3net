@@ -223,14 +223,14 @@ namespace TestSuite
             // base cell, and neither of the cwOffsetPent values are the original
             // base cell's face.
 
-            for (int pentagon = 0; pentagon < Constants.NUM_BASE_CELLS; pentagon++)
+            for (int pentagon = 0; pentagon < Constants.H3.NUM_BASE_CELLS; pentagon++)
             {
                 if (!pentagon.IsBaseCellPentagon())
                 {
                     continue;
                 }
 
-                for (int neighbor = 0; neighbor < Constants.NUM_BASE_CELLS; neighbor++)
+                for (int neighbor = 0; neighbor < Constants.H3.NUM_BASE_CELLS; neighbor++)
                 {
                     var homeFaceIjk = neighbor.ToFaceIjk();
                     int neighborFace = homeFaceIjk.Face;

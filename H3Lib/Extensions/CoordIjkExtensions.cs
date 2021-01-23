@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using H3Lib.StaticData;
 
 namespace H3Lib.Extensions
 {
@@ -52,7 +51,7 @@ namespace H3Lib.Extensions
             int i = h.I - h.K;
             int j = h.J - h.K;
 
-            return new Vec2d(i - 0.5 * j, j * Constants.M_SQRT3_2);
+            return new Vec2d(i - 0.5 * j, j * Constants.H3.M_SQRT3_2);
         }
 
         /// <summary>
@@ -110,7 +109,7 @@ namespace H3Lib.Extensions
         public static Direction ToDirection(this CoordIjk ijk)
         {
             var c = ijk.Normalized();
-            var test = StaticData.CoordIjk.UnitVectors.Where(pair => pair.Value == c).ToList();
+            var test = Constants.CoordIjk.UnitVectors.Where(pair => pair.Value == c).ToList();
 
             return test.Any()
                        ? test.First().Key
@@ -213,7 +212,7 @@ namespace H3Lib.Extensions
                 return ijk;
             }
 
-            return (ijk + StaticData.CoordIjk.UnitVectors[digit]).Normalized();
+            return (ijk + Constants.CoordIjk.UnitVectors[digit]).Normalized();
         }
 
         /// <summary>
@@ -376,7 +375,7 @@ namespace H3Lib.Extensions
             // This logic is very similar to faceIjkToH3
             // initialize the index
 
-            var outH3 = new H3Index(StaticData.H3Index.H3_INIT);
+            var outH3 = new H3Index(Constants.H3Index.H3_INIT);
             outH3 = outH3.SetMode(H3Mode.Hexagon).SetResolution(res);
 
             // check for res 0/base cell
@@ -390,7 +389,7 @@ namespace H3Lib.Extensions
                 Direction dir = ijk.ToDirection();
                 int newBaseCell = originBaseCell.GetNeighbor(dir);
             
-                if (newBaseCell == StaticData.BaseCells.InvalidBaseCell)
+                if (newBaseCell == Constants.BaseCells.InvalidBaseCell)
                 {
                     // Moving in an invalid direction off a pentagon.
                     return (1, new H3Index());
@@ -445,7 +444,7 @@ namespace H3Lib.Extensions
             // pentagon, and because pentagon base cells do not border each other,
             // baseCell must not be a pentagon.
             int indexOnPent =
-                baseCell == StaticData.BaseCells.InvalidBaseCell
+                baseCell == Constants.BaseCells.InvalidBaseCell
                     ? 0
                     : baseCell.IsBaseCellPentagon()
                         ? 1
@@ -461,7 +460,7 @@ namespace H3Lib.Extensions
                 {
                     Direction originLeadingDigit = origin.LeadingNonZeroDigit;
                     pentagonRotations =
-                        LocalIJ.PENTAGON_ROTATIONS_REVERSE[(int)originLeadingDigit, (int)dir2];
+                        Constants.LocalIJ.PENTAGON_ROTATIONS_REVERSE[(int)originLeadingDigit, (int)dir2];
                     for (var i = 0; i < pentagonRotations; i++)
                     {
                         dir2 = dir2.Rotate60CounterClockwise();
@@ -474,11 +473,11 @@ namespace H3Lib.Extensions
                     {
                         return(3, new H3Index());
                     }
-                    baseCell = StaticData.BaseCells.BaseCellNeighbors[originBaseCell, (int)dir2];
+                    baseCell = Constants.BaseCells.BaseCellNeighbors[originBaseCell, (int)dir2];
 
                     // indexOnPent does not need to be checked again since no pentagon
                     // base cells border each other.
-                    if (baseCell == StaticData.BaseCells.InvalidBaseCell)
+                    if (baseCell == Constants.BaseCells.InvalidBaseCell)
                     {
                         throw new Exception("baseCell != INVALID_BASE_CELL");
                     }
@@ -492,7 +491,7 @@ namespace H3Lib.Extensions
                 // Now we can determine the relation between the origin and target base
                 // cell.
                 int baseCellRotations =
-                    StaticData.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[originBaseCell, (int) dir2];
+                    Constants.BaseCells.BaseCellNeighbor60CounterClockwiseRotation[originBaseCell, (int) dir2];
                 if (baseCellRotations < 0)
                 {
                     throw new Exception("assert(baseCellRotations >= 0)");
@@ -521,8 +520,8 @@ namespace H3Lib.Extensions
                     var indexLeadingDigit = outH3.LeadingNonZeroDigit;
                     pentagonRotations =
                         baseCell.IsBaseCellPolarPentagon()
-                            ? LocalIJ.PENTAGON_ROTATIONS_REVERSE_POLAR[(int) revDir, (int) indexLeadingDigit]
-                            : LocalIJ.PENTAGON_ROTATIONS_REVERSE_NONPOLAR[(int) revDir, (int) indexLeadingDigit];
+                            ? Constants.LocalIJ.PENTAGON_ROTATIONS_REVERSE_POLAR[(int) revDir, (int) indexLeadingDigit]
+                            : Constants.LocalIJ.PENTAGON_ROTATIONS_REVERSE_NONPOLAR[(int) revDir, (int) indexLeadingDigit];
 
                     if (pentagonRotations < 0)
                     {
@@ -560,7 +559,7 @@ namespace H3Lib.Extensions
                 var indexLeadingDigit = (int) outH3.LeadingNonZeroDigit;
 
                 int withinPentagonRotations =
-                    LocalIJ.PENTAGON_ROTATIONS_REVERSE[originLeadingDigit, indexLeadingDigit];
+                    Constants.LocalIJ.PENTAGON_ROTATIONS_REVERSE[originLeadingDigit, indexLeadingDigit];
                 if (withinPentagonRotations < 0)
                 {
                     throw new Exception("withinPentagonRotations >= 0");

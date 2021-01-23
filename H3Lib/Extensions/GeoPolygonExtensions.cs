@@ -95,7 +95,7 @@ namespace H3Lib.Extensions
             // conservative overestimation of the number of hexagons possible.
             int numHexagons = polygon.MaxPolyFillSize(res);
             return Enumerable.Range(1, numHexagons)
-                             .Select(r => (H3Index) StaticData.H3Index.H3_NULL)
+                             .Select(r => (H3Index) Constants.H3Index.H3_NULL)
                              .ToList();
         }
         
@@ -135,7 +135,7 @@ namespace H3Lib.Extensions
             // resolution, the line tracing needs an extra buffer than the estimator
             // function provides (but beefing that up to cover causes most situations to
             // overallocate memory)
-            numHexagons += StaticData.Algos.PolyfillBuffer;
+            numHexagons += Constants.Algos.PolyfillBuffer;
             return numHexagons;
         }
 
@@ -256,14 +256,14 @@ namespace H3Lib.Extensions
                 {
                     H3Index searchHex = search[i];
                     var ring = searchHex.KRing(1);
-                    for (var kr = ring.Count; kr < StaticData.Algos.MaxOneRingSize; kr++)
+                    for (var kr = ring.Count; kr < Constants.Algos.MaxOneRingSize; kr++)
                     {
                         ring.Add(0);
                     }
 
-                    for (int j = 0; j < StaticData.Algos.MaxOneRingSize; j++)
+                    for (int j = 0; j < Constants.Algos.MaxOneRingSize; j++)
                     {
-                        if (ring[j] == StaticData.H3Index.H3_NULL)
+                        if (ring[j] == Constants.H3Index.H3_NULL)
                         {
                             continue;  // Skip if this was a pentagon and only had 5
                                        // neighbors

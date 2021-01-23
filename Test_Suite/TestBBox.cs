@@ -101,28 +101,28 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.4, Constants.M_PI - 0.1),
-                            new GeoCoord(0.4, -Constants.M_PI + 0.1),
-                            new GeoCoord(-0.4, -Constants.M_PI + 0.1),
-                            new GeoCoord(-0.4, Constants.M_PI - 0.1)
+                            new GeoCoord(0.4, Constants.H3.M_PI - 0.1),
+                            new GeoCoord(0.4, -Constants.H3.M_PI + 0.1),
+                            new GeoCoord(-0.4, -Constants.H3.M_PI + 0.1),
+                            new GeoCoord(-0.4, Constants.H3.M_PI - 0.1)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(0.4, -0.4, -Constants.M_PI + 0.1, Constants.M_PI - 0.1);
-            var insideOnMeridian = new GeoCoord(-0.1, Constants.M_PI);
-            var outside = new GeoCoord(1.0, Constants.M_PI - 0.5);
+            var expected = new BBox(0.4, -0.4, -Constants.H3.M_PI + 0.1, Constants.H3.M_PI - 0.1);
+            var insideOnMeridian = new GeoCoord(-0.1, Constants.H3.M_PI);
+            var outside = new GeoCoord(1.0, Constants.H3.M_PI - 0.5);
             RepeatBoxTest(geofence, expected, insideOnMeridian, outside);
 
-            var westInside = new GeoCoord(0.1, Constants.M_PI - 0.05);
+            var westInside = new GeoCoord(0.1, Constants.H3.M_PI - 0.05);
             Assert.IsTrue(expected.Contains(westInside));
 
-            var eastInside = new GeoCoord(0.1, -Constants.M_PI + 0.05);
+            var eastInside = new GeoCoord(0.1, -Constants.H3.M_PI + 0.05);
             Assert.IsTrue(expected.Contains(eastInside));
 
-            var westOutside = new GeoCoord(0.1, Constants.M_PI - 0.5);
+            var westOutside = new GeoCoord(0.1, Constants.H3.M_PI - 0.5);
             Assert.IsFalse(expected.Contains(westOutside));
 
-            var eastOutside = new GeoCoord(0.1, -Constants.M_PI + 0.5);
+            var eastOutside = new GeoCoord(0.1, -Constants.H3.M_PI + 0.5);
             Assert.IsFalse(expected.Contains(eastOutside));
         }
 
@@ -131,15 +131,15 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(Constants.M_PI_2 - 0.1, 0.1),
-                            new GeoCoord(Constants.M_PI_2 - 0.1, 0.8),
-                            new GeoCoord(Constants.M_PI_2, 0.8),
-                            new GeoCoord(Constants.M_PI_2, 0.1)
+                            new GeoCoord(Constants.H3.M_PI_2 - 0.1, 0.1),
+                            new GeoCoord(Constants.H3.M_PI_2 - 0.1, 0.8),
+                            new GeoCoord(Constants.H3.M_PI_2, 0.8),
+                            new GeoCoord(Constants.H3.M_PI_2, 0.1)
                         };
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(Constants.M_PI_2, Constants.M_PI_2 - 0.1, 0.8, 0.1);
-            var inside = new GeoCoord(Constants.M_PI_2 - 0.01, 0.4);
-            var outside = new GeoCoord(Constants.M_PI_2, 0.9);
+            var expected = new BBox(Constants.H3.M_PI_2, Constants.H3.M_PI_2 - 0.1, 0.8, 0.1);
+            var inside = new GeoCoord(Constants.H3.M_PI_2 - 0.01, 0.4);
+            var outside = new GeoCoord(Constants.H3.M_PI_2, 0.9);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
 
@@ -148,16 +148,16 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(-Constants.M_PI_2 + 0.1, 0.1),
-                            new GeoCoord(-Constants.M_PI_2 + 0.1, 0.8),
-                            new GeoCoord(-Constants.M_PI_2, 0.8),
-                            new GeoCoord(-Constants.M_PI_2, 0.1)
+                            new GeoCoord(-Constants.H3.M_PI_2 + 0.1, 0.1),
+                            new GeoCoord(-Constants.H3.M_PI_2 + 0.1, 0.8),
+                            new GeoCoord(-Constants.H3.M_PI_2, 0.8),
+                            new GeoCoord(-Constants.H3.M_PI_2, 0.1)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(-Constants.M_PI_2 + 0.1, -Constants.M_PI_2, 0.8, 0.1);
-            var inside = new GeoCoord(-Constants.M_PI_2 + 0.01, 0.4);
-            var outside = new GeoCoord(-Constants.M_PI_2, 0.9);
+            var expected = new BBox(-Constants.H3.M_PI_2 + 0.1, -Constants.H3.M_PI_2, 0.8, 0.1);
+            var inside = new GeoCoord(-Constants.H3.M_PI_2 + 0.01, 0.4);
+            var outside = new GeoCoord(-Constants.H3.M_PI_2, 0.9);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
         
@@ -182,18 +182,18 @@ namespace TestSuite
         [Test]
         public void ContainsEdgesTransmeridian()
         {
-            var bbox = new BBox(0.1, -0.1, -Constants.M_PI + 0.2, Constants.M_PI - 0.2);
+            var bbox = new BBox(0.1, -0.1, -Constants.H3.M_PI + 0.2, Constants.H3.M_PI - 0.2);
 
             var points = new[]
                          {
-                             new GeoCoord(0.1, -Constants.M_PI + 0.2),
-                             new GeoCoord(0.1, Constants.M_PI),
-                             new GeoCoord(0.1, Constants.M_PI - 0.2),
-                             new GeoCoord(0.0, -Constants.M_PI + 0.2),
-                             new GeoCoord(-0.1, -Constants.M_PI + 0.2),
-                             new GeoCoord(-0.1, Constants.M_PI),
-                             new GeoCoord(-0.1, Constants.M_PI - 0.2),
-                             new GeoCoord(0.0, Constants.M_PI - 0.2)
+                             new GeoCoord(0.1, -Constants.H3.M_PI + 0.2),
+                             new GeoCoord(0.1, Constants.H3.M_PI),
+                             new GeoCoord(0.1, Constants.H3.M_PI - 0.2),
+                             new GeoCoord(0.0, -Constants.H3.M_PI + 0.2),
+                             new GeoCoord(-0.1, -Constants.H3.M_PI + 0.2),
+                             new GeoCoord(-0.1, Constants.H3.M_PI),
+                             new GeoCoord(-0.1, Constants.H3.M_PI - 0.2),
+                             new GeoCoord(0.0, Constants.H3.M_PI - 0.2)
                          };
             
             foreach (var point in points)
@@ -234,18 +234,18 @@ namespace TestSuite
         [Test]
         public void BboxCenterTransmeridian()
         {
-            var bbox1 = new BBox(1.0, 0.8, -Constants.M_PI + 0.3, Constants.M_PI - 0.1);
-            var expected1 = new GeoCoord(0.9, -Constants.M_PI + 0.1);
+            var bbox1 = new BBox(1.0, 0.8, -Constants.H3.M_PI + 0.3, Constants.H3.M_PI - 0.1);
+            var expected1 = new GeoCoord(0.9, -Constants.H3.M_PI + 0.1);
             var center = bbox1.Center();
             Assert.AreEqual(center, expected1);
 
-            var bbox2 = new BBox(1.0, 0.8, -Constants.M_PI + 0.1, Constants.M_PI - 0.3);
-            var expected2 = new GeoCoord(0.9, Constants.M_PI - 0.1);
+            var bbox2 = new BBox(1.0, 0.8, -Constants.H3.M_PI + 0.1, Constants.H3.M_PI - 0.3);
+            var expected2 = new GeoCoord(0.9, Constants.H3.M_PI - 0.1);
             center = bbox2.Center();
             Assert.AreEqual(center, expected2);
 
-            var bbox3 = new BBox(1.0, 0.8, -Constants.M_PI + 0.1, Constants.M_PI - 0.1);
-            var expected3 = new GeoCoord(0.9, Constants.M_PI);
+            var bbox3 = new BBox(1.0, 0.8, -Constants.H3.M_PI + 0.1, Constants.H3.M_PI - 0.1);
+            var expected3 = new GeoCoord(0.9, Constants.H3.M_PI);
             center = bbox3.Center();
             Assert.AreEqual(center, expected3);
         }
@@ -256,7 +256,7 @@ namespace TestSuite
             var bboxNormal = new BBox(1.0, 0.8, 1.0, 0.8);
             Assert.IsFalse(bboxNormal.IsTransmeridian);
 
-            var bboxTransmeridian = new BBox(1.0, 0.8, -Constants.M_PI + 0.3, Constants.M_PI - 0.1);
+            var bboxTransmeridian = new BBox(1.0, 0.8, -Constants.H3.M_PI + 0.3, Constants.H3.M_PI - 0.1);
             Assert.IsTrue(bboxTransmeridian.IsTransmeridian);
         }
 

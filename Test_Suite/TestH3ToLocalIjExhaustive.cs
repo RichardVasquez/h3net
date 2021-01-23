@@ -59,14 +59,14 @@ namespace TestSuite
             switch (r)
             {
                 case 0:
-                    Assert.AreEqual(ijk, H3Lib.StaticData.CoordIjk.UnitVecs[0]);
+                    Assert.AreEqual(ijk, H3Lib.Constants.CoordIjk.UnitVecs[0]);
                     break;
                 case 1:
-                    Assert.AreEqual(ijk, H3Lib.StaticData.CoordIjk.UnitVecs[(int) h3.GetIndexDigit(1)]);
+                    Assert.AreEqual(ijk, H3Lib.Constants.CoordIjk.UnitVecs[(int) h3.GetIndexDigit(1)]);
                     break;
                 case 2:
                 {
-                    var expected = H3Lib.StaticData.CoordIjk.UnitVecs[(int) h3.GetIndexDigit(1)];
+                    var expected = H3Lib.Constants.CoordIjk.UnitVecs[(int) h3.GetIndexDigit(1)];
                     expected = expected.DownAp7R().Neighbor(h3.GetIndexDigit(2));
                     Assert.AreEqual(ijk, expected);
                     break;

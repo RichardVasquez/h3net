@@ -17,7 +17,7 @@ namespace TestSuite.Lib
         /// </summary>
         public static void IterateAllIndexesAtRes(int res, Action<H3Index> callback)
         {
-            IterateAllIndexesAtResPartial(res, callback, Constants.NUM_BASE_CELLS);
+            IterateAllIndexesAtResPartial(res, callback, Constants.H3.NUM_BASE_CELLS);
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace TestSuite.Lib
         /// <param name="baseCells"></param>
         public static void IterateAllIndexesAtResPartial(int res, Action<H3Index> callback, int baseCells)
         {
-            Assert.LessOrEqual(baseCells, Constants.NUM_BASE_CELLS);
+            Assert.LessOrEqual(baseCells, Constants.H3.NUM_BASE_CELLS);
             for (var i = 0; i < baseCells; i++)
             {
                 IterateBaseCellIndexesAtRes(res, callback, i);
@@ -60,7 +60,7 @@ namespace TestSuite.Lib
         public static int CountActualHexagons(List<H3Index> hexagons)
         {
             return hexagons
-               .Count(hexagon => hexagon != H3Lib.StaticData.H3Index.H3_NULL);
+               .Count(hexagon => hexagon != H3Lib.Constants.H3Index.H3_NULL);
         }
         
         /// <summary>

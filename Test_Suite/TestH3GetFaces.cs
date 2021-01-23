@@ -93,7 +93,7 @@ namespace TestSuite
         {
             int singleCount = 0;
             int multipleCount = 0;
-            for (int i = 0; i < Constants.NUM_BASE_CELLS; i++)
+            for (int i = 0; i < Constants.H3.NUM_BASE_CELLS; i++)
             {
                 if (!i.IsBaseCellPentagon())
                 {
@@ -118,7 +118,7 @@ namespace TestSuite
         [Test]
         public void BaseCellPentagons()
         {
-            for (var i = 0; i < Constants.NUM_BASE_CELLS; i++)
+            for (var i = 0; i < Constants.H3.NUM_BASE_CELLS; i++)
             {
                 if (!i.IsBaseCellPentagon())
                 {

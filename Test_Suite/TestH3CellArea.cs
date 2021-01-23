@@ -27,7 +27,7 @@ namespace TestSuite
             var testAreas = new List<double>();
             var diffs = new List<double>();
             
-            for (int res = 0; res <= Constants.MAX_H3_RES - 1; res++)
+            for (int res = 0; res <= Constants.H3.MAX_H3_RES - 1; res++)
             {
                 H3Index cell = gc.ToH3Index(res);
                 double area = cell.CellAreaKm2();
@@ -35,7 +35,7 @@ namespace TestSuite
                 diffs.Add(Math.Abs(area-AreasKm2[res]));
             }
 
-            for (int i = 0; i <= Constants.MAX_H3_RES - 1; i++)
+            for (int i = 0; i <= Constants.H3.MAX_H3_RES - 1; i++)
             {
                 //  TODO: Figure out why res 1 is 1e-5 difference error while others are <= 1e-9
                 //  TODO: Fix it later. Spent a day on it, and it's close enough for government work at this point.

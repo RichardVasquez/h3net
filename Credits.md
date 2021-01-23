@@ -4,9 +4,9 @@ as easily without the following:
 
 * [H3](https://gihub.com/uber/h3) - The actual source code that I've foolishly
   converted to C#.  I actually use h3net for another project on mobile, which
-  is why h3net exists.
+  is why h3net exists, and partly why I haven't updated this in a while.
   
-  My first iteration of that project used generated data sets from
+  My first iteration of _that_ project used generated data sets from
   [DGGRID](https://www.discreteglobalgrids.org/) which was not something I
   enjoyed since the project uses real time location data, and generating the
   hexagons in a 100 km^2 area polygon was at a resolution of ~100 m^2 was an
@@ -48,6 +48,7 @@ as easily without the following:
     * Hamilton
     * Heathers
     * In The Heights
+    * Jersey Boys
     * Mean Girls
     * Waitress
   

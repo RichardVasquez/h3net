@@ -160,7 +160,7 @@ namespace H3Lib.Extensions
 
             // Iterate through every hexagon
             foreach (var vertices in h3Set
-                                    .Where(w=>w!=StaticData.H3Index.H3_NULL)
+                                    .Where(w=>w!=Constants.H3Index.H3_NULL)
                                     .Select(cell => cell.ToGeoBoundary()))
             {
                 for (int j = 0; j < vertices.NumVerts; j++)

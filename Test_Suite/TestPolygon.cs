@@ -65,18 +65,18 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.01, -Constants.M_PI + 0.01),
-                            new GeoCoord(0.01, Constants.M_PI - 0.01),
-                            new GeoCoord(-0.01, Constants.M_PI - 0.01),
-                            new GeoCoord(-0.01, -Constants.M_PI + 0.01)
+                            new GeoCoord(0.01, -Constants.H3.M_PI + 0.01),
+                            new GeoCoord(0.01, Constants.H3.M_PI - 0.01),
+                            new GeoCoord(-0.01, Constants.H3.M_PI - 0.01),
+                            new GeoCoord(-0.01, -Constants.H3.M_PI + 0.01)
                         };
 
             var transMeridianGeofence = new GeoFence{NumVerts = 4, Verts = verts};
 
-            var eastPoint = new GeoCoord(0.001, -Constants.M_PI + 0.001);
-            var eastPointOutside = new GeoCoord(0.001, -Constants.M_PI + 0.1);
-            var westPoint = new GeoCoord(0.001, Constants.M_PI - 0.001);
-            var westPointOutside =new GeoCoord(0.001, Constants.M_PI - 0.1);
+            var eastPoint = new GeoCoord(0.001, -Constants.H3.M_PI + 0.001);
+            var eastPointOutside = new GeoCoord(0.001, -Constants.H3.M_PI + 0.1);
+            var westPoint = new GeoCoord(0.001, Constants.H3.M_PI - 0.001);
+            var westPointOutside =new GeoCoord(0.001, Constants.H3.M_PI - 0.1);
 
             var bbox = transMeridianGeofence.ToBBox();
 
@@ -125,14 +125,14 @@ namespace TestSuite
             var verts =
                 new[]
                 {
-                    new GeoCoord(0.1, -Constants.M_PI + 0.1), new GeoCoord(0.1, Constants.M_PI - 0.1),
-                    new GeoCoord(0.05, Constants.M_PI - 0.2), new GeoCoord(-0.1, Constants.M_PI - 0.1),
-                    new GeoCoord(-0.1, -Constants.M_PI + 0.1), new GeoCoord(-0.05, -Constants.M_PI + 0.2)
+                    new GeoCoord(0.1, -Constants.H3.M_PI + 0.1), new GeoCoord(0.1, Constants.H3.M_PI - 0.1),
+                    new GeoCoord(0.05, Constants.H3.M_PI - 0.2), new GeoCoord(-0.1, Constants.H3.M_PI - 0.1),
+                    new GeoCoord(-0.1, -Constants.H3.M_PI + 0.1), new GeoCoord(-0.05, -Constants.H3.M_PI + 0.2)
                 };
 
             var geofence = new GeoFence {NumVerts = 6, Verts = verts};
 
-            var expected = new BBox( 0.1, -0.1, -Constants.M_PI + 0.2, Constants.M_PI - 0.2);
+            var expected = new BBox( 0.1, -0.1, -Constants.H3.M_PI + 0.2, Constants.H3.M_PI - 0.2);
 
             var result = geofence.ToBBox();
             Assert.AreEqual(result, expected);
@@ -272,10 +272,10 @@ namespace TestSuite
         public void IsClockwiseGeofenceTransmeridian()
         {
             double[,] raw = {
-                                {0.4, Constants.M_PI - 0.1},
-                                {0.4, -Constants.M_PI + 0.1},
-                                {-0.4, -Constants.M_PI + 0.1},
-                                {-0.4, Constants.M_PI - 0.1}
+                                {0.4, Constants.H3.M_PI - 0.1},
+                                {0.4, -Constants.H3.M_PI + 0.1},
+                                {-0.4, -Constants.H3.M_PI + 0.1},
+                                {-0.4, Constants.H3.M_PI - 0.1}
                             };
             var verts = MakeGeoCoordArray(raw);
             var geofence = new GeoFence{NumVerts = 4, Verts = verts};
@@ -288,10 +288,10 @@ namespace TestSuite
         {
             double[,] raw =
             {
-                {0.4, Constants.M_PI - 0.1},
-                {0.4, -Constants.M_PI + 0.1},
-                {-0.4, -Constants.M_PI + 0.1},
-                {-0.4, Constants.M_PI - 0.1}
+                {0.4, Constants.H3.M_PI - 0.1},
+                {0.4, -Constants.H3.M_PI + 0.1},
+                {-0.4, -Constants.H3.M_PI + 0.1},
+                {-0.4, Constants.H3.M_PI - 0.1}
             };
 
             var verts = MakeGeoCoordArray(raw);
@@ -306,10 +306,10 @@ namespace TestSuite
         {
             double[,] raw =
             {
-                {0.4, Constants.M_PI - 0.1},
-                {-0.4, Constants.M_PI - 0.1},
-                {-0.4, -Constants.M_PI + 0.1},
-                {0.4, -Constants.M_PI + 0.1}
+                {0.4, Constants.H3.M_PI - 0.1},
+                {-0.4, Constants.H3.M_PI - 0.1},
+                {-0.4, -Constants.H3.M_PI + 0.1},
+                {0.4, -Constants.H3.M_PI + 0.1}
             };
 
             var verts = MakeGeoCoordArray(raw);
@@ -333,7 +333,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons(), 1);
             Assert.AreEqual(polygon.CountLoops(), 1);
             if (polygon.GeoLoopList.First != null)
@@ -360,7 +360,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons(), 2);
             Assert.AreEqual(polygon.CountLoops(), 1);
             Assert.AreEqual(polygon.Next.CountLoops(), 1);
@@ -384,7 +384,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons(), 1);
             Assert.AreEqual(polygon.CountLoops(), 2);
             
@@ -417,7 +417,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons(), 1);
             
             Assert.IsNotNull(polygon.GeoLoopList.First);
@@ -452,7 +452,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons(), 2);
             Assert.AreEqual(polygon.CountLoops(), 2);
 
@@ -497,7 +497,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.StaticData.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons(), 2);
             Assert.AreEqual(polygon.CountLoops(), 2);
 
@@ -534,7 +534,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(H3Lib.StaticData.LinkedGeo.NormalizationErrUnassignedHoles, result);
+            Assert.AreEqual(H3Lib.Constants.LinkedGeo.NormalizationErrUnassignedHoles, result);
 
             Assert.AreEqual(1, polygon.CountPolygons());
             Assert.AreEqual(0, polygon.CountLoops());
@@ -560,7 +560,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(H3Lib.StaticData.LinkedGeo.NormalizationErrMultiplePolygons, result);
+            Assert.AreEqual(H3Lib.Constants.LinkedGeo.NormalizationErrMultiplePolygons, result);
 
             Assert.AreEqual(2, polygon.CountPolygons());
             Assert.AreEqual(1, polygon.CountLoops());
@@ -591,7 +591,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(H3Lib.StaticData.LinkedGeo.NormalizationErrUnassignedHoles, result);
+            Assert.AreEqual(H3Lib.Constants.LinkedGeo.NormalizationErrUnassignedHoles, result);
             polygon.Clear();
         }
 

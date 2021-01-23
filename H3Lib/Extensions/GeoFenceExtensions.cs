@@ -67,7 +67,7 @@ namespace H3Lib.Extensions
                 // exactly matches, to decide tiebreakers, bias westerly
                 if (Math.Abs(aLng - lng) < double.Epsilon || Math.Abs(bLng - lng) < double.Epsilon)
                 {
-                    lng -= Constants.DBL_EPSILON;
+                    lng -= Constants.H3.DBL_EPSILON;
                 }
 
                 // For the latitude of the point, compute the longitude of the
@@ -172,7 +172,7 @@ namespace H3Lib.Extensions
                     maxNegLon = lon;
                 }
                 // check for arcs > 180 degrees longitude, flagging as transmeridian
-                if (Math.Abs(lon - next.Longitude) > Constants.M_PI)
+                if (Math.Abs(lon - next.Longitude) > Constants.H3.M_PI)
                 {
                     isTransmeridian = true;
                 }
@@ -207,7 +207,7 @@ namespace H3Lib.Extensions
 
                 // If we identify a transmeridian arc (> 180 degrees longitude),
                 // start over with the transmeridian flag set
-                if (!isTransmeridian && Math.Abs(a.Longitude - b.Longitude) > Constants.M_PI)
+                if (!isTransmeridian && Math.Abs(a.Longitude - b.Longitude) > Constants.H3.M_PI)
                 {
                     return loop.IsClockwiseNormalized(true);
                 }
@@ -280,7 +280,7 @@ namespace H3Lib.Extensions
                         // too small for the given polygon. This should not happen.
                         if (loopCount > numHexagons)
                         {
-                            return StaticData.Algos.HexHashOverflow; // LCOV_EXCL_LINE
+                            return Constants.Algos.HexHashOverflow; // LCOV_EXCL_LINE
                         }
                         if (found[loc] == pointHex)
                         {

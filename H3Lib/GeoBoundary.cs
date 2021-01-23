@@ -10,7 +10,7 @@ namespace H3Lib
 
         public GeoBoundary()
         {
-            for (var i = 0; i < Constants.MAX_CELL_BNDRY_VERTS; i++)
+            for (var i = 0; i < Constants.H3.MAX_CELL_BNDRY_VERTS; i++)
             {
                 Verts.Add(new GeoCoord());
             }
