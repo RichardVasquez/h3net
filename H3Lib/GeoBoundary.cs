@@ -18,11 +18,11 @@ namespace H3Lib
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append($"GeoBoundary: {NumVerts} Vertices").AppendLine();
+            var sb = new StringBuilder();
+            sb.Append($"GeoBoundary: {NumVerts} Vertices ");
             for (var i = 0; i < NumVerts; i++)
             {
-                sb.AppendLine($"\t{Verts[i]}");
+                sb.Append($"- {i} {Verts[i]}");
             }
 
             return sb.ToString();

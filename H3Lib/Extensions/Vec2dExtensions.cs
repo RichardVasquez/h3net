@@ -154,7 +154,8 @@ namespace H3Lib.Extensions
             theta = (Constants.FaceIjk.FaceAxesAzRadsCii[face, 0] - theta).NormalizeRadians();
 
             // now find the point at (r,theta) from the face center
-            return Constants.FaceIjk.FaceCenterGeo[face].GetAzimuthDistancePoint(theta, r);
+            return Constants.FaceIjk.FaceCenterGeo[face]
+                            .GetAzimuthDistancePoint(theta, r);
         }
         
 

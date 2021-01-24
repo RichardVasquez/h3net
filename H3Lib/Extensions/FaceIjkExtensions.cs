@@ -633,8 +633,9 @@ namespace H3Lib.Extensions
             var gb = new GeoBoundary();
             int adjRes = res;
             var centerIjk = h;
-            IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.H3.NUM_PENT_VERTS).Select(i => new FaceIjk()).ToArray();
-            (centerIjk, adjRes, fijkVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
+
+            IList<FaceIjk> fijkVerts = new FaceIjk[Constants.H3.NUM_PENT_VERTS];
+            (_, adjRes, fijkVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
             // of a distortion vertex on the last edge
@@ -646,7 +647,7 @@ namespace H3Lib.Extensions
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
             gb.NumVerts = 0;
-            var lastFijk = new FaceIjk();   // NOTE: Not quite happy about this, but we'll see where it goes from here.
+            var lastFijk = new FaceIjk();
 
             for (int vert = start; vert < start + length + additionalIteration; vert++)
             {
@@ -661,7 +662,6 @@ namespace H3Lib.Extensions
                 {
                     // find hex2d of the two vertexes on the last face
                     var tmpFijk = fijk;
-
                     var orig2d0 = lastFijk.Coord.ToHex2d();
 
                     int currentToLastDir = Constants.FaceIjk.AdjacentFaceDir[tmpFijk.Face, lastFijk.Face];
@@ -675,18 +675,26 @@ namespace H3Lib.Extensions
                     // rotate and translate for adjacent face
                     for (var i = 0; i < fijkOrient.Ccw60Rotations; i++)
                     {
-                        ijk = ijk.Rotate60Clockwise();
+                        ijk = ijk.Rotate60CounterClockwise();
                     }
 
-                    ijk =
-                        (ijk + fijkOrient.Translate * Constants.FaceIjk.UnitScaleByCiiRes[adjRes] * 3)
-                       .Normalized();
-                    // NOTE: Previous follows, but realized I was missing the UnitScaleByCiiRes above 
-                    //ijk = (ijk + fijkOrient.Translate * 3).Normalized();
+                    //  NOTE: Unfolding this to see if the problem is here.
+                    //  Folded:
+                    //  ijk = (ijk + fijkOrient.Translate * Constants.FaceIjk.UnitScaleByCiiRes[adjRes] * 3).Normalized();
 
+                    //  C code
+                    //  CoordIJK transVec = fijkOrient->translate;
+                    //  _ijkScale(&transVec, unitScaleByCIIres[adjRes] * 3);
+                    //  _ijkAdd(ijk, &transVec, ijk);
+                    //  _ijkNormalize(ijk);
+
+                    var transVec = fijkOrient.Translate;
+                    var scaleRes = Constants.FaceIjk.UnitScaleByCiiRes[adjRes] * 3;
+                    transVec *= scaleRes;
+                    ijk += transVec;
+                    ijk = ijk.Normalized();
+                    
                     var orig2d1 = ijk.ToHex2d();
-                    //  Give it back.
-                    tmpFijk = tmpFijk.ReplaceCoord(ijk);
 
                     // find the appropriate icosahedron face edge vertexes
                     int maxDim = Constants.FaceIjk.MaxDimByCiiRes[adjRes];

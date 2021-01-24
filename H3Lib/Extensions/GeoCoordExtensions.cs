@@ -156,7 +156,8 @@ namespace H3Lib.Extensions
             var p2 = new GeoCoord();
 
             // check for due north/south azimuth
-            if (azimuth < Constants.H3.EPSILON || Math.Abs(azimuth - Constants.H3.M_PI) < Constants.H3.EPSILON)
+            if (azimuth < Constants.H3.EPSILON ||
+                Math.Abs(azimuth - Constants.H3.M_PI) < Constants.H3.EPSILON)
             {
                 if (azimuth < Constants.H3.EPSILON) // due north
                 {
@@ -229,7 +230,11 @@ namespace H3Lib.Extensions
                         cosLongitude = -1.0;
                     }
 
-                    p2 = p2.SetLongitude((p1.Longitude + Math.Atan2(sinLongitude, cosLongitude)).ConstrainLongitude());
+                    p2 = p2.SetLongitude
+                        (
+                         (p1.Longitude + Math.Atan2(sinLongitude, cosLongitude))
+                        .ConstrainLongitude()
+                        );
                 }
             }
 

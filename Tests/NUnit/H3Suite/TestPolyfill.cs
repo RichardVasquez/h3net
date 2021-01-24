@@ -111,7 +111,7 @@ namespace TestSuite
                 children = children.Where(p => p != H3Lib.Constants.H3Index.H3_NULL).ToList();
                 children.Sort();
 
-                Assert.AreEqual(h3ToChildrenCount, polyfillCount);
+                Assert.AreEqual(h3ToChildrenCount, polyfillCount, $"h: {h}\nnextRes: {nextRes}\ncurrentRes: {currentRes}");
 
                 bool match = true;
                 for (int i = 0; i < children.Count; i++)
