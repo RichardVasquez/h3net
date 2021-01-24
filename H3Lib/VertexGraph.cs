@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,6 +13,8 @@ namespace H3Lib
         public readonly int Resolution;
 
         public int Count => _pool.Count;
+
+        public int Size => _pool.Count;
         
         /// <summary>
         /// Initialize a new VertexGraph
@@ -80,10 +83,10 @@ namespace H3Lib
         /// a node that already exists (in either direction)
         /// then remove it in both directions.
         /// </remarks>
-        public VertexNode AddNode(GeoCoord fromNode, GeoCoord toNode)
+        public VertexNode? AddNode(GeoCoord fromNode, GeoCoord toNode)
         {
-            var edge1 = InitNode(toNode, fromNode);
-            var edge2 = InitNode(fromNode, toNode);
+            var edge1 = InitNode(fromNode, toNode);
+            var edge2 = InitNode(toNode, fromNode);
 
             if (!_pool.Contains(edge1) && !_pool.Contains(edge2))
             {
@@ -93,6 +96,7 @@ namespace H3Lib
             {
                 _pool.Remove(edge1);
                 _pool.Remove(edge2);
+                _pool.Add(edge1);
             }
 
             return edge1;
@@ -116,15 +120,21 @@ namespace H3Lib
         /// vertexGraph.c
         /// int removeVertexNode
         /// -->
-        public bool RemoveNode(VertexNode vn)
+        public bool RemoveNode(VertexNode? vn)
         {
+            if (!vn.HasValue)
+            {
+                return false;
+            }
+
+            var myNode = vn.Value;
             int lookFor = _pool
-               .Count(p => p.From == vn.From && p.To == vn.To);
+               .Count(p => p.From == myNode.From && p.To == myNode.To);
             if (lookFor != 1)
             {
                 return false;
             }
-            _pool.Remove(vn);
+            _pool.Remove(myNode);
             return true;
         }
 
@@ -140,7 +150,7 @@ namespace H3Lib
         /// -->
         public VertexNode? FindEdge(GeoCoord fromNode, GeoCoord? toNode)
         {
-            var possibles = _pool.Where(p => p.From == fromNode).ToList();
+            var possibles = _pool.Where(p =>  p.From == fromNode).ToList();
             if (possibles.Count == 0)
             {
                 return null;
@@ -151,7 +161,12 @@ namespace H3Lib
                 return possibles.First();//good luck!
             }
 
-            IEnumerable<VertexNode> answer = possibles.Where(p => p.To == toNode);
+            List<VertexNode> answer = possibles.Where(p => p.To == toNode).ToList();
+            if (answer.Count == 0)
+            {
+                return null;
+            }
+
             return answer.First();
             //
             // if (toNode == null)
@@ -186,6 +201,10 @@ namespace H3Lib
         /// </summary>
         public VertexNode? FirstNode()
         {
+            if (_pool.Count == 0)
+            {
+                return null;
+            }
             return _pool.First();
         }
     }

@@ -333,7 +333,7 @@ namespace TestSuite
         }
 
         [Test]
-        public void fillIndex()
+        public void FillIndex()
         {
             Utility.IterateAllIndexesAtRes(0, fillIndex_assertions);
             Utility.IterateAllIndexesAtRes(1, fillIndex_assertions);

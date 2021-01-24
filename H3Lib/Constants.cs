@@ -1882,7 +1882,6 @@ namespace H3Lib
             public const int NormalizationErrUnassignedHoles = 2;
         }
 
-
         public static class LocalIJ
         {
             /// <summary>
