@@ -678,7 +678,11 @@ namespace H3Lib.Extensions
                         ijk = ijk.Rotate60Clockwise();
                     }
 
-                    ijk = (ijk + fijkOrient.Translate * 3).Normalized();
+                    ijk =
+                        (ijk + fijkOrient.Translate * Constants.FaceIjk.UnitScaleByCiiRes[adjRes] * 3)
+                       .Normalized();
+                    // NOTE: Previous follows, but realized I was missing the UnitScaleByCiiRes above 
+                    //ijk = (ijk + fijkOrient.Translate * 3).Normalized();
 
                     var orig2d1 = ijk.ToHex2d();
                     //  Give it back.
