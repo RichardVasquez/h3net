@@ -142,7 +142,6 @@ namespace H3Lib
             outPolygon = h3Set.ToLinkedGeoPolygon();
         }
 
-
         /// <summary>
         /// converts degrees to radians
         /// </summary>

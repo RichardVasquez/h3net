@@ -27,6 +27,7 @@ namespace TestSuite
             Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(invalidLon, 1));
             Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(invalidLatLon, 1));
         }
+        
         // Bug test for https://github.com/uber/h3/issues/45
         [Test]        
         public void h3ToGeoBoundary_classIIIEdgeVertex()
@@ -79,11 +80,11 @@ namespace TestSuite
             GeoBoundary boundary = new GeoBoundary();
             boundary.NumVerts = 6;
             boundary.Verts[0] = Api.SetGeoDegs( -52.0130533678236091, -34.6232931343713091);
-            boundary.Verts[0] = Api.SetGeoDegs( -52.0041156384652012, -34.6096733160584549);
-            boundary.Verts[0] = Api.SetGeoDegs( -51.9929610229502472, -34.6165157145896387);
-            boundary.Verts[0] = Api.SetGeoDegs( -51.9907410568096608, -34.6369680004259877);
-            boundary.Verts[0] = Api.SetGeoDegs( -51.9996738734672377, -34.6505896528323660);
-            boundary.Verts[0] = Api.SetGeoDegs( -52.0108315681413629, -34.6437571897165668);
+            boundary.Verts[1] = Api.SetGeoDegs( -52.0041156384652012, -34.6096733160584549);
+            boundary.Verts[2] = Api.SetGeoDegs( -51.9929610229502472, -34.6165157145896387);
+            boundary.Verts[3] = Api.SetGeoDegs( -51.9907410568096608, -34.6369680004259877);
+            boundary.Verts[4] = Api.SetGeoDegs( -51.9996738734672377, -34.6505896528323660);
+            boundary.Verts[5] = Api.SetGeoDegs( -52.0108315681413629, -34.6437571897165668);
 
             GeoBoundary myBoundary;
             Api.H3ToGeoBoundary(h3, out myBoundary);

@@ -1,11 +1,30 @@
+using System.Diagnostics;
+
 namespace H3Lib
 {
-    /// <summary>
-    /// A coordinate node in a linked geo structure, part of a linked list
-    /// </summary>
+    [DebuggerDisplay("Lat: {Latitude} Lon: {Longitude}")]
     public class LinkedGeoCoord
     {
-        public GeoCoord Vertex;
-        public LinkedGeoCoord Next;
+        private readonly GeoCoord _gc;
+
+        public double Latitude => _gc.Latitude;
+        public double Longitude => _gc.Longitude;
+
+        public GeoCoord Vertex => _gc;
+
+        public LinkedGeoCoord()
+        {
+            _gc = default;
+        }
+
+        public LinkedGeoCoord(GeoCoord gc)
+        {
+            _gc = gc;
+        }
+
+        public LinkedGeoCoord Replacement(GeoCoord gc)
+        {
+            return new LinkedGeoCoord(gc);
+        }
     }
 }

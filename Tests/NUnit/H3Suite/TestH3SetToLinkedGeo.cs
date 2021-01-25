@@ -23,9 +23,9 @@ namespace TestSuite
 
             var polygon = set.ToLinkedGeoPolygon();
 
-            Assert.AreEqual(1, polygon.CountPolygons());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(6, polygon.GeoLoopList.First.Value.CountCoords);
+            Assert.AreEqual(1, polygon.CountPolygons);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(6, polygon.Loops.First().Count);
 
             polygon.Clear();
         }
@@ -36,9 +36,9 @@ namespace TestSuite
             List<H3Index> set = new List<H3Index> {0x8928308291bffff, 0x89283082957ffff};
             LinkedGeoPolygon polygon = set.ToLinkedGeoPolygon();
 
-            Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(10, polygon.GeoLoopList.First.Value.CountCoords);
+            Assert.AreEqual(1, polygon.CountLoops);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(10, polygon.Loops.First().Count);
 
             polygon.Clear();
         }
@@ -46,23 +46,15 @@ namespace TestSuite
         [Test]
         public void NonContiguous2()
         {
-            // TODO: This test asserts incorrect behavior - we should be creating
-            // multiple polygons, each with their own single loop. Update when the
-            // algorithm is corrected.
-
-            //  NOTE: With the current code I've written, we'll actually
-            //  end up with one polygon, with 0 loops and no nodes, since
-            //  the hexagons are clockwise, and so they're not holes, and
-            //  Normalize says no thanks and dumps them since they're not
-            //  in each other, and I quit.  Accept these assertions until
-            //  the next version of h3net.
 
             var set = new List<H3Index> {0x8928308291bffff, 0x89283082943ffff};
             var polygon = set.ToLinkedGeoPolygon();
 
-            Assert.AreEqual(1, polygon.CountPolygons());
-            Assert.AreEqual(0, polygon.CountLoops());
-
+            Assert.AreEqual(2, polygon.CountPolygons);
+            Assert.AreEqual(1,polygon.CountLoops);
+            Assert.AreEqual(6, polygon.First.Count);
+            Assert.AreEqual(1,polygon.Next.CountLoops);
+            Assert.AreEqual(6,polygon.Next.First.Count);
             polygon.Clear();
         }
 
@@ -77,9 +69,9 @@ namespace TestSuite
                       };
             LinkedGeoPolygon polygon = set.ToLinkedGeoPolygon();
 
-            Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(12, polygon.GeoLoopList.First.Value.CountCoords);
+            Assert.AreEqual(1, polygon.CountLoops);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(12, polygon.Loops.First().Count);
 
             polygon.Clear();
         }
@@ -94,11 +86,11 @@ namespace TestSuite
                           0x8928308288fffff, 0x89283082883ffff
                       };
             var polygon = set.ToLinkedGeoPolygon();
-            Assert.AreEqual(2, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(18, polygon.GeoLoopList.First.Value.CountCoords);
-            Assert.IsNotNull(polygon.GeoLoopList.First.Next);
-            Assert.AreEqual(6, polygon.GeoLoopList.First.Next.Value.CountCoords);
+            Assert.AreEqual(2, polygon.CountLoops);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(18, polygon.Loops.First().Count);
+            Assert.IsNotNull(polygon.Loops[1]);
+            Assert.AreEqual(6, polygon.Loops[1].Count);
             polygon.Clear();
         }
 
@@ -108,9 +100,9 @@ namespace TestSuite
             var set = new List<H3Index> {0x851c0003fffffff};
             var polygon = set.ToLinkedGeoPolygon();
 
-            Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(10, polygon.GeoLoopList.First.Value.CountCoords);
+            Assert.AreEqual(1, polygon.CountLoops);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(10, polygon.Loops.First().Count);
             polygon.Clear();
         }
 
@@ -131,9 +123,9 @@ namespace TestSuite
 
             var polygon = set.ToLinkedGeoPolygon();
 
-            Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(6 * (2 * 2 + 1), polygon.GeoLoopList.First.Value.CountCoords);
+            Assert.AreEqual(1, polygon.CountLoops);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(6 * (2 * 2 + 1), polygon.Loops.First().Count);
             polygon.Clear();
         }
 
@@ -154,9 +146,9 @@ namespace TestSuite
                 };
 
             var polygon = set.ToLinkedGeoPolygon();
-            Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(6 * (2 * 2 + 1), polygon.GeoLoopList.First.Value.CountCoords);
+            Assert.AreEqual(1, polygon.CountLoops);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(6 * (2 * 2 + 1), polygon.Loops.First().Count);
             polygon.Clear();
         }
 
@@ -180,19 +172,23 @@ namespace TestSuite
 
             // Note that the polygon order here is arbitrary, making this test
             // somewhat brittle, but it's difficult to assert correctness otherwise
-            Assert.AreEqual(2, polygon.CountPolygons());
-            Assert.AreEqual(2, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(42, polygon.GeoLoopList.First.Value.CountCoords);
-            Assert.IsNotNull(polygon.GeoLoopList.First.Next);
-            Assert.AreEqual(30, polygon.GeoLoopList.First.Next.Value.CountCoords);
-            Assert.AreEqual(2, polygon.Next.CountLoops());
-            Assert.IsNotNull(polygon.Next.GeoLoopList.First);
-            Assert.AreEqual(18, polygon.Next.GeoLoopList.First.Value.CountCoords);
-            Assert.IsNotNull(polygon.Next.GeoLoopList.First.Next);
-            Assert.AreEqual(6, polygon.Next.GeoLoopList.First.Next.Value.CountCoords);
+            Assert.AreEqual(2, polygon.CountPolygons);
+            Assert.AreEqual(2, polygon.CountLoops);
+
+            var tempPolygons = polygon.LinkedPolygons.OrderByDescending(p => p.Loops.First().Count).ToList();
+            
+            Assert.IsNotNull(tempPolygons[0].Loops.First());
+            Assert.AreEqual(42, tempPolygons[0].Loops.First().Count);
+            Assert.IsNotNull(tempPolygons[0].Loops[1]);
+            Assert.AreEqual(30, tempPolygons[0].Loops[1].Count);
+            Assert.AreEqual(2, tempPolygons[1].Next.CountLoops);
+            Assert.IsNotNull(tempPolygons[1].Loops.First());
+            Assert.AreEqual(18, tempPolygons[1].Loops.First().Count);
+            Assert.IsNotNull(tempPolygons[1].Loops[1]);
+            Assert.AreEqual(6, tempPolygons[1].Loops[1].Count);
 
             polygon.Clear();
+            tempPolygons.Clear();
         }
 
         [Test]
@@ -215,19 +211,23 @@ namespace TestSuite
 
             // Note that the polygon order here is arbitrary, making this test
             // somewhat brittle, but it's difficult to assert correctness otherwise
-            Assert.AreEqual(2, polygon.CountPolygons());
-            Assert.AreEqual(2, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(18, polygon.GeoLoopList.First.Value.CountCoords);
-            Assert.IsNotNull(polygon.GeoLoopList.First.Next);
-            Assert.AreEqual(6, polygon.GeoLoopList.First.Next.Value.CountCoords);
-            Assert.AreEqual(2, polygon.Next.CountLoops());
-            Assert.IsNotNull(polygon.Next.GeoLoopList.First);
-            Assert.AreEqual(42, polygon.Next.GeoLoopList.First.Value.CountCoords);
-            Assert.IsNotNull(polygon.Next.GeoLoopList.First.Next);
-            Assert.AreEqual(30, polygon.Next.GeoLoopList.First.Next.Value.CountCoords);
+            Assert.AreEqual(2, polygon.CountPolygons);
+            Assert.AreEqual(2, polygon.CountLoops);
+
+            var tempPolygons = polygon.LinkedPolygons.OrderByDescending(p => p.Loops.First().Count).ToList();
+            
+            Assert.IsNotNull(tempPolygons[0].Loops.First());
+            Assert.AreEqual(42, tempPolygons[0].Loops.First().Count);
+            Assert.IsNotNull(tempPolygons[0].Loops[1]);
+            Assert.AreEqual(30, tempPolygons[0].Loops[1].Count);
+            Assert.AreEqual(2, tempPolygons[1].Next.CountLoops);
+            Assert.IsNotNull(tempPolygons[1].Loops.First());
+            Assert.AreEqual(18, tempPolygons[1].Loops.First().Count);
+            Assert.IsNotNull(tempPolygons[1].Loops[1]);
+            Assert.AreEqual(6, tempPolygons[1].Loops[1].Count);
 
             polygon.Clear();
+            tempPolygons.Clear();
         }
 
         [Test]
@@ -236,9 +236,9 @@ namespace TestSuite
             var set = new List<H3Index> {0x894cc5365afffff, 0x894cc536537ffff};
             var polygon = set.ToLinkedGeoPolygon();
 
-            Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(12, polygon.GeoLoopList.First.Value.CountCoords);
+            Assert.AreEqual(1, polygon.CountLoops);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(12, polygon.Loops.First().Count);
 
             polygon.Clear();
         }
@@ -249,13 +249,13 @@ namespace TestSuite
             var set = new List<H3Index> {0x88ad36c547fffff, 0x88ad36c467fffff};
             var polygon = set.ToLinkedGeoPolygon();
 
-            Assert.AreEqual(2, polygon.CountPolygons());
-            Assert.AreEqual(1, polygon.CountLoops());
-            Assert.IsNotNull(polygon.GeoLoopList.First);
-            Assert.AreEqual(6, polygon.GeoLoopList.First.Value.CountCoords);
-            Assert.AreEqual(1, polygon.Next.CountLoops());
-            Assert.IsNotNull(polygon.Next.GeoLoopList.First);
-            Assert.AreEqual(6, polygon.Next.GeoLoopList.First.Value.CountCoords);
+            Assert.AreEqual(2, polygon.CountPolygons);
+            Assert.AreEqual(1, polygon.CountLoops);
+            Assert.IsNotNull(polygon.Loops.First());
+            Assert.AreEqual(6, polygon.Loops.First().Count);
+            Assert.AreEqual(1, polygon.Next.CountLoops);
+            Assert.IsNotNull(polygon.Next.Loops.First());
+            Assert.AreEqual(6, polygon.Next.Loops.First().Count);
 
             polygon.Clear();
         }

@@ -155,20 +155,38 @@ namespace H3Lib.Extensions
             }
 
             var graph = new VertexGraph();
-
             int res = h3Set[0].Resolution;
 
-            // Iterate through every hexagon
-            foreach (var vertices in h3Set
-                                    .Where(w=>w!=Constants.H3Index.H3_NULL)
-                                    .Select(cell => cell.ToGeoBoundary()))
+            for (int i = 0; i < h3Set.Count; i++)
             {
+                var vertices = h3Set[i].ToGeoBoundary();
                 for (int j = 0; j < vertices.NumVerts; j++)
                 {
                     var fromVtx = vertices.Verts[j];
                     var toVtx = vertices.Verts[(j + 1) % vertices.NumVerts];
-                    graph.AddNode(fromVtx, toVtx);
+                    var edge = graph.FindEdge(toVtx, fromVtx);
+                    if (edge != null)
+                    {
+                        graph.RemoveNode(edge);
+                    }
+                    else
+                    {
+                        graph.AddNode(fromVtx, toVtx);
+                    }
                 }
+            }
+
+            // Iterate through every hexagon
+            // foreach (var vertices in h3Set
+            //                         .Where(w=>w!=Constants.H3Index.H3_NULL)
+            //                         .Select(cell => cell.ToGeoBoundary()))
+            // {
+            //     for (int j = 0; j < vertices.NumVerts; j++)
+            //     {
+            //         var fromVtx = vertices.Verts[j];
+            //         var toVtx = vertices.Verts[(j + 1) % vertices.NumVerts];
+            //         graph.AddNode(fromVtx, toVtx);
+            //     }
                 
                 // // iterate through every edge
                 // for (var j = 0; j < vertices.NumVerts; j++)
@@ -188,7 +206,7 @@ namespace H3Lib.Extensions
                 //         graph.AddNode(fromVtx, toVtx);
                 //     }
                 //}
-            }
+            // }
 
             return graph;
         }
@@ -254,11 +272,11 @@ namespace H3Lib.Extensions
             int max = -1;
             foreach (var poly in polygons)
             {
-                if (poly.GeoLoopList.First == null)
+                if (poly.First == null)
                 {
                     continue;
                 }
-                int count = poly.GeoLoopList.First.Value.CountContainers(polygons, boxes);
+                int count = poly.First.CountContainers(polygons, boxes);
                 if (count <= max)
                 {
                     continue;

@@ -23,15 +23,20 @@ namespace H3Lib.Extensions
                 var loop = new LinkedGeoLoop();
                 while (edge.HasValue)
                 {
-                    loop.GeoCoordList.AddLast(edge.Value.From);
+                    loop.AddLinkedCoord(edge.Value.From);
+                    //loop.GeoCoordList.AddLast(edge.Value.From);
                     var nextVertex = edge.Value.To;
                     graph.RemoveNode(edge.Value);
                     edge = graph.FindVertex(nextVertex);
                 }
 
-                if (loop.CountCoords > 0)
+                // if (loop.CountCoords > 0)
+                // {
+                //     result.GeoLoopList.AddLast(loop);
+                // }
+                if (loop.Count > 0)
                 {
-                    result.GeoLoopList.AddLast(loop);
+                    result.AddLinkedLoop(loop);
                 }
             }
             

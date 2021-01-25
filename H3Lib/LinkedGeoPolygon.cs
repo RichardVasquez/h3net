@@ -1,131 +1,145 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
+using System.Threading;
 
 namespace H3Lib
 {
-    /// TODO: Make sure all the LinkedList stuff works
-    /// <summary>
-    /// A polygon node in a linked geo structure, part of a linked list.
-    /// </summary>
     public class LinkedGeoPolygon
     {
+        private readonly LinkedList<LinkedGeoLoop> _geoLoops;
+
+        public int CountLoops => _geoLoops.Count;
+        public int CountPolygons => TotalPolygons();
+        public LinkedGeoLoop First => GetFirst();
+        public LinkedGeoLoop Last => GetLast();
+
         public LinkedGeoPolygon Next;
 
-        public readonly LinkedList<LinkedGeoLoop> GeoLoopList;
+        public ReadOnlyCollection<LinkedGeoPolygon> LinkedPolygons => GetPolygons();
         
-        public bool IsEmpty => GeoLoopList.Count == 0;
-
         public LinkedGeoPolygon()
         {
-            GeoLoopList = new LinkedList<LinkedGeoLoop>();
-            Next = null;
+            _geoLoops = new LinkedList<LinkedGeoLoop>();
         }
 
+        public List<LinkedGeoLoop> Loops => _geoLoops.ToList();
+        
         /// <summary>
-        /// Add a new polygon to the current polygon
+        /// This is potentially dangerous, thus why it's
+        /// a private method and provided as read only.
         /// </summary>
-        /// <returns>Reference to the new polygon</returns>
-        /// <!--
-        /// linkedGeo.c
-        /// LinkedGeoPolygon* addNewLinkedPolygon
-        /// -->
-        /// <remarks>
-        /// Going to try this with a slightly different approach to dodge pointers
-        /// and ref parameters.
-        /// </remarks>
-        public LinkedGeoPolygon AddNew()
+        private ReadOnlyCollection<LinkedGeoPolygon> GetPolygons()
         {
-            //  Can't add a new polygon to this one if Next is already established.
-            if (Next != null)
+            List<LinkedGeoPolygon> temp = new List<LinkedGeoPolygon>();
+            temp.Add(this);
+            var next = Next;
+            while (next != null)
             {
-                return null;
+                temp.Add(next);
+                next = next.Next;
             }
-            Next = new LinkedGeoPolygon();
-            return Next;
-        }
 
+            return temp.AsReadOnly();
+        }
+        
         /// <summary>
         /// Add a new linked loop to the current polygon
         /// </summary>
-        /// <returns>Reference to new loop</returns>
-        /// <!--
-        /// linkedGeo.c
-        /// LinkedGeoLoop* addNewLinkedLoop
-        /// -->
-        public LinkedGeoLoop AddNewLoop()
+        /// <returns>Reference to loop</returns>
+        public LinkedGeoLoop AddNewLinkedLoop()
         {
             var loop = new LinkedGeoLoop();
-            GeoLoopList.AddLast(loop);
-            return loop;
+            return AddLinkedLoop(loop);
         }
 
         /// <summary>
         /// Add an existing linked loop to the current polygon
         /// </summary>
-        /// <param name="loop">loop to add</param>
-        /// <returns>Reference to loop</returns>
-        /// <exception cref="Exception">First should be null if last is null</exception>
-        /// <!--
-        /// linkedGeo.c
-        /// LinkedGeoLoop* addLinkedLoop
-        /// -->
+        /// <param name="loop">Reference to loop</param>
+        /// <returns></returns>
         public LinkedGeoLoop AddLinkedLoop(LinkedGeoLoop loop)
         {
-            GeoLoopList.AddLast(loop);
+            _geoLoops.AddLast(loop);
             return loop;
         }
 
         /// <summary>
-        /// Going to try C# capabilities only in this.
-        ///
-        /// Clear all the geoLoops, then clear the linked list.
+        /// <see cref="Clear"/>
         /// </summary>
-        /// <!--
-        /// linkedGeo.c
-        /// void H3_EXPORT(destroyLinkedPolygon)
-        /// -->
-        public void Clear()
+        public void Destroy()
         {
-            foreach (var geoLoop in GeoLoopList)
-            {
-                geoLoop.Clear();
-            }
-            GeoLoopList.Clear();
+            Clear();
         }
 
         /// <summary>
-        /// Count the number of polygons in a linked list, starting from this
+        /// Free all the geoloops and propagate to the next polygon until
+        /// there's no more polygons.
         /// </summary>
-        /// <!--
-        /// linkedGeo.c
-        /// countLinkedPolygons
-        /// -->
-        public int CountPolygons()
+        public void Clear()
         {
-            var sum = 1;
-            var next = Next;
-            while (next != null)
+            foreach (var loop in _geoLoops)
             {
-                sum++;
-                next = next.Next;
+                loop.Clear();
             }
 
-            return sum;
+            Next?.Clear();
+            Next = null;
+        }
+
+        /// <summary>
+        /// Add a newly constructed polygon to current polygon.
+        /// </summary>
+        /// <returns>Reference to new polygon</returns>
+        /// <exception cref="Exception"></exception>
+        public LinkedGeoPolygon AddNewLinkedGeoPolygon()
+        {
+            if (Next != null)
+            {
+                throw new Exception("polygon.Next must be null");
+            }
+
+            Next = new LinkedGeoPolygon();
+            return Next;
         }
         
         /// <summary>
-        /// Going to try C# capabilities only in this.
-        ///
-        /// Count the number of loops in all the polygons.
+        /// Count the number of polygons in a linked list
         /// </summary>
-        /// <!--
-        /// linkedGeo.c
-        /// int countLinkedLoops
-        /// -->
-        public int CountLoops()
+        private int TotalPolygons()
         {
-            return GeoLoopList.Count;
+            var count = 1;
+            var next = Next;
+            while (next != null)
+            {
+                count++;
+                next = next.Next;
+            }
+
+            return count;
         }
+
+        private LinkedGeoLoop GetFirst()
+        {
+            if (_geoLoops == null || _geoLoops.Count < 1)
+            {
+                return null;
+            }
+
+            return _geoLoops.First();
+        }
+        
+        private LinkedGeoLoop GetLast()
+        {
+            if (_geoLoops == null || _geoLoops.Count < 1)
+            {
+                return null;
+            }
+
+            return _geoLoops.Last();
+        }
+
     }
 }

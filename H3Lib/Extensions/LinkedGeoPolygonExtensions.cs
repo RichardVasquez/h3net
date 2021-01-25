@@ -37,7 +37,7 @@ namespace H3Lib.Extensions
             }
 
             // Count loops, exiting early if there's only one
-            int loopCount = root.CountLoops();
+            int loopCount = root.CountLoops;
             if (loopCount <= 1)
             {
                 return (Constants.LinkedGeo.NormalizationSuccess, root);
@@ -57,12 +57,12 @@ namespace H3Lib.Extensions
             var bboxes = new List<BBox>();
 
             // Get the first loop and unlink it from root
-            var loop = root.GeoLoopList.First;
+            var testLoops = root.Loops;//.GeoLoopList.First;
 
-            var linkedGeoArray = new LinkedGeoLoop[root.GeoLoopList.Count];
-            root.GeoLoopList.CopyTo(linkedGeoArray,0);
+//            var linkedGeoArray = new LinkedGeoLoop[root.GeoLoopList.Count];
+//            root.GeoLoopList.CopyTo(linkedGeoArray,0);
 
-            var testLoops = linkedGeoArray.ToList();// root.LinkedGeoList.ToList();
+//            var testLoops = linkedGeoArray.ToList();// root.LinkedGeoList.ToList();
             root = new LinkedGeoPolygon();
 
             foreach (LinkedGeoLoop geoLoop in testLoops)
@@ -76,7 +76,7 @@ namespace H3Lib.Extensions
                 {
                     polygon = polygon == null
                                   ? root
-                                  : polygon.AddNew();
+                                  : polygon.AddNewLinkedGeoPolygon();
                     polygon.AddLinkedLoop(geoLoop);
                     bboxes.Add(geoLoop.ToBBox());
                     outerCount++;
@@ -161,6 +161,9 @@ namespace H3Lib.Extensions
             // Initialize arrays for candidate loops and their bounding boxes
             var candidates = Enumerable.Range(1, polygonCount).Select(s => new LinkedGeoPolygon()).ToList();
             var candidateBoxes = Enumerable.Range(1, polygonCount).Select(s => new BBox()).ToList();
+
+            candidates = new List<LinkedGeoPolygon>();
+            candidateBoxes = new List<BBox>();
             
             // Find all polygons that contain the loop
             var candidateCount = 0;
@@ -168,12 +171,14 @@ namespace H3Lib.Extensions
             while (polygon != null)
             {
                 // We are guaranteed not to overlap, so just test the first point
-                if(polygon.GeoLoopList.First!=null && loop.GeoCoordList.First!=null)
+                if(polygon.Loops !=null && loop.Nodes!=null)
                 {
-                    if (polygon.GeoLoopList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value))
+                    if (polygon.Loops.First().PointInside(boxes[index], loop.Nodes.First().Vertex))
                     {
-                        candidates[candidateCount] = polygon;
-                        candidateBoxes[candidateCount] = boxes[index];
+                        candidates.Add(polygon);
+                        candidateBoxes.Add(boxes[index]);
+//                        candidates[candidateCount] = polygon;
+//                        candidateBoxes[candidateCount] = boxes[index];
                         candidateCount++;
                     }
                 }
@@ -182,12 +187,12 @@ namespace H3Lib.Extensions
             }
 
             // The most deeply nested container is the immediate parent
-            var parent = candidates.FindDeepestContainer(boxes);
+            var parent = candidates.FindDeepestContainer(candidateBoxes);
 
             // Free allocated memory
             candidates.Clear();
             candidateBoxes.Clear();
-            return (parent.IsEmpty)
+            return (parent.CountLoops == 0)
                        ? null
                        : parent;
         }

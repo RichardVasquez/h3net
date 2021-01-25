@@ -1,59 +1,82 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using H3Lib.Extensions;
 
 namespace H3Lib
 {
-    /// TODO: Make sure all the LinkedList stuff works
-    /// <summary>
-    /// A loop node in a linked geo structure, part of a linked list
-    /// </summary>
     public class LinkedGeoLoop
     {
-        public readonly LinkedList<GeoCoord> GeoCoordList;
+        private LinkedList<LinkedGeoCoord> Loop;
+        public int Count => Loop.Count;
 
-        /// <summary>
-        /// Count the number of coordinates in a loop
-        /// </summary>
-        /// <returns>Count</returns>
-        /// <!--
-        /// linkedGeo.c
-        /// int countLinkedCoords
-        /// -->
-        public int CountCoords => GeoCoordList.Count;
+        public List<LinkedGeoCoord> Nodes => CopyNodes();
 
-        public bool IsEmpty => GeoCoordList.Count == 0;
+        public LinkedGeoCoord First => GetFirst();
+
+        public bool IsEmpty => Loop == null || Loop.Count == 0;
 
         public LinkedGeoLoop()
         {
-            GeoCoordList = new LinkedList<GeoCoord>();
+            Loop = new LinkedList<LinkedGeoCoord>();
         }
         
+        private List<LinkedGeoCoord> CopyNodes()
+        {
+            if (Loop == null || Loop.Count == 0)
+            {
+                return new List<LinkedGeoCoord>();
+            }
+
+            var temp = Enumerable
+                      .Range(1, Loop.Count)
+                      .Select(s => new LinkedGeoCoord())
+                      .ToArray();
+            Loop.CopyTo(temp, 0);
+            return temp.ToList();
+        }
+
         /// <summary>
         /// Add a new linked coordinate to the current loop
         /// </summary>
         /// <param name="vertex">Coordinate to add</param>
         /// <returns>Reference to the coordinate</returns>
-        /// <exception cref="Exception">First/Last requirements conflict</exception>
         /// <!--
         /// linkedGeo.c
         /// LinkedGeoCoord* addLinkedCoord
         /// -->
-        //public LinkedGeoCoord AddLinkedCoord(GeoCoord vertex)
-        public void AddLinkedCoord(GeoCoord vertex)
+        public LinkedGeoCoord AddLinkedCoord(GeoCoord vertex)
         {
-            GeoCoordList.AddLast(vertex);
+            var coord = new LinkedGeoCoord(vertex);
+            Loop.AddLast(coord);
+            return coord;
         }
 
         /// <summary>
-        /// Free all allocated memory for a linked geo loop.
+        /// Clears the list of coords
         /// </summary>
-        /// <!--
-        /// linkedGeo.c
-        /// void destroyLinkedGeoLoop
-        /// -->
         public void Clear()
         {
-            GeoCoordList.Clear();
+            Loop.Clear();
         }
+        
+        /// <summary>
+        /// Clears the list of coords
+        /// </summary>
+        public void Destroy()
+        {
+            Clear();
+        }
+        
+        private LinkedGeoCoord GetFirst()
+        {
+            if (Loop == null || Loop.Count < 1)
+            {
+                return null;
+            }
+
+            return Loop.First?.Value;
+        }
+
     }
 }

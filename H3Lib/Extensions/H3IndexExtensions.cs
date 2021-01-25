@@ -264,7 +264,7 @@ namespace H3Lib.Extensions
 
                 for (int i = 0; i < pentagonRotations; i++)
                 {
-                    indexFijk = new FaceIjk(indexFijk.Face, indexFijk.Coord.Rotate60Clockwise());
+                    indexFijk = indexFijk.ReplaceCoord(indexFijk.Coord.Rotate60Clockwise());
                 }
 
                 var offset = new CoordIjk().Neighbor(dir);
@@ -282,9 +282,7 @@ namespace H3Lib.Extensions
                 }
 
                 // Perform necessary translation
-                indexFijk = new FaceIjk(indexFijk.Face,
-                                        (indexFijk.Coord + offset).Normalized());
-                
+                indexFijk = indexFijk.ReplaceCoord((indexFijk.Coord + offset).Normalized());
             }
             else if (originOnPent==1 && indexOnPent==1)
             {
@@ -311,7 +309,7 @@ namespace H3Lib.Extensions
 
                 for (var i = 0; i < withinPentagonRotations; i++)
                 {
-                    indexFijk = new FaceIjk(indexFijk.Face, indexFijk.Coord.Rotate60Clockwise());
+                    indexFijk = indexFijk.ReplaceCoord(indexFijk.Coord.Rotate60Clockwise());
                 }
             }
         
@@ -607,7 +605,7 @@ namespace H3Lib.Extensions
             // that these can be calculated with the distance check above.
             // Convert H3 addresses to IJK coords
             var (_, startIjk) = start.ToLocalIjk(start);
-            var (_, endIjk) = end.ToLocalIjk(end);
+            var (_, endIjk) = start.ToLocalIjk(end);
 
             // Convert IJK to cube coordinates suitable for linear interpolation
             startIjk = startIjk.ToCube();
@@ -1111,6 +1109,7 @@ namespace H3Lib.Extensions
         {
             var fijk = h3.ToFaceIjk();
             
+//            Console.WriteLine($"h3: {h3}");
             var gb = h3.IsPentagon()
                      ? fijk.PentToGeoBoundary(h3.Resolution, 0, Constants.H3.NUM_PENT_VERTS)
                      : fijk.ToGeoBoundary(h3.Resolution, 0, Constants.H3.NUM_HEX_VERTS);

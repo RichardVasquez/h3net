@@ -199,6 +199,10 @@ namespace H3Lib
         /// <summary>
         /// Picks whatever HashSet says is the first VertexNode
         /// </summary>
+        /// <!--
+        /// VertexGraph.c
+        /// VertexNode* firstVertexNode
+        /// -->
         public VertexNode? FirstNode()
         {
             if (_pool.Count == 0)

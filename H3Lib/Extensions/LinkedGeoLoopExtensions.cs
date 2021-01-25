@@ -14,11 +14,11 @@ namespace H3Lib.Extensions
                 return false;
             }
             
-            //  Gonna add another test here for quick fail, as we need a triangle+ to have an inside
-            if (loop.GeoCoordList.Count < 3)
-            {
-                return false;
-            }
+            // //  Gonna add another test here for quick fail, as we need a triangle+ to have an inside
+            // if (loop.Count < 3)
+            // {
+            //     return false;
+            // }
 
             bool isTransmeridian = box.IsTransmeridian;
             bool contains = false;
@@ -26,7 +26,7 @@ namespace H3Lib.Extensions
             double targetLatitude = coord.Latitude;
             double targetLongitude = coord.Longitude.NormalizeLongitude(isTransmeridian);
 
-            var nodes = loop.GeoCoordList.ToList();
+            var nodes = loop.Nodes;
             for (int idx = 0; idx < nodes.Count; idx++)
             {
                 var a = nodes[idx];
@@ -93,7 +93,7 @@ namespace H3Lib.Extensions
             double lat;
             double lon;
 
-            var nodes = loop.GeoCoordList.ToList();
+            var nodes = loop.Nodes;
             for (int idx = 0; idx < nodes.Count; idx++)
             {
                 var coord = nodes[idx];
@@ -149,7 +149,7 @@ namespace H3Lib.Extensions
         {
             double sum = 0;
 
-            var nodes = loop.GeoCoordList.ToList();
+            var nodes = loop.Nodes;
             for (int idx = 0; idx < nodes.Count; idx++)
             {
                 var a = nodes[idx];
@@ -188,15 +188,21 @@ namespace H3Lib.Extensions
         public static int CountContainers(this LinkedGeoLoop loop, List<LinkedGeoPolygon> polygons, List<BBox> boxes)
         {
             return polygons
-                  .Where
-                       (
-                        (poly, index) =>
-                            poly.GeoLoopList.First != null &&
-                            loop.GeoCoordList.First != null &&
-                            loop != poly.GeoLoopList.First.Value &&
-                            poly.GeoLoopList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value)
-                       )
+                  .Where((t, i) =>
+                             loop != t.First &&
+                             t.First.PointInside(boxes[i], loop.First.Vertex))
                   .Count();
+
+            // return polygons
+            //       .Where
+            //            (
+            //             (poly, index) =>
+            //                 poly.First != null &&
+            //                 loop.First != null &&
+            //                 loop != poly.Loops. &&
+            //                 poly.GeoLoopList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value)
+            //            )
+            //       .Count();
 
             /*
             int containerCount = 0;
@@ -214,11 +220,6 @@ namespace H3Lib.Extensions
             return containerCount;
          
 */
-            //            return polygons
-            //                  .Where(
-            //                         (t, i) => loop != t.First &&
-            //                                   t.First.PointInside(boxes[i], loop.First.Vertex))
-            //                 .Count();
         }
     }
 }

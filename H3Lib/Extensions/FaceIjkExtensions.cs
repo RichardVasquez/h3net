@@ -50,7 +50,7 @@ namespace H3Lib.Extensions
             )
         {
             var overage = Overage.NO_OVERAGE;
-            var ijk = fijk.Coord;
+            var ijk = new CoordIjk(fijk.Coord);
 
             // get the maximum dimension value; scale if a substrate grid
             int maxDim = Constants.FaceIjk.MaxDimByCiiRes[res];
@@ -60,11 +60,11 @@ namespace H3Lib.Extensions
             }
 
             // check for overage
-            if (substrate != 0 && ijk.I + ijk.J + ijk.K == maxDim) // on edge
+            if (substrate != 0 && ijk.Sum() == maxDim) // on edge
             {
                 overage = Overage.FACE_EDGE;
             }
-            else if (ijk.I + ijk.J + ijk.K > maxDim) // overage
+            else if (ijk.Sum() > maxDim) // overage
             {
                 overage = Overage.NEW_FACE;
                 FaceOrientIjk fijkOrient;
@@ -93,8 +93,6 @@ namespace H3Lib.Extensions
                             tmp = tmp.Rotate60Clockwise();
                             // translate the origin back to the center of the triangle
                             ijk = tmp + origin;
-                            //let's move it back in, later
-                            //fijk = fijk.ReplaceCoord(ijk);
                         }
                     }
                 }
@@ -106,13 +104,11 @@ namespace H3Lib.Extensions
                 }
 
                 fijk = fijk.ReplaceFace(fijkOrient.Face);
-                //fijk = new FaceIjk(fijkOrient.Face, fijk.Coord);
 
                 // rotate and translate for adjacent face
                 for (int i = 0; i < fijkOrient.Ccw60Rotations; i++)
                 {
                     ijk = ijk.Rotate60CounterClockwise();
-                    //fijk = fijk.ReplaceCoord(ijk);
                 }
 
                 var transVec = fijkOrient.Translate;
@@ -125,15 +121,15 @@ namespace H3Lib.Extensions
                 transVec *= unitScale;
                 ijk += transVec;
                 ijk = ijk.Normalized();
-                fijk = fijk.ReplaceCoord(ijk);
 
                 // overage points on pentagon boundaries can end up on edges
-                if (substrate != 0 && ijk.I + ijk.J + ijk.K == maxDim) // on edge
+                if (substrate != 0 && ijk.Sum() == maxDim) // on edge
                 {
                     overage = Overage.FACE_EDGE;
                 }
             }
 
+            fijk = fijk.ReplaceCoord(ijk);
             return (overage, fijk);
         }
 
@@ -505,9 +501,7 @@ namespace H3Lib.Extensions
 
             int adjRes = res;
             var centerIjk = h;
-            IList<FaceIjk> fijkVerts = Enumerable.Range(1, Constants.H3.NUM_HEX_VERTS)
-                                                 .Select(i => new FaceIjk())
-                                                 .ToArray();
+            IList<FaceIjk> fijkVerts = new FaceIjk[Constants.H3.NUM_HEX_VERTS];
             (centerIjk, adjRes, fijkVerts) = centerIjk.ToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
@@ -532,7 +526,7 @@ namespace H3Lib.Extensions
 
                 Overage overage;
                 (overage, fijk) = fijk.AdjustOverageClassIi(adjRes, pentLeading4, 1);
-
+//                Console.WriteLine(overage.ToString());
                 /*
                 Check for edge-crossing. Each face of the underlying icosahedron is a
                 different projection plane. So if an edge of the hexagon crosses an
@@ -590,10 +584,13 @@ namespace H3Lib.Extensions
                     face, and no additional vertex is required.
                     */
                     bool isIntersectionAtVertex = orig2d0 == inter || orig2d1 == inter;
+//                    Console.WriteLine($"bool: {isIntersectionAtVertex} inter: {inter} orig2d0: {orig2d0} orig2d1: {orig2d1}");
                     if (!isIntersectionAtVertex)
                     {
                         gb.Verts[gb.NumVerts] = inter.ToGeoCoord(centerIjk.Face, adjRes, 1);
                         gb.NumVerts++;
+//                        Console.WriteLine($"Vertex: {gb.Verts[gb.NumVerts-1]}");
+//                        Console.WriteLine($"Main Loop {gb.NumVerts}  h: {h} res: {res} start: {start} length: {length}");
                     }
                 }
 
@@ -606,6 +603,8 @@ namespace H3Lib.Extensions
                                                 .ToHex2d()
                                                 .ToGeoCoord(fijk.Face, adjRes, 1);
                     gb.NumVerts++;
+//                    Console.WriteLine($"Vertex: {gb.Verts[gb.NumVerts-1]}");
+//                    Console.WriteLine($"addon {gb.NumVerts}  h: {h} res: {res} start: {start} length: {length}");
                 }
 
                 lastFace = fijk.Face;
@@ -677,16 +676,6 @@ namespace H3Lib.Extensions
                     {
                         ijk = ijk.Rotate60CounterClockwise();
                     }
-
-                    //  NOTE: Unfolding this to see if the problem is here.
-                    //  Folded:
-                    //  ijk = (ijk + fijkOrient.Translate * Constants.FaceIjk.UnitScaleByCiiRes[adjRes] * 3).Normalized();
-
-                    //  C code
-                    //  CoordIJK transVec = fijkOrient->translate;
-                    //  _ijkScale(&transVec, unitScaleByCIIres[adjRes] * 3);
-                    //  _ijkAdd(ijk, &transVec, ijk);
-                    //  _ijkNormalize(ijk);
 
                     var transVec = fijkOrient.Translate;
                     var scaleRes = Constants.FaceIjk.UnitScaleByCiiRes[adjRes] * 3;

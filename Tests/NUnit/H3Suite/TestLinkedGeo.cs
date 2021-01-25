@@ -19,7 +19,7 @@ namespace TestSuite
         [Test]
         public void CreateLinkedGeo()
         {
-            var polygon = new NewLinkedGeoPolygon();
+            var polygon = new LinkedGeoPolygon();
 
             var loop = polygon.AddNewLinkedLoop();
             Assert.IsNotNull(loop);
