@@ -23,7 +23,6 @@ namespace TestSuite
 
             var check = line.ToList();
             Assert.AreEqual(0, err);
-//            Console.WriteLine($"start: {start} end: {end}");
             Assert.AreEqual(start, check.First());
             Assert.AreEqual(end, check.Last());
 

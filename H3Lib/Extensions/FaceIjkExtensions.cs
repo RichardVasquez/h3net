@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace H3Lib.Extensions
 {
@@ -49,8 +48,9 @@ namespace H3Lib.Extensions
                 this FaceIjk fijk, int res, int pentLeading4, int substrate
             )
         {
-            var overage = Overage.NO_OVERAGE;
-            var ijk = new CoordIjk(fijk.Coord);
+            Overage overage = Overage.NO_OVERAGE;
+
+            var ijk = fijk.Coord;
 
             // get the maximum dimension value; scale if a substrate grid
             int maxDim = Constants.FaceIjk.MaxDimByCiiRes[res];
@@ -64,25 +64,20 @@ namespace H3Lib.Extensions
             {
                 overage = Overage.FACE_EDGE;
             }
-            else if (ijk.Sum() > maxDim) // overage
+            else if (ijk.Sum() > maxDim)  // overage
             {
                 overage = Overage.NEW_FACE;
-                FaceOrientIjk fijkOrient;
 
+                FaceOrientIjk fijkOrient;
                 if (ijk.K > 0)
                 {
                     if (ijk.J > 0) // jk "quadrant"
                     {
-                        fijkOrient = Constants
-                                    .FaceIjk
-                                    .FaceNeighbors[fijk.Face, Constants.FaceIjk.JK];
+                        fijkOrient = Constants.FaceIjk.FaceNeighbors[fijk.Face, Constants.FaceIjk.JK];
                     }
                     else // ik "quadrant"
                     {
-                        fijkOrient = Constants
-                                    .FaceIjk
-                                    .FaceNeighbors[fijk.Face, Constants.FaceIjk.KI];
-
+                        fijkOrient = Constants.FaceIjk.FaceNeighbors[fijk.Face, Constants.FaceIjk.KI];
                         // adjust for the pentagonal missing sequence
                         if (pentLeading4 != 0)
                         {
@@ -98,9 +93,7 @@ namespace H3Lib.Extensions
                 }
                 else // ij "quadrant"
                 {
-                    fijkOrient = Constants
-                                .FaceIjk
-                                .FaceNeighbors[fijk.Face, Constants.FaceIjk.IJ];
+                    fijkOrient = Constants.FaceIjk.FaceNeighbors[fijk.Face, Constants.FaceIjk.IJ];
                 }
 
                 fijk = fijk.ReplaceFace(fijkOrient.Face);
@@ -219,7 +212,6 @@ namespace H3Lib.Extensions
             if (res.IsResClassIii())
             {
                 tempCoord = tempCoord.DownAp7R();
-                //fijk = fijk.ReplaceCoord(fijk.Coord.DownAp7R());
                 res++;
             }
 
@@ -497,11 +489,10 @@ namespace H3Lib.Extensions
         /// -->
         public static GeoBoundary ToGeoBoundary(this FaceIjk h, int res, int start, int length)
         {
-            var gb = new GeoBoundary();
-
             int adjRes = res;
             var centerIjk = h;
             IList<FaceIjk> fijkVerts = new FaceIjk[Constants.H3.NUM_HEX_VERTS];
+
             (centerIjk, adjRes, fijkVerts) = centerIjk.ToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
@@ -510,23 +501,23 @@ namespace H3Lib.Extensions
                                           ? 1
                                           : 0;
 
+            var g = new GeoBoundary();
+            Overage overage = default;
             // convert each vertex to lat/lon
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
-            gb.NumVerts = 0;
+            g.NumVerts = 0;
             int lastFace = -1;
-            var lastOverage = Overage.NO_OVERAGE;
-            for (int vert = start;
-                 vert < start + length + additionalIteration;
-                 vert++)
+            Overage lastOverage = Overage.NO_OVERAGE;
+
+            for (int vert = start; vert < start + length + additionalIteration; vert++)
             {
                 int v = vert % Constants.H3.NUM_HEX_VERTS;
                 var fijk = fijkVerts[v];
-                const int pentLeading4 = 0;
+                var pentLeading4 = 0;
 
-                Overage overage;
                 (overage, fijk) = fijk.AdjustOverageClassIi(adjRes, pentLeading4, 1);
-//                Console.WriteLine(overage.ToString());
+                
                 /*
                 Check for edge-crossing. Each face of the underlying icosahedron is a
                 different projection plane. So if an edge of the hexagon crosses an
@@ -536,13 +527,13 @@ namespace H3Lib.Extensions
                 projection. Note that Class II cell edges have vertices on the face
                 edge, with no edge line intersections.
                 */
-                if (res.IsResClassIii() && vert > start && fijk.Face != lastFace &&
-                    lastOverage != Overage.FACE_EDGE)
+
+                Vec2d orig2d1 = fijkVerts[v].Coord.ToHex2d();
+                if (res.IsResClassIii() && vert > start && fijk.Face != lastFace && lastOverage != Overage.FACE_EDGE)
                 {
                     // find hex2d of the two vertexes on original face
                     int lastV = (v + 5) % Constants.H3.NUM_HEX_VERTS;
                     var orig2d0 = fijkVerts[lastV].Coord.ToHex2d();
-                    var orig2d1 = fijkVerts[v].Coord.ToHex2d();
 
                     // find the appropriate icosahedron face edge vertexes
                     int maxDim = Constants.FaceIjk.MaxDimByCiiRes[adjRes];
@@ -565,15 +556,15 @@ namespace H3Lib.Extensions
                             edge0 = v1;
                             edge1 = v2;
                             break;
-                        default:
-                            if (Constants.FaceIjk.AdjacentFaceDir[centerIjk.Face, face2] != Constants.FaceIjk.KI)
-                            {
-                                throw new Exception("adjacentFaceDir[centerIJK.face][face2] == KI");
-                            }
-
+                        case Constants.FaceIjk.KI:
                             edge0 = v2;
                             edge1 = v0;
                             break;
+                        default:
+                            throw new Exception
+                                (
+                                 $"(adjacentFaceDir[centerIJK.face][face2] == KI) idx0: {centerIjk.Face} idx1: {face2}"
+                                );
                     }
 
                     // find the intersection and add the lat/lon point to the result
@@ -584,13 +575,10 @@ namespace H3Lib.Extensions
                     face, and no additional vertex is required.
                     */
                     bool isIntersectionAtVertex = orig2d0 == inter || orig2d1 == inter;
-//                    Console.WriteLine($"bool: {isIntersectionAtVertex} inter: {inter} orig2d0: {orig2d0} orig2d1: {orig2d1}");
                     if (!isIntersectionAtVertex)
                     {
-                        gb.Verts[gb.NumVerts] = inter.ToGeoCoord(centerIjk.Face, adjRes, 1);
-                        gb.NumVerts++;
-//                        Console.WriteLine($"Vertex: {gb.Verts[gb.NumVerts-1]}");
-//                        Console.WriteLine($"Main Loop {gb.NumVerts}  h: {h} res: {res} start: {start} length: {length}");
+                        g.Verts[g.NumVerts] = inter.ToGeoCoord(centerIjk.Face, adjRes, 1);
+                        g.NumVerts++;
                     }
                 }
 
@@ -599,19 +587,16 @@ namespace H3Lib.Extensions
                 // intersection on last edge
                 if (vert < start + Constants.H3.NUM_HEX_VERTS)
                 {
-                    gb.Verts[gb.NumVerts] = fijk.Coord
-                                                .ToHex2d()
-                                                .ToGeoCoord(fijk.Face, adjRes, 1);
-                    gb.NumVerts++;
-//                    Console.WriteLine($"Vertex: {gb.Verts[gb.NumVerts-1]}");
-//                    Console.WriteLine($"addon {gb.NumVerts}  h: {h} res: {res} start: {start} length: {length}");
+                    var vec = fijk.Coord.ToHex2d();
+                    g.Verts[g.NumVerts] = vec.ToGeoCoord(fijk.Face, adjRes, 1);
+                    g.NumVerts++;
                 }
 
                 lastFace = fijk.Face;
                 lastOverage = overage;
             }
 
-            return gb;
+            return g;
         }
 
         /// <summary>
@@ -689,7 +674,7 @@ namespace H3Lib.Extensions
                     int maxDim = Constants.FaceIjk.MaxDimByCiiRes[adjRes];
                     var v0 = new Vec2d(3.0 * maxDim, 0.0);
                     var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.H3.M_SQRT3_2 * maxDim);
-                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.H3.M_SQRT3_2 * maxDim);
+                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 *Constants. H3.M_SQRT3_2 * maxDim);
 
                     Vec2d edge0;
                     Vec2d edge1;

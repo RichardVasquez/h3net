@@ -5,6 +5,11 @@ namespace H3Lib.Extensions
 {
     public static class CoordIjkExtensions
     {
+        public static bool IsZero(this CoordIjk ijk)
+        {
+            return ijk.I == 0 && ijk.J == 0 && ijk.K == 0;
+        }
+        
         public static int Sum(this CoordIjk ijk)
         {
             return ijk.I + ijk.J + ijk.K;

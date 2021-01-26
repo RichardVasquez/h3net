@@ -442,15 +442,13 @@ namespace H3Lib.Extensions
         /// -->
         public static (int, FaceIjk) ToFaceIjkWithInitializedFijk(this H3Index h, FaceIjk fijk)
         {
-            var empty = new CoordIjk();
-            var ijk = new CoordIjk(fijk.Coord);
+            var ijk = fijk.Coord;
             int res = h.Resolution;
 
             // center base cell hierarchy is entirely on this face
             var possibleOverage = 1;
 
-            if (!h.BaseCell.IsBaseCellPentagon() &&
-                (res == 0 || ijk == empty))
+            if (!h.BaseCell.IsBaseCellPentagon() && (res ==0||ijk.IsZero())) 
             {
                 possibleOverage = 0;
             }
@@ -458,13 +456,13 @@ namespace H3Lib.Extensions
             for (var r = 1; r <= res; r++)
             {
                 ijk = r.IsResClassIii()
-                          ? ijk.DownAp7()
-                          : ijk.DownAp7R();
+                          ? ijk.DownAp7()   //  Class III == rotate ccw
+                          : ijk.DownAp7R(); //  Class II == rotate cw
 
                 ijk = ijk.Neighbor(h.GetIndexDigit(r));
             }
 
-            fijk = new FaceIjk(fijk.Face, ijk);
+            fijk = fijk.ReplaceCoord(ijk);
             return (possibleOverage, fijk);
         }
 
@@ -829,8 +827,7 @@ namespace H3Lib.Extensions
             int baseCell = h.BaseCell;
             // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
             // to be adjusted (and some of sub-sequence 4 below)
-            if (baseCell.IsBaseCellPentagon() && 
-                h.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT)
+            if (baseCell.IsBaseCellPentagon() && (int) h.LeadingNonZeroDigit == 5)
             {
                 h = h.Rotate60Clockwise();
             }
@@ -861,7 +858,7 @@ namespace H3Lib.Extensions
             // a pentagon base cell with a leading 4 digit requires special handling
             int pentLeading4 =
                 baseCell.IsBaseCellPentagon() &&
-                h.LeadingNonZeroDigit == Direction.I_AXES_DIGIT
+                (int)h.LeadingNonZeroDigit == 4
                     ? 1
                     : 0;
 
@@ -1109,7 +1106,6 @@ namespace H3Lib.Extensions
         {
             var fijk = h3.ToFaceIjk();
             
-//            Console.WriteLine($"h3: {h3}");
             var gb = h3.IsPentagon()
                      ? fijk.PentToGeoBoundary(h3.Resolution, 0, Constants.H3.NUM_PENT_VERTS)
                      : fijk.ToGeoBoundary(h3.Resolution, 0, Constants.H3.NUM_HEX_VERTS);
