@@ -52,6 +52,8 @@ as easily without the following:
     * Mean Girls
     * Waitress
   
-* And as always, my family for accepting that I'm going to spend a few
+* As always, my family for accepting that I'm going to spend a few
   hours poking at a keyboard for days on end, and it's not even going
   to make cool pictures or be a video game.
+
+* Mandy Oei, for reminding me that I need to do things before it's too late.
