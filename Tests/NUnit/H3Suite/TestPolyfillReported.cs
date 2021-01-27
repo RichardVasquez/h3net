@@ -117,7 +117,7 @@ namespace TestSuite
 
             Assert.AreEqual(4609, actualNumHexagons);
         }
-        
+
         // https://github.com/uber/h3/issues/136
         [Test]
         public void h3_136()
