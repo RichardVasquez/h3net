@@ -48,7 +48,7 @@ namespace TestSuite
 
                 if (edgeBoundary.NumVerts != revEdgeBoundary.NumVerts)
                 {
-                    var k = 0;
+                    ;//var k = 0;
                 }
                 
                 

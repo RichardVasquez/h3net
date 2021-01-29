@@ -42,7 +42,7 @@ namespace TestSuite
         public void OneResStep()
         {
             const int expectedCount = 7;
-            const int paddedCount = 10;
+            //const int paddedCount = 10;
 
             var sfHex9s = sfHex8.ToChildren(9);
             var center = sfHex8.ToGeoCoord();
