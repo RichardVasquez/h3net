@@ -263,7 +263,7 @@ __pycache__/
 /h3net/PhantomCode/BridgeH3IndexFaceIjk.cs
 /h3net/PhantomCode/H3IndexCode.cs
 
-C Test Code
-/Scratch/Program.cs
-/Scratch/Scratch.csproj
-/test.drawio.svg
+# Other files
+/Scratch/*
+h3net.sln.DotSettings.user
+h3net.sln.DotSettings
