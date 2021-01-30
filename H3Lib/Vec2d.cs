@@ -9,9 +9,18 @@ namespace H3Lib
     [DebuggerDisplay("X: {X} Y: {Y}")]
     public readonly struct Vec2d:IEquatable<Vec2d>
     {
+        /// <summary>
+        /// X coordinate
+        /// </summary>
         public readonly double X;
+        /// <summary>
+        /// Y Coordinate
+        /// </summary>
         public readonly double Y;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Vec2d(double x, double y) 
         {
             X = x;
@@ -64,6 +73,9 @@ namespace H3Lib
                 );
         }
 
+        /// <summary>
+        /// Equality test
+        /// </summary>
         public bool Equals(Vec2d other)
         {
             return
@@ -71,26 +83,43 @@ namespace H3Lib
                 Math.Abs(Y - other.Y) < Constants.H3.DBL_EPSILON;
             
         }
+        
+        /// <summary>
+        /// Equality test against unboxed object
+        /// </summary>
         public override bool Equals(object obj)
         {
             return obj is Vec2d other && Equals(other);
         }
 
+        /// <summary>
+        /// Hashcode for identity
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return HashCode.Combine(X, Y);
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
         public static bool operator ==(Vec2d left, Vec2d right)
         {
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// Inequality operator
+        /// </summary>
         public static bool operator !=(Vec2d left, Vec2d right)
         {
             return !left.Equals(right);
         }
 
+        /// <summary>
+        /// Debug info as string
+        /// </summary>
         public override string ToString()
         {
             return $"Vec2d: X: {X} Y: {Y}";

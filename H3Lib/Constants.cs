@@ -1,7 +1,8 @@
 // ReSharper disable InconsistentNaming
-
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
+[assembly: InternalsVisibleTo("TestSuite")]
 namespace H3Lib
 {
     /// <summary>
@@ -9,159 +10,176 @@ namespace H3Lib
     /// </summary>
     public static class Constants
     {
-        /// <summary>
-        /// The following are taken from https://github.com/uber/h3/issues/148
-        /// to indicate the functional equivalence of this C# library.
-        /// </summary>
-        public const int H3_VERSION_MAJOR = 3;
-        public const int H3_VERSION_MINOR = 7;
-        public const int H3_VERSION_PATCH = 1;
+        /*
+         * The following are taken from https://github.com/uber/h3/issues/148
+         * to indicate the functional equivalence of this C# library.
+         */
 
+        /// <summary>
+        /// Major version
+        /// </summary>
+        internal const int H3_VERSION_MAJOR = 3;
+        /// <summary>
+        /// Minor version
+        /// </summary>
+        internal const int H3_VERSION_MINOR = 7;
+        /// <summary>
+        /// Patch version
+        /// </summary>
+        internal const int H3_VERSION_PATCH = 1;
+
+        /// <summary>
+        /// Internal values for all of H3
+        /// </summary>
         public static class H3
         {
             /// <summary>
             /// Pi
             /// </summary>
-            public const double M_PI = 3.14159265358979323846;
+            internal const double M_PI = 3.14159265358979323846;
 
             /// <summary>
             /// Pi / 2.0
             /// </summary>
-            public const double M_PI_2 = 1.5707963267948966;
+            internal const double M_PI_2 = 1.5707963267948966;
 
             /// <summary>
             /// Pi * 2.0
             /// </summary>
-            public const double M_2PI = 6.28318530717958647692528676655900576839433;
+            internal const double M_2PI = 6.28318530717958647692528676655900576839433;
 
             /// <summary>
             /// Pi / 180
             /// </summary>
-            public const double M_PI_180 = 0.0174532925199432957692369076848861271111;
+            internal const double M_PI_180 = 0.0174532925199432957692369076848861271111;
 
             /// <summary>
             /// 180 / Pi
             /// </summary>
-            public const double M_180_PI = 57.29577951308232087679815481410517033240547;
+            internal const double M_180_PI = 57.29577951308232087679815481410517033240547;
 
             /// <summary>
             /// Threshold epsilon
             /// </summary>
-            public const double EPSILON = 0.0000000000000001;
+            internal const double EPSILON = 0.0000000000000001;
 
             /// <summary>
             /// Sqrt(3) / 2.0
             /// </summary>
-            public const double M_SQRT3_2 = 0.8660254037844386467637231707529361834714;
+            internal const double M_SQRT3_2 = 0.8660254037844386467637231707529361834714;
 
             /// <summary>
             /// sin(60 degrees)
             /// </summary>
-            public const double M_SIN60 = M_SQRT3_2;
+            internal const double M_SIN60 = M_SQRT3_2;
 
             /// <summary>
             /// Rotation angle between Class II and Class III resolution axes
             /// asin(sqrt(3.0 / 28.0 ))
             /// </summary>
-            public const double M_AP7_ROT_RADS = 0.333473172251832115336090755351601070065900389;
+            internal const double M_AP7_ROT_RADS = 0.333473172251832115336090755351601070065900389;
 
             /// <summary>
             /// sin(<see cref="M_AP7_ROT_RADS"/>
             /// </summary>
-            public const double M_SIN_AP7_ROT = 0.3273268353539885718950318;
+            internal const double M_SIN_AP7_ROT = 0.3273268353539885718950318;
 
             /// <summary>
             /// cos(<see cref="M_AP7_ROT_RADS"/>
             /// </summary>
-            public const double M_COS_AP7_ROT = 0.9449111825230680680167902;
+            internal const double M_COS_AP7_ROT = 0.9449111825230680680167902;
 
             /// <summary>
             /// Earth radius in kilometers using WGS84 authalic radius
             /// </summary>
-            public const double EARTH_RADIUS_KM = 6371.007180918475;
+            internal const double EARTH_RADIUS_KM = 6371.007180918475;
 
             /// <summary>
             /// Scaling factor from hex2d resolution 0 unit length
             /// (or distance between adjacent cell center points on the place)
             /// to gnomonic unit length.
             /// </summary>
-            public const double RES0_U_GNOMONIC = 0.38196601125010500003;
+            internal const double RES0_U_GNOMONIC = 0.38196601125010500003;
 
             /// <summary>
             /// H3 resolution; H3 version 1 has 16 resolutions, numbered 0 through 15
             /// </summary>
-            public const int MAX_H3_RES = 15;
+            internal const int MAX_H3_RES = 15;
 
             /// <summary>
             /// The number of faces on an icosahedron
             /// </summary>
-            public const int NUM_ICOSA_FACES = 20;
+            internal const int NUM_ICOSA_FACES = 20;
 
             /// <summary>
             /// The number of H3 base cells
             /// </summary>
-            public const int NUM_BASE_CELLS = 122;
+            internal const int NUM_BASE_CELLS = 122;
 
             /// <summary>
             /// The number of vertices in a hexagon;
             /// </summary>
-            public const int NUM_HEX_VERTS = 6;
+            internal const int NUM_HEX_VERTS = 6;
 
             /// <summary>
             /// The number of vertices in a pentagon
             /// </summary>
-            public const int NUM_PENT_VERTS = 5;
+            internal const int NUM_PENT_VERTS = 5;
 
             /// <summary>
             /// H3 Index modes
             /// </summary>
-            public const int H3_HEXAGON_MODE = 1;
+            internal const int H3_HEXAGON_MODE = 1;
 
-            public const int H3_UNIEDGE_MODE = 2;
+            internal const int H3_UNIEDGE_MODE = 2;
 
             /// <summary>
             /// epsilon of ~0.1mm in degrees
             /// </summary>
-            public const double EPSILON_DEG = 0.000000001;
+            internal const double EPSILON_DEG = 0.000000001;
 
             /// <summary>
             /// epsilon of ~0.1mm in radians
             /// </summary>
-            public const double EPSILON_RAD = EPSILON_DEG * M_PI_180;
+            internal const double EPSILON_RAD = EPSILON_DEG * M_PI_180;
 
-            public const int MAX_CELL_BNDRY_VERTS = 10;
+            internal const int MAX_CELL_BNDRY_VERTS = 10;
+
+            // /// <summary>
+            // /// Return codes from Algos.hexRange and related functions.
+            // /// </summary>
+            // internal const int HEX_RANGE_SUCCESS = 0;
+            //
+            // internal const int HEX_RANGE_PENTAGON = 1;
+            // internal const int HEX_RANGE_K_SUBSEQUENCE = 1;
 
             /// <summary>
-            /// Return codes from <see cref="Algos.hexRange"/> and related functions.
+            /// General margin of error in differences between double values
             /// </summary>
-            public const int HEX_RANGE_SUCCESS = 0;
-
-            public const int HEX_RANGE_PENTAGON = 1;
-            public const int HEX_RANGE_K_SUBSEQUENCE = 1;
-
-            public const double DBL_EPSILON = 2.2204460492503131e-16;
+            internal const double DBL_EPSILON = 2.2204460492503131e-16;
 
             /// <summary>
             /// Direction used for traversing to the next outward hexagonal ring. 
             /// </summary>
-            public const Direction NEXT_RING_DIRECTION = Direction.I_AXES_DIGIT;
+            internal const Direction NEXT_RING_DIRECTION = Direction.I_AXES_DIGIT;
 
-            public const int NUM_PENTAGONS = 12;
+            internal const int NUM_PENTAGONS = 12;
         }
 
-        public static class Algos
+        internal static class Algos
         {
             /*
              * Return codes from hexRange and related functions.
             */
-            public const int HexRangeSuccess = 0;
-            public const int HexRangePentagon = 1;
-            public const int HexRangeKSubsequence = 2;
-            public const int MaxOneRingSize = 7;
-            public const int HexHashOverflow = -1;
-            public const int PolyfillBuffer = 12;
+            internal const int HexRangeSuccess = 0;
+            internal const int HexRangePentagon = 1;
+            internal const int HexRangeKSubsequence = 2;
+            internal const int MaxOneRingSize = 7;
+            internal const int HexHashOverflow = -1;
+            internal const int PolyfillBuffer = 12;
 
             /// <summary>
+            /// <code>
             ///      _
             ///    _/ \_      Directions used for traversing a        
             ///   / \5/ \     hexagonal ring counterclockwise
@@ -169,11 +187,12 @@ namespace H3Lib
             ///   / \_/ \
             ///   \1/ \3/
             ///     \2/
+            /// </code>
             /// </summary>
             /// <!--
             /// algos.c
             /// -->
-            public static readonly Direction[] Directions =
+            internal static readonly Direction[] Directions =
             {
                 Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT,
                 Direction.K_AXES_DIGIT, Direction.IK_AXES_DIGIT,
@@ -187,7 +206,7 @@ namespace H3Lib
             /// Algos.c
             /// NEXT_RING_DIRECTION
             /// -->
-            public const Direction NextRingDirection = Direction.I_AXES_DIGIT;
+            internal const Direction NextRingDirection = Direction.I_AXES_DIGIT;
 
             /// <summary>
             /// New digit when traversing along class II grids.
@@ -198,7 +217,7 @@ namespace H3Lib
             /// Algos.c
             /// NEW_DIGIT_II
             /// -->
-            public static readonly Direction[,] NewDigitIi =
+            internal static readonly Direction[,] NewDigitIi =
             {
                 {
                     Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.J_AXES_DIGIT,
@@ -246,7 +265,7 @@ namespace H3Lib
             /// Algos.c
             /// NEW_ADJUSTMENT_II
             /// -->
-            public static readonly Direction[,] NewAdjustmentIi =
+            internal static readonly Direction[,] NewAdjustmentIi =
             {
                 {
                     Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
@@ -294,7 +313,7 @@ namespace H3Lib
             /// Algos.c
             /// NEW_DIGIT_III
             /// -->
-            public static readonly Direction[,] NewDigitIii =
+            internal static readonly Direction[,] NewDigitIii =
             {
                 {
                     Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.J_AXES_DIGIT,
@@ -342,7 +361,7 @@ namespace H3Lib
             /// algos.c
             /// NEW_ADJUSTMENT_III
             /// -->
-            public static readonly Direction[,] NewAdjustmentIii =
+            internal static readonly Direction[,] NewAdjustmentIii =
             {
                 {
                     Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
@@ -383,19 +402,19 @@ namespace H3Lib
 
         }
 
-        public static class BaseCells
+        internal static class BaseCells
         {
-            public const int InvalidBaseCell = 127;
+            internal const int InvalidBaseCell = 127;
 
             /// <summary>
             /// Maximum input for any component to face-to-base-cell lookup functions
             /// </summary>
-            public const int MaxFaceCoord = 2;
+            internal const int MaxFaceCoord = 2;
 
             /// <summary>
             /// Invalid number of rotations
             /// </summary>
-            public const int InvalidRotations = -1;
+            internal const int InvalidRotations = -1;
 
             /// <summary>
             /// Neighboring base cell ID in each IJK direction.
@@ -403,7 +422,7 @@ namespace H3Lib
             /// For each base cell, for each direction, the neighboring base
             /// cell ID is given. 127 indicates there is no neighbor in that direction.
             /// </summary>
-            public static readonly int[,] BaseCellNeighbors =
+            internal static readonly int[,] BaseCellNeighbors =
             {
                 {0, 1, 5, 2, 4, 3, 8}, // base cell 0
                 {1, 7, 6, 9, 0, 3, 2}, // base cell 1
@@ -540,7 +559,7 @@ namespace H3Lib
             /// baseCells.c
             /// baseCellNeighbor60CCWRots
             /// -->
-            public static readonly int[,] BaseCellNeighbor60CounterClockwiseRotation =
+            internal static readonly int[,] BaseCellNeighbor60CounterClockwiseRotation =
             {
                 {0, 5, 0, 0, 1, 5, 1}, // base cell 0
                 {0, 0, 1, 0, 1, 0, 1}, // base cell 1
@@ -676,10 +695,10 @@ namespace H3Lib
             ///
             /// Valid lookup coordinates are from (0, 0, 0) to (2, 2, 2).
             ///
-            /// This table can be accessed using the functions <see cref="H3Lib.BaseCells._faceIjkToBaseCell"/>
-            /// and <see cref="H3Lib.BaseCells.ToBaseCellCounterClockwiseRotate60"/>
+            /// This table can be accessed using the functions BaseCells._faceIjkToBaseCell
+            /// and BaseCells.ToBaseCellCounterClockwiseRotate60
             /// </summary>
-            public static readonly BaseCellRotation[,,,] FaceIjkBaseCells =
+            internal static readonly BaseCellRotation[,,,] FaceIjkBaseCells =
             {
                 {
                     // face 0
@@ -1167,7 +1186,7 @@ namespace H3Lib
             /// is a pentagon, the two cw offset rotation adjacent faces are given (-1
             /// indicates that no cw offset rotation faces exist for this base cell).
             /// </summary>
-            public static readonly BaseCellData[] BaseCellData =
+            internal static readonly BaseCellData[] BaseCellData =
             {
                 new BaseCellData(1, 1, 0, 0, 0, 0, 0), // base cell 0
                 new BaseCellData(2, 1, 1, 0, 0, 0, 0), // base cell 1
@@ -1294,12 +1313,12 @@ namespace H3Lib
             };
         }
 
-        public static class CoordIjk
+        internal static class CoordIjk
         {
             /// <summary>
             /// CoordIJK unit vectors corresponding to the 7 H3 digits.
             /// </summary>
-            public static readonly H3Lib.CoordIjk[] UnitVecs =
+            internal static readonly H3Lib.CoordIjk[] UnitVecs =
             {
                 new H3Lib.CoordIjk(0, 0, 0), // direction 0
                 new H3Lib.CoordIjk(0, 0, 1), // direction 1
@@ -1324,37 +1343,37 @@ namespace H3Lib
 
         }
 
-        public static class FaceIjk
+        internal static class FaceIjk
         {
             /// <summary>
             /// Invalid face index
             /// </summary>
-            public static readonly int InvalidFace = -1;
+            internal static readonly int InvalidFace = -1;
 
             /// <summary>
             /// IJ quadrant faceNeighbors table direction
             /// </summary>
-            public const int IJ = 1;
+            internal const int IJ = 1;
 
             /// <summary>
             /// KI quadrant faceNeighbors table direction
             /// </summary>
-            public const int KI = 2;
+            internal const int KI = 2;
 
             /// <summary>
             /// JK quadrant faceNeighbors table direction
             /// </summary>
-            public const int JK = 3;
+            internal const int JK = 3;
 
             /// <summary>
             /// Square root of 7
             /// </summary>
-            public static readonly double MSqrt7 = 2.6457513110645905905016157536392604257102;
+            internal static readonly double MSqrt7 = 2.6457513110645905905016157536392604257102;
 
             /// <summary>
             /// icosahedron face centers in lat/lon radians
             /// </summary>
-            public static readonly H3Lib.GeoCoord[] FaceCenterGeo =
+            internal static readonly H3Lib.GeoCoord[] FaceCenterGeo =
             {
                 new H3Lib.GeoCoord(0.803582649718989942, 1.248397419617396099), // face  0
                 new H3Lib.GeoCoord(1.307747883455638156, 2.536945009877921159), // face  1
@@ -1381,7 +1400,7 @@ namespace H3Lib
             /// <summary>
             /// icosahedron face centers in x/y/z on the unit sphere
             /// </summary>
-            public static readonly Vec3d[] FaceCenterPoint =
+            internal static readonly Vec3d[] FaceCenterPoint =
             {
                 new Vec3d(0.2199307791404606, 0.6583691780274996, 0.7198475378926182), // face  0
                 new Vec3d(-0.2139234834501421, 0.1478171829550703, 0.9656017935214205), // face  1
@@ -1409,7 +1428,7 @@ namespace H3Lib
             /// icosahedron face ijk axes as azimuth in radians from face center to
             /// vertex 0/1/2 respectively
             /// </summary>
-            public static readonly double[,] FaceAxesAzRadsCii =
+            internal static readonly double[,] FaceAxesAzRadsCii =
             {
                 {5.619958268523939882, 3.525563166130744542, 1.431168063737548730}, // face  0
                 {5.760339081714187279, 3.665943979320991689, 1.571548876927796127}, // face  1
@@ -1436,7 +1455,7 @@ namespace H3Lib
             /// <summary>
             /// Definition of which faces neighbor each other.
             /// </summary>
-            public static readonly FaceOrientIjk[,] FaceNeighbors =
+            internal static readonly FaceOrientIjk[,] FaceNeighbors =
             {
                 {
                     // face 0
@@ -1584,7 +1603,7 @@ namespace H3Lib
             /// direction from the origin face to the destination face, relative to
             /// the origin face's coordinate system, or -1 if not adjacent.
             /// </summary>
-            public static readonly int[,] AdjacentFaceDir =
+            internal static readonly int[,] AdjacentFaceDir =
             {
                 {
                     0, KI, -1, -1, IJ, JK, -1, -1, -1, -1,
@@ -1671,7 +1690,7 @@ namespace H3Lib
             /// <summary>
             /// overage distance table
             /// </summary>
-            public static readonly int[] MaxDimByCiiRes =
+            internal static readonly int[] MaxDimByCiiRes =
             {
                 2, // res  0
                 -1, // res  1
@@ -1695,7 +1714,7 @@ namespace H3Lib
             /// <summary>
             /// unit scale distance table
             /// </summary>
-            public static readonly int[] UnitScaleByCiiRes =
+            internal static readonly int[] UnitScaleByCiiRes =
             {
                 1, // res  0
                 -1, // res  1
@@ -1717,9 +1736,9 @@ namespace H3Lib
             };
         }
 
-        public static class GeoCoord
+        internal static class GeoCoord
         {
-            public static readonly double[] AreasKm2 =
+            internal static readonly double[] AreasKm2 =
             {
                 4250546.848, 607220.9782, 86745.85403, 12392.26486,
                 1770.323552, 252.9033645, 36.1290521, 5.1612932,
@@ -1727,7 +1746,7 @@ namespace H3Lib
                 0.0003071, 0.0000439, 0.0000063, 0.0000009
             };
 
-            public static readonly double[] AreasM2 =
+            internal static readonly double[] AreasM2 =
             {
                 4.25055E+12, 6.07221E+11, 86745854035, 12392264862,
                 1770323552, 252903364.5, 36129052.1, 5161293.2,
@@ -1735,7 +1754,7 @@ namespace H3Lib
                 307.1, 43.9, 6.3, 0.9
             };
 
-            public static readonly double[] EdgeLengthKm =
+            internal static readonly double[] EdgeLengthKm =
             {
                 1107.712591, 418.6760055, 158.2446558, 59.81085794,
                 22.6063794, 8.544408276, 3.229482772, 1.220629759,
@@ -1743,7 +1762,7 @@ namespace H3Lib
                 0.009415526, 0.003559893, 0.001348575, 0.000509713
             };
 
-            public static readonly double[] EdgeLengthM =
+            internal static readonly double[] EdgeLengthM =
             {
                 1107712.591, 418676.0055, 158244.6558, 59810.85794,
                 22606.3794, 8544.408276, 3229.482772, 1220.629759,
@@ -1752,137 +1771,137 @@ namespace H3Lib
             };
         }
 
-        public static class H3Index
+        internal static class H3Index
         {
             /// <summary>
             /// Invalid index used to indicate an error from geoToH3 and related functions.
             /// </summary>
-            public static readonly ulong H3_INVALID_INDEX = 0;
+            internal static readonly ulong H3_INVALID_INDEX = 0;
 
             /// <summary>
             /// Invalid index used to indicate an error from geoToH3 and related functions
             /// or missing data in arrays of h3 indices. Analogous to NaN in floating point.
             /// </summary>
-            public static readonly ulong H3_NULL = 0;
+            internal static readonly ulong H3_NULL = 0;
 
             /// <summary>
             /// The number of bits in an H3 index.
             /// </summary>
-            public static readonly int H3_NUM_BITS = 64;
+            internal static readonly int H3_NUM_BITS = 64;
 
             /// <summary>
             /// The bit offset of the max resolution digit in an H3 index.
             /// </summary>
-            public static readonly int H3_MAX_OFFSET = 63;
+            internal static readonly int H3_MAX_OFFSET = 63;
 
             /// <summary>
             /// The bit offset of the mode in an H3 index.
             /// </summary>
-            public static readonly int H3_MODE_OFFSET = 59;
+            internal static readonly int H3_MODE_OFFSET = 59;
 
             /// <summary>
             /// The bit offset of the base cell in an H3 index.
             /// </summary>
-            public static readonly int H3_BC_OFFSET = 45;
+            internal static readonly int H3_BC_OFFSET = 45;
 
             /// <summary>
             /// The bit offset of the resolution in an H3 index.
             /// </summary>
-            public static readonly int H3_RES_OFFSET = 52;
+            internal static readonly int H3_RES_OFFSET = 52;
 
             /// <summary>
             /// The bit offset of the reserved bits in an H3 index.
             /// </summary>
-            public static readonly int H3_RESERVED_OFFSET = 56;
+            internal static readonly int H3_RESERVED_OFFSET = 56;
 
             /// <summary>
             /// The number of bits in a single H3 resolution digit.
             /// </summary>
-            public static readonly int H3_PER_DIGIT_OFFSET = 3;
+            internal static readonly int H3_PER_DIGIT_OFFSET = 3;
 
             /// <summary>
             /// 1 in the highest bit, 0's everywhere else.
             /// </summary>
-            public static readonly ulong H3_HIGH_BIT_MASK = (ulong) 1 << H3_MAX_OFFSET;
+            internal static readonly ulong H3_HIGH_BIT_MASK = (ulong) 1 << H3_MAX_OFFSET;
 
             /// <summary>
             /// 0 in the highest bit, 1's everywhere else.
             /// </summary>
-            public static readonly ulong H3_HIGH_BIT_MASK_NEGATIVE = ~H3_HIGH_BIT_MASK;
+            internal static readonly ulong H3_HIGH_BIT_MASK_NEGATIVE = ~H3_HIGH_BIT_MASK;
 
             /// <summary>
             /// 1's in the 4 mode bits, 0's everywhere else.
             /// </summary>
-            public static readonly ulong H3_MODE_MASK = (ulong) 15 << H3_MODE_OFFSET;
+            internal static readonly ulong H3_MODE_MASK = (ulong) 15 << H3_MODE_OFFSET;
 
             /// <summary>
             /// 0's in the 4 mode bits, 1's everywhere else.
             /// </summary>
-            public static readonly ulong H3_MODE_MASK_NEGATIVE = ~H3_MODE_MASK;
+            internal static readonly ulong H3_MODE_MASK_NEGATIVE = ~H3_MODE_MASK;
 
             /// <summary>
             /// 1's in the 7 base cell bits, 0's everywhere else.
             /// </summary>
-            public static readonly ulong H3_BC_MASK = (ulong) 127 << H3_BC_OFFSET;
+            internal static readonly ulong H3_BC_MASK = (ulong) 127 << H3_BC_OFFSET;
 
             /// <summary>
             /// 0's in the 7 base cell bits, 1's everywhere else.
             /// </summary>
-            public static readonly ulong H3_BC_MASK_NEGATIVE = ~H3_BC_MASK;
+            internal static readonly ulong H3_BC_MASK_NEGATIVE = ~H3_BC_MASK;
+
+            ///H3 index with mode 0, res 0, base cell 0, and 7 for all index digits.
+            ///Typically used to initialize the creation of an H3 cell index, which
+            ///expects all direction digits to be 7 beyond the cell's resolution.
+            internal static readonly ulong H3_INIT = 35184372088831;
 
             /// <summary>
             /// 1's in the 4 resolution bits, 0's everywhere else.
             /// </summary>
-            public static readonly ulong H3_RES_MASK = (ulong) 15 << H3_RES_OFFSET;
+            internal static readonly ulong H3_RES_MASK = (ulong) 15 << H3_RES_OFFSET;
 
             /// <summary>
             /// 0's in the 4 resolution bits, 1's everywhere else.
             /// </summary>
-            public static readonly ulong H3_RES_MASK_NEGATIVE = ~H3_RES_MASK;
+            internal static readonly ulong H3_RES_MASK_NEGATIVE = ~H3_RES_MASK;
 
             /// <summary>
             /// 1's in the 3 reserved bits, 0's everywhere else.
             /// </summary>
-            public static readonly ulong H3_RESERVED_MASK = (ulong) 7 << H3_RESERVED_OFFSET;
+            internal static readonly ulong H3_RESERVED_MASK = (ulong) 7 << H3_RESERVED_OFFSET;
 
             /// <summary>
             /// 0's in the 3 reserved bits, 1's everywhere else.
             /// </summary>
-            public static readonly ulong H3_RESERVED_MASK_NEGATIVE = ~H3_RESERVED_MASK;
+            internal static readonly ulong H3_RESERVED_MASK_NEGATIVE = ~H3_RESERVED_MASK;
 
             /// <summary>
             /// 1's in the 3 bits of res 15 digit bits, 0's everywhere else.
             /// </summary>
-            public static readonly ulong H3_DIGIT_MASK = 7;
+            internal static readonly ulong H3_DIGIT_MASK = 7;
 
             /// <summary>
             /// 0's in the 7 base cell bits, 1's everywhere else.
             /// </summary>
-            public static readonly ulong H3_DIGIT_MASK_NEGATIVE = ~H3_DIGIT_MASK;
-
-            /// <summary>
-            /// H3 index with mode 0, res 0, base cell 0, and 7 for all index digits.
-            /// </summary>
-            public static readonly ulong H3_INIT = 35184372088831;
+            internal static readonly ulong H3_DIGIT_MASK_NEGATIVE = ~H3_DIGIT_MASK;
 
             /*
              * Return codes for compact
              */
-            public const int COMPACT_SUCCESS = 0;
-            public const int COMPACT_LOOP_EXCEEDED = -1;
-            public const int COMPACT_DUPLICATE = -2;
-            public const int COMPACT_ALLOC_FAILED = -3;
-            public const int COMPACT_BAD_DATA = -10;
+            internal const int COMPACT_SUCCESS = 0;
+            internal const int COMPACT_LOOP_EXCEEDED = -1;
+            internal const int COMPACT_DUPLICATE = -2;
+            internal const int COMPACT_ALLOC_FAILED = -3;
+            internal const int COMPACT_BAD_DATA = -10;
         }
 
-        public static class LinkedGeo
+        internal static class LinkedGeo
         {
-            public const int NormalizationSuccess = 0;
-            public const int NormalizationErrMultiplePolygons = 1;
-            public const int NormalizationErrUnassignedHoles = 2;
+            internal const int NormalizationSuccess = 0;
+            internal const int NormalizationErrMultiplePolygons = 1;
+            internal const int NormalizationErrUnassignedHoles = 2;
         }
 
-        public static class LocalIJ
+        internal static class LocalIJ
         {
             /// <summary>
             /// Origin leading digit -&gt; index leading digit -&gt; rotations 60 cw
@@ -1974,19 +1993,19 @@ namespace H3Lib
             };
         }
 
-        public static class Vertex
+        internal static class Vertex
         {
             /// <summary>
             /// Invalid vertex number
             /// </summary>
-            public const int INVALID_VERTEX_NUM = -1;
+            internal const int INVALID_VERTEX_NUM = -1;
 
             /// <summary>
             /// Max number of faces a base cell's descendants may appear on
             /// </summary>
-            public const int MAX_BASE_CELL_FACES = 5;
+            internal const int MAX_BASE_CELL_FACES = 5;
 
-            public const int DIRECTION_INDEX_OFFSET = 2;
+            internal const int DIRECTION_INDEX_OFFSET = 2;
 
             /// <summary>
             /// Table of direction-to-face mapping for each pentagon
@@ -2000,7 +2019,7 @@ namespace H3Lib
             /// <!--
             /// vertex.c
             /// -->
-            public static readonly PentagonDirectionFace[] PentagonDirectionFaces =
+            internal static readonly PentagonDirectionFace[] PentagonDirectionFaces =
             {
                 new PentagonDirectionFace(4, 4, 0, 2, 1, 3),
                 new PentagonDirectionFace(14, 6, 11, 2, 7, 1),
@@ -2021,14 +2040,14 @@ namespace H3Lib
             ///
             /// Note that we don't use direction 0 (center).
             /// </summary>
-            public static int[] DirectionToVertexNumHex =
+            internal static int[] DirectionToVertexNumHex =
                 {(int) Direction.INVALID_DIGIT, 3, 1, 2, 5, 4, 0};
 
             /// <summary>
             /// Pentagon direction to vertex number relationships (same face).
             /// Note that we don't use directions 0 (center) or 1 (deleted K axis).
             /// </summary>
-            public static int[] DirectionToVertexNumPent =
+            internal static int[] DirectionToVertexNumPent =
                 {(int) Direction.INVALID_DIGIT, (int) Direction.INVALID_DIGIT, 1, 2, 4, 3, 0};
 
         }

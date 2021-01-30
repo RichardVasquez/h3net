@@ -5,6 +5,9 @@ using H3Lib.Extensions;
 
 namespace H3Lib
 {
+    /// <summary>
+    /// Primary H3 core library entry points.
+    /// </summary>
     public static class Api
     {
         /// <summary>
@@ -588,12 +591,8 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// Winging this one.
+        /// Winging this one, returns a GeoCoord with degree values instead of radians
         /// </summary>
-        /// <param name="p"></param>
-        /// <param name="latDegs"></param>
-        /// <param name="lonDegs"></param>
-        /// <returns></returns>
         public static GeoCoord SetGeoDegs(double latDegs, double lonDegs)
         {
             return new GeoCoord().SetDegrees(latDegs, lonDegs);

@@ -19,8 +19,19 @@ namespace H3Lib
     [DebuggerDisplay("IJK: ({I}, {J}, {K})")]
     public readonly struct CoordIjk:IEquatable<CoordIjk>
     {
+        /// <summary>
+        /// I Coordinate
+        /// </summary>
         public readonly int I;
+        
+        /// <summary>
+        /// J Coordinate
+        /// </summary>
         public readonly int J;
+        
+        /// <summary>
+        /// K Coordinate
+        /// </summary>
         public readonly int K;
 
         /// <summary>
@@ -33,6 +44,9 @@ namespace H3Lib
             K = k;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public CoordIjk(CoordIjk coord)
         {
             I = coord.I;
@@ -40,6 +54,9 @@ namespace H3Lib
             K = coord.K;
         }
 
+        /// <summary>
+        /// Debug information
+        /// </summary>
         public override string ToString()
         {
             return $"CoordIjk (IJK) {I}, {J}, {K}";
@@ -84,11 +101,17 @@ namespace H3Lib
             return new CoordIjk(ri, rj, rk);
         }
         
+        /// <summary>
+        /// Equality test
+        /// </summary>
         public bool Equals(CoordIjk other)
         {
             return I == other.I && J == other.J && K == other.K;
         }
 
+        /// <summary>
+        /// Equality for unboxed object
+        /// </summary>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -99,31 +122,50 @@ namespace H3Lib
             return obj is CoordIjk ijk && Equals(ijk);
         }
 
+        /// <summary>
+        /// Hashcode for identity
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return HashCode.Combine(I, J, K);
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
         public static bool operator ==(CoordIjk left, CoordIjk right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Inequality operator
+        /// </summary>
         public static bool operator !=(CoordIjk left, CoordIjk right)
         {
             return !Equals(left, right);
         }
-        
+
+        /// <summary>
+        /// Addition operator
+        /// </summary>
         public static CoordIjk operator+(CoordIjk c1,CoordIjk c2)
         {
             return new CoordIjk(c1.I + c2.I, c1.J + c2.J, c1.K + c2.K);
         }
 
+        /// <summary>
+        /// Subtraction operator
+        /// </summary>
         public static CoordIjk operator-(CoordIjk c1,CoordIjk c2)
         {
             return new CoordIjk(c1.I - c2.I, c1.J - c2.J, c1.K - c2.K);
         }
 
+        /// <summary>
+        /// Multiply operator for scaling
+        /// </summary>
         public static CoordIjk operator *(CoordIjk c, int scalar)
         {
             return new CoordIjk(c.I * scalar, c.J * scalar, c.K * scalar);

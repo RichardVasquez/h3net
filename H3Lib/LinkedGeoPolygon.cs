@@ -7,24 +7,54 @@ using System.Threading;
 
 namespace H3Lib
 {
+    /// <summary>
+    /// A polygon node in a linked geo structure, part of a linked list.
+    /// </summary>
     public class LinkedGeoPolygon
     {
+        /// <summary>
+        /// Linked list of loops that make up the polygon
+        /// </summary>
         private readonly LinkedList<LinkedGeoLoop> _geoLoops;
 
+        /// <summary>
+        /// Count of loops in polygon
+        /// </summary>
         public int CountLoops => _geoLoops.Count;
+        /// <summary>
+        /// Gets the count of polygons associated
+        /// </summary>
         public int CountPolygons => TotalPolygons();
+        /// <summary>
+        /// Returns reference to the first loop
+        /// </summary>
         public LinkedGeoLoop First => GetFirst();
+        /// <summary>
+        /// Returns reference to the last loop
+        /// </summary>
         public LinkedGeoLoop Last => GetLast();
 
+        /// <summary>
+        /// Returns reference to next polygon
+        /// </summary>
         public LinkedGeoPolygon Next;
 
+        /// <summary>
+        /// Returns all linked polygons to this one as a linear list
+        /// </summary>
         public ReadOnlyCollection<LinkedGeoPolygon> LinkedPolygons => GetPolygons();
         
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public LinkedGeoPolygon()
         {
             _geoLoops = new LinkedList<LinkedGeoLoop>();
         }
 
+        /// <summary>
+        /// Linear list of all loops in this specific polygon
+        /// </summary>
         public List<LinkedGeoLoop> Loops => _geoLoops.ToList();
         
         /// <summary>
@@ -121,6 +151,10 @@ namespace H3Lib
             return count;
         }
 
+        /// <summary>
+        /// Returns first loop if any exist, null otherwise
+        /// </summary>
+        /// <returns></returns>
         private LinkedGeoLoop GetFirst()
         {
             if (_geoLoops == null || _geoLoops.Count < 1)
@@ -131,6 +165,10 @@ namespace H3Lib
             return _geoLoops.First();
         }
         
+        /// <summary>
+        /// Gets last loop in polygon, null if none exist.
+        /// </summary>
+        /// <returns></returns>
         private LinkedGeoLoop GetLast()
         {
             if (_geoLoops == null || _geoLoops.Count < 1)

@@ -16,13 +16,13 @@
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <Company>Richard Vasquez</Company>
         <AssemblyVersion>3.7.1</AssemblyVersion>
-        <FileVersion>3.7.1.*</FileVersion>
+        <FileVersion>3.7.1</FileVersion>
         <Configurations>Debug;Release;Apps Only</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\H3Lib.xml</DocumentationFile>
+      <DocumentationFile>Documentation\H3Lib.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -30,6 +30,10 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Documentation\Classes" />
     </ItemGroup>
 
 </Project>

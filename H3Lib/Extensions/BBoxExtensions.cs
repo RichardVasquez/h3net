@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Extension methods for BBoxes
+    /// </summary>
     public static class BBoxExtensions
     {
         /// <summary>

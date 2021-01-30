@@ -6,12 +6,11 @@ namespace H3Lib.Extensions
     /// <summary>
     /// Static methods that work on collections.
     /// 
-    /// Currently List<T>, but will likely be switched to
-    /// IEnumerable<T> in future
+    /// Currently List, but will likely be switched to
+    /// IEnumerable in future
     /// </summary>
     public static class CollectionExtensions
     {
-       
         /// <summary>
         /// uncompact takes a compressed set of hexagons and expands back to the
         /// original set of hexagons.

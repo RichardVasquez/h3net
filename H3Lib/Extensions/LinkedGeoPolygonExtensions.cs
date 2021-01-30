@@ -159,14 +159,10 @@ namespace H3Lib.Extensions
                 return null;
             }
             // Initialize arrays for candidate loops and their bounding boxes
-            var candidates = Enumerable.Range(1, polygonCount).Select(s => new LinkedGeoPolygon()).ToList();
-            var candidateBoxes = Enumerable.Range(1, polygonCount).Select(s => new BBox()).ToList();
-
-            candidates = new List<LinkedGeoPolygon>();
-            candidateBoxes = new List<BBox>();
+            var candidates = new List<LinkedGeoPolygon>();
+            var candidateBoxes = new List<BBox>();
             
             // Find all polygons that contain the loop
-            var candidateCount = 0;
             var index = 0;
             while (polygon != null)
             {
@@ -177,9 +173,6 @@ namespace H3Lib.Extensions
                     {
                         candidates.Add(polygon);
                         candidateBoxes.Add(boxes[index]);
-//                        candidates[candidateCount] = polygon;
-//                        candidateBoxes[candidateCount] = boxes[index];
-                        candidateCount++;
                     }
                 }
                 polygon = polygon.Next;
@@ -192,7 +185,7 @@ namespace H3Lib.Extensions
             // Free allocated memory
             candidates.Clear();
             candidateBoxes.Clear();
-            return (parent.CountLoops == 0)
+            return (parent == null || parent.CountLoops == 0)
                        ? null
                        : parent;
         }

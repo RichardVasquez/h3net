@@ -7,8 +7,17 @@ namespace H3Lib
     /// </summary>
     public class GeoPolygon
     {
+        /// <summary>
+        /// exterior boundary of the polygon
+        /// </summary>
         public GeoFence GeoFence;
+        /// <summary>
+        /// Number of elements in the array pointed to by the holes
+        /// </summary>
         public int NumHoles;
+        /// <summary>
+        ///  interior boundaries (holes) in the polygon
+        /// </summary>
         public List<GeoFence> Holes;
     }
 

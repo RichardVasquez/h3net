@@ -1,0 +1,4336 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>H3Lib</name>
+    </assembly>
+    <members>
+        <member name="T:H3Lib.Api">
+            <summary>
+            Primary H3 core library entry points.
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.GeoToH3(H3Lib.GeoCoord,System.Int32)">
+            <summary>
+            find the H3 index of the resolution res cell containing the lat/lng
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3ToGeo(H3Lib.H3Index,H3Lib.GeoCoord@)">
+            <summary>
+            find the lat/lon center point g of the cell h3
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3ToGeoBoundary(H3Lib.H3Index,H3Lib.GeoBoundary@)">
+            <summary>
+            give the cell boundary in lat/lon coordinates for the cell h3
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.MaxKringSize(System.Int32)">
+            <summary>
+            maximum number of hexagons in k-ring
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.HexRange(H3Lib.H3Index,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            hexagons neighbors in all directions, assuming no pentagons
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.HexRangeDistances(H3Lib.H3Index,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@,System.Collections.Generic.List{System.Int32}@)">
+            <summary>
+            hexagons neighbors in all directions, assuming no pentagons,
+            reporting distance from origin
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.HexRanges(System.Collections.Generic.List{H3Lib.H3Index},System.Int32,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            collection of hex rings sorted by ring for all given hexagons
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.KRing(H3Lib.H3Index,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            hexagon neighbors in all directions
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.KRingDistances(H3Lib.H3Index,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@,System.Collections.Generic.List{System.Int32}@)">
+            <summary>
+            hexagon neighbors in all directions, reporting distance from origin
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.HexRing(H3Lib.H3Index,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            hollow hexagon ring at some origin
+            </summary>
+            <param name="origin"></param>
+            <param name="k"></param>
+            <param name="outCells"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Api.MaxPolyFillSize(H3Lib.GeoPolygon,System.Int32)">
+            <summary>
+            maximum number of hexagons in the geofence
+            </summary>
+            <param name="polygon"></param>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Api.PolyFill(H3Lib.GeoPolygon,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            hexagons within the given geofence
+            </summary>
+            <param name="polygon"></param>
+            <param name="r"></param>
+            <param name="outCells"></param>
+        </member>
+        <member name="M:H3Lib.Api.H3SetToLinkedGeo(System.Collections.Generic.List{H3Lib.H3Index},H3Lib.LinkedGeoPolygon@)">
+            <summary>
+            Create a LinkedGeoPolygon from a set of contiguous hexagons
+            </summary>
+            <param name="h3Set"></param>
+            <param name="outPolygon"></param>
+        </member>
+        <member name="M:H3Lib.Api.DegreesToRadians(System.Double)">
+            <summary>
+            converts degrees to radians
+            </summary>
+            <param name="degrees"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Api.RadiansToDegrees(System.Double)">
+            <summary>
+            converts radians to degrees
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Api.PointDistRads(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            "great circle distance" between pairs of GeoCoord points in radians*/
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Api.PointDistKm(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            "great circle distance" between pairs of GeoCoord points in kilometers
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Api.PointDistM(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            "great circle distance" between pairs of GeoCoord points in meters*/
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.HexAreaKm2(System.Int32)">
+            <summary>
+            average hexagon area in square kilometers (excludes pentagons)
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.HexAreaM2(System.Int32)">
+            <summary>
+            average hexagon area in square meters (excludes pentagons)
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.CellAreaRads2(H3Lib.H3Index)">
+            <summary>
+            exact area for a specific cell (hexagon or pentagon) in radians^2
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.CellAreaKm2(H3Lib.H3Index)">
+            <summary>
+            exact area for a specific cell (hexagon or pentagon) in kilometers^2
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.CellAreaM2(H3Lib.H3Index)">
+            <summary>
+            exact area for a specific cell (hexagon or pentagon) in meters^2
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.EdgeLengthKm(System.Int32)">
+            <summary>
+            average hexagon edge length in kilometers (excludes pentagons)
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.EdgeLengthM(System.Int32)">
+            <summary>
+            average hexagon edge length in meters (excludes pentagons)
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.ExactEdgeLengthRads(H3Lib.H3Index)">
+            <summary>
+            exact length for a specific unidirectional edge in radians*/
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.ExactEdgeLengthKm(H3Lib.H3Index)">
+            <summary>
+            exact length for a specific unidirectional edge in kilometers*/
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.ExactEdgeLengthM(H3Lib.H3Index)">
+            <summary>
+            exact length for a specific unidirectional edge in meters*/
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.NumHexagons(System.Int32)">
+            <summary>
+            number of cells (hexagons and pentagons) for a given resolution
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.Res0IndexCount">
+            <summary>
+            returns the number of resolution 0 cells (hexagons and pentagons)
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.GetRes0Indexes(System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            provides all base cells in H3Index format*/
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.PentagonIndexCount">
+            <summary>
+            returns the number of pentagons per resolution
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.GetPentagonIndexes(System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            generates all pentagons at the specified resolution
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3GetResolution(H3Lib.H3Index)">
+            <summary>
+            returns the resolution of the provided H3 index
+            Works on both cells and unidirectional edges.
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3GetBaseCell(H3Lib.H3Index)">
+            <summary>
+            returns the base cell "number" (0 to 121) of the provided H3 cell
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.StringToH3(System.String)">
+            <summary>
+            converts the canonical string format to H3Index format
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3ToString(H3Lib.H3Index,System.String@)">
+            <summary>
+            converts an H3Index to a canonical string
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3IsValid(H3Lib.H3Index)">
+            <summary>
+            confirms if an H3Index is a valid cell (hexagon or pentagon)
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3ToParent(H3Lib.H3Index,System.Int32)">
+            <summary>
+            returns the parent (or grandparent, etc) hexagon of the given hexagon
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.MaxH3ToChildrenSize(H3Lib.H3Index,System.Int32)">
+            <summary>
+            determines the maximum number of children (or grandchildren, etc)
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3ToChildren(H3Lib.H3Index,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            provides the children (or grandchildren, etc) of the given hexagon
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3ToCenterChild(H3Lib.H3Index,System.Int32)">
+            <summary>
+            returns the center child of the given hexagon at the specified
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.Compact(System.Collections.Generic.List{H3Lib.H3Index},System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            compacts the given set of hexagons as best as possible
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.MaxUncompactSize(H3Lib.H3Index,System.Int32)">
+            <summary>
+            determines the maximum number of hexagons that could be uncompacted
+            from the compacted set
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.Uncompact(System.Collections.Generic.List{H3Lib.H3Index},System.Collections.Generic.List{H3Lib.H3Index}@,System.Int32)">
+            <summary>
+            uncompacts the compacted hexagon set
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3IsResClassIii(H3Lib.H3Index)">
+            <summary>
+            determines if a hexagon is Class III (or Class II)
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3IsPentagon(H3Lib.H3Index)">
+            <summary>
+            determines if an H3 cell is a pentagon
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.MaxFaceCount(H3Lib.H3Index)">
+            <summary>
+            Max number of icosahedron faces intersected by an index
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3GetFaces(H3Lib.H3Index,System.Collections.Generic.List{System.Int32}@)">
+            <summary>
+            Find all icosahedron faces intersected by a given H3 index
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3IndexesAreNeighbors(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            returns whether or not the provided hexagons border
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.GetH3UnidirectionalEdge(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            returns the unidirectional edge H3Index for the specified origin and
+            destination
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3UnidirectionalEdgeIsValid(H3Lib.H3Index)">
+            <summary>
+            returns whether the H3Index is a valid unidirectional edge
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.GetOriginH3IndexFromUnidirectionalEdge(H3Lib.H3Index)">
+            <summary>
+            Returns the origin hexagon H3Index from the unidirectional edge
+            </summary>
+            H3Index
+        </member>
+        <member name="M:H3Lib.Api.GetDestinationH3IndexFromUnidirectionalEdge(H3Lib.H3Index)">
+            <summary>
+            Returns the destination hexagon H3Index from the unidirectional edge
+            H3Index
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.GetH3IndexesFromUnidirectionalEdge(H3Lib.H3Index,System.ValueTuple{H3Lib.H3Index,H3Lib.H3Index}@)">
+            <summary>
+            Returns the origin and destination hexagons from the unidirectional
+            edge H3Index
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.GetH3UnidirectionalEdgesFromHexagon(H3Lib.H3Index,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            Returns the 6 (or 5 for pentagons) edges associated with the H3Index
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.GetH3UnidirectionalEdgeBoundary(H3Lib.H3Index,H3Lib.GeoBoundary@)">
+            <summary>
+            Returns the GeoBoundary containing the coordinates of the edge
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3Distance(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            Returns grid distance between two indexes
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3LineSize(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            Number of indexes in a line connecting two indexes
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.H3Line(H3Lib.H3Index,H3Lib.H3Index,System.Collections.Generic.List{H3Lib.H3Index}@)">
+            <summary>
+            Line of h3 indexes connecting two indexes
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.ExperimentalH3ToLocalIj(H3Lib.H3Index,H3Lib.H3Index,H3Lib.CoordIj@)">
+            <summary>
+            Returns two dimensional coordinates for the given index
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.ExperimentalLocalIjToH3(H3Lib.H3Index,H3Lib.CoordIj,H3Lib.H3Index@)">
+            <summary>
+            Returns index for the given two dimensional coordinates
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.SetGeoDegs(System.Double,System.Double)">
+            <summary>
+            Winging this one, returns a GeoCoord with degree values instead of radians
+            </summary>
+        </member>
+        <member name="T:H3Lib.BaseCellData">
+            <summary>
+            Information on a single base cell
+            </summary>
+            <!--
+            baseCells.h
+            typedef struct BaseCellData
+            -->
+        </member>
+        <member name="F:H3Lib.BaseCellData.HomeFijk">
+            <summary>
+            "Home" face and normalized ijk coordinates on that face
+            </summary>
+        </member>
+        <member name="F:H3Lib.BaseCellData.IsPentagon">
+            <summary>
+            Is this base cell a pentagon?
+            </summary>
+        </member>
+        <member name="F:H3Lib.BaseCellData.ClockwiseOffsetPentagon">
+            <summary>
+            If it's a pentagon, what are its two clockwise offset faces?
+            </summary>
+        </member>
+        <member name="M:H3Lib.BaseCellData.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Extended constructor
+            </summary>
+            <param name="face">Face of BaseCellData</param>
+            <param name="faceI">I coordinate</param>
+            <param name="faceJ">J Coordinate</param>
+            <param name="faceK">K Coordinate</param>
+            <param name="isPentagon">Is cell pentagon?</param>
+            <param name="offset1">offset 1</param>
+            <param name="offset2">offset 2</param>
+        </member>
+        <member name="M:H3Lib.BaseCellData.Equals(H3Lib.BaseCellData)">
+            <summary>
+            Test for equality
+            </summary>
+            <param name="other">BaseCellData to test against</param>
+        </member>
+        <member name="M:H3Lib.BaseCellData.Equals(System.Object)">
+            <summary>
+            Test for equality against object that can be unboxed
+            </summary>
+            <param name="obj">Object to unbox if BaseCellData</param>
+        </member>
+        <member name="M:H3Lib.BaseCellData.GetHashCode">
+            <summary>
+            HashCode for identity
+            </summary>
+        </member>
+        <member name="M:H3Lib.BaseCellData.op_Equality(H3Lib.BaseCellData,H3Lib.BaseCellData)">
+            <summary>
+            Test for equality
+            </summary>
+            <param name="left">lhs item</param>
+            <param name="right">rhs item</param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.BaseCellData.op_Inequality(H3Lib.BaseCellData,H3Lib.BaseCellData)">
+            <summary>
+            Test for inequality
+            </summary>
+            <param name="left">lhs item</param>
+            <param name="right">rhd item</param>
+            <returns></returns>
+        </member>
+        <member name="T:H3Lib.BaseCellRotation">
+            <summary>
+            base cell at a given ijk and required rotations into its system
+            </summary>
+            <!--
+            baseCells.c
+            typedef struct BaseCellRotation
+            -->
+        </member>
+        <member name="F:H3Lib.BaseCellRotation.BaseCell">
+            <summary>
+            base cell number
+            </summary>
+        </member>
+        <member name="F:H3Lib.BaseCellRotation.CounterClockwiseRotate60">
+            <summary>
+            number of ccw 60 degree rotations relative to current face
+            </summary>
+        </member>
+        <member name="M:H3Lib.BaseCellRotation.#ctor(System.Int32,System.Int32)">
+            <summary>
+            constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.BaseCellRotation.Equals(H3Lib.BaseCellRotation)">
+            <summary>
+            Test for equality against BaseCellRotation
+            </summary>
+        </member>
+        <member name="M:H3Lib.BaseCellRotation.Equals(System.Object)">
+            <summary>
+            Test for equality against object that can be unboxed to BaseCellRotation
+            </summary>
+        </member>
+        <member name="M:H3Lib.BaseCellRotation.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+        </member>
+        <member name="M:H3Lib.BaseCellRotation.op_Equality(H3Lib.BaseCellRotation,H3Lib.BaseCellRotation)">
+            <summary>
+            Test for equality
+            </summary>
+        </member>
+        <member name="M:H3Lib.BaseCellRotation.op_Inequality(H3Lib.BaseCellRotation,H3Lib.BaseCellRotation)">
+            <summary>
+            Test for inequality
+            </summary>
+        </member>
+        <member name="T:H3Lib.BBox">
+            <summary>
+            Geographic bounding box with coordinates defined in radians
+            </summary>
+        </member>
+        <member name="F:H3Lib.BBox.North">
+            <summary>
+            North limit
+            </summary>
+        </member>
+        <member name="F:H3Lib.BBox.South">
+            <summary>
+            South limit
+            </summary>
+        </member>
+        <member name="F:H3Lib.BBox.East">
+            <summary>
+            East limit
+            </summary>
+        </member>
+        <member name="F:H3Lib.BBox.West">
+            <summary>
+            West limit
+            </summary>
+        </member>
+        <member name="P:H3Lib.BBox.IsTransmeridian">
+            <summary>
+            Whether the given bounding box crosses the antimeridian
+            </summary>
+            <!--
+            bbox.c
+            bboxIsTransmeridian
+            -->
+        </member>
+        <member name="M:H3Lib.BBox.#ctor(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.BBox.Equals(H3Lib.BBox)">
+            <summary>
+            Test for equality within measure of error against other BBox
+            </summary>
+        </member>
+        <member name="M:H3Lib.BBox.Equals(System.Object)">
+            <summary>
+            Test for object that can be unboxed to BBox
+            </summary>
+        </member>
+        <member name="M:H3Lib.BBox.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.BBox.op_Equality(H3Lib.BBox,H3Lib.BBox)">
+            <summary>
+            Test for equality
+            </summary>
+        </member>
+        <member name="M:H3Lib.BBox.op_Inequality(H3Lib.BBox,H3Lib.BBox)">
+            <summary>
+            Test for inequality
+            </summary>
+        </member>
+        <member name="T:H3Lib.Constants">
+            <summary>
+            Collection of constants used throughout the library.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3_VERSION_MAJOR">
+            <summary>
+            Major version
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3_VERSION_MINOR">
+            <summary>
+            Minor version
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3_VERSION_PATCH">
+            <summary>
+            Patch version
+            </summary>
+        </member>
+        <member name="T:H3Lib.Constants.H3">
+            <summary>
+            Internal values for all of H3
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_PI">
+            <summary>
+            Pi
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_PI_2">
+            <summary>
+            Pi / 2.0
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_2PI">
+            <summary>
+            Pi * 2.0
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_PI_180">
+            <summary>
+            Pi / 180
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_180_PI">
+            <summary>
+            180 / Pi
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.EPSILON">
+            <summary>
+            Threshold epsilon
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_SQRT3_2">
+            <summary>
+            Sqrt(3) / 2.0
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_SIN60">
+            <summary>
+            sin(60 degrees)
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_AP7_ROT_RADS">
+            <summary>
+            Rotation angle between Class II and Class III resolution axes
+            asin(sqrt(3.0 / 28.0 ))
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_SIN_AP7_ROT">
+            <summary>
+            sin(<see cref="F:H3Lib.Constants.H3.M_AP7_ROT_RADS"/>
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.M_COS_AP7_ROT">
+            <summary>
+            cos(<see cref="F:H3Lib.Constants.H3.M_AP7_ROT_RADS"/>
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.EARTH_RADIUS_KM">
+            <summary>
+            Earth radius in kilometers using WGS84 authalic radius
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.RES0_U_GNOMONIC">
+            <summary>
+            Scaling factor from hex2d resolution 0 unit length
+            (or distance between adjacent cell center points on the place)
+            to gnomonic unit length.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.MAX_H3_RES">
+            <summary>
+            H3 resolution; H3 version 1 has 16 resolutions, numbered 0 through 15
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.NUM_ICOSA_FACES">
+            <summary>
+            The number of faces on an icosahedron
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.NUM_BASE_CELLS">
+            <summary>
+            The number of H3 base cells
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.NUM_HEX_VERTS">
+            <summary>
+            The number of vertices in a hexagon;
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.NUM_PENT_VERTS">
+            <summary>
+            The number of vertices in a pentagon
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.H3_HEXAGON_MODE">
+            <summary>
+            H3 Index modes
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.EPSILON_DEG">
+            <summary>
+            epsilon of ~0.1mm in degrees
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.EPSILON_RAD">
+            <summary>
+            epsilon of ~0.1mm in radians
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.DBL_EPSILON">
+            <summary>
+            General margin of error in differences between double values
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3.NEXT_RING_DIRECTION">
+            <summary>
+            Direction used for traversing to the next outward hexagonal ring. 
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.Algos.Directions">
+            <summary>
+            <code>
+                 _
+               _/ \_      Directions used for traversing a        
+              / \5/ \     hexagonal ring counterclockwise
+              \0/ \4/     around {1, 0, 0}
+              / \_/ \
+              \1/ \3/
+                \2/
+            </code>
+            </summary>
+            <!--
+            algos.c
+            -->
+        </member>
+        <member name="F:H3Lib.Constants.Algos.NextRingDirection">
+            <summary>
+            Direction used for traversing to the next outward hexagonal ring.
+            </summary>
+            <!--
+            Algos.c
+            NEXT_RING_DIRECTION
+            -->
+        </member>
+        <member name="F:H3Lib.Constants.Algos.NewDigitIi">
+             <summary>
+             New digit when traversing along class II grids.
+            
+             Current digit -> direction -> new digit.
+             </summary>
+             <!--
+             Algos.c
+             NEW_DIGIT_II
+             -->
+        </member>
+        <member name="F:H3Lib.Constants.Algos.NewAdjustmentIi">
+             <summary>
+             New traversal direction when traversing along class II grids.
+            
+             Current digit -> direction -> new ap7 move (at coarser level).
+             </summary>
+             <!--
+             Algos.c
+             NEW_ADJUSTMENT_II
+             -->
+        </member>
+        <member name="F:H3Lib.Constants.Algos.NewDigitIii">
+             <summary>
+             New traversal direction when traversing along class III grids.
+            
+             Current digit -&gt; direction -&gt; new ap7 move (at coarser level).
+             </summary>
+             <!--
+             Algos.c
+             NEW_DIGIT_III
+             -->
+        </member>
+        <member name="F:H3Lib.Constants.Algos.NewAdjustmentIii">
+             <summary>
+             New traversal direction when traversing along class III grids.
+            
+             Current digit -gt; direction -gt; new ap7 move (at coarser level).
+             </summary>
+             <!--
+             algos.c
+             NEW_ADJUSTMENT_III
+             -->
+        </member>
+        <member name="F:H3Lib.Constants.BaseCells.MaxFaceCoord">
+            <summary>
+            Maximum input for any component to face-to-base-cell lookup functions
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.BaseCells.InvalidRotations">
+            <summary>
+            Invalid number of rotations
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.BaseCells.BaseCellNeighbors">
+             <summary>
+             Neighboring base cell ID in each IJK direction.
+            
+             For each base cell, for each direction, the neighboring base
+             cell ID is given. 127 indicates there is no neighbor in that direction.
+             </summary>
+        </member>
+        <member name="F:H3Lib.Constants.BaseCells.BaseCellNeighbor60CounterClockwiseRotation">
+             <summary>
+             Neighboring base cell rotations in each IJK direction.
+            
+             For each base cell, for each direction, the number of 60 degree
+             CCW rotations to the coordinate system of the neighbor is given.
+             -1 indicates there is no neighbor in that direction.
+             </summary>
+             <!--
+             baseCells.c
+             baseCellNeighbor60CCWRots
+             -->
+        </member>
+        <member name="F:H3Lib.Constants.BaseCells.FaceIjkBaseCells">
+             <summary>
+             Resolution 0 base cell lookup table for each face.
+            
+             Given the face number and a resolution 0 ijk+ coordinate in that face's
+             face-centered ijk coordinate system, gives the base cell located at that
+             coordinate and the number of 60 ccw rotations to rotate into that base
+             cell's orientation.
+            
+             Valid lookup coordinates are from (0, 0, 0) to (2, 2, 2).
+            
+             This table can be accessed using the functions BaseCells._faceIjkToBaseCell
+             and BaseCells.ToBaseCellCounterClockwiseRotate60
+             </summary>
+        </member>
+        <member name="F:H3Lib.Constants.BaseCells.BaseCellData">
+             <summary>
+             Resolution 0 base cell data table.
+            
+             For each base cell, gives the "home" face and ijk+ coordinates on that face,
+             whether or not the base cell is a pentagon. Additionally, if the base cell
+             is a pentagon, the two cw offset rotation adjacent faces are given (-1
+             indicates that no cw offset rotation faces exist for this base cell).
+             </summary>
+        </member>
+        <member name="F:H3Lib.Constants.CoordIjk.UnitVecs">
+            <summary>
+            CoordIJK unit vectors corresponding to the 7 H3 digits.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.InvalidFace">
+            <summary>
+            Invalid face index
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.IJ">
+            <summary>
+            IJ quadrant faceNeighbors table direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.KI">
+            <summary>
+            KI quadrant faceNeighbors table direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.JK">
+            <summary>
+            JK quadrant faceNeighbors table direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.MSqrt7">
+            <summary>
+            Square root of 7
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.FaceCenterGeo">
+            <summary>
+            icosahedron face centers in lat/lon radians
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.FaceCenterPoint">
+            <summary>
+            icosahedron face centers in x/y/z on the unit sphere
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.FaceAxesAzRadsCii">
+            <summary>
+            icosahedron face ijk axes as azimuth in radians from face center to
+            vertex 0/1/2 respectively
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.FaceNeighbors">
+            <summary>
+            Definition of which faces neighbor each other.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.AdjacentFaceDir">
+            <summary>
+            direction from the origin face to the destination face, relative to
+            the origin face's coordinate system, or -1 if not adjacent.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.MaxDimByCiiRes">
+            <summary>
+            overage distance table
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.FaceIjk.UnitScaleByCiiRes">
+            <summary>
+            unit scale distance table
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_INVALID_INDEX">
+            <summary>
+            Invalid index used to indicate an error from geoToH3 and related functions.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_NULL">
+            <summary>
+            Invalid index used to indicate an error from geoToH3 and related functions
+            or missing data in arrays of h3 indices. Analogous to NaN in floating point.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_NUM_BITS">
+            <summary>
+            The number of bits in an H3 index.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_MAX_OFFSET">
+            <summary>
+            The bit offset of the max resolution digit in an H3 index.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_MODE_OFFSET">
+            <summary>
+            The bit offset of the mode in an H3 index.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_BC_OFFSET">
+            <summary>
+            The bit offset of the base cell in an H3 index.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_RES_OFFSET">
+            <summary>
+            The bit offset of the resolution in an H3 index.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_RESERVED_OFFSET">
+            <summary>
+            The bit offset of the reserved bits in an H3 index.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_PER_DIGIT_OFFSET">
+            <summary>
+            The number of bits in a single H3 resolution digit.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_HIGH_BIT_MASK">
+            <summary>
+            1 in the highest bit, 0's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_HIGH_BIT_MASK_NEGATIVE">
+            <summary>
+            0 in the highest bit, 1's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_MODE_MASK">
+            <summary>
+            1's in the 4 mode bits, 0's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_MODE_MASK_NEGATIVE">
+            <summary>
+            0's in the 4 mode bits, 1's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_BC_MASK">
+            <summary>
+            1's in the 7 base cell bits, 0's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_BC_MASK_NEGATIVE">
+            <summary>
+            0's in the 7 base cell bits, 1's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_INIT">
+            H3 index with mode 0, res 0, base cell 0, and 7 for all index digits.
+            Typically used to initialize the creation of an H3 cell index, which
+            expects all direction digits to be 7 beyond the cell's resolution.
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_RES_MASK">
+            <summary>
+            1's in the 4 resolution bits, 0's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_RES_MASK_NEGATIVE">
+            <summary>
+            0's in the 4 resolution bits, 1's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_RESERVED_MASK">
+            <summary>
+            1's in the 3 reserved bits, 0's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_RESERVED_MASK_NEGATIVE">
+            <summary>
+            0's in the 3 reserved bits, 1's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_DIGIT_MASK">
+            <summary>
+            1's in the 3 bits of res 15 digit bits, 0's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.H3Index.H3_DIGIT_MASK_NEGATIVE">
+            <summary>
+            0's in the 7 base cell bits, 1's everywhere else.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.LocalIJ.PENTAGON_ROTATIONS">
+            <summary>
+            Origin leading digit -&gt; index leading digit -&gt; rotations 60 cw
+            Either being 1 (K axis) is invalid.
+            No good default at 0.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.LocalIJ.PENTAGON_ROTATIONS_REVERSE">
+            <summary>
+            Reverse base cell direction -&gt; leading index digit -&gt; rotations 60 ccw.
+            For reversing the rotation introduced in PENTAGON_ROTATIONS when the index is
+            on a pentagon and the origin is not.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.LocalIJ.PENTAGON_ROTATIONS_REVERSE_NONPOLAR">
+            <summary>
+            Reverse base cell direction -&gt; leading index digit -&gt; rotations 60 ccw.
+            For reversing the rotation introduced in PENTAGON_ROTATIONS when the index is
+            on a pentagon and the origin is not.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.LocalIJ.PENTAGON_ROTATIONS_REVERSE_POLAR">
+            <summary>
+            Reverse base cell direction -&gt; leading index digit -&gt; rotations 60 ccw.
+            For reversing the rotation introduced in PENTAGON_ROTATIONS when the index is
+            on a polar pentagon and the origin is not.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.LocalIJ.FAILED_DIRECTIONS">
+             Prohibited directions when unfolding a pentagon.
+            
+             Indexes by two directions, both relative to the pentagon base cell. The first
+             is the direction of the origin index and the second is the direction of the
+             index to unfold. Direction refers to the direction from base cell to base
+             cell if the indexes are on different base cells, or the leading digit if
+             within the pentagon base cell.
+            
+             This previously included a Class II/Class III check but these were removed
+             due to failure cases. It's possible this could be restricted to a narrower
+             set of a failure cases. Currently, the logic is any unfolding across more
+             than one icosahedron face is not permitted.
+        </member>
+        <member name="F:H3Lib.Constants.Vertex.INVALID_VERTEX_NUM">
+            <summary>
+            Invalid vertex number
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.Vertex.MAX_BASE_CELL_FACES">
+            <summary>
+            Max number of faces a base cell's descendants may appear on
+            </summary>
+        </member>
+        <member name="F:H3Lib.Constants.Vertex.PentagonDirectionFaces">
+             <summary>
+             Table of direction-to-face mapping for each pentagon
+            
+             Note that faces are in directional order, starting at J_AXES_DIGIT.
+             This table is generated by the generatePentagonDirectionFaces script.
+             </summary>
+             <remarks>
+             TODO: Need to create generatePentagonDirectionFaces script equivalent
+             </remarks>
+             <!--
+             vertex.c
+             -->
+        </member>
+        <member name="F:H3Lib.Constants.Vertex.DirectionToVertexNumHex">
+             <summary>
+             Hexagon direction to vertex number relationships (same face).
+            
+             Note that we don't use direction 0 (center).
+             </summary>
+        </member>
+        <member name="F:H3Lib.Constants.Vertex.DirectionToVertexNumPent">
+            <summary>
+            Pentagon direction to vertex number relationships (same face).
+            Note that we don't use directions 0 (center) or 1 (deleted K axis).
+            </summary>
+        </member>
+        <member name="T:H3Lib.CoordIj">
+             <summary>
+             IJ Hexagon coordinates.
+            
+             Each axis is spaced 120 degrees apart
+             </summary>
+        </member>
+        <member name="F:H3Lib.CoordIj.I">
+            <summary>
+            I Component
+            </summary>
+        </member>
+        <member name="F:H3Lib.CoordIj.J">
+            <summary>
+            J component
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.#ctor(H3Lib.CoordIj)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.Equals(H3Lib.CoordIj)">
+            <summary>
+            Test for equality
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.Equals(System.Object)">
+            <summary>
+            Test for equality on object that can be unboxed to CoordIJ
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.op_Equality(H3Lib.CoordIj,H3Lib.CoordIj)">
+            <summary>
+            Test for equality
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.op_Inequality(H3Lib.CoordIj,H3Lib.CoordIj)">
+            <summary>
+            Test for inequality
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.op_Addition(H3Lib.CoordIj,H3Lib.CoordIj)">
+            <summary>
+            Addition operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.op_Subtraction(H3Lib.CoordIj,H3Lib.CoordIj)">
+            <summary>
+            Subtraction operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIj.op_Multiply(H3Lib.CoordIj,System.Int32)">
+            <summary>
+            Multiply operator for scaling
+            </summary>
+        </member>
+        <member name="T:H3Lib.CoordIjk">
+             <summary>
+             Header file for CoordIJK functions including conversion from lat/lon
+             </summary>
+             <remarks>
+             References two Vec2d cartesian coordinate systems:
+            
+             1. gnomonic: face-centered polyhedral gnomonic projection space with
+                traditional scaling and x-axes aligned with the face Class II
+                i-axes
+            
+             2. hex2d: local face-centered coordinate system scaled a specific H3 grid
+                resolution unit length and with x-axes aligned with the local i-axes
+             </remarks>
+        </member>
+        <member name="F:H3Lib.CoordIjk.I">
+            <summary>
+            I Coordinate
+            </summary>
+        </member>
+        <member name="F:H3Lib.CoordIjk.J">
+            <summary>
+            J Coordinate
+            </summary>
+        </member>
+        <member name="F:H3Lib.CoordIjk.K">
+            <summary>
+            K Coordinate
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            IJK hexagon coordinates
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.#ctor(H3Lib.CoordIjk)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.ToString">
+            <summary>
+            Debug information
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.CubeRound(System.Double,System.Double,System.Double)">
+            <summary>
+            Given cube coords as doubles, round to valid integer coordinates. Algorithm
+            from https://www.redblobgames.com/grids/hexagons/#rounding
+            </summary>
+            <param name="i">Floating-point I coord</param>
+            <param name="j">Floating-point J coord</param>
+            <param name="k">Floating-point K coord</param>
+            <returns>IJK coord struct</returns>
+            <!--
+            localij.c
+            static void cubeRound
+            -->
+        </member>
+        <member name="M:H3Lib.CoordIjk.Equals(H3Lib.CoordIjk)">
+            <summary>
+            Equality test
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.Equals(System.Object)">
+            <summary>
+            Equality for unboxed object
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.CoordIjk.op_Equality(H3Lib.CoordIjk,H3Lib.CoordIjk)">
+            <summary>
+            Equality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.op_Inequality(H3Lib.CoordIjk,H3Lib.CoordIjk)">
+            <summary>
+            Inequality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.op_Addition(H3Lib.CoordIjk,H3Lib.CoordIjk)">
+            <summary>
+            Addition operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.op_Subtraction(H3Lib.CoordIjk,H3Lib.CoordIjk)">
+            <summary>
+            Subtraction operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.CoordIjk.op_Multiply(H3Lib.CoordIjk,System.Int32)">
+            <summary>
+            Multiply operator for scaling
+            </summary>
+        </member>
+        <member name="T:H3Lib.Direction">
+            <summary>
+            H3 digit representing ijk+ axes direction.
+            Values will be within the lowest 3 bits of an integer.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.CENTER_DIGIT">
+            <summary>
+            H3 digit in center
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.K_AXES_DIGIT">
+            <summary>
+            H3 digit in k-axes direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.J_AXES_DIGIT">
+            <summary>
+            H3 digit in j-axes direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.JK_AXES_DIGIT">
+            <summary>
+            H3 digit in j==k direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.I_AXES_DIGIT">
+            <summary>
+            H3 digit in i-axes direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.IK_AXES_DIGIT">
+            <summary>
+            H3 digit in i==k direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.IJ_AXES_DIGIT">
+            <summary>
+            H3 digit in i==j direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.INVALID_DIGIT">
+            <summary>
+            H3 digit in the invalid direction
+            </summary>
+        </member>
+        <member name="F:H3Lib.Direction.NUM_DIGITS">
+            <summary>
+            Valid digits will be less than this value. Same value as <see cref="F:H3Lib.Direction.INVALID_DIGIT"/>
+            </summary>
+        </member>
+        <member name="T:H3Lib.Extensions.BaseCellsExtensions">
+            <summary>
+            Extension methods for BaseCells
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.BaseCellsExtensions.IsBaseCellPentagon(System.Int32)">
+            <summary>
+            Return whether or not the indicated base cell is a pentagon.
+            </summary>
+            <!--
+            baseCells.c
+            int _isBaseCellPentagon
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.BaseCellsExtensions.GetBaseCellDirection(System.Int32,System.Int32)">
+            <summary>
+            Return the direction from the origin base cell to the neighbor.
+            </summary>
+            <returns>INVALID_DIGIT if the base cells are not neighbors.</returns>
+            <!--
+            baseCells.c
+            Direction _getBaseCellDirection
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.BaseCellsExtensions.IsBaseCellPolarPentagon(System.Int32)">
+            <summary>
+            Return whether the indicated base cell is a pentagon where all
+            neighbors are oriented towards it.
+            </summary>
+            <!--
+            baseCells.c
+            bool _isBaseCellPolarPentagon
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.BaseCellsExtensions.ToFaceIjk(System.Int32)">
+            <summary>
+            Find the FaceIJK given a base cell.
+            </summary>
+            <!--
+            baseCells.c
+            _baseCellToFaceIjk
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.BaseCellsExtensions.ToCounterClockwiseRotate60(System.Int32,System.Int32)">
+            <summary>
+            Given a base cell and the face it appears on, return
+            the number of 60' ccw rotations for that base cell's
+            coordinate system.
+            </summary>
+            <returns>
+            The number of rotations, or INVALID_ROTATIONS if the base
+            cell is not found on the given face
+            </returns>
+            <!--
+            baseCells.c
+            int _baseCellToCCWrot60
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.BaseCellsExtensions.GetNeighbor(System.Int32,H3Lib.Direction)">
+            <summary>
+            Return the neighboring base cell in the given direction.
+            </summary>
+            <!--
+            baseCells.c
+            _getBaseCellNeighbor
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.BaseCellsExtensions.IsClockwiseOffset(System.Int32,System.Int32)">
+            <summary>
+            Return whether or not the tested face is a cw offset face.
+            </summary>
+            <!--
+            baseCells.c
+            bool _baseCellIsCwOffset
+            -->
+        </member>
+        <member name="P:H3Lib.Extensions.BaseCellsExtensions.Res0IndexCount">
+            <summary>
+            NOTE: Looks like this is not needed.
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.BaseCellsExtensions.GetRes0Indexes">
+            <summary>
+            getRes0Indexes generates all base cells
+            </summary>
+        </member>
+        <member name="T:H3Lib.Extensions.BBoxExtensions">
+            <summary>
+            Extension methods for BBoxes
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceNorth(H3Lib.BBox,System.Double)">
+            <summary>
+            Returns a new BBox with the new North value.
+            </summary>
+            <param name="box">box to replace</param>
+            <param name="n">North Value</param>
+        </member>
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceSouth(H3Lib.BBox,System.Double)">
+            <summary>
+            Returns a new BBox with the new South value.
+            </summary>
+            <param name="box">box to replace</param>
+            <param name="s">South Value</param>
+        </member>
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceEast(H3Lib.BBox,System.Double)">
+            <summary>
+            Returns a new BBox with the new East value.
+            </summary>
+            <param name="box">box to replace</param>
+            <param name="e">East Value</param>
+        </member>
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceWest(H3Lib.BBox,System.Double)">
+            <summary>
+            Returns a new BBox with the new West value.
+            </summary>
+            <param name="box">box to replace</param>
+            <param name="w">West Value</param>
+        </member>
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceEW(H3Lib.BBox,System.Double,System.Double)">
+             <summary>
+             Returns a new BBox with replaced East/West values.
+            
+             Relevant for Transmeridian issues. 
+             </summary>
+             <param name="box">box to replace</param>
+             <param name="e">East value</param>
+             <param name="w">West value</param>
+             <returns></returns>
+        </member>
+        <member name="M:H3Lib.Extensions.BBoxExtensions.Center(H3Lib.BBox)">
+            <summary>
+            Gets the center of a bounding box
+            </summary>
+            <param name="box">input bounding box</param>
+            <returns>output center coordinate</returns>
+            <!--
+            bbox.c
+            void bboxCenter
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.BBoxExtensions.Contains(H3Lib.BBox,H3Lib.GeoCoord)">
+            <summary>
+            Whether the bounding box contains a given point
+            </summary>
+            <param name="box">Bounding box</param>
+            <param name="point">Point to test</param>
+            <returns>Whether the point is contained</returns>
+            <!--
+            bbox.c
+            ool bboxContains
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.BBoxExtensions.HexEstimate(H3Lib.BBox,System.Int32)">
+            <summary>
+            returns an estimated number of hexagons that fit
+            within the cartesian-projected bounding box
+            </summary>
+            <param name="box">bounding box to estimate the hexagon fill level</param>
+            <param name="res">resolution of the H3 hexagons to fill the bounding box</param>
+            <returns>estimated number of hexagons to fill the bounding box</returns>
+            <!--
+            bbox.c
+            int bboxHexEstimate
+            -->
+        </member>
+        <member name="T:H3Lib.Extensions.CollectionExtensions">
+            <summary>
+            Static methods that work on collections.
+            
+            Currently List, but will likely be switched to
+            IEnumerable in future
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CollectionExtensions.Uncompact(System.Collections.Generic.List{H3Lib.H3Index},System.Int32)">
+            <summary>
+            uncompact takes a compressed set of hexagons and expands back to the
+            original set of hexagons.
+            </summary>
+            <param name="compactedSet"> Set of hexagons</param>
+            <param name="res"> The hexagon resolution to decompress to</param>
+            <returns>
+            A status code and the uncompacted hexagons.
+            </returns>
+            <!--
+            h3index.c
+            int H3_EXPORT(uncompact)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CollectionExtensions.MaxUncompactSize(System.Collections.Generic.List{H3Lib.H3Index},System.Int32)">
+            <summary>
+            maxUncompactSize takes a compacted set of hexagons are provides an
+            upper-bound estimate of the size of the uncompacted set of hexagons.
+            </summary>
+            <param name="compactedSet"> Set of hexagons</param>
+            <param name="res"> The hexagon resolution to decompress to</param>
+            <returns>
+            The number of hexagons to allocate memory for, or a negative
+            number if an error occurs.
+            </returns>
+            <!--
+            h3Index.c
+            int H3_EXPORT(maxUncompactSize)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CollectionExtensions.HexRanges(System.Collections.Generic.List{H3Lib.H3Index},System.Int32)">
+            <summary>
+            hexRanges takes an array of input hex IDs and a max k-ring and returns an
+            array of hexagon IDs sorted first by the original hex IDs and then by the
+            k-ring (0 to max), with no guaranteed sorting within each k-ring group.
+            </summary>
+            <param name="h3Set">a list of H3Indexes</param>
+            <param name="k">k The number of rings to generate</param>
+            <returns>
+            Tuple
+                Item1 - 0 if no pentagon is encountered. Cannot trust output otherwise
+                Item2 - List of H3Index cells
+            </returns>
+        </member>
+        <member name="M:H3Lib.Extensions.CollectionExtensions.ToVertexGraph(System.Collections.Generic.List{H3Lib.H3Index})">
+            <summary>
+            Internal: Create a vertex graph from a set of hexagons. It is the
+            responsibility of the caller to call destroyVertexGraph on the populated
+            graph, otherwise the memory in the graph nodes will not be freed.
+            </summary>
+            <param name="h3Set">Set of hexagons</param>
+            <returns>Output graph</returns>
+            <!--
+            algos.c
+            h3SetToVertexGraph
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CollectionExtensions.ToLinkedGeoPolygon(System.Collections.Generic.List{H3Lib.H3Index})">
+            <summary>
+            Create a LinkedGeoPolygon describing the outline(s) of a set of  hexagons.
+            Polygon outlines will follow GeoJSON MultiPolygon order: Each polygon will
+            have one outer loop, which is first in the list, followed by any holes.
+            
+            It is the responsibility of the caller to call destroyLinkedPolygon on the
+            populated linked geo structure, or the memory for that structure will
+            not be freed.
+            
+            It is expected that all hexagons in the set have the same resolution and
+            that the set contains no duplicates. Behavior is undefined if duplicates
+            or multiple resolutions are present, and the algorithm may produce
+            unexpected or invalid output.
+            </summary>
+            <param name="h3Set">Set of Hexagons</param>
+            <returns>Output polygon</returns>
+            <!--
+            algos.c
+            void H3_EXPORT(h3SetToLinkedGeo)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CollectionExtensions.FindDeepestContainer(System.Collections.Generic.List{H3Lib.LinkedGeoPolygon},System.Collections.Generic.List{H3Lib.BBox})">
+            <summary>
+            Given a list of nested containers, find the one most deeply nested.
+            </summary>
+            <param name="polygons">Polygon containers to check</param>
+            <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
+            <returns>Deepest container, or null if list is empty</returns>
+            <!--
+            linkedGeo.c
+            static const LinkedGeoPolygon* findDeepestContainer
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjExtensions.ToIjk(H3Lib.CoordIj)">
+            <summary>
+            Transforms coordinates from the IJ coordinate system to the IJK+ coordinate system
+            </summary>
+            <param name="ij">The input IJ coordinates</param>
+            <remarks>
+            coordijk.c
+            void ijToIjk
+            </remarks>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjExtensions.ToH3Experimental(H3Lib.CoordIj,H3Lib.H3Index)">
+             <summary>
+             Produces an index for ij coordinates anchored by an origin.
+            
+             The coordinate space used by this function may have deleted
+             regions or warping due to pentagonal distortion.
+            
+             Failure may occur if the index is too far away from the origin
+             or if the index is on the other side of a pentagon.
+            
+             This function is experimental, and its output is not guaranteed
+             to be compatible across different versions of H3.
+             </summary>
+             <param name="ij">coordinates to index.</param>
+             <param name="origin">An anchoring index for the ij coordinate system.</param>
+             <returns>
+             Tuple:
+             Item1 indicates status => 0 = Success, other = failure
+             Item2 contains H3Index upon success.
+             </returns>
+             <!--
+             localij,c
+             int H3_EXPORT(experimentalLocalIjToH3)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.ToHex2d(H3Lib.CoordIjk)">
+            <summary>
+            Find the center point in 2D cartesian coordinates of a hex.
+            </summary>
+            <param name="h">The ijk coordinates of the hex.</param>
+            <!--
+            coordijk,c
+            void _ijkToHex2d
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.Normalized(H3Lib.CoordIjk)">
+            <summary>
+            Normalizes ijk coordinates by setting the components to the smallest possible
+            values. Works in place.
+            </summary>
+            <param name="coord">The ijk coordinates to normalize.</param>
+            <!--
+            coordijk.c
+            void _ijkNormalize
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.ToDirection(H3Lib.CoordIjk)">
+            <summary>
+            Determines the H3 digit corresponding to a unit vector in ijk coordinates.
+            </summary>
+            <param name="ijk">The ijk coordinates; must be a unit vector.</param>
+            <returns>
+            The H3 digit (0-6) corresponding to the ijk unit vector, or
+            <see cref="F:H3Lib.Direction.INVALID_DIGIT"/> INVALID_DIGIT on failure
+            </returns>
+            <!--
+            coordijk.c
+            Direction _unitIjkToDigit
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.UpAp7(H3Lib.CoordIjk)">
+            <summary>
+            Find the normalized ijk coordinates of the indexing parent of a cell in a
+            counter-clockwise aperture 7 grid. Works in place.
+            </summary>
+            <param name="ijk">The ijk coordinates</param>
+            <!--
+            coordijk.c
+            void _upAp7
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.UpAp7R(H3Lib.CoordIjk)">
+            <summary>
+            Find the normalized ijk coordinates of the indexing parent of a cell in a
+            clockwise aperture 7 grid. Works in place.
+            </summary>
+            <param name="ijk">The ijk coordinates</param>
+            <!--
+            coordijk.c
+            void _upAp7r
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.DownAp7(H3Lib.CoordIjk)">
+            <summary>
+            Find the normalized ijk coordinates of the hex centered on the indicated
+            hex at the next finer aperture 7 counter-clockwise resolution. Works in
+            place.
+            </summary>
+            <param name="ijk">The ijk coordinates</param>
+            <!--
+            coordijk.c
+            void _downAp7
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.DownAp7R(H3Lib.CoordIjk)">
+            <summary>
+            Find the normalized ijk coordinates of the hex centered on the indicated
+            hex at the next finer aperture 7 clockwise resolution. Works in place.
+            </summary>
+            <param name="ijk">The ijk coordinates.</param>
+            <!--
+            coordijk.c
+            void _downAp7r
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.Neighbor(H3Lib.CoordIjk,H3Lib.Direction)">
+            <summary>
+            Find the normalized ijk coordinates of the hex in the specified digit
+            direction from the specified ijk coordinates. Works in place.
+            </summary>
+            <param name="ijk">The ijk coordinates.</param>
+            <param name="digit">The digit direction from the original ijk coordinates.</param>
+            <!--
+            coordijk.c
+            void _neighbor
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.Rotate60CounterClockwise(H3Lib.CoordIjk)">
+            <summary>
+            Rotates ijk coordinates 60 degrees counter-clockwise. Works in place.
+            </summary>
+            <param name="ijk">The ijk coordinates.</param>
+            <!--
+            coordijk.c
+            void _ijkRotate60ccw
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.Rotate60Clockwise(H3Lib.CoordIjk)">
+            <summary>
+            Rotates ijk coordinates 60 degrees clockwise. Works in place.
+            </summary>
+            <param name="ijk">The ijk coordinates.</param>
+            <!--
+            coordijk.c
+            void _ijkRotate60cw
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.DownAp3(H3Lib.CoordIjk)">
+            <summary>
+            Find the normalized ijk coordinates of the hex centered on the indicated
+            hex at the next finer aperture 3 counter-clockwise resolution. Works in
+            place.
+            </summary>
+            <param name="ijk">The ijk coordinates.</param>
+            <!--
+            coordijk.c
+            void _downAp3
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.DownAp3R(H3Lib.CoordIjk)">
+            <summary>
+            Find the normalized ijk coordinates of the hex centered on the indicated
+            hex at the next finer aperture 3 clockwise resolution. Works in place.
+            </summary>
+            <param name="ijk">The ijk coordinates.</param>
+            <!--
+            coordijk.c
+            void _downAp3r
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.DistanceTo(H3Lib.CoordIjk,H3Lib.CoordIjk)">
+            <summary>
+            Finds the distance between the two coordinates. Returns result.
+            </summary>
+            <param name="start">The first set of ijk coordinates.</param>
+            <param name="end">The second set of ijk coordinates.</param>
+            <!--
+            coordijk.c
+            int ijkDistance
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.ToIj(H3Lib.CoordIjk)">
+            <summary>
+            Transforms coordinates from the IJK+ coordinate system to the IJ coordinate system
+            </summary>
+            <param name="ijk">The input IJK+ coordinates</param>
+            <!--
+            coordijk.c
+            void ijkToIj
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.ToCube(H3Lib.CoordIjk)">
+            <summary>
+            Convert IJK coordinates to cube coordinates, in place
+            </summary>
+            <param name="ijk">Coordinate to convert</param>
+            <!--
+            coordijk.c
+            void ijkToCube
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.FromCube(H3Lib.CoordIjk)">
+            <summary>
+            Convert cube coordinates to IJK coordinates, in place
+            </summary>
+            <param name="ijk">Coordinate to convert</param>
+            <!--
+            coordijk.c
+            void cubeToIjk
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.LocalIjkToH3(H3Lib.CoordIjk,H3Lib.H3Index)">
+             <summary>
+             Produces an index for ijk+ coordinates anchored by an origin.
+            
+             The coordinate space used by this function may have deleted
+             regions or warping due to pentagonal distortion.
+            
+             Failure may occur if the coordinates are too far away from the origin
+             or if the index is on the other side of a pentagon.
+             </summary>
+             <param name="origin">An anchoring index for the ijk+ coordinate system.</param>
+             <param name="ijk">IJK+ Coordinates to find the index of</param>
+             <returns>0 on success, or another value on failure</returns>
+             <!--
+             localij.c
+             int localIjkToH3
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.DirectionExtensions.Rotate60CounterClockwise(H3Lib.Direction)">
+            <summary>
+            Rotates indexing digit 60 degrees counter-clockwise. Returns result.
+            </summary>
+            <param name="digit">Indexing digit (between 1 and 6 inclusive)</param>
+            <!--
+            coordijk.c
+            Direction _rotate60ccw
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.DirectionExtensions.Rotate60Clockwise(H3Lib.Direction)">
+            <summary>
+            Rotates indexing digit 60 degrees clockwise. Returns result.
+            </summary>
+            <param name="digit">Indexing digit (between 1 and 6 inclusive)</param>
+            <!--
+            coordijk.c
+            Direction _rotate60cw
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.ReplaceFace(H3Lib.FaceIjk,System.Int32)">
+            <summary>
+            Quick replacement of Face value
+            </summary>
+            <param name="fijk">FaceIjk to replace Face value of</param>
+            <param name="face">new Face value to slot in</param>
+            <returns>A new instance with the correct values</returns>
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.ReplaceCoord(H3Lib.FaceIjk,H3Lib.CoordIjk)">
+            <summary>
+            Quick replacement of Coord value
+            </summary>
+            <param name="fijk">FaceIjk to replace Coord value of</param>
+            <param name="coord">New CoordIjk to slot in</param>
+            <returns>A new instance with the correct values</returns>
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.AdjustOverageClassIi(H3Lib.FaceIjk,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Adjusts a FaceIJK address in place so that the resulting cell address is
+            relative to the correct icosahedral face.
+            </summary>
+            <param name="fijk">The FaceIJK address of the cell.</param>
+            <param name="res">The H3 resolution of the cell.</param>
+            <param name="pentLeading4">Whether or not the cell is a pentagon with a leading figit 4</param>
+            <param name="substrate">Whether or not the cell is in a substrate grid.</param>
+            <returns>
+            Tuple
+            Item1: <see cref="T:H3Lib.Overage"/>
+            Item2: Adjusted <see cref="T:H3Lib.FaceIjk"/>
+            </returns>
+            <!--
+            faceijk.c
+            Overage _adjustOverageClassII
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.AdjustPentOverage(H3Lib.FaceIjk,System.Int32)">
+            <summary>
+            Adjusts a FaceIJK address for a pentagon vertex in a substrate grid in
+            place so that the resulting cell address is relative to the correct
+            icosahedral face.
+            </summary>
+            <param name="fijk">The FaceIJK address of the cell.</param>
+            <param name="res">The H3 resolution of the cell.</param>
+            <!--
+            faceIjk.c
+            Overage _adjustPentVertOverage
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.PentToVerts(H3Lib.FaceIjk,System.Int32,System.Collections.Generic.IList{H3Lib.FaceIjk})">
+            <summary>
+            Get the vertices of a pentagon cell as substrate FaceIJK addresses
+            </summary>
+            <param name="fijk">The FaceIJK address of the cell.</param>
+            <param name="res">
+            The H3 resolution of the cell. This may be adjusted if
+            necessary for the substrate grid resolution.
+            </param>
+            <param name="fijkVerts">array for the vertices</param>
+            <returns>
+            Tuple
+            Item1 Possibly modified fijk
+            Item2 Possibly modified res
+            Item3 Array for vertices
+            </returns>
+            <!--
+            faceijk.c
+            void _faceIjkPentToVerts
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.ToVerts(H3Lib.FaceIjk,System.Int32,System.Collections.Generic.IList{H3Lib.FaceIjk})">
+            <summary>
+            Get the vertices of a cell as substrate FaceIJK addresses
+            </summary>
+            <param name="fijk">The FaceIJK address of the cell.</param>
+            <param name="res">
+            The H3 resolution of the cell. This may be adjusted if
+            necessary for the substrate grid resolution.
+            </param>
+            <param name="fijkVerts">array for the vertices</param>
+            <returns>
+            Tuple
+            Item1 Possibly modified fijk
+            Item2 Possibly modified res
+            Item3 Array for vertices
+            </returns>
+            <!--
+            faceijk.c
+            void _faceIjkToVerts
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.ToH3(H3Lib.FaceIjk,System.Int32)">
+            <summary>
+            Convert an FaceIJK address to the corresponding H3Index.
+            </summary>
+            <param name="fijk">The FaceIJK address.</param>
+            <param name="res">The cell resolution.</param>
+            <returns>The encoded H3Index (or H3_NULL on failure).</returns>
+            <!--
+            h3index.c
+            H3Index _faceIjkToH3
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.ToBaseCell(H3Lib.FaceIjk)">
+             <summary>
+             Find base cell given FaceIJK.
+            
+             Given the face number and a resolution 0 ijk+ coordinate in that face's
+             face-centered ijk coordinate system, return the base cell located at that
+             coordinate.
+            
+             Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
+             </summary>
+             <!--
+             baseCells.c
+             int _faceIjkToBaseCell
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.ToBaseCellCounterClockwiseRotate60(H3Lib.FaceIjk)">
+             <summary>
+             Find base cell given FaceIJK.
+            
+             Given the face number and a resolution 0 ijk+ coordinate in that face's
+             face-centered ijk coordinate system, return the number of 60' ccw rotations
+             to rotate into the coordinate system of the base cell at that coordinates.
+            
+             Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
+             </summary>
+             <!--
+             baseCells.c
+             int _faceIjkToBaseCellCCWrot60
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.ToGeoCoord(H3Lib.FaceIjk,System.Int32)">
+            <summary>
+            Determines the center point in spherical coordinates of a cell given by
+            a FaceIJK address at a specified resolution.
+            </summary>
+            <param name="h">The FaceIJK address of the cell.</param>
+            <param name="res">The H3 resolution of the cell.</param>
+            <param name="g">The spherical coordinates of the cell center point.</param>
+            <!--
+            faceijk.c
+            void _faceIjkToGeo
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.ToGeoBoundary(H3Lib.FaceIjk,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Generates the cell boundary in spherical coordinates for a cell given by a
+            FaceIJK address at a specified resolution.
+            </summary>
+            <param name="h">The FaceIJK address of the cell</param>
+            <param name="res">The H3 resolution of the cell</param>
+            <param name="start">The first topological vertex to return</param>
+            <param name="length">The number of topological vertexes to return</param>
+            <returns>The spherical coordinates of the cell boundary</returns>
+            <!--
+            faceijk.c
+            void _faceIjkToGeoBoundary
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.FaceIjkExtensions.PentToGeoBoundary(H3Lib.FaceIjk,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Generates the cell boundary in spherical coordinates for a pentagonal cell
+            given by a FaceIJK address at a specified resolution.
+            </summary>
+            <param name="h">The FaceIJK address of the pentagonal cell.</param>
+            <param name="res">The H3 resolution of the cell.</param>
+            <param name="start">The first topological vertex to return.</param>
+            <param name="length">The number of topological vertexes to return.</param>
+            <returns>The spherical coordinates of the cell boundary.</returns>
+            <!--
+            faceijk.c
+            void _faceIjkPentToGeoBoundary
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetDegrees(H3Lib.GeoCoord,System.Double,System.Double)">
+            <summary>
+            Set the components of spherical coordinates in decimal degrees.
+            </summary>
+            <param name="gc">The spherical coordinates</param>
+            <param name="latitude">The desired latitude in decimal degrees</param>
+            <param name="longitude">The desired longitude in decimal degrees</param>
+            <!--
+            geoCoord.c
+            void setGeoDegs
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetRadians(H3Lib.GeoCoord,System.Double,System.Double)">
+            <summary>
+            Set the components of spherical coordinates in radians.
+            </summary>
+            <param name="gc">The spherical coordinates</param>
+            <param name="latitude">The desired latitude in decimal radians</param>
+            <param name="longitude">The desired longitude in decimal radians</param>
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetGeoRads(H3Lib.GeoCoord,System.Double,System.Double)">
+            <summary>
+            Set the components of spherical coordinates in radians.
+            </summary>
+            <param name="gc">The spherical coordinates</param>
+            <param name="latitudeRadians">The desired latitude in decimal radians</param>
+            <param name="longitudeRadians">The desired longitude in decimal radians</param>
+            <!--
+            geoCoord.c
+            void _setGeoRads
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.DistanceToRadians(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            The great circle distance in radians between two spherical coordinates.
+            This function uses the Haversine formula.
+            For math details, see:
+                https://en.wikipedia.org/wiki/Haversine_formula
+                https://www.movable-type.co.uk/scripts/latlong.html
+            </summary>
+            <param name="a">the first lat/lng pair (in radians)</param>
+            <param name="b">the second lat/lng pair (in radians)</param>
+            <returns>
+            the great circle distance in radians between a and b
+            </returns>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(pointDistRads)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.DistanceToKm(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            The great circle distance in kilometers between two spherical coordinates
+            </summary>
+            <param name="a">the first lat/lng pair (in radians)</param>
+            <param name="b">the second lat/lng pair (in radians)</param>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(pointDistKm)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.DistanceToM(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            The great circle distance in meters between two spherical coordinates
+            </summary>
+            <param name="a">the first lat/lng pair (in radians)</param>
+            <param name="b">the second lat/lng pair (in radians)</param>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(pointDistM)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.AzimuthRadiansTo(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            Determines the azimuth to p2 from p1 in radians
+            </summary>
+            <param name="p1">The first spherical coordinates</param>
+            <param name="p2">The second spherical coordinates</param>
+            <returns>The azimuth in radians from p1 to p2</returns>
+            <!--
+            geoCoord.c
+            double _geoAzimuthRads
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.GetAzimuthDistancePoint(H3Lib.GeoCoord,System.Double,System.Double)">
+            <summary>
+            Computes the point on the sphere a specified azimuth and distance from
+            another point.
+            </summary>
+            <param name="p1">The first spherical coordinates.</param>
+            <param name="azimuth">The desired azimuth from p1.</param>
+            <param name="distance">The desired distance from p1, must be non-negative.</param>
+            <returns>The spherical coordinates at the desired azimuth and distance from p1.</returns>
+            <!--
+            geoCoord.c
+            void _geoAzDistanceRads
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.ToFaceIjk(H3Lib.GeoCoord,System.Int32)">
+            <summary>
+            Encodes a coordinate on the sphere to the FaceIJK address of the containing
+            cell at the specified resolution.
+            </summary>
+            <param name="g">The spherical coordinates to encode.</param>
+            <param name="res">The desired H3 resolution for the encoding.</param>
+            <returns>The FaceIJK address of the containing cell at resolution res.</returns>
+            <!--
+            faceijk.c
+            void _geoToFaceIjk
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.ToHex2d(H3Lib.GeoCoord,System.Int32)">
+            <summary>
+            Encodes a coordinate on the sphere to the corresponding icosahedral face and
+            containing 2D hex coordinates relative to that face center.
+            </summary>
+            <param name="g">The spherical coordinates to encode.</param>
+            <param name="res">The desired H3 resolution for the encoding.</param>
+            <returns>
+            Tuple
+            Item1: The resulting face (can later get rid of <see cref="!:face"/> parameter.
+            Item2: The 2D hex coordinates of the cell containing the point.
+            </returns>
+            <!--
+            faceijk.c
+            void _geoToHex2d
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.ToVec3d(H3Lib.GeoCoord)">
+            <summary>
+            Calculate the 3D coordinate on unit sphere from the latitude and longitude.
+            </summary>
+            <param name="geo">The latitude and longitude of the point</param>
+            <!--
+            vec3d.c
+            void _geoToVec3d
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.ToH3Index(H3Lib.GeoCoord,System.Int32)">
+             <summary>
+             Encodes a coordinate on the sphere to the H3 index of the containing cell at
+             the specified resolution.
+            
+             Returns 0 on invalid input.
+             </summary>
+             <param name="g">The spherical coordinates to encode.</param>
+             <param name="res">The desired H3 resolution for the encoding.</param>
+             <returns>The encoded H3Index (or H3_NULL on failure).</returns>
+             <!--
+             h3Index.c
+             H3Index H3_EXPORT(geoToH3)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.LineHexEstimate(H3Lib.GeoCoord,H3Lib.GeoCoord,System.Int32)">
+            <summary>
+            returns an estimated number of hexagons that trace
+            the cartesian-projected line
+            </summary>
+            <param name="origin">the origin coordinates</param>
+            <param name="destination">the destination coordinates</param>
+            <param name="res">the resolution of the H3 hexagons to trace the line</param>
+            <returns>the estimated number of hexagons required to trace the line</returns>
+            <!--
+            bbox.c
+            int lineHexEstimate
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoFenceExtensions.ToBBox(H3Lib.GeoFence)">
+            <summary>
+            Create a bounding box from a simple polygon loop
+            </summary>
+            <remarks>
+            Known limitations:
+            - Does not support polygons with two adjacent points > 180 degrees of
+              longitude apart. These will be interpreted as crossing the antimeridian.
+            - Does not currently support polygons containing a pole.
+            </remarks>
+            <param name="loop">Loop of coordinates</param>
+            <returns>output box</returns>
+        </member>
+        <member name="M:H3Lib.Extensions.GeoFenceExtensions.GetEdgeHexagons(H3Lib.GeoFence,System.Int32,System.Int32,System.Int32@,System.Collections.Generic.List{H3Lib.H3Index}@,System.Collections.Generic.List{H3Lib.H3Index}@)">
+             <summary>
+             _getEdgeHexagons takes a given geofence ring (either the main geofence or
+             one of the holes) and traces it with hexagons and updates the search and
+             found memory blocks. This is used for determining the initial hexagon set
+             for the polyfill algorithm to execute on.
+             </summary>
+             <param name="geofence">The geofence (or hole) to be traced</param>
+             <param name="numHexagons">
+             The maximum number of hexagons possible for the geofence
+             (also the bounds of the search and found arrays)
+             </param>
+             <param name="res">The hexagon resolution (0-15)</param>
+             <param name="numSearchHexagons">The number of hexagons found so far to be searched</param>
+             <param name="search">The block of memory containing the hexagons to search from</param>
+             <param name="found">The block of memory containing the hexagons found from the search</param>
+             <returns>
+            An error code if the hash function cannot insert a found hexagon into the found array.
+             </returns>
+             <!--
+             algos.c
+             int _getEdgeHexagons
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoPolygonExtensions.PointInside(H3Lib.GeoPolygon,System.Collections.Generic.List{H3Lib.BBox},H3Lib.GeoCoord)">
+            <summary>
+            pointInsidePolygon takes a given GeoPolygon data structure and
+            checks if it contains a given geo coordinate.
+            </summary>
+            <param name="polygon">The geofence and holes defining the relevant area</param>
+            <param name="boxes">The bboxes for the main geofence and each of its holes</param>
+            <param name="coord">The coordinate to check</param>
+            <returns>Whether the point is contained</returns>
+            <!--
+            polygon.c
+            bool pointInsidePolygon
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoPolygonExtensions.ToBBoxes(H3Lib.GeoPolygon)">
+            <summary>
+            Create a set of bounding boxes from a GeoPolygon
+            </summary>
+            <param name="polygon">Input GeoPolygon</param>
+            <returns>
+            Output bboxes, one for the outer loop and one for each hole
+            </returns>
+            <!--
+            polygon.c
+            void bboxesFromGeoPolygon
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoPolygonExtensions.Polyfill(H3Lib.GeoPolygon,System.Int32)">
+             <summary>
+             polyfill takes a given GeoJSON-like data structure and preallocated,
+             zeroed memory, and fills it with the hexagons that are contained by
+             the GeoJSON-like data structure.
+            
+             This implementation traces the GeoJSON geofence(s) in cartesian space with
+             hexagons, tests them and their neighbors to be contained by the geofence(s),
+             and then any newly found hexagons are used to test again until no new
+             hexagons are found.
+             </summary>
+             <param name="polygon">The geofence and holes defining the relevant area</param>
+             <param name="res">The Hexagon resolution (0-15)</param>
+             <returns>List of H3Index that compose the polyfill</returns>
+             <!--
+             algos.c
+             void H3_EXPORT(polyfill)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoPolygonExtensions.MaxPolyFillSize(H3Lib.GeoPolygon,System.Int32)">
+             <summary>
+             maxPolyfillSize returns the number of hexagons to allocate space for when
+             performing a polyfill on the given GeoJSON-like data structure.
+            
+             The size is the maximum of either the number of points in the geofence or the
+             number of hexagons in the bounding box of the geofence.
+             </summary>
+             <param name="geoPolygon">A GeoJSON-like data structure indicating the poly to fill</param>
+             <param name="res">Hexagon resolution (0-15)</param>
+             <returns>number of hexagons to allocate for</returns>
+             <!--
+             algos.c
+             int H3_EXPORT(maxPolyfillSize)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoPolygonExtensions.PolyFillInternal(H3Lib.GeoPolygon,System.Int32)">
+            <summary>
+            _polyfillInternal traces the provided geoPolygon data structure with hexagons
+            and then iteratively searches through these hexagons and their immediate
+            neighbors to see if they are contained within the polygon or not. Those that
+            are found are added to the out array as well as the found array. Once all
+            hexagons to search are checked, the found hexagons become the new search
+            array and the found array is wiped and the process repeats until no new
+            hexagons can be found.
+            </summary>
+            <param name="geoPolygon">The geofence and holes defining the relevant area</param>
+            <param name="res">The Hexagon resolution (0-15)</param>
+            <returns>
+            Tuple
+            Item1 - Status code
+            Item2 - List of H3Index values
+            </returns>
+            <!--
+            algos.c
+            int _polyfillInternal
+            -->
+        </member>
+        <member name="T:H3Lib.Extensions.H3IndexExtensions">
+            <summary>
+            Operations that act upon a data type of <see cref="T:H3Lib.H3Index"/> located
+            in one central location.
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.CellAreaRadians2(H3Lib.H3Index)">
+             <summary>
+             Area of H3 cell in radians^2.
+            
+             The area is calculated by breaking the cell into spherical triangles and
+             summing up their areas. Note that some H3 cells (hexagons and pentagons)
+             are irregular, and have more than 6 or 5 sides.
+            
+             todo: optimize the computation by re-using the edges shared between triangles
+             </summary>
+             <param name="cell">H3 cell</param>
+             <returns>cell area in radians^2</returns>
+             <!--
+             geoCoord.c
+             double H3_EXPORT(cellAreaRads2)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.CellAreaKm2(H3Lib.H3Index)">
+            <summary>
+            Area of H3 cell in kilometers^2.
+            </summary>
+            <param name="h">h3 cell</param>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(cellAreaKm2)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.CellAreaM2(H3Lib.H3Index)">
+            <summary>
+            Area of H3 cell in meters^2.
+            </summary>
+            <param name="h">h3 cell</param>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(cellAreaM2)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ExactEdgeLengthRads(H3Lib.H3Index)">
+            <summary>
+            Length of a unidirectional edge in radians.
+            </summary>
+            <param name="edge">H3 unidirectional edge</param>
+            <returns>length in radians</returns>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(exactEdgeLengthRads)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ExactEdgeLengthKm(H3Lib.H3Index)">
+            <summary>
+            Length of a unidirectional edge in kilometers.
+            </summary>
+            <param name="edge">H3 unidirectional edge</param>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(exactEdgeLengthKm)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ExactEdgeLengthM(H3Lib.H3Index)">
+            <summary>
+            Length of a unidirectional edge in meters.
+            </summary>
+            <param name="edge">H3 unidirectional edge</param>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(exactEdgeLengthM)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToLocalIjk(H3Lib.H3Index,H3Lib.H3Index)">
+             <summary>
+             Produces ijk+ coordinates for an index anchored by an origin.
+            
+             The coordinate space used by this function may have deleted
+             regions or warping due to pentagonal distortion.
+            
+             Coordinates are only comparable if they come from the same
+             origin index.
+             
+             Failure may occur if the index is too far away from the origin
+             or if the index is on the other side of a pentagon.
+            
+             </summary>
+             <param name="origin">An anchoring index for the ijk+ coordinate system.</param>
+             <param name="h3">Index to find the coordinates of</param>
+             <returns>
+             Item1: 0 on success, or another value on failure.
+             Item2: ijk+ coordinates of the index will be placed here on success
+             </returns>
+             <!--
+             localij.c
+             int h3ToLocalIjk
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.RotatePent60CounterClockwise(H3Lib.H3Index)">
+            <summary>
+            Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
+            </summary>
+            <param name="h">The H3Index.</param>
+            <!--
+            h3index.c
+            H3Index _h3RotatePent60ccw
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.RotatePent60Clockwise(H3Lib.H3Index)">
+            <summary>
+            Rotate an H3Index 60 degrees clockwise about a pentagonal center.
+            </summary>
+            <param name="h"> The H3Index.</param>
+            <!--
+            h3Index.c
+            H3Index _h3RotatePent60cw
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.Rotate60CounterClockwise(H3Lib.H3Index)">
+            <summary>
+            Rotate an H3Index 60 degrees counter-clockwise.
+            </summary>
+            <param name="h">The H3Index.</param>
+            <!--
+            h3Index.c
+            H3Index _h3Rotate60ccw(H3Index h)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.Rotate60Clockwise(H3Lib.H3Index)">
+            <summary>
+            Rotate an H3Index 60 degrees clockwise.
+            </summary>
+            <param name="h">The H3Index.</param>
+            <!--
+            h3Index.c
+            H3Index _h3Rotate60cw
+            --> 
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToFaceIjkWithInitializedFijk(H3Lib.H3Index,H3Lib.FaceIjk)">
+            <summary>
+            Convert an H3Index to the FaceIjk address on a specified icosahedral face.
+            </summary>
+            <param name="h"> The H3Index.</param>
+            <param name="fijk">
+            The FaceIjk address, initialized with the desired face
+            and normalized base cell coordinates.
+            </param>
+            <returns>
+            Tuple
+            Item1: Returns 1 if the possibility of overage exists, otherwise 0.
+            Item2: Modified FaceIjk
+            </returns>
+            <!--
+            h3Index.c
+            int _h3ToFaceIjkWithInitializedFijk
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToLocalIjExperimental(H3Lib.H3Index,H3Lib.H3Index)">
+             <summary>
+             Produces ij coordinates for an index anchored by an origin.
+            
+             The coordinate space used by this function may have deleted
+             regions or warping due to pentagonal distortion.
+            
+             Coordinates are only comparable if they come from the same
+             origin index.
+            
+             Failure may occur if the index is too far away from the origin
+             or if the index is on the other side of a pentagon.
+            
+             This function is experimental, and its output is not guaranteed
+             to be compatible across different versions of H3.
+             </summary>
+             <param name="origin">An anchoring index for the ij coordinate system.</param>
+             <param name="h3">Index to find the coordinates of</param>
+             <returns>
+             Tuple with Item1 indicating success (0) or other
+                        Item2 contains ij coordinates. 
+             </returns>
+             <!--
+             localij.c
+             int H3_EXPORT(experimentalH3ToLocalIj)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.DistanceTo(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            Produces the grid distance between the two indexes.
+            
+            This function may fail to find the distance between two indexes, for
+            example if they are very far apart. It may also fail when finding
+            distances for indexes on opposite sides of a pentagon.
+            </summary>
+            <param name="origin">Index to find the distance from.</param>
+            <param name="h3">Index to find the distance to.</param>
+            <returns>
+            The distance, or a negative number if the library could not
+            compute the distance.
+            </returns>
+            <!--
+            localij.c
+            int H3_EXPORT(h3Distance)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.LineSize(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            Number of indexes in a line from the start index to the end index,
+            to be used for allocating memory. Returns a negative number if the
+            line cannot be computed.
+            </summary>
+            <param name="start">Start index of the line</param>
+            <param name="end">End index of the line</param>
+            <returns>
+            Size of the line, or a negative number if the line cannot
+            be computed.
+            </returns>
+            <!--
+            localij.c
+            int H3_EXPORT(h3LineSize)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.LineTo(H3Lib.H3Index,H3Lib.H3Index)">
+             <summary>
+             Given two H3 indexes, return the line of indexes between them (inclusive).
+            
+             This function may fail to find the line between two indexes, for
+             example if they are very far apart. It may also fail when finding
+             distances for indexes on opposite sides of a pentagon.
+            
+             Notes:
+              - The specific output of this function should not be considered stable
+                across library versions. The only guarantees the library provides are
+                that the line length will be `h3Distance(start, end) + 1` and that
+                every index in the line will be a neighbor of the preceding index.
+              - Lines are drawn in grid space, and may not correspond exactly to either
+                Cartesian lines or great arcs.
+             </summary>
+             <param name="start">Start index of the line</param>
+             <param name="end">End index of the line</param>
+             <returns>
+             Tuple:
+             (status, IEnumerable)
+             status => 0 success, otherwise failure
+             </returns>
+             <!--
+             localij.c
+             int H3_EXPORT(h3Line)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.IsValid(H3Lib.H3Index)">
+            <summary>
+            Returns whether or not an H3 index is a valid cell (hexagon or pentagon).
+            </summary>
+            <param name="h">The H3 index to validate.</param>
+            <returns>true if the H3 index is valid</returns>
+            <!--
+            h3Index.c
+            int H3_EXPORT(h3IsValid)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToParent(H3Lib.H3Index,System.Int32)">
+            <summary>
+            h3ToParent produces the parent index for a given H3 index
+            </summary>
+            <param name="h">H3Index to find parent of</param>
+            <param name="parentRes">The resolution to switch to (parent, grandparent, etc)</param>
+            <returns>H3Index of the parent, or H3_NULL if you actually asked for a child</returns>
+            <!--
+            h3Index.c
+            H3Index H3_EXPORT(h3ToParent)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.MaxChildrenSize(H3Lib.H3Index,System.Int32)">
+            <summary>
+            MaxChildrenSize returns the maximum number of children possible for a
+            given child level.
+            </summary>
+            <param name="h3">H3Index to find the number of children of</param>
+            <param name="childRes">The resolution of the child level you're interested in</param>
+            <returns>count of maximum number of children (equal for hexagons, less for pentagons</returns>
+            <!--
+            h3Index.c
+            int64_t H3_EXPORT(maxH3ToChildrenSize)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.SetIndex(H3Lib.H3Index,System.Int32,System.Int32,H3Lib.Direction)">
+            <summary>
+            Initializes an H3 index.
+            </summary>
+            <param name="hp"> The H3 index to initialize.</param>
+            <param name="res"> The H3 resolution to initialize the index to.</param>
+            <param name="baseCell"> The H3 base cell to initialize the index to.</param>
+            <param name="initDigit"> The H3 digit (0-7) to initialize all of the index digits to.</param>
+            <!--
+            h3Index.c
+            void setH3Index
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.IsPentagon(H3Lib.H3Index)">
+            <summary>
+            Takes an H3Index and determines if it is actually a pentagon.
+            </summary>
+            <param name="h"> The H3Index to check.</param>
+            <returns>Returns true if it is a pentagon, otherwise false.</returns>
+            <!--
+            h3Index.c
+            int H3_EXPORT(h3IsPentagon)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.MakeDirectChild(H3Lib.H3Index,System.Int32)">
+            <summary>
+            MakeDirectChild takes an index and immediately returns the immediate child
+            index based on the specified cell number. Bit operations only, could generate
+            invalid indexes if not careful (deleted cell under a pentagon).
+            </summary>
+            <param name="h"> H3Index to find the direct child of</param>
+            <param name="cellNumber"> int id of the direct child (0-6)</param>
+            <returns>The new H3Index for the child</returns>
+            <!--
+            h3Index.c
+            H3Index makeDirectChild
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToFaceIjk(H3Lib.H3Index)">
+            <summary>
+            Convert an H3Index to a FaceIJK address.
+            </summary>
+            <param name="h">The H3 Index</param>
+            <returns>The corresponding FaceIJK address.</returns>
+            <!--
+            h3Index.cs
+            void _h3ToFaceIjk
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.GetFaces(H3Lib.H3Index)">
+            <summary>
+            Find all icosahedron faces intersected by a given H3 index, represented
+            as integers from 0-19. The array is sparse; since 0 is a valid value,
+            invalid array values are represented as -1. It is the responsibility of
+            the caller to filter out invalid values.
+            </summary>
+            <param name="h3">The H3 index</param>*
+            <returns>Output list.</returns>
+            <!--
+            h3Index.c
+            void H3_EXPORT(h3GetFaces)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.MaxFaceCount(H3Lib.H3Index)">
+            <summary>
+            Returns the max number of possible icosahedron faces an H3 index
+            may intersect.
+            </summary>
+            <param name="h3"></param>
+            <returns></returns>
+            <!--
+            h3Index.c
+            int H3_EXPORT(maxFaceCount)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToChildren(H3Lib.H3Index,System.Int32)">
+            <summary>
+            ToChildren takes the given hexagon id and generates all of the children
+            at the specified resolution storing them into the provided memory pointer.
+            It's assumed that maxH3ToChildrenSize was used to determine the allocation.
+            </summary>
+            <param name="h"> H3Index to find the children of</param>
+            <param name="childRes"> int the child level to produce</param>
+            <returns>The list of H3Index children</returns>
+            <!--
+            h3index.c
+            void H3_EXPORT(h3ToChildren)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToCenterChild(H3Lib.H3Index,System.Int32)">
+            <summary>
+            ToCenterChild produces the center child index for a given H3 index at
+            the specified resolution
+            </summary>
+            <param name="h">H3Index to find center child of</param>
+            <param name="childRes">The resolution to switch to</param>
+            <returns>
+            H3Index of the center child, or H3_NULL if you actually asked for a parent
+            </returns>
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToGeoCoord(H3Lib.H3Index)">
+            <summary>
+            Determines the spherical coordinates of the center point of an H3 index.
+            </summary>
+            <param name="h3">The H3 index.</param>
+            <returns>The spherical coordinates of the H3 cell center.</returns>
+            <!--
+            h3index.c
+            void H3_EXPORT(h3ToGeo)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.ToGeoBoundary(H3Lib.H3Index)">
+            <summary>
+            Determines the cell boundary in spherical coordinates for an H3 index.
+            </summary>
+            <param name="h3">The H3 index.</param>
+            <returns>The boundary of the H3 cell in spherical coordinates.</returns>
+            <!--
+            h3index.c
+            void H3_EXPORT(h3ToGeoBoundary)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.VertexRotations(H3Lib.H3Index)">
+            <summary>
+            Get the number of CCW rotations of the cell's vertex numbers
+            compared to the directional layout of its neighbors.
+            </summary>
+            <returns>Number of CCW rotations for the cell</returns>
+            <!--
+            vertex.c
+            int vertexRotations
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.VertexNumForDirection(H3Lib.H3Index,H3Lib.Direction)">
+            <summary>
+            Get the first vertex number for a given direction. The neighbor in this
+            direction is located between this vertex number and the next number in
+            sequence.
+            </summary>
+            <returns>
+            The number for the first topological vertex, or INVALID_VERTEX_NUM
+            if the direction is not valid for this cell
+            </returns>
+            <!--
+            vertex.c
+            int vertexNumForDirection
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.IsNeighborTo(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            Returns whether or not the provided H3Indexes are neighbors.
+            
+            </summary>
+            <param name="origin">The origin H3 index.</param>
+            <param name="destination">The destination H3 index.</param>
+            <returns>true if the indices are neighbors, false otherwise</returns>
+            <!--
+            hwUniEdge.c
+            int H3_EXPORT(h3IndexesAreNeighbors)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.UniDirectionalEdgeTo(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            Returns a unidirectional edge H3 index based on the provided origin and destination
+            </summary>
+            <param name="origin">The origin H3 hexagon index</param>
+            <param name="destination">The destination H3 hexagon index</param>
+            <returns>The unidirectional edge H3Index, or H3_NULL on failure.</returns>
+            <!--
+            h3UniEdge.c
+            H3Index H3_EXPORT(getH3UnidirectionalEdge)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.OriginFromUniDirectionalEdge(H3Lib.H3Index)">
+            <summary>
+            Returns the origin hexagon from the unidirectional edge H3Index
+            </summary>
+            <param name="edge">The edge H3 index</param>
+            <returns>The origin H3 hexagon index, or H3_NULL on failure</returns>
+            <!--
+            h3UniEdge.c
+            H3Index H3_EXPORT(getOriginH3IndexFromUnidirectionalEdge)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.DestinationFromUniDirectionalEdge(H3Lib.H3Index)">
+            <summary>
+            Returns the destination hexagon from the unidirectional edge H3Index
+            </summary>
+            <param name="edge">The edge H3 index</param>
+            <returns>
+            The destination H3 hexagon index, or H3_NULL on failure
+            </returns>
+            <!--
+            h3UniEdge.c
+            H3Index H3_EXPORT(getDestinationH3IndexFromUnidirectionalEdge)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.IsValidUniEdge(H3Lib.H3Index)">
+            <summary>
+            Determines if the provided H3Index is a valid unidirectional edge index
+            </summary>
+            <param name="edge">The unidirectional edge H3Index</param>
+            <returns>true if it is a unidirectional edge H3Index, otherwise false</returns>
+            <!--
+            h3UniEdge.c
+            int H3_EXPORT(h3UnidirectionalEdgeIsValid)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.GetH3IndexesFromUniEdge(H3Lib.H3Index)">
+            <summary>
+            Returns the origin, destination pair of hexagon IDs for the given edge ID
+            </summary>
+            <param name="edge">The unidirectional edge H3Index</param>
+            <returns>Tuple containing origin and destination H#Index cells of edge</returns>
+            <!--
+            h3UniEdge.c
+            void H3_EXPORT(getH3IndexesFromUnidirectionalEdge)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.GetH3IndexesArrayFromUniEdge(H3Lib.H3Index)">
+            <summary>
+            Returns the origin, destination pair of hexagon IDs for the given edge ID
+            </summary>
+            <param name="edge">The unidirectional edge H3Index</param>
+            <returns>Tuple containing origin and destination H#Index cells of edge</returns>
+            <!--
+            h3UniEdge.c
+            void H3_EXPORT(getH3IndexesFromUnidirectionalEdge)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.GetUniEdgesFromCell(H3Lib.H3Index)">
+            <summary>
+            Provides all of the unidirectional edges from the current H3Index.
+            </summary>
+            <param name="origin">The origin hexagon H3Index to find edges for.</param>
+            <returns>List of edges</returns>
+            <!--
+            h3UniEdge.c
+            void H3_EXPORT(getH3UnidirectionalEdgesFromHexagon)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.UniEdgeToGeoBoundary(H3Lib.H3Index)">
+            <summary>
+            Provides the coordinates defining the unidirectional edge.
+            </summary>
+            <param name="edge">The unidirectional edge H3Index</param>
+            <returns>The geoboundary object to store the edge coordinates.</returns>
+            <!--
+            h3UniEdge.c
+            void H3_EXPORT(getH3UnidirectionalEdgeBoundary)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.HexRange(H3Lib.H3Index,System.Int32)">
+             <summary>
+             hexRange produces indexes within k distance of the origin index.
+            
+             Output behavior is undefined when one of the indexes returned by this
+             function is a pentagon or is in the pentagon distortion area.
+            
+             k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
+             all neighboring indexes, and so on.
+            
+             Output is placed in the provided array in order of increasing distance from
+             the origin.
+             </summary>
+             <param name="origin">Origin location.</param>
+             <param name="k">k &gt;= 0</param>
+             <returns>
+             Tuple
+                 Item1 - 0 if no pentagon or pentagonal distortion area was encountered.
+                 Item2 - List of H3Index cells
+             </returns>
+             <!--
+             algos.c
+             int H3_EXPORT(hexRange)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.KRing(H3Lib.H3Index,System.Int32)">
+             <summary>
+             Produce cells within grid distance k of the origin cell.
+            
+             k-ring 0 is defined as the origin cell, k-ring 1 is defined as k-ring 0 and
+             all neighboring cells, and so on.
+             
+             Output is placed in the provided array in no particular order. Elements of
+             the output array may be left zero, as can happen when crossing a pentagon.
+             </summary>
+             <param name="origin">origin cell</param>
+             <param name="k">k >= 0</param>
+             <returns>H3Index cells within range</returns>
+             <!--
+             algos.c
+             void H3_EXPORT(kRing)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.KRingDistances(H3Lib.H3Index,System.Int32)">
+             <summary>
+             Produce cells and their distances from the given origin cell, up to
+             distance k
+            
+             k-ring 0 is defined as the origin cell, k-ring 1 is defined as k-ring 0 and
+             all neighboring cells, and so on.
+            
+             Output is placed in the provided array in no particular order. Elements of
+             the output array may be left zero, as can happen when crossing a pentagon.
+             </summary>
+             <param name="origin">origin cell</param>
+             <param name="k">k &gt;= 0</param>
+             <returns>
+             A dictionary with keys being the H3Index, and the value being the distance.
+             </returns>
+             <!--
+             algos.c
+             void H3_EXPORT(kRingDistances)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.KRingInternal(H3Lib.H3Index,System.Int32,System.Int32,System.Collections.Generic.Dictionary{H3Lib.H3Index,System.Int32})">
+            <summary>
+            Internal helper function called recursively for kRingDistances.
+            
+            Adds the origin cell to the output set (treating it as a hash set)
+            and recurses to its neighbors, if needed.
+            </summary>
+            <param name="origin">Origin cell</param>
+            <param name="k">Maximum distance to move from the origin</param>
+            <param name="currentK">Current distance from the origin</param>
+            <param name="outData">Dictionary passing information between recursions</param>
+            <returns>
+            Dictionary of cells
+            Key - element either an H3Index or 0
+            Value - indicate ijk distance from the origin cell to Item2
+            </returns>
+            <remarks>
+            NOTE: You _should_ be able to just call this with h3.KRingInternal(k).  We'll see.
+            </remarks>
+            <!--
+            algos.c
+            void _kRingInternal
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.NeighborRotations(H3Lib.H3Index,H3Lib.Direction,System.Int32)">
+             <summary>
+             Returns the hexagon index neighboring the origin, in the direction dir.
+            
+             Implementation note: The only reachable case where this returns 0 is if the
+             origin is a pentagon and the translation is in the k direction. Thus,
+             0 can only be returned if origin is a pentagon.
+             </summary>
+             <param name="origin">Origin index</param>
+             <param name="dir">Direction to move in</param>
+             <param name="rotations">
+             Number of ccw rotations to perform to reorient the
+             translation vector. Modified version Will be returned in tuple,
+             so make sure it's reassigned upon return.  Return will be the
+             new number of rotations to perform (such as when crossing a face edge.)
+             </param>
+             <returns>
+             Tuple
+             Item1 - see summary above
+             Item2 - Modified rotation value
+             </returns>
+             <!--
+             algos.c
+             H3Index h3NeighborRotations
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.HexRangeDistances(H3Lib.H3Index,System.Int32)">
+             <summary>
+             Produces indexes within k distance of the origin index.
+             Output behavior is undefined when one of the indexes returned by this
+             function is a pentagon or is in the pentagon distortion area.
+            
+             k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and
+             all neighboring indexes, and so on.
+            
+             Output is placed in the provided array in order of increasing distance from
+             the origin. The distances in hexagons is placed in the distances array at
+             the same offset.
+             </summary>
+             <param name="origin">Origin location.</param>
+             <param name="k">k &gt;= 0</param>
+             <returns>
+             Tuple with list of tuples
+             Main tuple:
+                 Item1 : status code
+                 Item2 : List of tuples
+                         Item1: H3Index
+                         Item2: distance
+             </returns>
+             <!--
+             algos.c
+             int H3_EXPORT(hexRangeDistances)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.HexRing(H3Lib.H3Index,System.Int32)">
+             <summary>
+             Returns the "hollow" ring of hexagons at exactly grid distance k from
+             the origin hexagon. In particular, k=0 returns just the origin hexagon.
+            
+             A nonzero failure code may be returned in some cases, for example,
+             if a pentagon is encountered.
+            
+             Failure cases may be fixed in future versions.
+             </summary>
+             <param name="origin">Origin location.</param>
+             <param name="k">k >= 0</param>
+             <returns>
+             Tuple
+                 Item1 - Status: 0 if successful, other if failure
+                 Item2 - List of h3index cells if status == 0, otherwise empty list 
+             </returns>
+             <!--
+             algos.c
+             int H3_EXPORT(hexRing)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.HexRadiusKm(H3Lib.H3Index)">
+            <summary>
+            returns the radius of a given hexagon in Km
+            </summary>
+            <param name="h3">the index of the hexagon</param>
+            <returns>the radius of the hexagon in Km</returns>
+            <!--
+            bbox.c
+            double _hexRadiusKm
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.MaxUncompactSize(H3Lib.H3Index,System.Int32)">
+            <summary>
+            Lets you get the maxUncompactSize from a single cell instead of
+            requiring wrapping it in a List
+            </summary>
+            <param name="singleCell">Cell that will be uncompacted</param>
+            <param name="res">resolution to uncompact to</param>
+            <returns>How many hexagons to expect</returns>
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.Uncompact(H3Lib.H3Index,System.Int32)">
+            <summary>
+            Run uncompact on a single cell
+            </summary>
+            <param name="singleCell">cell to uncompact</param>
+            <param name="res">resolution to uncompact to</param>
+            <returns><see cref="M:H3Lib.Extensions.CollectionExtensions.Uncompact(System.Collections.Generic.List{H3Lib.H3Index},System.Int32)"/> for details</returns>
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.NormalizeRadians(System.Double,System.Double)">
+            <summary>
+            Normalizes radians to a value between 0.0 and two PI.
+            </summary>
+            <param name="rads">The input radians value</param>
+            <param name="limit">Default value of 2pi. _Can_ be changed, probably shouldn't</param>
+            <returns>The normalized radians value</returns>
+            <remarks>
+            Originally part of geoCoord.c as  double _posAngleRads(double rads)
+            
+            However, it's only used once in
+            void _geoAzDistanceRads(const GeoCoord *p1, double az, double distance, GeoCoord *p2)
+            
+            It's used multiple times in faceijk.c, _geoToHex2d and _hex2dToGeo
+            
+            For now, let's isolate it and see if it needs to be folded in later.
+            </remarks>
+            <!--
+            geoCoord.c
+            double _posAngleRads
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLatitude(System.Double)">
+            <summary>
+            Makes sure latitudes are in the proper bounds
+            </summary>
+            <param name="latitude">The original lat value</param>
+            <returns>The corrected lat value</returns>
+            <!--
+            geoCoord.c
+            double constrainLat
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Double)">
+            <summary>
+            Makes sure longitudes are in the proper bounds
+            </summary>
+            <param name="longitude">The origin lng value</param>
+            <returns>The corrected lng value</returns>
+            <!--
+            geoCoord.c
+            double constrainLng
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Double)">
+            <summary>
+            Convert from decimal degrees to radians.
+            </summary>
+            <param name="degrees">The decimal degrees</param>
+            <returns>The corresponding radians</returns>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(degsToRads)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.RadiansToDegrees(System.Double)">
+            <summary>
+            Convert from radians to decimal degrees.
+            </summary>
+            <param name="radians">The radians</param>
+            <returns>The corresponding decimal degrees</returns>
+            <!--
+            geoCoord.c
+            double H3_EXPORT(radsToDegs)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.Power(System.Int64,System.Int64)">
+             <summary>
+             Does integer exponentiation efficiently. Taken from StackOverflow.
+            
+             An example of this can be found at:
+             https://stackoverflow.com/questions/101439/the-most-efficient-way-to-implement-an-integer-based-power-function-powint-int
+             </summary>
+             <param name="baseValue">the integer base (can be positive or negative)</param>
+             <param name="power">the integer exponent (should be nonnegative)</param>
+             <returns>the exponentiated value</returns>
+             <!--
+             mathExtensions.c
+             int64_t _ipow
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.NumHexagons(System.Int32)">
+            <summary>
+            Number of unique valid H3Indexes at given resolution.
+            </summary>
+            <param name="res">Resolution to get count of cells</param>
+            <!--
+            geoCoord.c
+            int64_t H3_EXPORT(numHexagons)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.IsResClassIii(System.Int32)">
+            <summary>
+            Returns whether or not a resolution is a Class III grid. Note that odd
+             resolutions are Class III and even resolutions are Class II.
+            </summary>
+            <param name="res">The H3 resolution</param>
+            <returns>Returns true if the resolution is class III grid, otherwise false.</returns>
+            <!--
+            h3Index.c
+            int H3_EXPORT(h3IsResClassIII)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.Square(System.Double)">
+            <summary>
+            Square of a number
+            </summary>
+            <param name="x">The input number</param>
+            <returns>The square of the input number</returns>
+            <!--
+            vec3d.c
+            double _square
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.ToH3Index(System.String)">
+            <summary>
+            Converts a string representation of an H3 index into an H3 index.
+            </summary>
+            <param name="s"> The string representation of an H3 index.</param>
+            <returns>
+            The H3 index corresponding to the string argument, or 0 if invalid.
+            </returns>
+            <!--
+            h3Index.c
+            H3Index H3_EXPORT(stringToH3)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.IsValidChildRes(System.Int32,System.Int32)">
+            <summary>
+            Determines whether one resolution is a valid child resolution of another.
+            Each resolution is considered a valid child resolution of itself.
+            </summary>
+            <param name="parentRes">int resolution of the parent</param>
+            <param name="childRes">int resolution of the child</param>
+            <returns>The validity of the child resolution</returns>
+            <!--
+            h3Index.c
+            static bool _isValidChildRes
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.GetPentagonIndexes(System.Int32)">
+             Generates all pentagons at the specified resolution
+            
+             <param name="res">The resolution to produce pentagons at.</param>
+             <returns>Output List.</returns>
+             <!--
+             h3Index.c
+             void H3_EXPORT(getPentagonIndexes)
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.Compact(System.Collections.Generic.List{H3Lib.H3Index})">
+            <summary>
+            compact takes a set of hexagons all at the same resolution and compresses
+            them by pruning full child branches to the parent level. This is also done
+            for all parents recursively to get the minimum number of hex addresses that
+            perfectly cover the defined space.
+            </summary>
+            <param name="h3Set"> Set of hexagons</param>
+            <returns>status code and compacted hexes</returns>
+            <remarks>
+            Gonna do this a bit differently, allowing for varying
+            resolutions in input data.  Also, this is a front for <see cref="M:H3Lib.Extensions.H3LibExtensions.FlexiCompact(System.Collections.Generic.List{H3Lib.H3Index})"/>
+            that tries to maintain the same restrictions the original H3 compact enforces.
+            </remarks>
+            <!--
+            h3index.c
+            int H3_EXPORT(compact)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.FlexiCompact(System.Collections.Generic.List{H3Lib.H3Index})">
+            A slightly different approach to the problem of compacting with some
+            flexibility.  All resolutions are handled, duplicates are avoided,
+            and we shouldn't have overlapping children in case the parent was
+            provided in the original data.
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.MaxKringSize(System.Int32)">
+            <summary>
+            Maximum number of cells that result from the kRing algorithm with the given
+            k. Formula source and proof: https://oeis.org/A003215
+            </summary>
+            <param name="k">k value, k &gt;= 0.</param>
+            <!--
+            algos.c
+            int H3_EXPORT(maxKringSize)
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.NormalizeLongitude(System.Double,System.Boolean)">
+            <summary>
+            Normalize longitude, dealing with transmeridian arcs
+            </summary>
+            <!--
+            polygonAlgos.h
+            #define NORMALIZE_LON
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.LinkedGeoLoopExtensions.CountContainers(H3Lib.LinkedGeoLoop,System.Collections.Generic.List{H3Lib.LinkedGeoPolygon},System.Collections.Generic.List{H3Lib.BBox})">
+            <summary>
+            Count the number of polygons containing a given loop.
+            </summary>
+            <param name="loop">Loop to count containers for</param>
+            <param name="polygons">Polygons to test</param>
+            <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
+            <returns>Number of polygons containing the loop</returns>
+            <!--
+            linkedGeo.c
+            static int countContainers
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.LinkedGeoPolygonExtensions.NormalizeMultiPolygon(H3Lib.LinkedGeoPolygon)">
+             <summary>
+             Normalize a LinkedGeoPolygon in-place into a structure following GeoJSON
+             MultiPolygon rules: Each polygon must have exactly one outer loop, which
+             must be first in the list, followed by any holes. Holes in this algorithm
+             are identified by winding order (holes are clockwise), which is guaranteed
+             by the h3SetToVertexGraph algorithm.
+            
+             Input to this function is assumed to be a single polygon including all
+             loops to normalize. It's assumed that a valid arrangement is possible.
+             </summary>
+             <param name="root">Root polygon including all loops</param>
+             <returns>
+             Tuple
+             Item1 - 0 on success, or an error code > 0 for invalid input
+             Item2 - Normalized LinkedGeoPolygon
+             </returns>
+             <!--
+             linkedGeo.c
+             int normalizeMultiPolygon
+             -->
+        </member>
+        <member name="M:H3Lib.Extensions.LinkedGeoPolygonExtensions.FindPolygonForHole(H3Lib.LinkedGeoLoop,H3Lib.LinkedGeoPolygon,System.Collections.Generic.List{H3Lib.BBox},System.Int32)">
+            <summary>
+            Find the polygon to which a given hole should be allocated. Note that this
+            function will return null if no parent is found.
+            </summary>
+            <param name="loop">Inner loop describing a hole</param>
+            <param name="polygon">Head of a linked list of polygons to check</param>
+            <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
+            <param name="polygonCount">Number of polygons to check</param>
+            <returns>Pointer to parent polygon, or null if not found</returns>
+            <!--
+            linkedGeo.c
+            static const LinkedGeoPolygon* findPolygonForHole
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.Vec2dExtensions.ToCoordIjk(H3Lib.Vec2d)">
+            <summary>
+            Determine the containing hex in ijk+ coordinates for a 2D cartesian
+            coordinate vector (from <a href="http://www.discreteglobalgrids.org/software/">DGGRID</a>).
+            </summary>
+            <param name="v">The 2D cartesian coordinate vector.</param>
+            <!--
+            coordijk.c
+            void _hex2dToCoordIJK
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.Vec2dExtensions.ToGeoCoord(H3Lib.Vec2d,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Determines the center point in spherical coordinates of a cell given by 2D
+            hex coordinates on a particular icosahedral face.
+            </summary>
+            <param name="v">The 2D hex coordinates of the cell</param>
+            <param name="face">The icosahedral face upon which the 2D hex coordinate system is centered</param>
+            <param name="res">The H3 resolution of the cell</param>
+            <param name="substrate">
+            Indicates whether or not this grid is actually a substrate
+            grid relative to the specified resolution.
+            </param>
+            <returns>The spherical coordinates of the cell center point</returns>
+            <!--
+            faceIjk.c
+            void _hex2dToGeo
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.Vec3dExtensions.PointSquareDistance(H3Lib.Vec3d,H3Lib.Vec3d)">
+            <summary>
+            Calculate the square of the distance between two 3D coordinates.
+            </summary>
+            <param name="v1">The first 3D coordinate.</param>
+            <param name="v2">The second 3D coordinate.</param>
+            <returns>The square of the distance between the given points.</returns>
+            <!--
+            vec3d.c
+            double _pointSquareDist
+            -->
+        </member>
+        <member name="M:H3Lib.Extensions.VertexGraphExtensions.ToLinkedGeoPolygon(H3Lib.VertexGraph)">
+            <summary>
+            Internal: Create a LinkedGeoPolygon from a vertex graph. It is the
+            responsibility of the caller to call destroyLinkedPolygon on the populated
+            linked geo structure, or the memory for that structure will not be freed.
+            </summary>
+            <param name="graph">Input graph</param>
+            <returns>Output polygon</returns>
+            <!--
+            algos.c
+            void _vertexGraphToLinkedGeo
+            -->
+        </member>
+        <member name="T:H3Lib.FaceIjk">
+            <summary>
+            Functions for working with icosahedral face-centered hex IJK
+            coordinate systems.
+            </summary>
+        </member>
+        <member name="F:H3Lib.FaceIjk.Face">
+            <summary>
+            face number
+            </summary>
+        </member>
+        <member name="F:H3Lib.FaceIjk.Coord">
+            <summary>
+            ijk coordinates on that face
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceIjk.#ctor(System.Int32,H3Lib.CoordIjk)">
+            <summary>
+            constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceIjk.#ctor(H3Lib.FaceIjk)">
+            <summary>
+            constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceIjk.ToString">
+            <summary>
+            Debug data in string
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceIjk.Equals(H3Lib.FaceIjk)">
+            <summary>
+            Equality test
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceIjk.Equals(System.Object)">
+            <summary>
+            Equality test on unboxed object
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceIjk.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceIjk.op_Equality(H3Lib.FaceIjk,H3Lib.FaceIjk)">
+            <summary>
+            Equality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceIjk.op_Inequality(H3Lib.FaceIjk,H3Lib.FaceIjk)">
+            <summary>
+            Inequality operator
+            </summary>
+        </member>
+        <member name="T:H3Lib.FaceOrientIjk">
+            <summary>
+            Information to transform into an adjacent face IJK system
+            </summary>
+        </member>
+        <member name="F:H3Lib.FaceOrientIjk.Face">
+            <summary>
+            face number
+            </summary>
+        </member>
+        <member name="F:H3Lib.FaceOrientIjk.Translate">
+            <summary>
+            res 0 translation relative to primary face
+            </summary>
+        </member>
+        <member name="F:H3Lib.FaceOrientIjk.Ccw60Rotations">
+            <summary>
+            number of 60 degree ccw rotations relative to primary
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceOrientIjk.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceOrientIjk.#ctor(System.Int32,H3Lib.CoordIjk,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceOrientIjk.Equals(H3Lib.FaceOrientIjk)">
+            <summary>
+            Equality test
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.FaceOrientIjk.Equals(System.Object)">
+            <summary>
+            Equality test against unboxed object
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceOrientIjk.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.FaceOrientIjk.op_Equality(H3Lib.FaceOrientIjk,H3Lib.FaceOrientIjk)">
+            <summary>
+            Equality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.FaceOrientIjk.op_Inequality(H3Lib.FaceOrientIjk,H3Lib.FaceOrientIjk)">
+            <summary>
+            Inequality operator
+            </summary>
+        </member>
+        <member name="T:H3Lib.GeoBoundary">
+            <summary>
+            cell boundary in latitude/longitude
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoBoundary.NumVerts">
+            <summary>
+            number of vertices
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoBoundary.Verts">
+            <summary>
+            vertices in ccw order
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoBoundary.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoBoundary.ToString">
+            <summary>
+            Debug information in string form
+            </summary>
+        </member>
+        <member name="T:H3Lib.GeoCoord">
+            <summary>
+            Functions for working with lat/lon coordinates.
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoCoord.Latitude">
+            <summary>
+            Latitude normally in radians
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoCoord.Longitude">
+            <summary>
+            Longitude normally in radians
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.#ctor(System.Double,System.Double)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.#ctor(H3Lib.GeoCoord)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.ToString">
+            <summary>
+            Debug information in string form
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.GeoCoord.HexAreaKm2(System.Int32)">
+            <summary>
+            Area of cell at resolution in square kilometers
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.HexAreaM2(System.Int32)">
+            <summary>
+            Area of cell at resolution in square meters
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.EdgeLengthKm(System.Int32)">
+            <summary>
+            Length of cell edge at resolution in kilometers
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.EdgeLengthM(System.Int32)">
+            <summary>
+            Length of cell edge at resolution in meters
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.TriangleEdgeLengthToArea(System.Double,System.Double,System.Double)">
+             <summary>
+             Surface area in radians^2 of spherical triangle on unit sphere.
+            
+             For the math, see:
+             https://en.wikipedia.org/wiki/Spherical_trigonometry#Area_and_spherical_excess
+             </summary>
+             <param name="a">length of triangle side A in radians</param>
+             <param name="b">length of triangle side B in radians</param>
+             <param name="c">length of triangle side C in radians</param>
+             <returns>area in radians^2 of triangle on unit sphere</returns>
+             <!--
+             geoCoord.c
+             double triangleEdgeLengthsToArea
+             -->
+        </member>
+        <member name="M:H3Lib.GeoCoord.TriangleArea(H3Lib.GeoCoord,H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            Compute area in radians^2 of a spherical triangle, given its vertices.
+            </summary>
+            <param name="a">vertex lat/lng in radians</param>
+            <param name="b">vertex lat/lng in radians</param>
+            <param name="c">vertex lat/lng in radians</param>
+            <returns>area of triangle on unit sphere, in radians^2</returns>
+            <!--
+            geoCoord.c
+            double triangleArea
+            -->
+        </member>
+        <member name="M:H3Lib.GeoCoord.Equals(H3Lib.GeoCoord)">
+            <summary>
+            Equality test
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.Equals(System.Object)">
+            <summary>
+            Equality test against unboxed object
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.op_Equality(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            Equality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoCoord.op_Inequality(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            Inequality operator
+            </summary>
+        </member>
+        <member name="T:H3Lib.GeoFence">
+            <summary>
+            similar to GeoBoundary, but requires more alloc work
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoFence.NumVerts">
+            <summary>
+            number of vertices
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoFence.Verts">
+            <summary>
+            vertices in ccw order
+            </summary>
+        </member>
+        <member name="P:H3Lib.GeoFence.IsEmpty">
+            <summary>
+            Indicates if the geofence has no vertices
+            </summary>
+        </member>
+        <member name="M:H3Lib.GeoFence.#ctor">
+            <summary>
+            constructor
+            </summary>
+        </member>
+        <member name="T:H3Lib.GeoMultiPolygon">
+            <summary>
+            Simplified core of GeoJSON MultiPolygon coordinates definition
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoMultiPolygon.NumPolygons">
+            <summary>
+            Number of elements in the array pointed to by the holes
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoMultiPolygon.Polygons">
+            <summary>
+             interior boundaries (holes) in the polygon
+            </summary>
+        </member>
+        <member name="T:H3Lib.GeoPolygon">
+            <summary>
+            Simplified core of GeoJSON Polygon coordinates definition
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoPolygon.GeoFence">
+            <summary>
+            exterior boundary of the polygon
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoPolygon.NumHoles">
+            <summary>
+            Number of elements in the array pointed to by the holes
+            </summary>
+        </member>
+        <member name="F:H3Lib.GeoPolygon.Holes">
+            <summary>
+             interior boundaries (holes) in the polygon
+            </summary>
+        </member>
+        <member name="T:H3Lib.H3Index">
+            <summary>
+            H3Index utility functions
+            </summary>
+        </member>
+        <member name="F:H3Lib.H3Index.Value">
+            <summary>
+            Where the actual index is stored.
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.#ctor(System.UInt64)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="val"></param>
+        </member>
+        <member name="M:H3Lib.H3Index.#ctor(System.Int32,System.Int32,H3Lib.Direction)">
+            <summary>
+            constructor
+            
+            This came about from getting tired of two stepping
+            constructors for unit tests.
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            constructor
+            
+            This came about from getting tired of two stepping
+            constructors for unit tests.
+            </summary>
+            <param name="res"></param>
+            <param name="baseCell"></param>
+            <param name="initDigit"></param>
+        </member>
+        <member name="P:H3Lib.H3Index.Resolution">
+            <summary>
+            Integer resolution of an H3 index.  
+            </summary>
+            <!--
+            h3index.c
+            int H3_EXPORT(h3GetResolution)(H3Index h)
+            -->
+        </member>
+        <member name="P:H3Lib.H3Index.BaseCell">
+            <summary>
+            Integer base cell of H3
+            </summary>
+            <!--
+            h3index.c
+            int H3_EXPORT(h3GetBaseCell)
+            -->
+        </member>
+        <member name="P:H3Lib.H3Index.LeadingNonZeroDigit">
+            <summary>
+            Returns the highest resolution non-zero digit in an H3Index.
+            </summary>
+            <!--
+            h3index.c
+            Direction _h3LeadingNonZeroDigit
+            -->
+        </member>
+        <member name="P:H3Lib.H3Index.Mode">
+            <summary>
+            Integer mode of H3
+            </summary>
+        </member>
+        <member name="P:H3Lib.H3Index.HighBit">
+            <summary>
+            High bit of H3
+            </summary>
+        </member>
+        <member name="P:H3Lib.H3Index.ReservedBits">
+            <summary>
+            Reserved bits of H3Index
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.GetIndexDigit(System.Int32)">
+            <summary>
+            Gets the resolution res integer digit (0-7) of h3.
+            </summary>
+        </member>
+        <member name="P:H3Lib.H3Index.PentagonIndexCount">
+            <summary>
+            returns the number of pentagons (same at any resolution)
+            </summary>
+        </member>
+        <member name="P:H3Lib.H3Index.IsResClassIii">
+            <summary>
+            IsResClassIII takes a hexagon ID and determines if it is in a
+            Class III resolution (rotated versus the icosahedron and subject
+            to shape distortion adding extra points on icosahedron edges, making
+            them not true hexagons).
+            </summary>
+            <!--
+            h3index.c
+            int H3_EXPORT(h3IsResClassIII)
+            -->
+        </member>
+        <member name="M:H3Lib.H3Index.ToString">
+            <summary>
+            Converts an H3 index into a string representation.
+            </summary>
+            <returns>The string representation of the H3 index as a hexadecimal number</returns>
+        </member>
+        <member name="M:H3Lib.H3Index.op_Implicit(System.UInt64)~H3Lib.H3Index">
+            <summary>
+            Implicit conversion
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.op_Implicit(H3Lib.H3Index)~System.UInt64">
+            <summary>
+            Implicit conversion
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.Equals(H3Lib.H3Index)">
+            <summary>
+            Equality test
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.H3Index.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.op_Equality(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            Equality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.op_Inequality(H3Lib.H3Index,H3Lib.H3Index)">
+            <summary>
+            Inequality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.CompareTo(H3Lib.H3Index)">
+            <summary>
+            Compare test
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.Equals(System.UInt64)">
+            <summary>
+            Equal against ulong
+            </summary>
+        </member>
+        <member name="M:H3Lib.H3Index.Equals(System.Object)">
+            <summary>
+            Equal test against object
+            </summary>
+        </member>
+        <member name="T:H3Lib.H3Mode">
+            <summary>
+            mode for any examined H3Index
+            </summary>
+        </member>
+        <member name="F:H3Lib.H3Mode.Hexagon">
+            <summary>
+            Hexagon mode
+            </summary>
+        </member>
+        <member name="F:H3Lib.H3Mode.UniEdge">
+            <summary>
+            Directed Edge mode
+            </summary>
+        </member>
+        <member name="T:H3Lib.LinkedGeoCoord">
+            <summary>
+            A wrapper class for storing GeoCoords within a linked list
+            </summary>
+        </member>
+        <member name="F:H3Lib.LinkedGeoCoord._gc">
+            <summary>
+            Vertex being held
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoCoord.Latitude">
+            <summary>
+            Latitude of vertex
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoCoord.Longitude">
+            <summary>
+            longitude of vertex
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoCoord.Vertex">
+            <summary>
+            Return the actual vertex, read only
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoCoord.#ctor">
+            <summary>
+            constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoCoord.#ctor(H3Lib.GeoCoord)">
+            <summary>
+            constructor with vertex
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoCoord.Replacement(H3Lib.GeoCoord)">
+            <summary>
+            mutator to change vertex
+            </summary>
+        </member>
+        <member name="T:H3Lib.LinkedGeoLoop">
+            <summary>
+            A loop node in a linked geo structure, part of a linked list 
+            </summary>
+        </member>
+        <member name="F:H3Lib.LinkedGeoLoop.Loop">
+            <summary>
+            Linked list that stores the vertices 
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoLoop.Count">
+            <summary>
+            Counts how many vetices in this loop
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoLoop.Nodes">
+            <summary>
+            Presents a copy of the vertices in a linear list 
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoLoop.First">
+            <summary>
+            Gets the first vertex in the list
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoLoop.IsEmpty">
+            <summary>
+            Indicates if there's any vertices in the loop
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoLoop.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoLoop.CopyNodes">
+            <summary>
+            Makes a copy of the vertices in the loop 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.LinkedGeoLoop.AddLinkedCoord(H3Lib.GeoCoord)">
+            <summary>
+            Add a new linked coordinate to the current loop
+            </summary>
+            <param name="vertex">Coordinate to add</param>
+            <returns>Reference to the coordinate</returns>
+            <!--
+            linkedGeo.c
+            LinkedGeoCoord* addLinkedCoord
+            -->
+        </member>
+        <member name="M:H3Lib.LinkedGeoLoop.Clear">
+            <summary>
+            Clears the list of coords
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoLoop.Destroy">
+            <summary>
+            Clears the list of coords
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoLoop.GetFirst">
+            <summary>
+            Returns first vertex or null if there are none.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:H3Lib.LinkedGeoPolygon">
+            <summary>
+            A polygon node in a linked geo structure, part of a linked list.
+            </summary>
+        </member>
+        <member name="F:H3Lib.LinkedGeoPolygon._geoLoops">
+            <summary>
+            Linked list of loops that make up the polygon
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoPolygon.CountLoops">
+            <summary>
+            Count of loops in polygon
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoPolygon.CountPolygons">
+            <summary>
+            Gets the count of polygons associated
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoPolygon.First">
+            <summary>
+            Returns reference to the first loop
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoPolygon.Last">
+            <summary>
+            Returns reference to the last loop
+            </summary>
+        </member>
+        <member name="F:H3Lib.LinkedGeoPolygon.Next">
+            <summary>
+            Returns reference to next polygon
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoPolygon.LinkedPolygons">
+            <summary>
+            Returns all linked polygons to this one as a linear list
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:H3Lib.LinkedGeoPolygon.Loops">
+            <summary>
+            Linear list of all loops in this specific polygon
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.GetPolygons">
+            <summary>
+            This is potentially dangerous, thus why it's
+            a private method and provided as read only.
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.AddNewLinkedLoop">
+            <summary>
+            Add a new linked loop to the current polygon
+            </summary>
+            <returns>Reference to loop</returns>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.AddLinkedLoop(H3Lib.LinkedGeoLoop)">
+            <summary>
+            Add an existing linked loop to the current polygon
+            </summary>
+            <param name="loop">Reference to loop</param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.Destroy">
+            <summary>
+            <see cref="M:H3Lib.LinkedGeoPolygon.Clear"/>
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.Clear">
+            <summary>
+            Free all the geoloops and propagate to the next polygon until
+            there's no more polygons.
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.AddNewLinkedGeoPolygon">
+            <summary>
+            Add a newly constructed polygon to current polygon.
+            </summary>
+            <returns>Reference to new polygon</returns>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.TotalPolygons">
+            <summary>
+            Count the number of polygons in a linked list
+            </summary>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.GetFirst">
+            <summary>
+            Returns first loop if any exist, null otherwise
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.LinkedGeoPolygon.GetLast">
+            <summary>
+            Gets last loop in polygon, null if none exist.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:H3Lib.Overage">
+            <summary>
+            Digit representing overage type
+            </summary>
+        </member>
+        <member name="F:H3Lib.Overage.NO_OVERAGE">
+            <summary>
+            No overage
+            </summary>
+        </member>
+        <member name="F:H3Lib.Overage.FACE_EDGE">
+            <summary>
+            Overage at face edge
+            </summary>
+        </member>
+        <member name="F:H3Lib.Overage.NEW_FACE">
+            <summary>
+            Overage goes on next face
+            </summary>
+        </member>
+        <member name="T:H3Lib.PentagonDirectionFace">
+            <summary>
+            The faces in each axial direction of a given pentagon base cell
+            </summary>
+        </member>
+        <member name="F:H3Lib.PentagonDirectionFace.BaseCell">
+            <summary>
+            base cell number
+            </summary>
+        </member>
+        <member name="F:H3Lib.PentagonDirectionFace.Faces">
+            <summary>
+            face numbers for each axial direction, in order, starting with J
+            </summary>
+        </member>
+        <member name="M:H3Lib.PentagonDirectionFace.#ctor(System.Int32,System.Collections.Generic.IList{System.Int32})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="bc"></param>
+            <param name="faces"></param>
+        </member>
+        <member name="M:H3Lib.PentagonDirectionFace.#ctor(System.Collections.Generic.IList{System.Int32})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="raw"></param>
+        </member>
+        <member name="M:H3Lib.PentagonDirectionFace.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="bc"></param>
+        </member>
+        <member name="T:H3Lib.Vec2d">
+            <summary>
+            2D floating point vector functions.
+            </summary>
+        </member>
+        <member name="F:H3Lib.Vec2d.X">
+            <summary>
+            X coordinate
+            </summary>
+        </member>
+        <member name="F:H3Lib.Vec2d.Y">
+            <summary>
+            Y Coordinate
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec2d.#ctor(System.Double,System.Double)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:H3Lib.Vec2d.Magnitude">
+            <summary>
+            Calculates the magnitude of a 2D cartesian vector.
+            </summary>
+            <!--
+            vec2d.c
+            double _v2dMag
+            -->
+        </member>
+        <member name="M:H3Lib.Vec2d.FindIntersection(H3Lib.Vec2d,H3Lib.Vec2d,H3Lib.Vec2d,H3Lib.Vec2d)">
+            Finds the intersection between two lines. Assumes that the lines intersect
+            and that the intersection is not at an endpoint of either line.
+            @param p0 The first endpoint of the first line.
+            @param p1 The second endpoint of the first line.
+            @param p2 The first endpoint of the second line.
+            @param p3 The second endpoint of the second line.
+            @param inter The intersection point.
+            <summary>
+            Finds the intersection between two lines. Assumes that the lines intersect
+            and that the intersection is not at an endpoint of either line.
+            </summary>
+            <param name="p0">The first endpoint of the first line</param>
+            <param name="p1">The second endpoint of the first line</param>
+            <param name="p2">The first endpoint of the second line</param>
+            <param name="p3">The first endpoint of the first line</param>
+            <returns>The intersection point.</returns>
+            <!--
+            vec2d.c
+            _v2dIntersect
+            -->
+        </member>
+        <member name="M:H3Lib.Vec2d.Equals(H3Lib.Vec2d)">
+            <summary>
+            Equality test
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec2d.Equals(System.Object)">
+            <summary>
+            Equality test against unboxed object
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec2d.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Vec2d.op_Equality(H3Lib.Vec2d,H3Lib.Vec2d)">
+            <summary>
+            Equality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec2d.op_Inequality(H3Lib.Vec2d,H3Lib.Vec2d)">
+            <summary>
+            Inequality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec2d.ToString">
+            <summary>
+            Debug info as string
+            </summary>
+        </member>
+        <member name="T:H3Lib.Vec3d">
+            <summary>
+            3D floating point structure
+            </summary>
+        </member>
+        <member name="F:H3Lib.Vec3d.X">
+            <summary>
+            X Coordinate
+            </summary>
+        </member>
+        <member name="F:H3Lib.Vec3d.Y">
+            <summary>
+            Y Coordinate
+            </summary>
+        </member>
+        <member name="F:H3Lib.Vec3d.Z">
+            <summary>
+            Z Coordinate
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec3d.#ctor(System.Double,System.Double,System.Double)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec3d.ToString">
+            <summary>
+            Debug info in string format
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec3d.Equals(H3Lib.Vec3d)">
+            <summary>
+            Equality test
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec3d.Equals(System.Object)">
+            <summary>
+            Equality test
+            </summary>
+        </member>
+        <member name="M:H3Lib.Vec3d.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Vec3d.op_Equality(H3Lib.Vec3d,H3Lib.Vec3d)">
+            <summary>
+            Equality operator
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Vec3d.op_Inequality(H3Lib.Vec3d,H3Lib.Vec3d)">
+            <summary>
+            inequality operator
+            </summary>
+        </member>
+        <member name="T:H3Lib.VertexGraph">
+            <summary>
+            Data structure for storing a graph of vertices
+            </summary>
+        </member>
+        <member name="F:H3Lib.VertexGraph._pool">
+            <summary>
+            Hashset to store vertices
+            </summary>
+        </member>
+        <member name="F:H3Lib.VertexGraph.Resolution">
+            <summary>
+            Resolution of nodes, but not needed. Probably needs to be phased out
+            </summary>
+        </member>
+        <member name="P:H3Lib.VertexGraph.Count">
+            <summary>
+            Number of vertices
+            </summary>
+        </member>
+        <member name="P:H3Lib.VertexGraph.Size">
+            <summary>
+            Number of vertices
+            </summary>
+        </member>
+        <member name="M:H3Lib.VertexGraph.#ctor">
+            <summary>
+            Initialize a new VertexGraph
+            </summary>
+            <!--
+            vertexGraph.c
+            void initVertexGraph
+            -->
+        </member>
+        <member name="M:H3Lib.VertexGraph.#ctor(System.Int32)">
+            <summary>
+            Initialize a new VertexGraph
+            </summary>
+            <param name="res">Resolution of the hexagons whose vertices we're storing</param>
+            <!--
+            vertexGraph.c
+            void initVertexGraph
+            -->
+        </member>
+        <member name="M:H3Lib.VertexGraph.Clear">
+            <summary>
+            Destroy a VertexGraph's sub-objects, freeing their memory. The caller is
+            responsible for freeing memory allocated to the VertexGraph struct itself.
+            </summary>
+            <!--
+            vertexGraph.c
+            void destroyVertexGraph
+            -->
+        </member>
+        <member name="M:H3Lib.VertexGraph.InitNode(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            Create a new node based on two GeoCoords
+            </summary>
+            <!--
+            vertexGraph.c
+            void _initVertexNode
+            -->
+        </member>
+        <member name="M:H3Lib.VertexGraph.AddNode(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            Add an edge to the graph
+            </summary>
+            <param name="fromNode">Start vertex</param>
+            <param name="toNode">End vertex</param>
+            <returns>Reference to the new node</returns>
+            <!--
+            vertexGraph.c
+            VertexNode* addVertexNode
+            -->
+            <remarks>
+            Gonna try some tomfoolery here, and if you add
+            a node that already exists (in either direction)
+            then remove it in both directions.
+            </remarks>
+        </member>
+        <member name="M:H3Lib.VertexGraph.RemoveNode(System.Nullable{H3Lib.VertexNode})">
+            <summary>
+            Remove a node from the graph. The input node will be freed, and should
+            not be used after removal.
+            </summary>
+            <param name="vn">Node to remove</param>
+            <returns>true on success, false on faiilure (node not found)</returns>
+            <!--
+            vertexGraph.c
+            int removeVertexNode
+            -->
+        </member>
+        <member name="M:H3Lib.VertexGraph.FindEdge(H3Lib.GeoCoord,System.Nullable{H3Lib.GeoCoord})">
+            <summary>
+            Find the Vertex node for a given edge, if it exists
+            </summary>
+            <param name="fromNode">Start vertex</param>
+            <param name="toNode">End vertex, or NULL if we don't care</param>
+            <returns>Reference to the vertex node, if found</returns>
+            <!--
+            vertexGraph.c
+            VertexNode* findNodeForVertex
+            -->
+        </member>
+        <member name="M:H3Lib.VertexGraph.FindVertex(H3Lib.GeoCoord)">
+            <summary>Find a Vertex node starting at the given vertex</summary>
+            <param name="vertex">fromVtx Start vertex</param>
+            <returns>Pointer to the vertex node, if found</returns>
+            <!--
+            vertexGraph.c
+            VertexNode* findNodeForVertex
+            -->
+        </member>
+        <member name="M:H3Lib.VertexGraph.FirstNode">
+            <summary>
+            Picks whatever HashSet says is the first VertexNode
+            </summary>
+            <!--
+            VertexGraph.c
+            VertexNode* firstVertexNode
+            -->
+        </member>
+        <member name="T:H3Lib.VertexNode">
+            <summary>
+            A single node in a vertex graph, part of a linked list
+            </summary>
+        </member>
+        <member name="F:H3Lib.VertexNode.From">
+            <summary>
+            Where the edge starts
+            </summary>
+        </member>
+        <member name="F:H3Lib.VertexNode.To">
+            <summary>
+            Where the edge ends
+            </summary>
+        </member>
+        <member name="M:H3Lib.VertexNode.#ctor(H3Lib.GeoCoord,H3Lib.GeoCoord)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="toNode"></param>
+            <param name="fromNode"></param>
+        </member>
+        <member name="M:H3Lib.VertexNode.Equals(H3Lib.VertexNode)">
+            <summary>
+            Equality test
+            </summary>
+        </member>
+        <member name="M:H3Lib.VertexNode.Equals(System.Object)">
+            <summary>
+            Equality test against unboxed object
+            </summary>
+        </member>
+        <member name="M:H3Lib.VertexNode.GetHashCode">
+            <summary>
+            Hashcode for identity
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.VertexNode.op_Equality(H3Lib.VertexNode,H3Lib.VertexNode)">
+            <summary>
+            equality operator
+            </summary>
+        </member>
+        <member name="M:H3Lib.VertexNode.op_Inequality(H3Lib.VertexNode,H3Lib.VertexNode)">
+            <summary>
+            inequality operator
+            </summary>
+        </member>
+    </members>
+</doc>

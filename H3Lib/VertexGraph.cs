@@ -9,11 +9,24 @@ namespace H3Lib
     /// </summary>
     public class VertexGraph
     {
+        /// <summary>
+        /// Hashset to store vertices
+        /// </summary>
         private readonly HashSet<VertexNode> _pool;
+        
+        /// <summary>
+        /// Resolution of nodes, but not needed. Probably needs to be phased out
+        /// </summary>
         public readonly int Resolution;
 
+        /// <summary>
+        /// Number of vertices
+        /// </summary>
         public int Count => _pool.Count;
 
+        /// <summary>
+        /// Number of vertices
+        /// </summary>
         public int Size => _pool.Count;
         
         /// <summary>
@@ -168,20 +181,6 @@ namespace H3Lib
             }
 
             return answer.First();
-            //
-            // if (toNode == null)
-            // {
-            //     if(_pool.Count)
-            // }
-            //
-            // int lookFor = _pool
-            //    .Count(p => p.From == fromNode && p.To == toNode);
-            // if (lookFor == 0)
-            // {
-            //     return null;
-            // }
-            //
-            // return _pool.First(p => p.From == fromNode && p.To == toNode);
         }
 
         /// <summary>Find a Vertex node starting at the given vertex</summary>

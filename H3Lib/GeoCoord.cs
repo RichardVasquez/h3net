@@ -10,21 +10,38 @@ namespace H3Lib
     [DebuggerDisplay("Lat: {Latitude} Lon: {Longitude}")]
     public readonly struct GeoCoord:IEquatable<GeoCoord>
     {
+        /// <summary>
+        /// Latitude normally in radians
+        /// </summary>
         public readonly double Latitude;
+        
+        /// <summary>
+        /// Longitude normally in radians
+        /// </summary>
         public readonly double Longitude;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public GeoCoord(double latitude, double longitude)
         {
             Latitude = latitude;
             Longitude = longitude;
         }
-
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public GeoCoord(GeoCoord gc)
         {
             Latitude = gc.Latitude;
             Longitude = gc.Longitude;
         }
 
+        /// <summary>
+        /// Debug information in string form
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"GeoCoord: (Lat,Lng) {Latitude:F9}, {Longitude:F9}";
@@ -38,25 +55,33 @@ namespace H3Lib
          * the future.
          */
         
-        // geoCoord.c double H3_EXPORT(hexAreaKm2)
+        /// <summary>
+        /// Area of cell at resolution in square kilometers
+        /// </summary>
         public static double HexAreaKm2(int res)
         {
             return Constants.GeoCoord.AreasKm2[res];
         }
 
-        // geoCoord.c double H3_EXPORT(hexAreaM2)
+        /// <summary>
+        /// Area of cell at resolution in square meters
+        /// </summary>
         public static double HexAreaM2(int res)
         {
             return Constants.GeoCoord.AreasM2[res];
         }
 
-        // geoCoord.c double H3_EXPORT(edgeLengthKm)
+        /// <summary>
+        /// Length of cell edge at resolution in kilometers
+        /// </summary>
         public static double EdgeLengthKm(int res)
         {
             return Constants.GeoCoord.EdgeLengthKm[res];
         }
 
-        // geoCoord.c double H3_EXPORT(edgeLengthM)
+        /// <summary>
+        /// Length of cell edge at resolution in meters
+        /// </summary>
         public static double EdgeLengthM(int res)
         {
             return Constants.GeoCoord.EdgeLengthM[res];
@@ -111,14 +136,9 @@ namespace H3Lib
                  c.DistanceToRadians(a));
         }
 
-        public bool Equals(GeoCoord  other, double epsilon)
-        {
-            return
-                Math.Abs(Latitude - other.Longitude) < epsilon &&
-                Math.Abs(Longitude - other.Longitude) < epsilon;
-        }
-
-        
+        /// <summary>
+        /// Equality test
+        /// </summary>
         public bool Equals(GeoCoord other)
         {
             return
@@ -126,21 +146,33 @@ namespace H3Lib
                 Math.Abs(Longitude - other.Longitude) < Constants.H3.EPSILON_RAD;
         }
 
+        /// <summary>
+        /// Equality test against unboxed object
+        /// </summary>
         public override bool Equals(object obj)
         {
             return obj is GeoCoord other && Equals(other);
         }
 
+        /// <summary>
+        /// Hashcode for identity
+        /// </summary>
         public override int GetHashCode()
         {
             return HashCode.Combine(Latitude, Longitude);
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
         public static bool operator ==(GeoCoord left, GeoCoord right)
         {
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// Inequality operator
+        /// </summary>
         public static bool operator !=(GeoCoord left, GeoCoord right)
         {
             return !left.Equals(right);

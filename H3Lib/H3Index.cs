@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using H3Lib.Extensions;
 
 namespace H3Lib
@@ -16,20 +15,21 @@ namespace H3Lib
         /// </summary>
         public readonly ulong Value;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="val"></param>
         public H3Index(ulong val) :this()
         {
-            // Consider using IsValid() tests in here
-            
             Value = val;
         }
 
         /// <summary>
+        /// constructor
+        /// 
         /// This came about from getting tired of two stepping
         /// constructors for unit tests.
         /// </summary>
-        /// <param name="res"></param>
-        /// <param name="baseCell"></param>
-        /// <param name="initDigit"></param>
         public H3Index(int res, int baseCell, Direction initDigit)
         {
             H3Index h = Constants.H3Index.H3_INIT;
@@ -37,6 +37,15 @@ namespace H3Lib
             Value = h.Value;
         }
         
+        /// <summary>
+        /// constructor
+        /// 
+        /// This came about from getting tired of two stepping
+        /// constructors for unit tests.
+        /// </summary>
+        /// <param name="res"></param>
+        /// <param name="baseCell"></param>
+        /// <param name="initDigit"></param>
         public H3Index(int res, int baseCell, int initDigit)
         {
             H3Index h = Constants.H3Index.H3_INIT;
@@ -104,6 +113,9 @@ namespace H3Lib
             (int) ((Value & Constants.H3Index.H3_HIGH_BIT_MASK) >>
                    Constants.H3Index.H3_MAX_OFFSET);
 
+        /// <summary>
+        /// Reserved bits of H3Index
+        /// </summary>
         public int ReservedBits =>
             (int) ((Value & Constants.H3Index.H3_RESERVED_MASK) >>
                    Constants.H3Index.H3_RESERVED_OFFSET);
@@ -118,7 +130,6 @@ namespace H3Lib
                   ((Constants.H3.MAX_H3_RES - res) * Constants.H3Index.H3_PER_DIGIT_OFFSET)) &
                  Constants.H3Index.H3_DIGIT_MASK);
         }
-
 
         /// <summary>
         /// returns the number of pentagons (same at any resolution)
@@ -147,39 +158,68 @@ namespace H3Lib
             return s.Substring(s.Length - 16, 16).ToLower();
         }
 
+        /// <summary>
+        /// Implicit conversion
+        /// </summary>
         public static implicit operator H3Index(ulong u) => new H3Index(u);
+        /// <summary>
+        /// Implicit conversion
+        /// </summary>
         public static implicit operator ulong(H3Index h3) => h3.Value;
 
+        /// <summary>
+        /// Equality test
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public bool Equals(H3Index other)
         {
             return Value == other.Value;
         }
 
+        /// <summary>
+        /// Hashcode for identity
+        /// </summary>
         public override int GetHashCode()
         {
             return Value.GetHashCode();
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
         public static bool operator ==(H3Index left, H3Index right)
         {
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// Inequality operator
+        /// </summary>
         public static bool operator !=(H3Index left, H3Index right)
         {
             return !left.Equals(right);
         }
 
+        /// <summary>
+        /// Compare test
+        /// </summary>
         public int CompareTo(H3Index other)
         {
             return Value.CompareTo(other.Value);
         }
 
+        /// <summary>
+        /// Equal against ulong
+        /// </summary>
         public bool Equals(ulong other)
         {
             return Value == other;
         }
 
+        /// <summary>
+        /// Equal test against object
+        /// </summary>
         public override bool Equals(object obj)
         {
             return obj is H3Index other && Equals(other);

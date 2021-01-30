@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Extension methods for BaseCells
+    /// </summary>
     public static class BaseCellsExtensions
     {
         /// <summary>
@@ -124,6 +127,9 @@ namespace H3Lib.Extensions
                    Constants.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[1] == testFace;
         }
         
+        /// <summary>
+        /// NOTE: Looks like this is not needed.
+        /// </summary>
         public static int Res0IndexCount => Constants.H3.NUM_BASE_CELLS;
 
         /// <summary>
