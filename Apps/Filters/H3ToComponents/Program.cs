@@ -44,7 +44,7 @@ namespace H3ToComponents
                     parser.ShowUsage();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Unable to parse input.");
                 parser.ShowUsage();

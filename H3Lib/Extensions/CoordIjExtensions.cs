@@ -2,13 +2,23 @@ using Microsoft.VisualBasic.CompilerServices;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Extension methods for working with CoordIj type
+    /// </summary>
     public static class CoordIjExtensions
     {
+        /// <summary>
+        /// Replace I value
+        /// </summary>
         public static CoordIj ReplaceI(this CoordIj ij, int i)
         {
             return new CoordIj(i, ij.J);
         }
-        
+
+        /// <summary>
+        /// replace J value
+        /// </summary>
+        /// <returns></returns>
         public static CoordIj ReplaceJ(this CoordIj ij, int j)
         {
             return new CoordIj(ij.I, j);
@@ -59,6 +69,5 @@ namespace H3Lib.Extensions
             var ijk = ij.ToIjk();
             return ijk.LocalIjkToH3(origin);
         }
-
     }
 }

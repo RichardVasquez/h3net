@@ -2,6 +2,9 @@ using System;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations on Vec2d
+    /// </summary>
     public static class Vec2dExtensions
     {
         /// <summary>

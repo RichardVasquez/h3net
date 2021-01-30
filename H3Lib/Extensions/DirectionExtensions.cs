@@ -1,5 +1,8 @@
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations for Direction enum type
+    /// </summary>
     public static class DirectionExtensions
     {
         /// <summary>

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations for FaceIjk type
+    /// </summary>
     public static class FaceIjkExtensions
     {
         /// <summary>
@@ -461,7 +464,6 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h">The FaceIJK address of the cell.</param>
         /// <param name="res">The H3 resolution of the cell.</param>
-        /// <param name="g">The spherical coordinates of the cell center point.</param>
         /// <!--
         /// faceijk.c
         /// void _faceIjkToGeo

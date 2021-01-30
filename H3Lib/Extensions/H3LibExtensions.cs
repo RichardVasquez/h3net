@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Extension methods that work on numbers that are then converted to some
+    /// parameter of H3Index space
+    /// </summary>
     public static class H3LibExtensions
     {
         /// <summary>
@@ -59,7 +64,10 @@ namespace H3Lib.Extensions
             return latitude;
         }
 
-        
+
+        /// <summary>
+        /// Constrain Latitude to +/- PI/2
+        /// </summary>
         public static double ConstrainLatitude(this int latitude)
         {
             var newLatitude = (double) latitude;
@@ -95,6 +103,11 @@ namespace H3Lib.Extensions
             return longitude;
         }
 
+        /// <summary>
+        /// Constrain Longitude to +/- PI
+        /// </summary>
+        /// <param name="longitude"></param>
+        /// <returns></returns>
         public static double ConstrainLongitude(this int longitude)
         {
             var newLongitude = (double) longitude;
@@ -125,6 +138,11 @@ namespace H3Lib.Extensions
             return degrees * Constants.H3.M_PI_180;
         }
 
+        /// <summary>
+        /// Convert decimal degrees to radians
+        /// </summary>
+        /// <param name="degrees"></param>
+        /// <returns></returns>
         public static double DegreesToRadians(this int degrees)
         {
             return degrees * Constants.H3.M_PI_180;
@@ -277,13 +295,6 @@ namespace H3Lib.Extensions
             }
 
             return results;
-            // var cells = Enumerable
-            //            .Range(0, Constants.NUM_BASE_CELLS)
-            //            .Where(t => t.IsBaseCellPentagon());
-            //
-            // return cells
-            //       .Select(cell => new H3Index().SetIndex(res, cell, Direction.CENTER_DIGIT))
-            //       .ToList();
         }
 
         /// <summary>

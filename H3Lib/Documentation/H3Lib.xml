@@ -1544,6 +1544,22 @@
             static const LinkedGeoPolygon* findDeepestContainer
             -->
         </member>
+        <member name="T:H3Lib.Extensions.CoordIjExtensions">
+            <summary>
+            Extension methods for working with CoordIj type
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjExtensions.ReplaceI(H3Lib.CoordIj,System.Int32)">
+            <summary>
+            Replace I value
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjExtensions.ReplaceJ(H3Lib.CoordIj,System.Int32)">
+            <summary>
+            replace J value
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:H3Lib.Extensions.CoordIjExtensions.ToIjk(H3Lib.CoordIj)">
             <summary>
             Transforms coordinates from the IJ coordinate system to the IJK+ coordinate system
@@ -1578,6 +1594,51 @@
              localij,c
              int H3_EXPORT(experimentalLocalIjToH3)
              -->
+        </member>
+        <member name="T:H3Lib.Extensions.CoordIjkExtensions">
+            <summary>
+            Extension methods for CoordIjk type
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.IsZero(H3Lib.CoordIjk)">
+            <summary>
+            Tests if all coordinates are zero
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.Sum(H3Lib.CoordIjk)">
+            <summary>
+            Returns sum of all coordinates
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.SetI(H3Lib.CoordIjk,System.Int32)">
+            <summary>
+            Change I coordinate value
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.SetJ(H3Lib.CoordIjk,System.Int32)">
+            <summary>
+            Change J coordinate value
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.SetK(H3Lib.CoordIjk,System.Int32)">
+            <summary>
+            Change K coordinate value
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.SetIJ(H3Lib.CoordIjk,System.Int32,System.Int32)">
+            <summary>
+            Change IJ coordinates value
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.SetIK(H3Lib.CoordIjk,System.Int32,System.Int32)">
+            <summary>
+            Change JK coordinates value
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.CoordIjkExtensions.SetJK(H3Lib.CoordIjk,System.Int32,System.Int32)">
+            <summary>
+            Change JK coordinates value
+            </summary>
         </member>
         <member name="M:H3Lib.Extensions.CoordIjkExtensions.ToHex2d(H3Lib.CoordIjk)">
             <summary>
@@ -1773,6 +1834,11 @@
              int localIjkToH3
              -->
         </member>
+        <member name="T:H3Lib.Extensions.DirectionExtensions">
+            <summary>
+            Operations for Direction enum type
+            </summary>
+        </member>
         <member name="M:H3Lib.Extensions.DirectionExtensions.Rotate60CounterClockwise(H3Lib.Direction)">
             <summary>
             Rotates indexing digit 60 degrees counter-clockwise. Returns result.
@@ -1792,6 +1858,11 @@
             coordijk.c
             Direction _rotate60cw
             -->
+        </member>
+        <member name="T:H3Lib.Extensions.FaceIjkExtensions">
+            <summary>
+            Operations for FaceIjk type
+            </summary>
         </member>
         <member name="M:H3Lib.Extensions.FaceIjkExtensions.ReplaceFace(H3Lib.FaceIjk,System.Int32)">
             <summary>
@@ -1932,7 +2003,6 @@
             </summary>
             <param name="h">The FaceIJK address of the cell.</param>
             <param name="res">The H3 resolution of the cell.</param>
-            <param name="g">The spherical coordinates of the cell center point.</param>
             <!--
             faceijk.c
             void _faceIjkToGeo
@@ -1968,6 +2038,11 @@
             void _faceIjkPentToGeoBoundary
             -->
         </member>
+        <member name="T:H3Lib.Extensions.GeoCoordExtensions">
+            <summary>
+            Operations for GeoCoord type
+            </summary>
+        </member>
         <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetDegrees(H3Lib.GeoCoord,System.Double,System.Double)">
             <summary>
             Set the components of spherical coordinates in decimal degrees.
@@ -1999,6 +2074,16 @@
             geoCoord.c
             void _setGeoRads
             -->
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetLatitude(H3Lib.GeoCoord,System.Double)">
+            <summary>
+            Quick replacement for Latitude
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetLongitude(H3Lib.GeoCoord,System.Double)">
+            <summary>
+            Quick replacement for Longitude
+            </summary>
         </member>
         <member name="M:H3Lib.Extensions.GeoCoordExtensions.DistanceToRadians(H3Lib.GeoCoord,H3Lib.GeoCoord)">
             <summary>
@@ -2088,7 +2173,7 @@
             <param name="res">The desired H3 resolution for the encoding.</param>
             <returns>
             Tuple
-            Item1: The resulting face (can later get rid of <see cref="!:face"/> parameter.
+            Item1: The resulting face
             Item2: The 2D hex coordinates of the cell containing the point.
             </returns>
             <!--
@@ -2135,6 +2220,19 @@
             int lineHexEstimate
             -->
         </member>
+        <member name="T:H3Lib.Extensions.GeoFenceExtensions">
+            <summary>
+            Operations for GeoFence type
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.GeoFenceExtensions.PointInside(H3Lib.GeoFence,H3Lib.BBox,H3Lib.GeoCoord)">
+            <summary>
+            Is boint within the loo?
+            </summary>
+            <param name="loop"></param>
+            <param name="box"></param>
+            <param name="coord"></param>
+        </member>
         <member name="M:H3Lib.Extensions.GeoFenceExtensions.ToBBox(H3Lib.GeoFence)">
             <summary>
             Create a bounding box from a simple polygon loop
@@ -2147,6 +2245,21 @@
             </remarks>
             <param name="loop">Loop of coordinates</param>
             <returns>output box</returns>
+        </member>
+        <member name="M:H3Lib.Extensions.GeoFenceExtensions.IsClockwiseNormalized(H3Lib.GeoFence,System.Boolean)">
+            <summary>
+            Is loop clockwise oriented?
+            </summary>
+            <param name="loop"></param>
+            <param name="isTransmeridian"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Extensions.GeoFenceExtensions.IsClockwise(H3Lib.GeoFence)">
+            <summary>
+            Is GeoFence clockwise?
+            </summary>
+            <param name="loop"></param>
+            <returns></returns>
         </member>
         <member name="M:H3Lib.Extensions.GeoFenceExtensions.GetEdgeHexagons(H3Lib.GeoFence,System.Int32,System.Int32,System.Int32@,System.Collections.Generic.List{H3Lib.H3Index}@,System.Collections.Generic.List{H3Lib.H3Index}@)">
              <summary>
@@ -2171,6 +2284,11 @@
              algos.c
              int _getEdgeHexagons
              -->
+        </member>
+        <member name="T:H3Lib.Extensions.GeoPolygonExtensions">
+            <summary>
+            Operations on GeoPolygon type
+            </summary>
         </member>
         <member name="M:H3Lib.Extensions.GeoPolygonExtensions.PointInside(H3Lib.GeoPolygon,System.Collections.Generic.List{H3Lib.BBox},H3Lib.GeoCoord)">
             <summary>
@@ -2985,6 +3103,42 @@
             <param name="res">resolution to uncompact to</param>
             <returns><see cref="M:H3Lib.Extensions.CollectionExtensions.Uncompact(System.Collections.Generic.List{H3Lib.H3Index},System.Int32)"/> for details</returns>
         </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.SetResolution(H3Lib.H3Index,System.Int32)">
+            <summary>
+            Set resolution of H3Index cell
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.SetBaseCell(H3Lib.H3Index,System.Int32)">
+            <summary>
+            Set BaseCell of H3Index cell
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.SetMode(H3Lib.H3Index,H3Lib.H3Mode)">
+            <summary>
+            Sets mode of H3Index cell
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.SetHighBit(H3Lib.H3Index,System.Int32)">
+            <summary>
+            Sets high bit of H3Index cell
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.SetReservedBits(H3Lib.H3Index,System.Int32)">
+            <summary>
+            Set reserved bits of H3Index cell
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.H3IndexExtensions.SetIndexDigit(H3Lib.H3Index,System.Int32,System.UInt64)">
+            <summary>
+            Sets specified index digit of H3Index cell
+            </summary>
+        </member>
+        <member name="T:H3Lib.Extensions.H3LibExtensions">
+            <summary>
+            Extension methods that work on numbers that are then converted to some
+            parameter of H3Index space
+            </summary>
+        </member>
         <member name="M:H3Lib.Extensions.H3LibExtensions.NormalizeRadians(System.Double,System.Double)">
             <summary>
             Normalizes radians to a value between 0.0 and two PI.
@@ -3018,6 +3172,11 @@
             double constrainLat
             -->
         </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLatitude(System.Int32)">
+            <summary>
+            Constrain Latitude to +/- PI/2
+            </summary>
+        </member>
         <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Double)">
             <summary>
             Makes sure longitudes are in the proper bounds
@@ -3029,6 +3188,13 @@
             double constrainLng
             -->
         </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Int32)">
+            <summary>
+            Constrain Longitude to +/- PI
+            </summary>
+            <param name="longitude"></param>
+            <returns></returns>
+        </member>
         <member name="M:H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Double)">
             <summary>
             Convert from decimal degrees to radians.
@@ -3039,6 +3205,13 @@
             geoCoord.c
             double H3_EXPORT(degsToRads)
             -->
+        </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Int32)">
+            <summary>
+            Convert decimal degrees to radians
+            </summary>
+            <param name="degrees"></param>
+            <returns></returns>
         </member>
         <member name="M:H3Lib.Extensions.H3LibExtensions.RadiansToDegrees(System.Double)">
             <summary>
@@ -3180,6 +3353,42 @@
             #define NORMALIZE_LON
             -->
         </member>
+        <member name="T:H3Lib.Extensions.LinkedGeoLoopExtensions">
+            <summary>
+            Operations on LinkedGeoLoop type
+            </summary>
+        </member>
+        <member name="M:H3Lib.Extensions.LinkedGeoLoopExtensions.PointInside(H3Lib.LinkedGeoLoop,H3Lib.BBox,H3Lib.GeoCoord)">
+            <summary>
+            Is point inside GeoLoop?
+            </summary>
+            <param name="loop"></param>
+            <param name="box"></param>
+            <param name="coord"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Extensions.LinkedGeoLoopExtensions.ToBBox(H3Lib.LinkedGeoLoop)">
+            <summary>
+            Convert GeoLoop to bounding box for loop
+            </summary>
+            <param name="loop"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Extensions.LinkedGeoLoopExtensions.IsClockwiseNormalized(H3Lib.LinkedGeoLoop,System.Boolean)">
+            <summary>
+            Is loop clockwise normalized?
+            </summary>
+            <param name="loop"></param>
+            <param name="isTransmeridian"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Extensions.LinkedGeoLoopExtensions.IsClockwise(H3Lib.LinkedGeoLoop)">
+            <summary>
+            Is loop clockwise?
+            </summary>
+            <param name="loop"></param>
+            <returns></returns>
+        </member>
         <member name="M:H3Lib.Extensions.LinkedGeoLoopExtensions.CountContainers(H3Lib.LinkedGeoLoop,System.Collections.Generic.List{H3Lib.LinkedGeoPolygon},System.Collections.Generic.List{H3Lib.BBox})">
             <summary>
             Count the number of polygons containing a given loop.
@@ -3192,6 +3401,11 @@
             linkedGeo.c
             static int countContainers
             -->
+        </member>
+        <member name="T:H3Lib.Extensions.LinkedGeoPolygonExtensions">
+            <summary>
+            Operations on LinkedGeoPolygon type
+            </summary>
         </member>
         <member name="M:H3Lib.Extensions.LinkedGeoPolygonExtensions.NormalizeMultiPolygon(H3Lib.LinkedGeoPolygon)">
              <summary>
@@ -3230,6 +3444,11 @@
             static const LinkedGeoPolygon* findPolygonForHole
             -->
         </member>
+        <member name="T:H3Lib.Extensions.Vec2dExtensions">
+            <summary>
+            Operations on Vec2d
+            </summary>
+        </member>
         <member name="M:H3Lib.Extensions.Vec2dExtensions.ToCoordIjk(H3Lib.Vec2d)">
             <summary>
             Determine the containing hex in ijk+ coordinates for a 2D cartesian
@@ -3259,6 +3478,11 @@
             void _hex2dToGeo
             -->
         </member>
+        <member name="T:H3Lib.Extensions.Vec3dExtensions">
+            <summary>
+            Operations on Vec3d
+            </summary>
+        </member>
         <member name="M:H3Lib.Extensions.Vec3dExtensions.PointSquareDistance(H3Lib.Vec3d,H3Lib.Vec3d)">
             <summary>
             Calculate the square of the distance between two 3D coordinates.
@@ -3270,6 +3494,35 @@
             vec3d.c
             double _pointSquareDist
             -->
+        </member>
+        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetX(H3Lib.Vec3d,System.Double)">
+            <summary>
+            Replace X value
+            </summary>
+            <param name="v3"></param>
+            <param name="x"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetY(H3Lib.Vec3d,System.Double)">
+            <summary>
+            Replace Y value
+            </summary>
+            <param name="v3"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetZ(H3Lib.Vec3d,System.Double)">
+            <summary>
+            Repalce Z value
+            </summary>
+            <param name="v3"></param>
+            <param name="z"></param>
+            <returns></returns>
+        </member>
+        <member name="T:H3Lib.Extensions.VertexGraphExtensions">
+            <summary>
+            Operations on VertexGraph type
+            </summary>
         </member>
         <member name="M:H3Lib.Extensions.VertexGraphExtensions.ToLinkedGeoPolygon(H3Lib.VertexGraph)">
             <summary>
@@ -4019,7 +4272,6 @@
             <summary>
             Constructor
             </summary>
-            <param name="bc"></param>
         </member>
         <member name="T:H3Lib.Vec2d">
             <summary>

@@ -2107,16 +2107,18 @@ namespace H3Lib.Extensions
             return new List<H3Index> {singleCell}.Uncompact(res);
         }
 
-        
-        //---------------------------------------------------------------------------
-        //  Field "Modifiers" - This is not going to be fun
-
+        /// <summary>
+        /// Set resolution of H3Index cell
+        /// </summary>
         public static H3Index SetResolution(this H3Index h3Index, int resolution)
         {
             return (h3Index & Constants.H3Index.H3_RES_MASK_NEGATIVE) |
                    ((ulong) resolution << Constants.H3Index.H3_RES_OFFSET);
         }
-        
+
+        /// <summary>
+        /// Set BaseCell of H3Index cell
+        /// </summary>
         public static H3Index SetBaseCell(this H3Index cell, int baseCell)
         {
             return (cell & Constants.H3Index.H3_BC_MASK_NEGATIVE) |
@@ -2124,23 +2126,35 @@ namespace H3Lib.Extensions
             
         }
 
+        /// <summary>
+        /// Sets mode of H3Index cell
+        /// </summary>
         public static H3Index SetMode(this H3Index cell, H3Mode mode)
         {
             return cell  & Constants.H3Index.H3_MODE_MASK_NEGATIVE |
                    ((ulong)mode << Constants.H3Index.H3_MODE_OFFSET);
         }
 
+        /// <summary>
+        /// Sets high bit of H3Index cell
+        /// </summary>
         public static H3Index SetHighBit(this H3Index cell, int value)
         {
             return  (cell & Constants.H3Index.H3_HIGH_BIT_MASK_NEGATIVE) |
                     ((ulong) value << Constants.H3Index.H3_MAX_OFFSET);
         }
 
+        /// <summary>
+        /// Set reserved bits of H3Index cell
+        /// </summary>
         public static H3Index SetReservedBits(this H3Index cell, int value)
         {
             return  (cell & Constants.H3Index.H3_RESERVED_MASK_NEGATIVE) | ((ulong) value << Constants.H3Index.H3_RESERVED_OFFSET);
         }
 
+        /// <summary>
+        /// Sets specified index digit of H3Index cell
+        /// </summary>
         public static H3Index SetIndexDigit(this H3Index cell, int res, ulong digit)
         {
             return  (cell & ~(Constants.H3Index.H3_DIGIT_MASK << ((Constants.H3.MAX_H3_RES - res) * Constants.H3Index.H3_PER_DIGIT_OFFSET))) |

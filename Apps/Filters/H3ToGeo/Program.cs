@@ -44,7 +44,7 @@ namespace H3ToGeo
                     ProcessFile(argParser, parser);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Unable to parse input.");
                 parser.ShowUsage();

@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations on LinkedGeoPolygon type
+    /// </summary>
     public static class LinkedGeoPolygonExtensions
     {
         /// <summary>

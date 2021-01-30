@@ -22,7 +22,7 @@ namespace H3ToLocalIj
                 parser.ParseCommandLine(args);
                 ProcessArguments(argParser);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Unable to parse input.");
                 parser.ShowUsage();

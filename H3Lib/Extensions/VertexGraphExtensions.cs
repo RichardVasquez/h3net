@@ -1,5 +1,8 @@
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations on VertexGraph type
+    /// </summary>
     public static class VertexGraphExtensions
     {
         /// <summary>

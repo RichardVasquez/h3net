@@ -156,6 +156,8 @@
   - [op_Multiply()](#M-H3Lib-CoordIj-op_Multiply-H3Lib-CoordIj,System-Int32- 'H3Lib.CoordIj.op_Multiply(H3Lib.CoordIj,System.Int32)')
   - [op_Subtraction()](#M-H3Lib-CoordIj-op_Subtraction-H3Lib-CoordIj,H3Lib-CoordIj- 'H3Lib.CoordIj.op_Subtraction(H3Lib.CoordIj,H3Lib.CoordIj)')
 - [CoordIjExtensions](#T-H3Lib-Extensions-CoordIjExtensions 'H3Lib.Extensions.CoordIjExtensions')
+  - [ReplaceI()](#M-H3Lib-Extensions-CoordIjExtensions-ReplaceI-H3Lib-CoordIj,System-Int32- 'H3Lib.Extensions.CoordIjExtensions.ReplaceI(H3Lib.CoordIj,System.Int32)')
+  - [ReplaceJ()](#M-H3Lib-Extensions-CoordIjExtensions-ReplaceJ-H3Lib-CoordIj,System-Int32- 'H3Lib.Extensions.CoordIjExtensions.ReplaceJ(H3Lib.CoordIj,System.Int32)')
   - [ToH3Experimental(ij,origin)](#M-H3Lib-Extensions-CoordIjExtensions-ToH3Experimental-H3Lib-CoordIj,H3Lib-H3Index- 'H3Lib.Extensions.CoordIjExtensions.ToH3Experimental(H3Lib.CoordIj,H3Lib.H3Index)')
   - [ToIjk(ij)](#M-H3Lib-Extensions-CoordIjExtensions-ToIjk-H3Lib-CoordIj- 'H3Lib.Extensions.CoordIjExtensions.ToIjk(H3Lib.CoordIj)')
 - [CoordIjk](#T-H3Lib-Constants-CoordIjk 'H3Lib.Constants.CoordIjk')
@@ -183,11 +185,19 @@
   - [DownAp7(ijk)](#M-H3Lib-Extensions-CoordIjkExtensions-DownAp7-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.DownAp7(H3Lib.CoordIjk)')
   - [DownAp7R(ijk)](#M-H3Lib-Extensions-CoordIjkExtensions-DownAp7R-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.DownAp7R(H3Lib.CoordIjk)')
   - [FromCube(ijk)](#M-H3Lib-Extensions-CoordIjkExtensions-FromCube-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.FromCube(H3Lib.CoordIjk)')
+  - [IsZero()](#M-H3Lib-Extensions-CoordIjkExtensions-IsZero-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.IsZero(H3Lib.CoordIjk)')
   - [LocalIjkToH3(origin,ijk)](#M-H3Lib-Extensions-CoordIjkExtensions-LocalIjkToH3-H3Lib-CoordIjk,H3Lib-H3Index- 'H3Lib.Extensions.CoordIjkExtensions.LocalIjkToH3(H3Lib.CoordIjk,H3Lib.H3Index)')
   - [Neighbor(ijk,digit)](#M-H3Lib-Extensions-CoordIjkExtensions-Neighbor-H3Lib-CoordIjk,H3Lib-Direction- 'H3Lib.Extensions.CoordIjkExtensions.Neighbor(H3Lib.CoordIjk,H3Lib.Direction)')
   - [Normalized(coord)](#M-H3Lib-Extensions-CoordIjkExtensions-Normalized-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.Normalized(H3Lib.CoordIjk)')
   - [Rotate60Clockwise(ijk)](#M-H3Lib-Extensions-CoordIjkExtensions-Rotate60Clockwise-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.Rotate60Clockwise(H3Lib.CoordIjk)')
   - [Rotate60CounterClockwise(ijk)](#M-H3Lib-Extensions-CoordIjkExtensions-Rotate60CounterClockwise-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.Rotate60CounterClockwise(H3Lib.CoordIjk)')
+  - [SetI()](#M-H3Lib-Extensions-CoordIjkExtensions-SetI-H3Lib-CoordIjk,System-Int32- 'H3Lib.Extensions.CoordIjkExtensions.SetI(H3Lib.CoordIjk,System.Int32)')
+  - [SetIJ()](#M-H3Lib-Extensions-CoordIjkExtensions-SetIJ-H3Lib-CoordIjk,System-Int32,System-Int32- 'H3Lib.Extensions.CoordIjkExtensions.SetIJ(H3Lib.CoordIjk,System.Int32,System.Int32)')
+  - [SetIK()](#M-H3Lib-Extensions-CoordIjkExtensions-SetIK-H3Lib-CoordIjk,System-Int32,System-Int32- 'H3Lib.Extensions.CoordIjkExtensions.SetIK(H3Lib.CoordIjk,System.Int32,System.Int32)')
+  - [SetJ()](#M-H3Lib-Extensions-CoordIjkExtensions-SetJ-H3Lib-CoordIjk,System-Int32- 'H3Lib.Extensions.CoordIjkExtensions.SetJ(H3Lib.CoordIjk,System.Int32)')
+  - [SetJK()](#M-H3Lib-Extensions-CoordIjkExtensions-SetJK-H3Lib-CoordIjk,System-Int32,System-Int32- 'H3Lib.Extensions.CoordIjkExtensions.SetJK(H3Lib.CoordIjk,System.Int32,System.Int32)')
+  - [SetK()](#M-H3Lib-Extensions-CoordIjkExtensions-SetK-H3Lib-CoordIjk,System-Int32- 'H3Lib.Extensions.CoordIjkExtensions.SetK(H3Lib.CoordIjk,System.Int32)')
+  - [Sum()](#M-H3Lib-Extensions-CoordIjkExtensions-Sum-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.Sum(H3Lib.CoordIjk)')
   - [ToCube(ijk)](#M-H3Lib-Extensions-CoordIjkExtensions-ToCube-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.ToCube(H3Lib.CoordIjk)')
   - [ToDirection(ijk)](#M-H3Lib-Extensions-CoordIjkExtensions-ToDirection-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.ToDirection(H3Lib.CoordIjk)')
   - [ToHex2d(h)](#M-H3Lib-Extensions-CoordIjkExtensions-ToHex2d-H3Lib-CoordIjk- 'H3Lib.Extensions.CoordIjkExtensions.ToHex2d(H3Lib.CoordIjk)')
@@ -241,7 +251,7 @@
   - [ToBaseCell()](#M-H3Lib-Extensions-FaceIjkExtensions-ToBaseCell-H3Lib-FaceIjk- 'H3Lib.Extensions.FaceIjkExtensions.ToBaseCell(H3Lib.FaceIjk)')
   - [ToBaseCellCounterClockwiseRotate60()](#M-H3Lib-Extensions-FaceIjkExtensions-ToBaseCellCounterClockwiseRotate60-H3Lib-FaceIjk- 'H3Lib.Extensions.FaceIjkExtensions.ToBaseCellCounterClockwiseRotate60(H3Lib.FaceIjk)')
   - [ToGeoBoundary(h,res,start,length)](#M-H3Lib-Extensions-FaceIjkExtensions-ToGeoBoundary-H3Lib-FaceIjk,System-Int32,System-Int32,System-Int32- 'H3Lib.Extensions.FaceIjkExtensions.ToGeoBoundary(H3Lib.FaceIjk,System.Int32,System.Int32,System.Int32)')
-  - [ToGeoCoord(h,res,g)](#M-H3Lib-Extensions-FaceIjkExtensions-ToGeoCoord-H3Lib-FaceIjk,System-Int32- 'H3Lib.Extensions.FaceIjkExtensions.ToGeoCoord(H3Lib.FaceIjk,System.Int32)')
+  - [ToGeoCoord(h,res)](#M-H3Lib-Extensions-FaceIjkExtensions-ToGeoCoord-H3Lib-FaceIjk,System-Int32- 'H3Lib.Extensions.FaceIjkExtensions.ToGeoCoord(H3Lib.FaceIjk,System.Int32)')
   - [ToH3(fijk,res)](#M-H3Lib-Extensions-FaceIjkExtensions-ToH3-H3Lib-FaceIjk,System-Int32- 'H3Lib.Extensions.FaceIjkExtensions.ToH3(H3Lib.FaceIjk,System.Int32)')
   - [ToVerts(fijk,res,fijkVerts)](#M-H3Lib-Extensions-FaceIjkExtensions-ToVerts-H3Lib-FaceIjk,System-Int32,System-Collections-Generic-IList{H3Lib-FaceIjk}- 'H3Lib.Extensions.FaceIjkExtensions.ToVerts(H3Lib.FaceIjk,System.Int32,System.Collections.Generic.IList{H3Lib.FaceIjk})')
 - [FaceOrientIjk](#T-H3Lib-FaceOrientIjk 'H3Lib.FaceOrientIjk')
@@ -286,6 +296,8 @@
   - [LineHexEstimate(origin,destination,res)](#M-H3Lib-Extensions-GeoCoordExtensions-LineHexEstimate-H3Lib-GeoCoord,H3Lib-GeoCoord,System-Int32- 'H3Lib.Extensions.GeoCoordExtensions.LineHexEstimate(H3Lib.GeoCoord,H3Lib.GeoCoord,System.Int32)')
   - [SetDegrees(gc,latitude,longitude)](#M-H3Lib-Extensions-GeoCoordExtensions-SetDegrees-H3Lib-GeoCoord,System-Double,System-Double- 'H3Lib.Extensions.GeoCoordExtensions.SetDegrees(H3Lib.GeoCoord,System.Double,System.Double)')
   - [SetGeoRads(gc,latitudeRadians,longitudeRadians)](#M-H3Lib-Extensions-GeoCoordExtensions-SetGeoRads-H3Lib-GeoCoord,System-Double,System-Double- 'H3Lib.Extensions.GeoCoordExtensions.SetGeoRads(H3Lib.GeoCoord,System.Double,System.Double)')
+  - [SetLatitude()](#M-H3Lib-Extensions-GeoCoordExtensions-SetLatitude-H3Lib-GeoCoord,System-Double- 'H3Lib.Extensions.GeoCoordExtensions.SetLatitude(H3Lib.GeoCoord,System.Double)')
+  - [SetLongitude()](#M-H3Lib-Extensions-GeoCoordExtensions-SetLongitude-H3Lib-GeoCoord,System-Double- 'H3Lib.Extensions.GeoCoordExtensions.SetLongitude(H3Lib.GeoCoord,System.Double)')
   - [SetRadians(gc,latitude,longitude)](#M-H3Lib-Extensions-GeoCoordExtensions-SetRadians-H3Lib-GeoCoord,System-Double,System-Double- 'H3Lib.Extensions.GeoCoordExtensions.SetRadians(H3Lib.GeoCoord,System.Double,System.Double)')
   - [ToFaceIjk(g,res)](#M-H3Lib-Extensions-GeoCoordExtensions-ToFaceIjk-H3Lib-GeoCoord,System-Int32- 'H3Lib.Extensions.GeoCoordExtensions.ToFaceIjk(H3Lib.GeoCoord,System.Int32)')
   - [ToH3Index(g,res)](#M-H3Lib-Extensions-GeoCoordExtensions-ToH3Index-H3Lib-GeoCoord,System-Int32- 'H3Lib.Extensions.GeoCoordExtensions.ToH3Index(H3Lib.GeoCoord,System.Int32)')
@@ -298,6 +310,9 @@
   - [IsEmpty](#P-H3Lib-GeoFence-IsEmpty 'H3Lib.GeoFence.IsEmpty')
 - [GeoFenceExtensions](#T-H3Lib-Extensions-GeoFenceExtensions 'H3Lib.Extensions.GeoFenceExtensions')
   - [GetEdgeHexagons(geofence,numHexagons,res,numSearchHexagons,search,found)](#M-H3Lib-Extensions-GeoFenceExtensions-GetEdgeHexagons-H3Lib-GeoFence,System-Int32,System-Int32,System-Int32@,System-Collections-Generic-List{H3Lib-H3Index}@,System-Collections-Generic-List{H3Lib-H3Index}@- 'H3Lib.Extensions.GeoFenceExtensions.GetEdgeHexagons(H3Lib.GeoFence,System.Int32,System.Int32,System.Int32@,System.Collections.Generic.List{H3Lib.H3Index}@,System.Collections.Generic.List{H3Lib.H3Index}@)')
+  - [IsClockwise(loop)](#M-H3Lib-Extensions-GeoFenceExtensions-IsClockwise-H3Lib-GeoFence- 'H3Lib.Extensions.GeoFenceExtensions.IsClockwise(H3Lib.GeoFence)')
+  - [IsClockwiseNormalized(loop,isTransmeridian)](#M-H3Lib-Extensions-GeoFenceExtensions-IsClockwiseNormalized-H3Lib-GeoFence,System-Boolean- 'H3Lib.Extensions.GeoFenceExtensions.IsClockwiseNormalized(H3Lib.GeoFence,System.Boolean)')
+  - [PointInside(loop,box,coord)](#M-H3Lib-Extensions-GeoFenceExtensions-PointInside-H3Lib-GeoFence,H3Lib-BBox,H3Lib-GeoCoord- 'H3Lib.Extensions.GeoFenceExtensions.PointInside(H3Lib.GeoFence,H3Lib.BBox,H3Lib.GeoCoord)')
   - [ToBBox(loop)](#M-H3Lib-Extensions-GeoFenceExtensions-ToBBox-H3Lib-GeoFence- 'H3Lib.Extensions.GeoFenceExtensions.ToBBox(H3Lib.GeoFence)')
 - [GeoMultiPolygon](#T-H3Lib-GeoMultiPolygon 'H3Lib.GeoMultiPolygon')
   - [NumPolygons](#F-H3Lib-GeoMultiPolygon-NumPolygons 'H3Lib.GeoMultiPolygon.NumPolygons')
@@ -419,7 +434,13 @@
   - [Rotate60CounterClockwise(h)](#M-H3Lib-Extensions-H3IndexExtensions-Rotate60CounterClockwise-H3Lib-H3Index- 'H3Lib.Extensions.H3IndexExtensions.Rotate60CounterClockwise(H3Lib.H3Index)')
   - [RotatePent60Clockwise(h)](#M-H3Lib-Extensions-H3IndexExtensions-RotatePent60Clockwise-H3Lib-H3Index- 'H3Lib.Extensions.H3IndexExtensions.RotatePent60Clockwise(H3Lib.H3Index)')
   - [RotatePent60CounterClockwise(h)](#M-H3Lib-Extensions-H3IndexExtensions-RotatePent60CounterClockwise-H3Lib-H3Index- 'H3Lib.Extensions.H3IndexExtensions.RotatePent60CounterClockwise(H3Lib.H3Index)')
+  - [SetBaseCell()](#M-H3Lib-Extensions-H3IndexExtensions-SetBaseCell-H3Lib-H3Index,System-Int32- 'H3Lib.Extensions.H3IndexExtensions.SetBaseCell(H3Lib.H3Index,System.Int32)')
+  - [SetHighBit()](#M-H3Lib-Extensions-H3IndexExtensions-SetHighBit-H3Lib-H3Index,System-Int32- 'H3Lib.Extensions.H3IndexExtensions.SetHighBit(H3Lib.H3Index,System.Int32)')
   - [SetIndex(hp,res,baseCell,initDigit)](#M-H3Lib-Extensions-H3IndexExtensions-SetIndex-H3Lib-H3Index,System-Int32,System-Int32,H3Lib-Direction- 'H3Lib.Extensions.H3IndexExtensions.SetIndex(H3Lib.H3Index,System.Int32,System.Int32,H3Lib.Direction)')
+  - [SetIndexDigit()](#M-H3Lib-Extensions-H3IndexExtensions-SetIndexDigit-H3Lib-H3Index,System-Int32,System-UInt64- 'H3Lib.Extensions.H3IndexExtensions.SetIndexDigit(H3Lib.H3Index,System.Int32,System.UInt64)')
+  - [SetMode()](#M-H3Lib-Extensions-H3IndexExtensions-SetMode-H3Lib-H3Index,H3Lib-H3Mode- 'H3Lib.Extensions.H3IndexExtensions.SetMode(H3Lib.H3Index,H3Lib.H3Mode)')
+  - [SetReservedBits()](#M-H3Lib-Extensions-H3IndexExtensions-SetReservedBits-H3Lib-H3Index,System-Int32- 'H3Lib.Extensions.H3IndexExtensions.SetReservedBits(H3Lib.H3Index,System.Int32)')
+  - [SetResolution()](#M-H3Lib-Extensions-H3IndexExtensions-SetResolution-H3Lib-H3Index,System-Int32- 'H3Lib.Extensions.H3IndexExtensions.SetResolution(H3Lib.H3Index,System.Int32)')
   - [ToCenterChild(h,childRes)](#M-H3Lib-Extensions-H3IndexExtensions-ToCenterChild-H3Lib-H3Index,System-Int32- 'H3Lib.Extensions.H3IndexExtensions.ToCenterChild(H3Lib.H3Index,System.Int32)')
   - [ToChildren(h,childRes)](#M-H3Lib-Extensions-H3IndexExtensions-ToChildren-H3Lib-H3Index,System-Int32- 'H3Lib.Extensions.H3IndexExtensions.ToChildren(H3Lib.H3Index,System.Int32)')
   - [ToFaceIjk(h)](#M-H3Lib-Extensions-H3IndexExtensions-ToFaceIjk-H3Lib-H3Index- 'H3Lib.Extensions.H3IndexExtensions.ToFaceIjk(H3Lib.H3Index)')
@@ -437,8 +458,11 @@
 - [H3LibExtensions](#T-H3Lib-Extensions-H3LibExtensions 'H3Lib.Extensions.H3LibExtensions')
   - [Compact(h3Set)](#M-H3Lib-Extensions-H3LibExtensions-Compact-System-Collections-Generic-List{H3Lib-H3Index}- 'H3Lib.Extensions.H3LibExtensions.Compact(System.Collections.Generic.List{H3Lib.H3Index})')
   - [ConstrainLatitude(latitude)](#M-H3Lib-Extensions-H3LibExtensions-ConstrainLatitude-System-Double- 'H3Lib.Extensions.H3LibExtensions.ConstrainLatitude(System.Double)')
+  - [ConstrainLatitude()](#M-H3Lib-Extensions-H3LibExtensions-ConstrainLatitude-System-Int32- 'H3Lib.Extensions.H3LibExtensions.ConstrainLatitude(System.Int32)')
   - [ConstrainLongitude(longitude)](#M-H3Lib-Extensions-H3LibExtensions-ConstrainLongitude-System-Double- 'H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Double)')
+  - [ConstrainLongitude(longitude)](#M-H3Lib-Extensions-H3LibExtensions-ConstrainLongitude-System-Int32- 'H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Int32)')
   - [DegreesToRadians(degrees)](#M-H3Lib-Extensions-H3LibExtensions-DegreesToRadians-System-Double- 'H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Double)')
+  - [DegreesToRadians(degrees)](#M-H3Lib-Extensions-H3LibExtensions-DegreesToRadians-System-Int32- 'H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Int32)')
   - [FlexiCompact()](#M-H3Lib-Extensions-H3LibExtensions-FlexiCompact-System-Collections-Generic-List{H3Lib-H3Index}- 'H3Lib.Extensions.H3LibExtensions.FlexiCompact(System.Collections.Generic.List{H3Lib.H3Index})')
   - [GetPentagonIndexes(res)](#M-H3Lib-Extensions-H3LibExtensions-GetPentagonIndexes-System-Int32- 'H3Lib.Extensions.H3LibExtensions.GetPentagonIndexes(System.Int32)')
   - [IsResClassIii(res)](#M-H3Lib-Extensions-H3LibExtensions-IsResClassIii-System-Int32- 'H3Lib.Extensions.H3LibExtensions.IsResClassIii(System.Int32)')
@@ -476,6 +500,10 @@
   - [GetFirst()](#M-H3Lib-LinkedGeoLoop-GetFirst 'H3Lib.LinkedGeoLoop.GetFirst')
 - [LinkedGeoLoopExtensions](#T-H3Lib-Extensions-LinkedGeoLoopExtensions 'H3Lib.Extensions.LinkedGeoLoopExtensions')
   - [CountContainers(loop,polygons,boxes)](#M-H3Lib-Extensions-LinkedGeoLoopExtensions-CountContainers-H3Lib-LinkedGeoLoop,System-Collections-Generic-List{H3Lib-LinkedGeoPolygon},System-Collections-Generic-List{H3Lib-BBox}- 'H3Lib.Extensions.LinkedGeoLoopExtensions.CountContainers(H3Lib.LinkedGeoLoop,System.Collections.Generic.List{H3Lib.LinkedGeoPolygon},System.Collections.Generic.List{H3Lib.BBox})')
+  - [IsClockwise(loop)](#M-H3Lib-Extensions-LinkedGeoLoopExtensions-IsClockwise-H3Lib-LinkedGeoLoop- 'H3Lib.Extensions.LinkedGeoLoopExtensions.IsClockwise(H3Lib.LinkedGeoLoop)')
+  - [IsClockwiseNormalized(loop,isTransmeridian)](#M-H3Lib-Extensions-LinkedGeoLoopExtensions-IsClockwiseNormalized-H3Lib-LinkedGeoLoop,System-Boolean- 'H3Lib.Extensions.LinkedGeoLoopExtensions.IsClockwiseNormalized(H3Lib.LinkedGeoLoop,System.Boolean)')
+  - [PointInside(loop,box,coord)](#M-H3Lib-Extensions-LinkedGeoLoopExtensions-PointInside-H3Lib-LinkedGeoLoop,H3Lib-BBox,H3Lib-GeoCoord- 'H3Lib.Extensions.LinkedGeoLoopExtensions.PointInside(H3Lib.LinkedGeoLoop,H3Lib.BBox,H3Lib.GeoCoord)')
+  - [ToBBox(loop)](#M-H3Lib-Extensions-LinkedGeoLoopExtensions-ToBBox-H3Lib-LinkedGeoLoop- 'H3Lib.Extensions.LinkedGeoLoopExtensions.ToBBox(H3Lib.LinkedGeoLoop)')
 - [LinkedGeoPolygon](#T-H3Lib-LinkedGeoPolygon 'H3Lib.LinkedGeoPolygon')
   - [#ctor()](#M-H3Lib-LinkedGeoPolygon-#ctor 'H3Lib.LinkedGeoPolygon.#ctor')
   - [Next](#F-H3Lib-LinkedGeoPolygon-Next 'H3Lib.LinkedGeoPolygon.Next')
@@ -511,7 +539,7 @@
 - [PentagonDirectionFace](#T-H3Lib-PentagonDirectionFace 'H3Lib.PentagonDirectionFace')
   - [#ctor(bc,faces)](#M-H3Lib-PentagonDirectionFace-#ctor-System-Int32,System-Collections-Generic-IList{System-Int32}- 'H3Lib.PentagonDirectionFace.#ctor(System.Int32,System.Collections.Generic.IList{System.Int32})')
   - [#ctor(raw)](#M-H3Lib-PentagonDirectionFace-#ctor-System-Collections-Generic-IList{System-Int32}- 'H3Lib.PentagonDirectionFace.#ctor(System.Collections.Generic.IList{System.Int32})')
-  - [#ctor(bc)](#M-H3Lib-PentagonDirectionFace-#ctor-System-Int32,System-Int32,System-Int32,System-Int32,System-Int32,System-Int32- 'H3Lib.PentagonDirectionFace.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)')
+  - [#ctor()](#M-H3Lib-PentagonDirectionFace-#ctor-System-Int32,System-Int32,System-Int32,System-Int32,System-Int32,System-Int32- 'H3Lib.PentagonDirectionFace.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)')
   - [BaseCell](#F-H3Lib-PentagonDirectionFace-BaseCell 'H3Lib.PentagonDirectionFace.BaseCell')
   - [Faces](#F-H3Lib-PentagonDirectionFace-Faces 'H3Lib.PentagonDirectionFace.Faces')
 - [Vec2d](#T-H3Lib-Vec2d 'H3Lib.Vec2d')
@@ -542,6 +570,9 @@
   - [op_Inequality()](#M-H3Lib-Vec3d-op_Inequality-H3Lib-Vec3d,H3Lib-Vec3d- 'H3Lib.Vec3d.op_Inequality(H3Lib.Vec3d,H3Lib.Vec3d)')
 - [Vec3dExtensions](#T-H3Lib-Extensions-Vec3dExtensions 'H3Lib.Extensions.Vec3dExtensions')
   - [PointSquareDistance(v1,v2)](#M-H3Lib-Extensions-Vec3dExtensions-PointSquareDistance-H3Lib-Vec3d,H3Lib-Vec3d- 'H3Lib.Extensions.Vec3dExtensions.PointSquareDistance(H3Lib.Vec3d,H3Lib.Vec3d)')
+  - [SetX(v3,x)](#M-H3Lib-Extensions-Vec3dExtensions-SetX-H3Lib-Vec3d,System-Double- 'H3Lib.Extensions.Vec3dExtensions.SetX(H3Lib.Vec3d,System.Double)')
+  - [SetY(v3,y)](#M-H3Lib-Extensions-Vec3dExtensions-SetY-H3Lib-Vec3d,System-Double- 'H3Lib.Extensions.Vec3dExtensions.SetY(H3Lib.Vec3d,System.Double)')
+  - [SetZ(v3,z)](#M-H3Lib-Extensions-Vec3dExtensions-SetZ-H3Lib-Vec3d,System-Double- 'H3Lib.Extensions.Vec3dExtensions.SetZ(H3Lib.Vec3d,System.Double)')
 - [Vertex](#T-H3Lib-Constants-Vertex 'H3Lib.Constants.Vertex')
   - [DirectionToVertexNumHex](#F-H3Lib-Constants-Vertex-DirectionToVertexNumHex 'H3Lib.Constants.Vertex.DirectionToVertexNumHex')
   - [DirectionToVertexNumPent](#F-H3Lib-Constants-Vertex-DirectionToVertexNumPent 'H3Lib.Constants.Vertex.DirectionToVertexNumPent')
@@ -2373,6 +2404,36 @@ This method has no parameters.
 
 H3Lib.Extensions
 
+##### Summary
+
+Extension methods for working with CoordIj type
+
+<a name='M-H3Lib-Extensions-CoordIjExtensions-ReplaceI-H3Lib-CoordIj,System-Int32-'></a>
+### ReplaceI() `method`
+
+##### Summary
+
+Replace I value
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-CoordIjExtensions-ReplaceJ-H3Lib-CoordIj,System-Int32-'></a>
+### ReplaceJ() `method`
+
+##### Summary
+
+replace J value
+
+##### Returns
+
+
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-H3Lib-Extensions-CoordIjExtensions-ToH3Experimental-H3Lib-CoordIj,H3Lib-H3Index-'></a>
 ### ToH3Experimental(ij,origin) `method`
 
@@ -2629,6 +2690,10 @@ This method has no parameters.
 
 H3Lib.Extensions
 
+##### Summary
+
+Extension methods for CoordIjk type
+
 <a name='M-H3Lib-Extensions-CoordIjkExtensions-DistanceTo-H3Lib-CoordIjk,H3Lib-CoordIjk-'></a>
 ### DistanceTo(start,end) `method`
 
@@ -2714,6 +2779,17 @@ Convert cube coordinates to IJK coordinates, in place
 | ---- | ---- | ----------- |
 | ijk | [H3Lib.CoordIjk](#T-H3Lib-CoordIjk 'H3Lib.CoordIjk') | Coordinate to convert |
 
+<a name='M-H3Lib-Extensions-CoordIjkExtensions-IsZero-H3Lib-CoordIjk-'></a>
+### IsZero() `method`
+
+##### Summary
+
+Tests if all coordinates are zero
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-H3Lib-Extensions-CoordIjkExtensions-LocalIjkToH3-H3Lib-CoordIjk,H3Lib-H3Index-'></a>
 ### LocalIjkToH3(origin,ijk) `method`
 
@@ -2792,6 +2868,83 @@ Rotates ijk coordinates 60 degrees counter-clockwise. Works in place.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | ijk | [H3Lib.CoordIjk](#T-H3Lib-CoordIjk 'H3Lib.CoordIjk') | The ijk coordinates. |
+
+<a name='M-H3Lib-Extensions-CoordIjkExtensions-SetI-H3Lib-CoordIjk,System-Int32-'></a>
+### SetI() `method`
+
+##### Summary
+
+Change I coordinate value
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-CoordIjkExtensions-SetIJ-H3Lib-CoordIjk,System-Int32,System-Int32-'></a>
+### SetIJ() `method`
+
+##### Summary
+
+Change IJ coordinates value
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-CoordIjkExtensions-SetIK-H3Lib-CoordIjk,System-Int32,System-Int32-'></a>
+### SetIK() `method`
+
+##### Summary
+
+Change JK coordinates value
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-CoordIjkExtensions-SetJ-H3Lib-CoordIjk,System-Int32-'></a>
+### SetJ() `method`
+
+##### Summary
+
+Change J coordinate value
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-CoordIjkExtensions-SetJK-H3Lib-CoordIjk,System-Int32,System-Int32-'></a>
+### SetJK() `method`
+
+##### Summary
+
+Change JK coordinates value
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-CoordIjkExtensions-SetK-H3Lib-CoordIjk,System-Int32-'></a>
+### SetK() `method`
+
+##### Summary
+
+Change K coordinate value
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-CoordIjkExtensions-Sum-H3Lib-CoordIjk-'></a>
+### Sum() `method`
+
+##### Summary
+
+Returns sum of all coordinates
+
+##### Parameters
+
+This method has no parameters.
 
 <a name='M-H3Lib-Extensions-CoordIjkExtensions-ToCube-H3Lib-CoordIjk-'></a>
 ### ToCube(ijk) `method`
@@ -2959,6 +3112,10 @@ Valid digits will be less than this value. Same value as [INVALID_DIGIT](#F-H3Li
 ##### Namespace
 
 H3Lib.Extensions
+
+##### Summary
+
+Operations for Direction enum type
 
 <a name='M-H3Lib-Extensions-DirectionExtensions-Rotate60Clockwise-H3Lib-Direction-'></a>
 ### Rotate60Clockwise(digit) `method`
@@ -3200,6 +3357,10 @@ This method has no parameters.
 
 H3Lib.Extensions
 
+##### Summary
+
+Operations for FaceIjk type
+
 <a name='M-H3Lib-Extensions-FaceIjkExtensions-AdjustOverageClassIi-H3Lib-FaceIjk,System-Int32,System-Int32,System-Int32-'></a>
 ### AdjustOverageClassIi(fijk,res,pentLeading4,substrate) `method`
 
@@ -3375,7 +3536,7 @@ The spherical coordinates of the cell boundary
 | length | [System.Int32](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32 'System.Int32') | The number of topological vertexes to return |
 
 <a name='M-H3Lib-Extensions-FaceIjkExtensions-ToGeoCoord-H3Lib-FaceIjk,System-Int32-'></a>
-### ToGeoCoord(h,res,g) `method`
+### ToGeoCoord(h,res) `method`
 
 ##### Summary
 
@@ -3805,6 +3966,10 @@ This method has no parameters.
 
 H3Lib.Extensions
 
+##### Summary
+
+Operations for GeoCoord type
+
 <a name='M-H3Lib-Extensions-GeoCoordExtensions-AzimuthRadiansTo-H3Lib-GeoCoord,H3Lib-GeoCoord-'></a>
 ### AzimuthRadiansTo(p1,p2) `method`
 
@@ -3943,6 +4108,28 @@ Set the components of spherical coordinates in radians.
 | latitudeRadians | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') | The desired latitude in decimal radians |
 | longitudeRadians | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') | The desired longitude in decimal radians |
 
+<a name='M-H3Lib-Extensions-GeoCoordExtensions-SetLatitude-H3Lib-GeoCoord,System-Double-'></a>
+### SetLatitude() `method`
+
+##### Summary
+
+Quick replacement for Latitude
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-GeoCoordExtensions-SetLongitude-H3Lib-GeoCoord,System-Double-'></a>
+### SetLongitude() `method`
+
+##### Summary
+
+Quick replacement for Longitude
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-H3Lib-Extensions-GeoCoordExtensions-SetRadians-H3Lib-GeoCoord,System-Double,System-Double-'></a>
 ### SetRadians(gc,latitude,longitude) `method`
 
@@ -4009,7 +4196,7 @@ containing 2D hex coordinates relative to that face center.
 ##### Returns
 
 Tuple
-Item1: The resulting face (can later get rid of [](#!-face 'face') parameter.
+Item1: The resulting face
 Item2: The 2D hex coordinates of the cell containing the point.
 
 ##### Parameters
@@ -4082,6 +4269,10 @@ Indicates if the geofence has no vertices
 
 H3Lib.Extensions
 
+##### Summary
+
+Operations for GeoFence type
+
 <a name='M-H3Lib-Extensions-GeoFenceExtensions-GetEdgeHexagons-H3Lib-GeoFence,System-Int32,System-Int32,System-Int32@,System-Collections-Generic-List{H3Lib-H3Index}@,System-Collections-Generic-List{H3Lib-H3Index}@-'></a>
 ### GetEdgeHexagons(geofence,numHexagons,res,numSearchHexagons,search,found) `method`
 
@@ -4107,6 +4298,56 @@ An error code if the hash function cannot insert a found hexagon into the found 
 | numSearchHexagons | [System.Int32@](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32@ 'System.Int32@') | The number of hexagons found so far to be searched |
 | search | [System.Collections.Generic.List{H3Lib.H3Index}@](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.List 'System.Collections.Generic.List{H3Lib.H3Index}@') | The block of memory containing the hexagons to search from |
 | found | [System.Collections.Generic.List{H3Lib.H3Index}@](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.List 'System.Collections.Generic.List{H3Lib.H3Index}@') | The block of memory containing the hexagons found from the search |
+
+<a name='M-H3Lib-Extensions-GeoFenceExtensions-IsClockwise-H3Lib-GeoFence-'></a>
+### IsClockwise(loop) `method`
+
+##### Summary
+
+Is GeoFence clockwise?
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| loop | [H3Lib.GeoFence](#T-H3Lib-GeoFence 'H3Lib.GeoFence') |  |
+
+<a name='M-H3Lib-Extensions-GeoFenceExtensions-IsClockwiseNormalized-H3Lib-GeoFence,System-Boolean-'></a>
+### IsClockwiseNormalized(loop,isTransmeridian) `method`
+
+##### Summary
+
+Is loop clockwise oriented?
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| loop | [H3Lib.GeoFence](#T-H3Lib-GeoFence 'H3Lib.GeoFence') |  |
+| isTransmeridian | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
+
+<a name='M-H3Lib-Extensions-GeoFenceExtensions-PointInside-H3Lib-GeoFence,H3Lib-BBox,H3Lib-GeoCoord-'></a>
+### PointInside(loop,box,coord) `method`
+
+##### Summary
+
+Is boint within the loo?
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| loop | [H3Lib.GeoFence](#T-H3Lib-GeoFence 'H3Lib.GeoFence') |  |
+| box | [H3Lib.BBox](#T-H3Lib-BBox 'H3Lib.BBox') |  |
+| coord | [H3Lib.GeoCoord](#T-H3Lib-GeoCoord 'H3Lib.GeoCoord') |  |
 
 <a name='M-H3Lib-Extensions-GeoFenceExtensions-ToBBox-H3Lib-GeoFence-'></a>
 ### ToBBox(loop) `method`
@@ -4195,6 +4436,10 @@ Number of elements in the array pointed to by the holes
 ##### Namespace
 
 H3Lib.Extensions
+
+##### Summary
+
+Operations on GeoPolygon type
 
 <a name='M-H3Lib-Extensions-GeoPolygonExtensions-MaxPolyFillSize-H3Lib-GeoPolygon,System-Int32-'></a>
 ### MaxPolyFillSize(geoPolygon,res) `method`
@@ -5584,6 +5829,28 @@ Rotate an H3Index 60 degrees counter-clockwise about a pentagonal center.
 | ---- | ---- | ----------- |
 | h | [H3Lib.H3Index](#T-H3Lib-H3Index 'H3Lib.H3Index') | The H3Index. |
 
+<a name='M-H3Lib-Extensions-H3IndexExtensions-SetBaseCell-H3Lib-H3Index,System-Int32-'></a>
+### SetBaseCell() `method`
+
+##### Summary
+
+Set BaseCell of H3Index cell
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-H3IndexExtensions-SetHighBit-H3Lib-H3Index,System-Int32-'></a>
+### SetHighBit() `method`
+
+##### Summary
+
+Sets high bit of H3Index cell
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-H3Lib-Extensions-H3IndexExtensions-SetIndex-H3Lib-H3Index,System-Int32,System-Int32,H3Lib-Direction-'></a>
 ### SetIndex(hp,res,baseCell,initDigit) `method`
 
@@ -5599,6 +5866,50 @@ Initializes an H3 index.
 | res | [System.Int32](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32 'System.Int32') | The H3 resolution to initialize the index to. |
 | baseCell | [System.Int32](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32 'System.Int32') | The H3 base cell to initialize the index to. |
 | initDigit | [H3Lib.Direction](#T-H3Lib-Direction 'H3Lib.Direction') | The H3 digit (0-7) to initialize all of the index digits to. |
+
+<a name='M-H3Lib-Extensions-H3IndexExtensions-SetIndexDigit-H3Lib-H3Index,System-Int32,System-UInt64-'></a>
+### SetIndexDigit() `method`
+
+##### Summary
+
+Sets specified index digit of H3Index cell
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-H3IndexExtensions-SetMode-H3Lib-H3Index,H3Lib-H3Mode-'></a>
+### SetMode() `method`
+
+##### Summary
+
+Sets mode of H3Index cell
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-H3IndexExtensions-SetReservedBits-H3Lib-H3Index,System-Int32-'></a>
+### SetReservedBits() `method`
+
+##### Summary
+
+Set reserved bits of H3Index cell
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Extensions-H3IndexExtensions-SetResolution-H3Lib-H3Index,System-Int32-'></a>
+### SetResolution() `method`
+
+##### Summary
+
+Set resolution of H3Index cell
+
+##### Parameters
+
+This method has no parameters.
 
 <a name='M-H3Lib-Extensions-H3IndexExtensions-ToCenterChild-H3Lib-H3Index,System-Int32-'></a>
 ### ToCenterChild(h,childRes) `method`
@@ -5882,6 +6193,11 @@ This method has no parameters.
 
 H3Lib.Extensions
 
+##### Summary
+
+Extension methods that work on numbers that are then converted to some
+parameter of H3Index space
+
 <a name='M-H3Lib-Extensions-H3LibExtensions-Compact-System-Collections-Generic-List{H3Lib-H3Index}-'></a>
 ### Compact(h3Set) `method`
 
@@ -5925,6 +6241,17 @@ The corrected lat value
 | ---- | ---- | ----------- |
 | latitude | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') | The original lat value |
 
+<a name='M-H3Lib-Extensions-H3LibExtensions-ConstrainLatitude-System-Int32-'></a>
+### ConstrainLatitude() `method`
+
+##### Summary
+
+Constrain Latitude to +/- PI/2
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-H3Lib-Extensions-H3LibExtensions-ConstrainLongitude-System-Double-'></a>
 ### ConstrainLongitude(longitude) `method`
 
@@ -5942,6 +6269,23 @@ The corrected lng value
 | ---- | ---- | ----------- |
 | longitude | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') | The origin lng value |
 
+<a name='M-H3Lib-Extensions-H3LibExtensions-ConstrainLongitude-System-Int32-'></a>
+### ConstrainLongitude(longitude) `method`
+
+##### Summary
+
+Constrain Longitude to +/- PI
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| longitude | [System.Int32](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32 'System.Int32') |  |
+
 <a name='M-H3Lib-Extensions-H3LibExtensions-DegreesToRadians-System-Double-'></a>
 ### DegreesToRadians(degrees) `method`
 
@@ -5958,6 +6302,23 @@ The corresponding radians
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | degrees | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') | The decimal degrees |
+
+<a name='M-H3Lib-Extensions-H3LibExtensions-DegreesToRadians-System-Int32-'></a>
+### DegreesToRadians(degrees) `method`
+
+##### Summary
+
+Convert decimal degrees to radians
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| degrees | [System.Int32](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32 'System.Int32') |  |
 
 <a name='M-H3Lib-Extensions-H3LibExtensions-FlexiCompact-System-Collections-Generic-List{H3Lib-H3Index}-'></a>
 ### FlexiCompact() `method`
@@ -6385,6 +6746,10 @@ This method has no parameters.
 
 H3Lib.Extensions
 
+##### Summary
+
+Operations on LinkedGeoLoop type
+
 <a name='M-H3Lib-Extensions-LinkedGeoLoopExtensions-CountContainers-H3Lib-LinkedGeoLoop,System-Collections-Generic-List{H3Lib-LinkedGeoPolygon},System-Collections-Generic-List{H3Lib-BBox}-'></a>
 ### CountContainers(loop,polygons,boxes) `method`
 
@@ -6403,6 +6768,77 @@ Number of polygons containing the loop
 | loop | [H3Lib.LinkedGeoLoop](#T-H3Lib-LinkedGeoLoop 'H3Lib.LinkedGeoLoop') | Loop to count containers for |
 | polygons | [System.Collections.Generic.List{H3Lib.LinkedGeoPolygon}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.List 'System.Collections.Generic.List{H3Lib.LinkedGeoPolygon}') | Polygons to test |
 | boxes | [System.Collections.Generic.List{H3Lib.BBox}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.List 'System.Collections.Generic.List{H3Lib.BBox}') | Bounding boxes for polygons, used in point-in-poly check |
+
+<a name='M-H3Lib-Extensions-LinkedGeoLoopExtensions-IsClockwise-H3Lib-LinkedGeoLoop-'></a>
+### IsClockwise(loop) `method`
+
+##### Summary
+
+Is loop clockwise?
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| loop | [H3Lib.LinkedGeoLoop](#T-H3Lib-LinkedGeoLoop 'H3Lib.LinkedGeoLoop') |  |
+
+<a name='M-H3Lib-Extensions-LinkedGeoLoopExtensions-IsClockwiseNormalized-H3Lib-LinkedGeoLoop,System-Boolean-'></a>
+### IsClockwiseNormalized(loop,isTransmeridian) `method`
+
+##### Summary
+
+Is loop clockwise normalized?
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| loop | [H3Lib.LinkedGeoLoop](#T-H3Lib-LinkedGeoLoop 'H3Lib.LinkedGeoLoop') |  |
+| isTransmeridian | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
+
+<a name='M-H3Lib-Extensions-LinkedGeoLoopExtensions-PointInside-H3Lib-LinkedGeoLoop,H3Lib-BBox,H3Lib-GeoCoord-'></a>
+### PointInside(loop,box,coord) `method`
+
+##### Summary
+
+Is point inside GeoLoop?
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| loop | [H3Lib.LinkedGeoLoop](#T-H3Lib-LinkedGeoLoop 'H3Lib.LinkedGeoLoop') |  |
+| box | [H3Lib.BBox](#T-H3Lib-BBox 'H3Lib.BBox') |  |
+| coord | [H3Lib.GeoCoord](#T-H3Lib-GeoCoord 'H3Lib.GeoCoord') |  |
+
+<a name='M-H3Lib-Extensions-LinkedGeoLoopExtensions-ToBBox-H3Lib-LinkedGeoLoop-'></a>
+### ToBBox(loop) `method`
+
+##### Summary
+
+Convert GeoLoop to bounding box for loop
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| loop | [H3Lib.LinkedGeoLoop](#T-H3Lib-LinkedGeoLoop 'H3Lib.LinkedGeoLoop') |  |
 
 <a name='T-H3Lib-LinkedGeoPolygon'></a>
 ## LinkedGeoPolygon `type`
@@ -6618,6 +7054,10 @@ This method has no parameters.
 
 H3Lib.Extensions
 
+##### Summary
+
+Operations on LinkedGeoPolygon type
+
 <a name='M-H3Lib-Extensions-LinkedGeoPolygonExtensions-FindPolygonForHole-H3Lib-LinkedGeoLoop,H3Lib-LinkedGeoPolygon,System-Collections-Generic-List{H3Lib-BBox},System-Int32-'></a>
 ### FindPolygonForHole(loop,polygon,boxes,polygonCount) `method`
 
@@ -6782,7 +7222,7 @@ Constructor
 | raw | [System.Collections.Generic.IList{System.Int32}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.IList 'System.Collections.Generic.IList{System.Int32}') |  |
 
 <a name='M-H3Lib-PentagonDirectionFace-#ctor-System-Int32,System-Int32,System-Int32,System-Int32,System-Int32,System-Int32-'></a>
-### #ctor(bc) `constructor`
+### #ctor() `constructor`
 
 ##### Summary
 
@@ -6790,9 +7230,7 @@ Constructor
 
 ##### Parameters
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| bc | [System.Int32](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32 'System.Int32') |  |
+This constructor has no parameters.
 
 <a name='F-H3Lib-PentagonDirectionFace-BaseCell'></a>
 ### BaseCell `constants`
@@ -6948,6 +7386,10 @@ This method has no parameters.
 ##### Namespace
 
 H3Lib.Extensions
+
+##### Summary
+
+Operations on Vec2d
 
 <a name='M-H3Lib-Extensions-Vec2dExtensions-ToCoordIjk-H3Lib-Vec2d-'></a>
 ### ToCoordIjk(v) `method`
@@ -7112,6 +7554,10 @@ This method has no parameters.
 
 H3Lib.Extensions
 
+##### Summary
+
+Operations on Vec3d
+
 <a name='M-H3Lib-Extensions-Vec3dExtensions-PointSquareDistance-H3Lib-Vec3d,H3Lib-Vec3d-'></a>
 ### PointSquareDistance(v1,v2) `method`
 
@@ -7129,6 +7575,60 @@ The square of the distance between the given points.
 | ---- | ---- | ----------- |
 | v1 | [H3Lib.Vec3d](#T-H3Lib-Vec3d 'H3Lib.Vec3d') | The first 3D coordinate. |
 | v2 | [H3Lib.Vec3d](#T-H3Lib-Vec3d 'H3Lib.Vec3d') | The second 3D coordinate. |
+
+<a name='M-H3Lib-Extensions-Vec3dExtensions-SetX-H3Lib-Vec3d,System-Double-'></a>
+### SetX(v3,x) `method`
+
+##### Summary
+
+Replace X value
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| v3 | [H3Lib.Vec3d](#T-H3Lib-Vec3d 'H3Lib.Vec3d') |  |
+| x | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
+
+<a name='M-H3Lib-Extensions-Vec3dExtensions-SetY-H3Lib-Vec3d,System-Double-'></a>
+### SetY(v3,y) `method`
+
+##### Summary
+
+Replace Y value
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| v3 | [H3Lib.Vec3d](#T-H3Lib-Vec3d 'H3Lib.Vec3d') |  |
+| y | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
+
+<a name='M-H3Lib-Extensions-Vec3dExtensions-SetZ-H3Lib-Vec3d,System-Double-'></a>
+### SetZ(v3,z) `method`
+
+##### Summary
+
+Repalce Z value
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| v3 | [H3Lib.Vec3d](#T-H3Lib-Vec3d 'H3Lib.Vec3d') |  |
+| z | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 
 <a name='T-H3Lib-Constants-Vertex'></a>
 ## Vertex `type`
@@ -7362,6 +7862,10 @@ true on success, false on faiilure (node not found)
 ##### Namespace
 
 H3Lib.Extensions
+
+##### Summary
+
+Operations on VertexGraph type
 
 <a name='M-H3Lib-Extensions-VertexGraphExtensions-ToLinkedGeoPolygon-H3Lib-VertexGraph-'></a>
 ### ToLinkedGeoPolygon(graph) `method`

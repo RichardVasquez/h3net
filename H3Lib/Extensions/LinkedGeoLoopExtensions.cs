@@ -4,8 +4,18 @@ using System.Linq;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations on LinkedGeoLoop type
+    /// </summary>
     public static class LinkedGeoLoopExtensions
     {
+        /// <summary>
+        /// Is point inside GeoLoop?
+        /// </summary>
+        /// <param name="loop"></param>
+        /// <param name="box"></param>
+        /// <param name="coord"></param>
+        /// <returns></returns>
         public static bool PointInside(this LinkedGeoLoop loop, BBox box, GeoCoord coord)
         {
             // fail fast if we're outside the bounding box
@@ -13,12 +23,6 @@ namespace H3Lib.Extensions
             {
                 return false;
             }
-            
-            // //  Gonna add another test here for quick fail, as we need a triangle+ to have an inside
-            // if (loop.Count < 3)
-            // {
-            //     return false;
-            // }
 
             bool isTransmeridian = box.IsTransmeridian;
             bool contains = false;
@@ -78,6 +82,11 @@ namespace H3Lib.Extensions
             return contains;
         }
 
+        /// <summary>
+        /// Convert GeoLoop to bounding box for loop
+        /// </summary>
+        /// <param name="loop"></param>
+        /// <returns></returns>
         public static BBox ToBBox(this LinkedGeoLoop loop)
         {
             if (loop.IsEmpty)
@@ -145,6 +154,12 @@ namespace H3Lib.Extensions
             return box;
         }
 
+        /// <summary>
+        /// Is loop clockwise normalized?
+        /// </summary>
+        /// <param name="loop"></param>
+        /// <param name="isTransmeridian"></param>
+        /// <returns></returns>
         public static bool IsClockwiseNormalized(this LinkedGeoLoop loop, bool isTransmeridian)
         {
             double sum = 0;
@@ -169,6 +184,11 @@ namespace H3Lib.Extensions
             return sum > 0;
         }
 
+        /// <summary>
+        /// Is loop clockwise?
+        /// </summary>
+        /// <param name="loop"></param>
+        /// <returns></returns>
         public static bool IsClockwise(this LinkedGeoLoop loop)
         {
             return loop.IsClockwiseNormalized(false);
@@ -192,34 +212,6 @@ namespace H3Lib.Extensions
                              loop != t.First &&
                              t.First.PointInside(boxes[i], loop.First.Vertex))
                   .Count();
-
-            // return polygons
-            //       .Where
-            //            (
-            //             (poly, index) =>
-            //                 poly.First != null &&
-            //                 loop.First != null &&
-            //                 loop != poly.Loops. &&
-            //                 poly.GeoLoopList.First.Value.PointInside(boxes[index], loop.GeoCoordList.First.Value)
-            //            )
-            //       .Count();
-
-            /*
-            int containerCount = 0;
-            for (int i = 0; i < polygons.Count; i++)
-            {
-                if(polygons[i].LinkedGeoList.First!=null && loop.GeoCoordList.First!=null)
-                {
-                    if (loop != polygons[i].LinkedGeoList.First.Value &&
-                        polygons[i].LinkedGeoList.First.Value.PointInside(boxes[i], loop.GeoCoordList.First.Value))
-                    {
-                        containerCount++;
-                    }
-                }
-            }
-            return containerCount;
-         
-*/
         }
     }
 }

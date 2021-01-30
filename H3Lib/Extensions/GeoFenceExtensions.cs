@@ -3,8 +3,17 @@ using System.Collections.Generic;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations for GeoFence type
+    /// </summary>
     public static class GeoFenceExtensions
     {
+        /// <summary>
+        /// Is boint within the loo?
+        /// </summary>
+        /// <param name="loop"></param>
+        /// <param name="box"></param>
+        /// <param name="coord"></param>
         public static bool PointInside(this GeoFence loop, BBox box, GeoCoord coord)
         {
             // fail fast if we're outside the bounding box
@@ -186,6 +195,12 @@ namespace H3Lib.Extensions
             return box;
         }
         
+        /// <summary>
+        /// Is loop clockwise oriented?
+        /// </summary>
+        /// <param name="loop"></param>
+        /// <param name="isTransmeridian"></param>
+        /// <returns></returns>
         public static bool IsClockwiseNormalized(this GeoFence loop, bool isTransmeridian)
         {
             double sum = 0;
@@ -219,6 +234,11 @@ namespace H3Lib.Extensions
             return sum > 0;
         }
 
+        /// <summary>
+        /// Is GeoFence clockwise?
+        /// </summary>
+        /// <param name="loop"></param>
+        /// <returns></returns>
         public static bool IsClockwise(this GeoFence loop)
         {
             return loop.IsClockwiseNormalized(false);

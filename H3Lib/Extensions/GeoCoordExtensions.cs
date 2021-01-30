@@ -2,6 +2,9 @@ using System;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Operations for GeoCoord type
+    /// </summary>
     public static class GeoCoordExtensions
     {
         /// <summary>
@@ -47,11 +50,17 @@ namespace H3Lib.Extensions
             return gc;
         }
 
+        /// <summary>
+        /// Quick replacement for Latitude
+        /// </summary>
         public static GeoCoord SetLatitude(this GeoCoord gc, double latitude)
         {
             return new GeoCoord(latitude, gc.Longitude);
         }
 
+        /// <summary>
+        /// Quick replacement for Longitude
+        /// </summary>
         public static GeoCoord SetLongitude(this GeoCoord gc, double longitude)
         {
             return new GeoCoord(gc.Latitude, longitude);
@@ -269,7 +278,7 @@ namespace H3Lib.Extensions
         /// <param name="res">The desired H3 resolution for the encoding.</param>
         /// <returns>
         /// Tuple
-        /// Item1: The resulting face (can later get rid of <see cref="face"/> parameter.
+        /// Item1: The resulting face
         /// Item2: The 2D hex coordinates of the cell containing the point.
         /// </returns>
         /// <!--

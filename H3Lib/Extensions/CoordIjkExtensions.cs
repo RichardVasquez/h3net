@@ -3,49 +3,72 @@ using System.Linq;
 
 namespace H3Lib.Extensions
 {
+    /// <summary>
+    /// Extension methods for CoordIjk type
+    /// </summary>
     public static class CoordIjkExtensions
     {
+        /// <summary>
+        /// Tests if all coordinates are zero
+        /// </summary>
         public static bool IsZero(this CoordIjk ijk)
         {
             return ijk.I == 0 && ijk.J == 0 && ijk.K == 0;
         }
         
+        /// <summary>
+        /// Returns sum of all coordinates
+        /// </summary>
         public static int Sum(this CoordIjk ijk)
         {
             return ijk.I + ijk.J + ijk.K;
         }
         
+        /// <summary>
+        /// Change I coordinate value
+        /// </summary>
         public static CoordIjk SetI(this CoordIjk ijk, int i)
         {
             return new CoordIjk(i, ijk.J, ijk.K);
         }
+        /// <summary>
+        /// Change J coordinate value
+        /// </summary>
         public static CoordIjk SetJ(this CoordIjk ijk, int j)
         {
             return new CoordIjk(ijk.I, j, ijk.K);
         }
+        
+        /// <summary>
+        /// Change K coordinate value
+        /// </summary>
         public static CoordIjk SetK(this CoordIjk ijk, int k)
         {
             return new CoordIjk(ijk.I, ijk.J, k);
         }
 
+        /// <summary>
+        /// Change IJ coordinates value
+        /// </summary>
         public static CoordIjk SetIJ(this CoordIjk ijk, int i, int j)
         {
             return new CoordIjk(i, j, ijk.K);
         }
 
+        /// <summary>
+        /// Change JK coordinates value
+        /// </summary>
         public static CoordIjk SetIK(this CoordIjk ijk, int i, int k)
         {
             return new CoordIjk(i, ijk.J, k);
         }
 
+        /// <summary>
+        /// Change JK coordinates value
+        /// </summary>
         public static CoordIjk SetJK(this CoordIjk ijk, int j, int k)
         {
             return new CoordIjk(ijk.I, j, k);
-        }
-
-        public static CoordIjk SetIJK(this CoordIjk ijk, int i, int j, int k)
-        {
-            return new CoordIjk(i, j, k);
         }
         
         /// <summary>
