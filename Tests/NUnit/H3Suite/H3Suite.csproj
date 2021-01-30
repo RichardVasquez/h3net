@@ -22,6 +22,10 @@
         <RepositoryUrl>https://github.com/RichardVasquez/h3net</RepositoryUrl>
 
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+        <Configurations>Debug;Release;Apps Only</Configurations>
+
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
