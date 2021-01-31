@@ -21,14 +21,14 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
-                            new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2)
+                            new GeoCoord(0.8m, 0.3m), new GeoCoord(0.7m, 0.6m),
+                            new GeoCoord(1.1m, 0.7m), new GeoCoord(1.0m, 0.2m)
                         };
 
             var geofence = new GeoFence {Verts = verts, NumVerts = 4};
-            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
-            var inside = new GeoCoord(0.9, 0.4);
-            var outside = new GeoCoord(0.0, 0.0);
+            var expected = new BBox(1.1m, 0.7m, 0.7m, 0.2m);
+            var inside = new GeoCoord(0.9m, 0.4m);
+            var outside = new GeoCoord(0.0m, 0.0m);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
 
@@ -37,14 +37,14 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(-0.3, 0.6), new GeoCoord(-0.4, 0.9),
-                            new GeoCoord(-0.2, 0.8), new GeoCoord(-0.1, 0.6)
+                            new GeoCoord(-0.3m, 0.6m), new GeoCoord(-0.4m, 0.9m),
+                            new GeoCoord(-0.2m, 0.8m), new GeoCoord(-0.1m, 0.6m)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(-0.1, -0.4, 0.9, 0.6);
-            var inside = new GeoCoord(-0.3, 0.8);
-            var outside = new GeoCoord(0.0, 0.0);
+            var expected = new BBox(-0.1m, -0.4m, 0.9m, 0.6m);
+            var inside = new GeoCoord(-0.3m, 0.8m);
+            var outside = new GeoCoord(0.0m, 0.0m);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
 
@@ -53,14 +53,14 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.7, -1.4), new GeoCoord(0.8, -0.9),
-                            new GeoCoord(1.0, -0.8), new GeoCoord(1.1, -1.3)
+                            new GeoCoord(0.7m, -1.4m), new GeoCoord(0.8m, -0.9m),
+                            new GeoCoord(1.0m, -0.8m), new GeoCoord(1.1m, -1.3m)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(1.1, 0.7, -0.8, -1.4);
-            var inside = new GeoCoord(0.9, -1.0);
-            var outside = new GeoCoord(0.0, 0.0);
+            var expected = new BBox(1.1m, 0.7m, -0.8m, -1.4m);
+            var inside = new GeoCoord(0.9m, -1.0m);
+            var outside = new GeoCoord(0.0m, 0.0m);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
 
@@ -69,14 +69,14 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(-0.4, -1.4), new GeoCoord(-0.3, -1.1),
-                            new GeoCoord(-0.1, -1.2), new GeoCoord(-0.2, -1.4)
+                            new GeoCoord(-0.4m, -1.4m), new GeoCoord(-0.3m, -1.1m),
+                            new GeoCoord(-0.1m, -1.2m), new GeoCoord(-0.2m, -1.4m)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(-0.1, -0.4, -1.1, -1.4);
-            var inside = new GeoCoord(-0.3, -1.2);
-            var outside = new GeoCoord(0.0, 0.0);
+            var expected = new BBox(-0.1m, -0.4m, -1.1m, -1.4m);
+            var inside = new GeoCoord(-0.3m, -1.2m);
+            var outside = new GeoCoord(0.0m, 0.0m);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
 
@@ -85,14 +85,14 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.4, -0.4), new GeoCoord(0.4, 0.4),
-                            new GeoCoord(-0.4, 0.4), new GeoCoord(-0.4, -0.4)
+                            new GeoCoord(0.4m, -0.4m), new GeoCoord(0.4m, 0.4m),
+                            new GeoCoord(-0.4m, 0.4m), new GeoCoord(-0.4m, -0.4m)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(0.4, -0.4, 0.4, -0.4);
-            var inside = new GeoCoord(-0.1, -0.1);
-            var outside = new GeoCoord(1.0, -1.0);
+            var expected = new BBox(0.4m, -0.4m, 0.4m, -0.4m);
+            var inside = new GeoCoord(-0.1m, -0.1m);
+            var outside = new GeoCoord(1.0m, -1.0m);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
 
@@ -101,28 +101,28 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.4, Constants.H3.M_PI - 0.1),
-                            new GeoCoord(0.4, -Constants.H3.M_PI + 0.1),
-                            new GeoCoord(-0.4, -Constants.H3.M_PI + 0.1),
-                            new GeoCoord(-0.4, Constants.H3.M_PI - 0.1)
+                            new GeoCoord(0.4m, Constants.H3.M_PI - 0.1m),
+                            new GeoCoord(0.4m, -Constants.H3.M_PI + 0.1m),
+                            new GeoCoord(-0.4m, -Constants.H3.M_PI + 0.1m),
+                            new GeoCoord(-0.4m, Constants.H3.M_PI - 0.1m)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(0.4, -0.4, -Constants.H3.M_PI + 0.1, Constants.H3.M_PI - 0.1);
-            var insideOnMeridian = new GeoCoord(-0.1, Constants.H3.M_PI);
-            var outside = new GeoCoord(1.0, Constants.H3.M_PI - 0.5);
+            var expected = new BBox(0.4m, -0.4m, -Constants.H3.M_PI + 0.1m, Constants.H3.M_PI - 0.1m);
+            var insideOnMeridian = new GeoCoord(-0.1m, Constants.H3.M_PI);
+            var outside = new GeoCoord(1.0m, Constants.H3.M_PI - 0.5m);
             RepeatBoxTest(geofence, expected, insideOnMeridian, outside);
 
-            var westInside = new GeoCoord(0.1, Constants.H3.M_PI - 0.05);
+            var westInside = new GeoCoord(0.1m, Constants.H3.M_PI - 0.05m);
             Assert.IsTrue(expected.Contains(westInside));
 
-            var eastInside = new GeoCoord(0.1, -Constants.H3.M_PI + 0.05);
+            var eastInside = new GeoCoord(0.1m, -Constants.H3.M_PI + 0.05m);
             Assert.IsTrue(expected.Contains(eastInside));
 
-            var westOutside = new GeoCoord(0.1, Constants.H3.M_PI - 0.5);
+            var westOutside = new GeoCoord(0.1m, Constants.H3.M_PI - 0.5m);
             Assert.IsFalse(expected.Contains(westOutside));
 
-            var eastOutside = new GeoCoord(0.1, -Constants.H3.M_PI + 0.5);
+            var eastOutside = new GeoCoord(0.1m, -Constants.H3.M_PI + 0.5m);
             Assert.IsFalse(expected.Contains(eastOutside));
         }
 
@@ -131,15 +131,15 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(Constants.H3.M_PI_2 - 0.1, 0.1),
-                            new GeoCoord(Constants.H3.M_PI_2 - 0.1, 0.8),
-                            new GeoCoord(Constants.H3.M_PI_2, 0.8),
-                            new GeoCoord(Constants.H3.M_PI_2, 0.1)
+                            new GeoCoord(Constants.H3.M_PI_2 - 0.1m, 0.1m),
+                            new GeoCoord(Constants.H3.M_PI_2 - 0.1m, 0.8m),
+                            new GeoCoord(Constants.H3.M_PI_2, 0.8m),
+                            new GeoCoord(Constants.H3.M_PI_2, 0.1m)
                         };
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(Constants.H3.M_PI_2, Constants.H3.M_PI_2 - 0.1, 0.8, 0.1);
-            var inside = new GeoCoord(Constants.H3.M_PI_2 - 0.01, 0.4);
-            var outside = new GeoCoord(Constants.H3.M_PI_2, 0.9);
+            var expected = new BBox(Constants.H3.M_PI_2, Constants.H3.M_PI_2 - 0.1m, 0.8m, 0.1m);
+            var inside = new GeoCoord(Constants.H3.M_PI_2 - 0.01m, 0.4m);
+            var outside = new GeoCoord(Constants.H3.M_PI_2, 0.9m);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
 
@@ -148,29 +148,29 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(-Constants.H3.M_PI_2 + 0.1, 0.1),
-                            new GeoCoord(-Constants.H3.M_PI_2 + 0.1, 0.8),
-                            new GeoCoord(-Constants.H3.M_PI_2, 0.8),
-                            new GeoCoord(-Constants.H3.M_PI_2, 0.1)
+                            new GeoCoord(-Constants.H3.M_PI_2 + 0.1m, 0.1m),
+                            new GeoCoord(-Constants.H3.M_PI_2 + 0.1m, 0.8m),
+                            new GeoCoord(-Constants.H3.M_PI_2, 0.8m),
+                            new GeoCoord(-Constants.H3.M_PI_2, 0.1m)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
-            var expected = new BBox(-Constants.H3.M_PI_2 + 0.1, -Constants.H3.M_PI_2, 0.8, 0.1);
-            var inside = new GeoCoord(-Constants.H3.M_PI_2 + 0.01, 0.4);
-            var outside = new GeoCoord(-Constants.H3.M_PI_2, 0.9);
+            var expected = new BBox(-Constants.H3.M_PI_2 + 0.1m, -Constants.H3.M_PI_2, 0.8m, 0.1m);
+            var inside = new GeoCoord(-Constants.H3.M_PI_2 + 0.01m, 0.4m);
+            var outside = new GeoCoord(-Constants.H3.M_PI_2, 0.9m);
             RepeatBoxTest(geofence, expected, inside, outside);
         }
         
         [Test]
         public void ContainsEdges()
         {
-            var bbox = new BBox(0.1, -0.1, 0.2, -0.2);
+            var bbox = new BBox(0.1m, -0.1m, 0.2m, -0.2m);
             var points = new[]
                          {
-                             new GeoCoord(0.1, 0.2), new GeoCoord(0.1, 0.0),
-                             new GeoCoord(0.1, -0.2), new GeoCoord(0.0, 0.2),
-                             new GeoCoord(-0.1, 0.2), new GeoCoord(-0.1, 0.0),
-                             new GeoCoord(-0.1, -0.2), new GeoCoord(0.0, -0.2)
+                             new GeoCoord(0.1m, 0.2m), new GeoCoord(0.1m, 0.0m),
+                             new GeoCoord(0.1m, -0.2m), new GeoCoord(0.0m, 0.2m),
+                             new GeoCoord(-0.1m, 0.2m), new GeoCoord(-0.1m, 0.0m),
+                             new GeoCoord(-0.1m, -0.2m), new GeoCoord(0.0m, -0.2m)
                          };
 
             foreach (var point in points)
@@ -182,18 +182,18 @@ namespace TestSuite
         [Test]
         public void ContainsEdgesTransmeridian()
         {
-            var bbox = new BBox(0.1, -0.1, -Constants.H3.M_PI + 0.2, Constants.H3.M_PI - 0.2);
+            var bbox = new BBox(0.1m, -0.1m, -Constants.H3.M_PI + 0.2m, Constants.H3.M_PI - 0.2m);
 
             var points = new[]
                          {
-                             new GeoCoord(0.1, -Constants.H3.M_PI + 0.2),
-                             new GeoCoord(0.1, Constants.H3.M_PI),
-                             new GeoCoord(0.1, Constants.H3.M_PI - 0.2),
-                             new GeoCoord(0.0, -Constants.H3.M_PI + 0.2),
-                             new GeoCoord(-0.1, -Constants.H3.M_PI + 0.2),
-                             new GeoCoord(-0.1, Constants.H3.M_PI),
-                             new GeoCoord(-0.1, Constants.H3.M_PI - 0.2),
-                             new GeoCoord(0.0, Constants.H3.M_PI - 0.2)
+                             new GeoCoord(0.1m, -Constants.H3.M_PI + 0.2m),
+                             new GeoCoord(0.1m, Constants.H3.M_PI),
+                             new GeoCoord(0.1m, Constants.H3.M_PI - 0.2m),
+                             new GeoCoord(0.0m, -Constants.H3.M_PI + 0.2m),
+                             new GeoCoord(-0.1m, -Constants.H3.M_PI + 0.2m),
+                             new GeoCoord(-0.1m, Constants.H3.M_PI),
+                             new GeoCoord(-0.1m, Constants.H3.M_PI - 0.2m),
+                             new GeoCoord(0.0m, Constants.H3.M_PI - 0.2m)
                          };
             
             foreach (var point in points)
@@ -205,28 +205,28 @@ namespace TestSuite
         [Test]
         public void BboxCenterBasicQuadrants()
         {
-            var bbox1 = new BBox(1.0, 0.8, 1.0, 0.8);
-            var expected1 = new GeoCoord(0.9, 0.9);
+            var bbox1 = new BBox(1.0m, 0.8m, 1.0m, 0.8m);
+            var expected1 = new GeoCoord(0.9m, 0.9m);
             var center = bbox1.Center();
             Assert.AreEqual(center, expected1);
 
-            var bbox2 = new BBox(-0.8, -1.0, 1.0, 0.8);
-            var expected2 = new GeoCoord(-0.9, 0.9);
+            var bbox2 = new BBox(-0.8m, -1.0m, 1.0m, 0.8m);
+            var expected2 = new GeoCoord(-0.9m, 0.9m);
             center = bbox2.Center();
             Assert.AreEqual(center, expected2);
 
-            var bbox3 = new BBox(1.0, 0.8, -0.8, -1.0);
-            var expected3 = new GeoCoord(0.9, -0.9);
+            var bbox3 = new BBox(1.0m, 0.8m, -0.8m, -1.0m);
+            var expected3 = new GeoCoord(0.9m, -0.9m);
             center = bbox3.Center();
             Assert.AreEqual(center, expected3);
 
-            var bbox4 = new BBox(-0.8, -1.0, -0.8, -1.0);
-            var expected4 = new GeoCoord(-0.9, -0.9);
+            var bbox4 = new BBox(-0.8m, -1.0m, -0.8m, -1.0m);
+            var expected4 = new GeoCoord(-0.9m, -0.9m);
             center = bbox4.Center();
             Assert.AreEqual(center, expected4);
 
-            var bbox5 = new BBox(0.8, -0.8, 1.0, -1.0);
-            var expected5 = new GeoCoord(0.0, 0.0);
+            var bbox5 = new BBox(0.8m, -0.8m, 1.0m, -1.0m);
+            var expected5 = new GeoCoord(0.0m, 0.0m);
             center = bbox5.Center();
             Assert.AreEqual(center, expected5);
         }
@@ -234,18 +234,18 @@ namespace TestSuite
         [Test]
         public void BboxCenterTransmeridian()
         {
-            var bbox1 = new BBox(1.0, 0.8, -Constants.H3.M_PI + 0.3, Constants.H3.M_PI - 0.1);
-            var expected1 = new GeoCoord(0.9, -Constants.H3.M_PI + 0.1);
+            var bbox1 = new BBox(1.0m, 0.8m, -Constants.H3.M_PI + 0.3m, Constants.H3.M_PI - 0.1m);
+            var expected1 = new GeoCoord(0.9m, -Constants.H3.M_PI + 0.1m);
             var center = bbox1.Center();
             Assert.AreEqual(center, expected1);
 
-            var bbox2 = new BBox(1.0, 0.8, -Constants.H3.M_PI + 0.1, Constants.H3.M_PI - 0.3);
-            var expected2 = new GeoCoord(0.9, Constants.H3.M_PI - 0.1);
+            var bbox2 = new BBox(1.0m, 0.8m, -Constants.H3.M_PI + 0.1m, Constants.H3.M_PI - 0.3m);
+            var expected2 = new GeoCoord(0.9m, Constants.H3.M_PI - 0.1m);
             center = bbox2.Center();
             Assert.AreEqual(center, expected2);
 
-            var bbox3 = new BBox(1.0, 0.8, -Constants.H3.M_PI + 0.1, Constants.H3.M_PI - 0.1);
-            var expected3 = new GeoCoord(0.9, Constants.H3.M_PI);
+            var bbox3 = new BBox(1.0m, 0.8m, -Constants.H3.M_PI + 0.1m, Constants.H3.M_PI - 0.1m);
+            var expected3 = new GeoCoord(0.9m, Constants.H3.M_PI);
             center = bbox3.Center();
             Assert.AreEqual(center, expected3);
         }
@@ -253,21 +253,21 @@ namespace TestSuite
         [Test]
         public void BboxIsTransmeridian()
         {
-            var bboxNormal = new BBox(1.0, 0.8, 1.0, 0.8);
+            var bboxNormal = new BBox(1.0m, 0.8m, 1.0m, 0.8m);
             Assert.IsFalse(bboxNormal.IsTransmeridian);
 
-            var bboxTransmeridian = new BBox(1.0, 0.8, -Constants.H3.M_PI + 0.3, Constants.H3.M_PI - 0.1);
+            var bboxTransmeridian = new BBox(1.0m, 0.8m, -Constants.H3.M_PI + 0.3m, Constants.H3.M_PI - 0.1m);
             Assert.IsTrue(bboxTransmeridian.IsTransmeridian);
         }
 
         [Test]
         public void BboxEquals()
         {
-            var bbox = new BBox(1.0, 0.0, 1.0, 0.0);
-            var north = bbox.ReplaceNorth(bbox.North + 0.1);
-            var south = bbox.ReplaceSouth(bbox.South + 0.1);
-            var east = bbox.ReplaceEast(bbox.East + 0.1);
-            var west = bbox.ReplaceWest(bbox.West + 0.1);
+            var bbox = new BBox(1.0m, 0.0m, 1.0m, 0.0m);
+            var north = bbox.ReplaceNorth(bbox.North + 0.1m);
+            var south = bbox.ReplaceSouth(bbox.South + 0.1m);
+            var east = bbox.ReplaceEast(bbox.East + 0.1m);
+            var west = bbox.ReplaceWest(bbox.West + 0.1m);
 
             Assert.AreEqual(bbox,bbox);
             Assert.AreNotEqual(bbox,north);

@@ -25,12 +25,12 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double H3_EXPORT(cellAreaRads2)
         /// -->
-        public static double CellAreaRadians2(this H3Index cell)
+        public static decimal CellAreaRadians2(this H3Index cell)
         {
             var c = cell.ToGeoCoord();
             var gb = cell.ToGeoBoundary();
 
-            var area = 0.0;
+            var area = 0.0m;
             for (var i = 0; i < gb.NumVerts; i++)
             {
                 int j = (i + 1) % gb.NumVerts;
@@ -48,7 +48,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double H3_EXPORT(cellAreaKm2)
         /// -->
-        public static double CellAreaKm2(this H3Index h)
+        public static decimal CellAreaKm2(this H3Index h)
         {
             return h.CellAreaRadians2() * 
                    Constants.H3.EARTH_RADIUS_KM *
@@ -63,7 +63,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double H3_EXPORT(cellAreaM2)
         /// -->
-        public static double CellAreaM2(this H3Index h)
+        public static decimal CellAreaM2(this H3Index h)
         {
             return h.CellAreaKm2() * 1000 * 1000;
         }
@@ -77,11 +77,11 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double H3_EXPORT(exactEdgeLengthRads)
         /// -->
-        public static double ExactEdgeLengthRads(this H3Index edge)
+        public static decimal ExactEdgeLengthRads(this H3Index edge)
         {
             var gb = edge.UniEdgeToGeoBoundary();
 
-            var length = 0.0;
+            var length = 0.0m;
             for (var i = 0; i < gb.NumVerts - 1; i++)
             {
                 length += gb.Verts[i].DistanceToRadians(gb.Verts[i + 1]);
@@ -97,7 +97,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double H3_EXPORT(exactEdgeLengthKm)
         /// -->
-        public static double ExactEdgeLengthKm(this H3Index edge)
+        public static decimal ExactEdgeLengthKm(this H3Index edge)
         {
             return edge.ExactEdgeLengthRads() * Constants.H3.EARTH_RADIUS_KM;
         }
@@ -110,7 +110,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double H3_EXPORT(exactEdgeLengthM)
         /// -->
-        public static double ExactEdgeLengthM(this H3Index edge)
+        public static decimal ExactEdgeLengthM(this H3Index edge)
         {
             return edge.ExactEdgeLengthKm() * 1000;
         }
@@ -2075,7 +2075,7 @@ namespace H3Lib.Extensions
         /// bbox.c
         /// double _hexRadiusKm
         /// -->
-        public static double HexRadiusKm(this H3Index h3)
+        public static decimal HexRadiusKm(this H3Index h3)
         {
             // There is probably a cheaper way to determine the radius of a
             // hexagon, but this way is conceptually simple

@@ -150,7 +150,7 @@ namespace H3Lib
         /// </summary>
         /// <param name="degrees"></param>
         /// <returns></returns>
-        public static double DegreesToRadians(double degrees)
+        public static decimal DegreesToRadians(decimal degrees)
         {
             return degrees.DegreesToRadians();
         }
@@ -160,7 +160,7 @@ namespace H3Lib
         /// converts radians to degrees
         /// </summary>
         /// <returns></returns>
-        public static double RadiansToDegrees(double radians)
+        public static decimal RadiansToDegrees(decimal radians)
         {
             return radians.RadiansToDegrees();
         }
@@ -171,7 +171,7 @@ namespace H3Lib
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static double PointDistRads(GeoCoord a, GeoCoord b)
+        public static decimal PointDistRads(GeoCoord a, GeoCoord b)
         {
             return a.DistanceToRadians(b);
         }
@@ -182,7 +182,7 @@ namespace H3Lib
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static double PointDistKm(GeoCoord a, GeoCoord b)
+        public static decimal PointDistKm(GeoCoord a, GeoCoord b)
         {
             return a.DistanceToKm(b);
         }
@@ -190,7 +190,7 @@ namespace H3Lib
         /// <summary>
         /// "great circle distance" between pairs of GeoCoord points in meters*/
         /// </summary>
-        public static double PointDistM(GeoCoord a, GeoCoord b)
+        public static decimal PointDistM(GeoCoord a, GeoCoord b)
         {
            return a.DistanceToM(b);
         }
@@ -198,7 +198,7 @@ namespace H3Lib
         /// <summary>
         /// average hexagon area in square kilometers (excludes pentagons)
         /// </summary>
-        public static double HexAreaKm2(int r)
+        public static decimal HexAreaKm2(int r)
         {
             return GeoCoord.HexAreaKm2(r);
         }
@@ -206,7 +206,7 @@ namespace H3Lib
         /// <summary>
         /// average hexagon area in square meters (excludes pentagons)
         /// </summary>
-        public static double HexAreaM2(int r)
+        public static decimal HexAreaM2(int r)
         {
             return GeoCoord.HexAreaM2(r);
         }
@@ -215,7 +215,7 @@ namespace H3Lib
         /// <summary>
         /// exact area for a specific cell (hexagon or pentagon) in radians^2
         /// </summary>
-        public static double CellAreaRads2(H3Index h)
+        public static decimal CellAreaRads2(H3Index h)
         {
             return h.CellAreaRadians2();
         }
@@ -223,7 +223,7 @@ namespace H3Lib
         /// <summary>
         /// exact area for a specific cell (hexagon or pentagon) in kilometers^2
         /// </summary>
-        public static double CellAreaKm2(H3Index h)
+        public static decimal CellAreaKm2(H3Index h)
         {
             return h.CellAreaKm2();
         }
@@ -231,7 +231,7 @@ namespace H3Lib
         /// <summary>
         /// exact area for a specific cell (hexagon or pentagon) in meters^2
         /// </summary>
-        public static double CellAreaM2(H3Index h)
+        public static decimal CellAreaM2(H3Index h)
         {
             return h.CellAreaM2();
         }
@@ -239,7 +239,7 @@ namespace H3Lib
         /// <summary>
         /// average hexagon edge length in kilometers (excludes pentagons)
         /// </summary>
-        public static double EdgeLengthKm(int r)
+        public static decimal EdgeLengthKm(int r)
         {
             return GeoCoord.EdgeLengthKm(r);
         }
@@ -247,7 +247,7 @@ namespace H3Lib
         /// <summary>
         /// average hexagon edge length in meters (excludes pentagons)
         /// </summary>
-        public static double EdgeLengthM(int r)
+        public static decimal EdgeLengthM(int r)
         {
             return GeoCoord.EdgeLengthM(r);
         }
@@ -255,7 +255,7 @@ namespace H3Lib
         /// <summary>
         /// exact length for a specific unidirectional edge in radians*/
         /// </summary>
-        public static double ExactEdgeLengthRads(H3Index edge)
+        public static decimal ExactEdgeLengthRads(H3Index edge)
         {
             return edge.ExactEdgeLengthRads();
         }
@@ -263,7 +263,7 @@ namespace H3Lib
         /// <summary>
         /// exact length for a specific unidirectional edge in kilometers*/
         /// </summary>
-        public static double ExactEdgeLengthKm(H3Index edge)
+        public static decimal ExactEdgeLengthKm(H3Index edge)
         {
             return edge.ExactEdgeLengthKm();
         }
@@ -271,7 +271,7 @@ namespace H3Lib
         /// <summary>
         /// exact length for a specific unidirectional edge in meters*/
         /// </summary>
-        public static double ExactEdgeLengthM(H3Index edge)
+        public static decimal ExactEdgeLengthM(H3Index edge)
         {
             return edge.ExactEdgeLengthM();
         }
@@ -593,7 +593,7 @@ namespace H3Lib
         /// <summary>
         /// Winging this one, returns a GeoCoord with degree values instead of radians
         /// </summary>
-        public static GeoCoord SetGeoDegs(double latDegs, double lonDegs)
+        public static GeoCoord SetGeoDegs(decimal latDegs, decimal lonDegs)
         {
             return new GeoCoord().SetDegrees(latDegs, lonDegs);
         }

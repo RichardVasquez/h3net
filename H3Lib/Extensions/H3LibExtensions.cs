@@ -32,9 +32,9 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double _posAngleRads
         /// -->
-        public static double NormalizeRadians(this double rads, double limit = Constants.H3.M_2PI)
+        public static decimal NormalizeRadians(this decimal rads, decimal limit = Constants.H3.M_2PI)
         {
-            double tmp = rads < 0.0
+            decimal tmp = rads < 0.0m
                              ? rads + Constants.H3.M_2PI
                              : rads;
             if (rads >= Constants.H3.M_2PI)
@@ -54,7 +54,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double constrainLat
         /// -->
-        public static double ConstrainLatitude(this double latitude)
+        public static decimal ConstrainLatitude(this decimal latitude)
         {
             while (latitude > Constants.H3.M_PI_2)
             {
@@ -68,9 +68,9 @@ namespace H3Lib.Extensions
         /// <summary>
         /// Constrain Latitude to +/- PI/2
         /// </summary>
-        public static double ConstrainLatitude(this int latitude)
+        public static decimal ConstrainLatitude(this int latitude)
         {
-            var newLatitude = (double) latitude;
+            var newLatitude = (decimal) latitude;
             while (newLatitude > Constants.H3.M_PI_2)
             {
                 newLatitude -= Constants.H3.M_PI;
@@ -88,7 +88,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double constrainLng
         /// -->
-        public static double ConstrainLongitude(this double longitude)
+        public static decimal ConstrainLongitude(this decimal longitude)
         {
             while (longitude > Constants.H3.M_PI)
             {
@@ -108,17 +108,17 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="longitude"></param>
         /// <returns></returns>
-        public static double ConstrainLongitude(this int longitude)
+        public static decimal ConstrainLongitude(this int longitude)
         {
-            var newLongitude = (double) longitude;
+            var newLongitude = (decimal) longitude;
             while (newLongitude > Constants.H3.M_PI)
             {
-                newLongitude -= 2 * Constants.H3.M_PI;
+                newLongitude -= 2m * Constants.H3.M_PI;
             }
 
             while (newLongitude < -Constants.H3.M_PI)
             {
-                newLongitude += 2 * Constants.H3.M_PI;
+                newLongitude += 2m * Constants.H3.M_PI;
             }
 
             return newLongitude;
@@ -133,7 +133,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double H3_EXPORT(degsToRads)
         /// -->
-        public static double DegreesToRadians(this double degrees)
+        public static decimal DegreesToRadians(this decimal degrees)
         {
             return degrees * Constants.H3.M_PI_180;
         }
@@ -143,7 +143,7 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="degrees"></param>
         /// <returns></returns>
-        public static double DegreesToRadians(this int degrees)
+        public static decimal DegreesToRadians(this int degrees)
         {
             return degrees * Constants.H3.M_PI_180;
         }
@@ -157,7 +157,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double H3_EXPORT(radsToDegs)
         /// -->
-        public static double RadiansToDegrees(this double radians)
+        public static decimal RadiansToDegrees(this decimal radians)
         {
             return radians * Constants.H3.M_180_PI;
         }
@@ -227,7 +227,7 @@ namespace H3Lib.Extensions
         /// vec3d.c
         /// double _square
         /// -->
-        public static double Square(this double x)
+        public static decimal Square(this decimal x)
         {
             return x * x;
         }
@@ -457,7 +457,7 @@ namespace H3Lib.Extensions
         /// polygonAlgos.h
         /// #define NORMALIZE_LON
         /// -->
-        public static double NormalizeLongitude(this double longitude, bool isTransmeridian)
+        public static decimal NormalizeLongitude(this decimal longitude, bool isTransmeridian)
         {
             return isTransmeridian && longitude < 0
                        ? longitude + Constants.H3.M_2PI

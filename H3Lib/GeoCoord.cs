@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using DecimalMath;
 using H3Lib.Extensions;
 
 namespace H3Lib
@@ -13,17 +14,17 @@ namespace H3Lib
         /// <summary>
         /// Latitude normally in radians
         /// </summary>
-        public readonly double Latitude;
+        public readonly decimal Latitude;
         
         /// <summary>
         /// Longitude normally in radians
         /// </summary>
-        public readonly double Longitude;
+        public readonly decimal Longitude;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public GeoCoord(double latitude, double longitude)
+        public GeoCoord(decimal latitude, decimal longitude)
         {
             Latitude = latitude;
             Longitude = longitude;
@@ -58,7 +59,7 @@ namespace H3Lib
         /// <summary>
         /// Area of cell at resolution in square kilometers
         /// </summary>
-        public static double HexAreaKm2(int res)
+        public static decimal HexAreaKm2(int res)
         {
             return Constants.GeoCoord.AreasKm2[res];
         }
@@ -66,7 +67,7 @@ namespace H3Lib
         /// <summary>
         /// Area of cell at resolution in square meters
         /// </summary>
-        public static double HexAreaM2(int res)
+        public static decimal HexAreaM2(int res)
         {
             return Constants.GeoCoord.AreasM2[res];
         }
@@ -74,7 +75,7 @@ namespace H3Lib
         /// <summary>
         /// Length of cell edge at resolution in kilometers
         /// </summary>
-        public static double EdgeLengthKm(int res)
+        public static decimal EdgeLengthKm(int res)
         {
             return Constants.GeoCoord.EdgeLengthKm[res];
         }
@@ -82,7 +83,7 @@ namespace H3Lib
         /// <summary>
         /// Length of cell edge at resolution in meters
         /// </summary>
-        public static double EdgeLengthM(int res)
+        public static decimal EdgeLengthM(int res)
         {
             return Constants.GeoCoord.EdgeLengthM[res];
         }
@@ -101,20 +102,20 @@ namespace H3Lib
         /// geoCoord.c
         /// double triangleEdgeLengthsToArea
         /// -->
-        private static double TriangleEdgeLengthToArea(double a, double b, double c)
+        private static decimal TriangleEdgeLengthToArea(decimal a, decimal b, decimal c)
         {
-            double s = (a + b + c) / 2;
+            decimal s = (a + b + c) / 2;
 
             a = (s - a) / 2;
             b = (s - b) / 2;
             c = (s - c) / 2;
             s /= 2;
 
-            return 4 * Math.Atan
-                       (Math.Sqrt(Math.Tan(s) *
-                                  Math.Tan(a) * 
-                                  Math.Tan(b) *
-                                  Math.Tan(c)));
+            return 4 * DecimalEx.ATan
+                       (DecimalEx.Sqrt(DecimalEx.Tan(s) *
+                                       DecimalEx.Tan(a) * 
+                                       DecimalEx.Tan(b) *
+                                       DecimalEx.Tan(c)));
         }
 
         /// <summary>
@@ -128,7 +129,7 @@ namespace H3Lib
         /// geoCoord.c
         /// double triangleArea
         /// -->
-        public static double TriangleArea(GeoCoord a, GeoCoord b, GeoCoord c)
+        public static decimal TriangleArea(GeoCoord a, GeoCoord b, GeoCoord c)
         {
             return TriangleEdgeLengthToArea
                 (a.DistanceToRadians(b),

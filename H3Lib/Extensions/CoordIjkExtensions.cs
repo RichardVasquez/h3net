@@ -84,7 +84,7 @@ namespace H3Lib.Extensions
             int i = h.I - h.K;
             int j = h.J - h.K;
 
-            return new Vec2d(i - 0.5 * j, j * Constants.H3.M_SQRT3_2);
+            return new Vec2d(i - 0.5m * j, j * Constants.H3.M_SQRT3_2);
         }
 
         /// <summary>

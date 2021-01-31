@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using DecimalMath;
 
 namespace H3Lib
 {
@@ -12,16 +13,16 @@ namespace H3Lib
         /// <summary>
         /// X coordinate
         /// </summary>
-        public readonly double X;
+        public readonly decimal X;
         /// <summary>
         /// Y Coordinate
         /// </summary>
-        public readonly double Y;
+        public readonly decimal Y;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public Vec2d(double x, double y) 
+        public Vec2d(decimal x, decimal y) 
         {
             X = x;
             Y = y;
@@ -34,7 +35,7 @@ namespace H3Lib
         /// vec2d.c
         /// double _v2dMag
         /// -->
-        public double Magnitude => Math.Sqrt(X * X + Y * Y);
+        public decimal Magnitude => DecimalEx.Sqrt(X * X + Y * Y);
 
         /**
          * Finds the intersection between two lines. Assumes that the lines intersect
@@ -63,7 +64,7 @@ namespace H3Lib
             var s1 = new Vec2d(p1.X - p0.X, p1.Y - p0.Y);
             var s2 = new Vec2d(p3.X - p2.X, p3.Y - p2.Y);
 
-            double t = (s2.X * (p0.Y - p2.Y) - s2.Y * (p0.X - p2.X)) /
+            decimal t = (s2.X * (p0.Y - p2.Y) - s2.Y * (p0.X - p2.X)) /
                        (-s2.X * s1.Y + s1.X * s2.Y);
 
             return new Vec2d

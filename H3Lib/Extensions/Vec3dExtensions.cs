@@ -15,7 +15,7 @@ namespace H3Lib.Extensions
         /// vec3d.c
         /// double _pointSquareDist
         /// -->
-        public static double PointSquareDistance(this Vec3d v1, Vec3d v2)
+        public static decimal PointSquareDistance(this Vec3d v1, Vec3d v2)
         {
             return (v1.X - v2.X).Square() + (v1.Y - v2.Y).Square() + (v1.Z - v2.Z).Square();
         }
@@ -26,7 +26,7 @@ namespace H3Lib.Extensions
         /// <param name="v3"></param>
         /// <param name="x"></param>
         /// <returns></returns>
-        public static Vec3d SetX(this Vec3d v3, double x)
+        public static Vec3d SetX(this Vec3d v3, decimal x)
         {
             return new Vec3d(x, v3.Y, v3.Z);
         }
@@ -37,7 +37,7 @@ namespace H3Lib.Extensions
         /// <param name="v3"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static Vec3d SetY(this Vec3d v3, double y)
+        public static Vec3d SetY(this Vec3d v3, decimal y)
         {
             return new Vec3d(v3.X, y, v3.Z);
         }
@@ -48,7 +48,7 @@ namespace H3Lib.Extensions
         /// <param name="v3"></param>
         /// <param name="z"></param>
         /// <returns></returns>
-        public static Vec3d SetZ(this Vec3d v3, double z)
+        public static Vec3d SetZ(this Vec3d v3, decimal z)
         {
             return new Vec3d(v3.X, v3.Y, z);
         }

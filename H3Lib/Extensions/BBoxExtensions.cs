@@ -13,7 +13,7 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="box">box to replace</param>
         /// <param name="n">North Value</param>
-        public static BBox ReplaceNorth(this BBox box, double n)
+        public static BBox ReplaceNorth(this BBox box, decimal n)
         {
             return new BBox(n, box.South, box.East, box.West);
         }
@@ -23,7 +23,7 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="box">box to replace</param>
         /// <param name="s">South Value</param>
-        public static BBox ReplaceSouth(this BBox box, double s)
+        public static BBox ReplaceSouth(this BBox box, decimal s)
         {
             return new BBox(box.North, s, box.East, box.West);
         }
@@ -33,7 +33,7 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="box">box to replace</param>
         /// <param name="e">East Value</param>
-        public static BBox ReplaceEast(this BBox box, double e)
+        public static BBox ReplaceEast(this BBox box, decimal e)
         {
             return new BBox(box.North, box.South, e, box.West);
         }
@@ -43,7 +43,7 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="box">box to replace</param>
         /// <param name="w">West Value</param>
-        public static BBox ReplaceWest(this BBox box, double w)
+        public static BBox ReplaceWest(this BBox box, decimal w)
         {
             return new BBox(box.North, box.South, box.East, w);
         }
@@ -57,7 +57,7 @@ namespace H3Lib.Extensions
         /// <param name="e">East value</param>
         /// <param name="w">West value</param>
         /// <returns></returns>
-        public static BBox ReplaceEW(this BBox box, double e, double w)
+        public static BBox ReplaceEW(this BBox box, decimal e, decimal w)
         {
             return new BBox(box.North, box.South, e, w);
         }
@@ -74,12 +74,12 @@ namespace H3Lib.Extensions
         /// -->
         public static GeoCoord Center(this BBox box)
         {
-            double latitude = (box.North + box.South) / 2.0;
+            decimal latitude = (box.North + box.South) / 2.0m;
             // If the bbox crosses the antimeridian, shift east 360 degrees
-            double east = box.IsTransmeridian
-                              ? box.East + Constants.H3.M_2PI
-                              : box.East;
-            double longitude = ((east + box.West) / 2.0).ConstrainLongitude();
+            decimal east = box.IsTransmeridian
+                               ? box.East + Constants.H3.M_2PI
+                               : box.East;
+            decimal longitude = ((east + box.West) / 2.0m).ConstrainLongitude();
             return new GeoCoord(latitude, longitude);
         }
 
@@ -119,30 +119,30 @@ namespace H3Lib.Extensions
         {
             // Get the area of the pentagon as the maximally-distorted area possible
             var pentagons = res.GetPentagonIndexes();
-            double pentagonRadiusKm = pentagons[0].HexRadiusKm();
+            decimal pentagonRadiusKm = pentagons[0].HexRadiusKm();
 
             // Area of a regular hexagon is 3/2*sqrt(3) * r * r
             // The pentagon has the most distortion (smallest edges) and shares its
             // edges with hexagons, so the most-distorted hexagons have this area,
             // shrunk by 20% off chance that the bounding box perfectly bounds a
             // pentagon.
-            double pentagonAreaKm2 =
-                0.8 * (2.59807621135 * pentagonRadiusKm * pentagonRadiusKm);
+            decimal pentagonAreaKm2 =
+                0.8m * (2.59807621135m * pentagonRadiusKm * pentagonRadiusKm);
 
             // Then get the area of the bounding box of the geofence in question
             var p1 = new GeoCoord(box.North, box.East);
             var p2 = new GeoCoord(box.South, box.West);
-            double d = p1.DistanceToKm(p2);
+            decimal d = p1.DistanceToKm(p2);
 
             // Derived constant based on: https://math.stackexchange.com/a/1921940
             // Clamped to 3 as higher values tend to rapidly drag the estimate to zero.
-            double a = d * d /
-                       new[]
-                           {
-                               3.0,
-                               Math.Abs((p1.Longitude - p2.Longitude) / (p1.Latitude - p2.Latitude))
-                           }
-                          .Min();
+            decimal a = d * d /
+                        new[]
+                            {
+                                3.0m,
+                                Math.Abs((p1.Longitude - p2.Longitude) / (p1.Latitude - p2.Latitude))
+                            }
+                           .Min();
 
             // Divide the two to get an estimate of the number of hexagons needed
             var estimate = (int) Math.Ceiling(a / pentagonAreaKm2);

@@ -26,7 +26,7 @@ namespace H3Lib
         {
             Verts = new[]
                     {
-                        new GeoCoord(0.0,0.0), new GeoCoord(0.0,0.0)
+                        new GeoCoord(0.0m,0.0m), new GeoCoord(0.0m,0.0m)
                     };
             NumVerts = 0;
         }

@@ -11,20 +11,20 @@ namespace H3Lib
         /// <summary>
         /// X Coordinate
         /// </summary>
-        public readonly double X;
+        public readonly decimal X;
         /// <summary>
         /// Y Coordinate
         /// </summary>
-        public readonly double Y;
+        public readonly decimal Y;
         /// <summary>
         /// Z Coordinate
         /// </summary>
-        public readonly double Z;
+        public readonly decimal Z;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public Vec3d(double x, double y, double z)
+        public Vec3d(decimal x, decimal y, decimal z)
         {
             X = x;
             Y = y;
