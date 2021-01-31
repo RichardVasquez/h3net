@@ -187,9 +187,9 @@ namespace H3Lib.Extensions
             // Get the estimated number of hexagons and allocate some temporary memory
             // for the hexagons
             int numHexagons = geoPolygon.MaxPolyFillSize(res);
-            var search = Enumerable.Range(1, numHexagons).Select(r => new H3Index()).ToList();
-            var found = Enumerable.Range(1, numHexagons).Select(r => new H3Index()).ToList();
-            var results = Enumerable.Range(1, numHexagons).Select(r => new H3Index()).ToList();
+            var search = new H3Index[numHexagons].ToList();
+            var found = new H3Index[numHexagons].ToList();
+            var results = new H3Index[numHexagons].ToList();
 
             // Some metadata for tracking the state of the search and found memory
             // blocks

@@ -42,7 +42,7 @@ namespace TestSuite
             {
                 var h3 = Api.StringToH3(hexes[i]);
                 var b = h3.ToGeoBoundary();
-                Assert.AreEqual(7, b.NumVerts);
+                Assert.AreEqual(7, b.NumVerts, $"{h3.Value} => {h3.ToString()}");
             }
         }
 

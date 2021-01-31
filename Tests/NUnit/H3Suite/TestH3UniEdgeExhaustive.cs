@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using H3Lib;
 using H3Lib.Extensions;
@@ -46,22 +47,26 @@ namespace TestSuite
 
                 var revEdgeBoundary = revEdge.UniEdgeToGeoBoundary();
 
-                if (edgeBoundary.NumVerts != revEdgeBoundary.NumVerts)
-                {
-                    ;//var k = 0;
-                }
-                
-                
                 Assert.AreEqual(edgeBoundary.NumVerts, revEdgeBoundary.NumVerts);
 
                 for (var j = 0; j < edgeBoundary.NumVerts; j++)
                 {
+                    if (Math.Abs
+                            (
+                             edgeBoundary.Verts[j].Latitude -
+                             revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude
+                            ) >= .000001)
+                    {
+                        var k = 0;
+                    }
+                    
                     
                     Assert.AreEqual
                         (
                          edgeBoundary.Verts[j].Latitude,
                          revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude,
-                         0.000001
+                         0.000001, 
+                         $"\n1: {edgeBoundary.Verts[j].Latitude}\n2: {revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude}"
                         );
                     Assert.AreEqual
                         (

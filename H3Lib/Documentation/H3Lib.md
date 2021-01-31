@@ -4568,6 +4568,10 @@ Internal values for all of H3
 ##### Summary
 
 General margin of error in differences between double values
+ Original value was 2.2204460492503131e-16;
+
+ This is relevant to accuracy's interest, methinks
+ https://github.com/dotnet/runtime/issues/8528
 
 <a name='F-H3Lib-Constants-H3-EARTH_RADIUS_KM'></a>
 ### EARTH_RADIUS_KM `constants`

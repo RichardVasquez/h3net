@@ -85,19 +85,19 @@ namespace TestSuite
             // TODO: Not testing more than one depth because the assertions fail.
             for (int nextRes = currentRes; nextRes <= currentRes + 1; nextRes++)
             {
-                GeoBoundary bndry = h.ToGeoBoundary();
+                var boundary = h.ToGeoBoundary();
 
-                GeoPolygon polygon = new GeoPolygon()
-                                     {
-                                         GeoFence =
-                                             new GeoFence
-                                             {
-                                                 NumVerts = bndry.NumVerts,
-                                                 Verts = bndry.Verts.ToArray()
-                                             },
-                                         NumHoles = 0,
-                                         Holes = new List<GeoFence>()
-                                     };
+                var polygon = new GeoPolygon()
+                              {
+                                  GeoFence =
+                                      new GeoFence
+                                      {
+                                          NumVerts = boundary.NumVerts,
+                                          Verts = boundary.Verts.ToArray()
+                                      },
+                                  NumHoles = 0,
+                                  Holes = new List<GeoFence>()
+                              };
 
                 var polyfillOut = polygon.Polyfill(nextRes);
                 int polyfillCount = Utility.CountActualHexagons(polyfillOut);

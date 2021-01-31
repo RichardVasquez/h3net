@@ -530,12 +530,12 @@ namespace H3Lib.Extensions
                 edge, with no edge line intersections.
                 */
 
-                Vec2d orig2d1 = fijkVerts[v].Coord.ToHex2d();
                 if (res.IsResClassIii() && vert > start && fijk.Face != lastFace && lastOverage != Overage.FACE_EDGE)
                 {
                     // find hex2d of the two vertexes on original face
                     int lastV = (v + 5) % Constants.H3.NUM_HEX_VERTS;
                     var orig2d0 = fijkVerts[lastV].Coord.ToHex2d();
+                    var orig2d1 = fijkVerts[v].Coord.ToHex2d();
 
                     // find the appropriate icosahedron face edge vertexes
                     int maxDim = Constants.FaceIjk.MaxDimByCiiRes[adjRes];

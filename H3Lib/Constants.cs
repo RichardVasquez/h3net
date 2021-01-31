@@ -155,8 +155,13 @@ namespace H3Lib
 
             /// <summary>
             /// General margin of error in differences between double values
+            /// Original value was 2.2204460492503131e-16;
+            ///
+            /// This is relevant to accuracy's interest, methinks
+            /// https://github.com/dotnet/runtime/issues/8528
+            /// 
             /// </summary>
-            internal const double DBL_EPSILON = 2.2204460492503131e-16;
+            internal const double DBL_EPSILON = 0.0000000001;
 
             /// <summary>
             /// Direction used for traversing to the next outward hexagonal ring. 
