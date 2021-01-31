@@ -68,10 +68,10 @@ namespace TestSuite
         [Test]
         public void h3js_67()
         {
-            double east = (-56.25).DegreesToRadians();
-            double north = (-33.13755119234615).DegreesToRadians();
-            double south = (-34.30714385628804).DegreesToRadians();
-            double west = (-57.65625).DegreesToRadians();
+            decimal east = (-56.25m).DegreesToRadians();
+            decimal north = (-33.13755119234615m).DegreesToRadians();
+            decimal south = (-34.30714385628804m).DegreesToRadians();
+            decimal west = (-57.65625m).DegreesToRadians();
 
             var testVerts = new[]
                             {
@@ -95,10 +95,10 @@ namespace TestSuite
         [Test]
         public void h3js_67_2nd()
         {
-            double east = (-57.65625).DegreesToRadians();
-            double north = (-34.30714385628804).DegreesToRadians();
-            double south = (-35.4606699514953).DegreesToRadians();
-            double west = (-59.0625).DegreesToRadians();
+            decimal east = (-57.65625m).DegreesToRadians();
+            decimal north = (-34.30714385628804m).DegreesToRadians();
+            decimal south = (-35.4606699514953m).DegreesToRadians();
+            decimal west = (-59.0625m).DegreesToRadians();
 
             var testVerts = new[]
                             {
@@ -124,10 +124,10 @@ namespace TestSuite
         {
             var testVerts = new[]
                             {
-                                new GeoCoord(0.10068990369902957, 0.8920772174196191),
-                                new GeoCoord(0.10032914690616246, 0.8915914753447348),
-                                new GeoCoord(0.10033349237998787, 0.8915860128746426),
-                                new GeoCoord(0.10069496685903621, 0.8920742194546231)
+                                new GeoCoord(0.10068990369902957m, 0.8920772174196191m),
+                                new GeoCoord(0.10032914690616246m, 0.8915914753447348m),
+                                new GeoCoord(0.10033349237998787m, 0.8915860128746426m),
+                                new GeoCoord(0.10069496685903621m, 0.8920742194546231m)
                             };
 
             var testGeoFence = new GeoFence{NumVerts = 4, Verts = testVerts};

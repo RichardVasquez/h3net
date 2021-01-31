@@ -34,7 +34,7 @@ namespace GeoToH3
             var target = new GeoToH3Parser();
             parser.ExtractArgumentAttributes(target);
 
-            var h3 = new GeoCoord(target.Latitude, target.Longitude)
+            var h3 = new GeoCoord((decimal)target.Latitude, (decimal)target.Longitude)
                .ToH3Index(target.Resolution);
 
             Console.WriteLine(h3.ToString());

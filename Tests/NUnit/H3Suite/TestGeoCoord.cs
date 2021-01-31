@@ -8,10 +8,10 @@ namespace TestSuite
     [TestFixture]
     public class TestGeoCoord
     {
-        private static void TestDecreasingFunction(Func<int,double> function)
+        private static void TestDecreasingFunction(Func<int,decimal> function)
         {
-            double last = 0;
-            double next;
+            decimal last = 0;
+            decimal next;
             for (int i = Constants.H3.MAX_H3_RES; i >= 0; i--)
             {
                 next = function(i);
@@ -23,9 +23,9 @@ namespace TestSuite
         [Test]
         public void RadsToDegs()
         {
-            double originalRads = 1;
-            double degs = originalRads.RadiansToDegrees();
-            double rads = degs.DegreesToRadians();
+            decimal originalRads = 1;
+            decimal degs = originalRads.RadiansToDegrees();
+            decimal rads = degs.DegreesToRadians();
             Assert.Less(rads-originalRads, Constants.H3.EPSILON_RAD);
         }
 
@@ -37,7 +37,7 @@ namespace TestSuite
 
             // TODO: Epsilon is relatively large
             Assert.Less(p1.DistanceToRadians(p1),Constants.H3.EPSILON_RAD * 1000);
-            Assert.Less(p1.DistanceToRadians(p2) - (10.0).DegreesToRadians(), Constants.H3.EPSILON_RAD * 1000);
+            Assert.Less(p1.DistanceToRadians(p2) - (10.0m).DegreesToRadians(), Constants.H3.EPSILON_RAD * 1000);
         }
 
         [Test]
@@ -48,13 +48,13 @@ namespace TestSuite
 
             Assert.AreEqual(a, b);
 
-            b = new GeoCoord(15.00001, 10.00002);
+            b = new GeoCoord(15.00001m, 10.00002m);
             Assert.AreNotEqual(a, b);
 
-            b = new GeoCoord(15.00001, 10);
+            b = new GeoCoord(15.00001m, 10);
             Assert.AreNotEqual(a, b);
 
-            b = new GeoCoord(15, 10.00001);
+            b = new GeoCoord(15, 10.00001m);
             Assert.AreNotEqual(a,b);
         }
 
@@ -142,9 +142,9 @@ namespace TestSuite
             start = start.SetDegrees(15, 10);
             GeoCoord outCoord = default;
 
-            double azimuth = 20.DegreesToRadians();
-            double degrees180 = 180.DegreesToRadians();
-            double distance = 15.DegreesToRadians();
+            decimal azimuth = 20.DegreesToRadians();
+            decimal degrees180 = 180.DegreesToRadians();
+            decimal distance = 15.DegreesToRadians();
 
             outCoord = start.GetAzimuthDistancePoint(azimuth, distance);
             Assert.Less(Math.Abs(start.DistanceToRadians(outCoord) - distance), Constants.H3.EPSILON_RAD);

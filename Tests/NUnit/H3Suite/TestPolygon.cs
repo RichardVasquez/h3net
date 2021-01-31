@@ -12,12 +12,12 @@ namespace TestSuite
     {
         private static readonly GeoCoord[] SfVerts =
         {
-            new GeoCoord(0.659966917655, -2.1364398519396), new GeoCoord(0.6595011102219, -2.1359434279405),
-            new GeoCoord(0.6583348114025, -2.1354884206045), new GeoCoord(0.6581220034068, -2.1382437718946),
-            new GeoCoord(0.6594479998527, -2.1384597563896), new GeoCoord(0.6599990002976, -2.1376771158464)
+            new GeoCoord(0.659966917655m, -2.1364398519396m), new GeoCoord(0.6595011102219m, -2.1359434279405m),
+            new GeoCoord(0.6583348114025m, -2.1354884206045m), new GeoCoord(0.6581220034068m, -2.1382437718946m),
+            new GeoCoord(0.6594479998527m, -2.1384597563896m), new GeoCoord(0.6599990002976m, -2.1376771158464m)
         };
 
-        private static GeoCoord[] MakeGeoCoordArray(double[,] coords)
+        private static GeoCoord[] MakeGeoCoordArray(decimal[,] coords)
         {
             var results = new List<GeoCoord>();
 
@@ -29,7 +29,7 @@ namespace TestSuite
             return results.ToArray();
         }
 
-        private static BBox MakeBox(IReadOnlyList<double> directions)
+        private static BBox MakeBox(IReadOnlyList<decimal> directions)
         {
             return new BBox(directions[0], directions[1], directions[2], directions[3]);
         }
@@ -50,7 +50,7 @@ namespace TestSuite
         {
             var geofence = new GeoFence {NumVerts = 6, Verts = SfVerts};
 
-            var inside = new GeoCoord(0.659, -2.136);
+            var inside = new GeoCoord(0.659m, -2.136m);
             var somewhere= new GeoCoord(1, 2);
 
             BBox bbox = geofence.ToBBox();
@@ -66,18 +66,18 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.01, -Constants.H3.M_PI + 0.01),
-                            new GeoCoord(0.01, Constants.H3.M_PI - 0.01),
-                            new GeoCoord(-0.01, Constants.H3.M_PI - 0.01),
-                            new GeoCoord(-0.01, -Constants.H3.M_PI + 0.01)
+                            new GeoCoord(0.01m, -Constants.H3.M_PI + 0.01m),
+                            new GeoCoord(0.01m, Constants.H3.M_PI - 0.01m),
+                            new GeoCoord(-0.01m, Constants.H3.M_PI - 0.01m),
+                            new GeoCoord(-0.01m, -Constants.H3.M_PI + 0.01m)
                         };
 
             var transMeridianGeofence = new GeoFence{NumVerts = 4, Verts = verts};
 
-            var eastPoint = new GeoCoord(0.001, -Constants.H3.M_PI + 0.001);
-            var eastPointOutside = new GeoCoord(0.001, -Constants.H3.M_PI + 0.1);
-            var westPoint = new GeoCoord(0.001, Constants.H3.M_PI - 0.001);
-            var westPointOutside =new GeoCoord(0.001, Constants.H3.M_PI - 0.1);
+            var eastPoint = new GeoCoord(0.001m, -Constants.H3.M_PI + 0.001m);
+            var eastPointOutside = new GeoCoord(0.001m, -Constants.H3.M_PI + 0.1m);
+            var westPoint = new GeoCoord(0.001m, Constants.H3.M_PI - 0.001m);
+            var westPointOutside =new GeoCoord(0.001m, Constants.H3.M_PI - 0.1m);
 
             var bbox = transMeridianGeofence.ToBBox();
 
@@ -91,7 +91,7 @@ namespace TestSuite
         public void PointInsideLinkedGeoLoop()
         {
             var somewhere = new GeoCoord(1, 2);
-            var inside = new GeoCoord(0.659, -2.136);
+            var inside = new GeoCoord(0.659m, -2.136m);
 
             var loop = CreateLinkedLoop(SfVerts);
 
@@ -108,13 +108,13 @@ namespace TestSuite
         {
             var verts = new[]
             {
-                new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
-                new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2)
+                new GeoCoord(0.8m, 0.3m), new GeoCoord(0.7m, 0.6m),
+                new GeoCoord(1.1m, 0.7m), new GeoCoord(1.0m, 0.2m)
             };
             
             var geofence = new GeoFence{NumVerts = 4, Verts = verts};
 
-            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
+            var expected = new BBox(1.1m, 0.7m, 0.7m, 0.2m);
 
             BBox result = geofence.ToBBox();
             Assert.AreEqual(result, expected);
@@ -126,14 +126,14 @@ namespace TestSuite
             var verts =
                 new[]
                 {
-                    new GeoCoord(0.1, -Constants.H3.M_PI + 0.1), new GeoCoord(0.1, Constants.H3.M_PI - 0.1),
-                    new GeoCoord(0.05, Constants.H3.M_PI - 0.2), new GeoCoord(-0.1, Constants.H3.M_PI - 0.1),
-                    new GeoCoord(-0.1, -Constants.H3.M_PI + 0.1), new GeoCoord(-0.05, -Constants.H3.M_PI + 0.2)
+                    new GeoCoord(0.1m, -Constants.H3.M_PI + 0.1m), new GeoCoord(0.1m, Constants.H3.M_PI - 0.1m),
+                    new GeoCoord(0.05m, Constants.H3.M_PI - 0.2m), new GeoCoord(-0.1m, Constants.H3.M_PI - 0.1m),
+                    new GeoCoord(-0.1m, -Constants.H3.M_PI + 0.1m), new GeoCoord(-0.05m, -Constants.H3.M_PI + 0.2m)
                 };
 
             var geofence = new GeoFence {NumVerts = 6, Verts = verts};
 
-            var expected = new BBox( 0.1, -0.1, -Constants.H3.M_PI + 0.2, Constants.H3.M_PI - 0.2);
+            var expected = new BBox( 0.1m, -0.1m, -Constants.H3.M_PI + 0.2m, Constants.H3.M_PI - 0.2m);
 
             var result = geofence.ToBBox();
             Assert.AreEqual(result, expected);
@@ -144,7 +144,7 @@ namespace TestSuite
         {
             var geofence = new GeoFence();
 
-            var expected = new BBox(0.0, 0.0, 0.0, 0.0);
+            var expected = new BBox(0.0m, 0.0m, 0.0m, 0.0m);
 
             var result = geofence.ToBBox();
             Assert.AreEqual(result, expected);
@@ -155,14 +155,14 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
-                            new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2)
+                            new GeoCoord(0.8m, 0.3m), new GeoCoord(0.7m, 0.6m),
+                            new GeoCoord(1.1m, 0.7m), new GeoCoord(1.0m, 0.2m)
                         };
 
             var geofence = new GeoFence{NumVerts = 4, Verts = verts};
             var  polygon = new GeoPolygon {GeoFence = geofence, NumHoles = 0};
 
-            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
+            var expected = new BBox(1.1m, 0.7m, 0.7m, 0.2m);
 
             var result = polygon.ToBBoxes();
             Assert.AreEqual(result[0], expected);
@@ -173,8 +173,8 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
-                            new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2)
+                            new GeoCoord(0.8m, 0.3m), new GeoCoord(0.7m, 0.6m),
+                            new GeoCoord(1.1m, 0.7m), new GeoCoord(1.0m, 0.2m)
                         };
 
             var geofence = new GeoFence {NumVerts = 4, Verts = verts};
@@ -182,8 +182,8 @@ namespace TestSuite
             // not a real hole, but doesn't matter for the test
             var holeVerts = new[]
                             {
-                                new GeoCoord(0.9, 0.3), new GeoCoord(0.9, 0.5),
-                                new GeoCoord(1.0, 0.7), new GeoCoord(0.9, 0.3)
+                                new GeoCoord(0.9m, 0.3m), new GeoCoord(0.9m, 0.5m),
+                                new GeoCoord(1.0m, 0.7m), new GeoCoord(0.9m, 0.3m)
                             };
 
             var holeGeofence = new GeoFence {NumVerts = 4, Verts = holeVerts};
@@ -196,10 +196,9 @@ namespace TestSuite
                     Holes = new List<GeoFence> {holeGeofence}
                 };
 
-            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
-            var expectedHole = new BBox(1.0, 0.9, 0.7, 0.3);
+            var expected = new BBox(1.1m, 0.7m, 0.7m, 0.2m);
+            var expectedHole = new BBox(1.0m, 0.9m, 0.7m, 0.3m);
 
-            //BBox* result = calloc(sizeof(BBox), 2);
             var result = polygon.ToBBoxes();
 
             Assert.AreEqual(result[0], expected);
@@ -211,13 +210,13 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0.8, 0.3), new GeoCoord(0.7, 0.6),
-                            new GeoCoord(1.1, 0.7), new GeoCoord(1.0, 0.2),
+                            new GeoCoord(0.8m, 0.3m), new GeoCoord(0.7m, 0.6m),
+                            new GeoCoord(1.1m, 0.7m), new GeoCoord(1.0m, 0.2m),
                         };
 
             var loop = CreateLinkedLoop(verts);
 
-            var expected = new BBox(1.1, 0.7, 0.7, 0.2);
+            var expected = new BBox(1.1m, 0.7m, 0.7m, 0.2m);
 
             var result = loop.ToBBox();
             Assert.AreEqual(result, expected);
@@ -229,7 +228,7 @@ namespace TestSuite
         public void BboxFromLinkedGeoLoopNoVertices()
         {
             var loop = new LinkedGeoLoop();
-            var expected = new BBox(0.0, 0.0, 0.0, 0.0);
+            var expected = new BBox(0.0m, 0.0m, 0.0m, 0.0m);
 
             var result = loop.ToBBox();
             Assert.AreEqual(result,expected);
@@ -242,8 +241,8 @@ namespace TestSuite
         {
             var verts = new[]
                         {
-                            new GeoCoord(0,0), new GeoCoord(0.1,0.1),
-                            new GeoCoord(0,0.1)
+                            new GeoCoord(0m,0m), new GeoCoord(0.1m,0.1m),
+                            new GeoCoord(0m,0.1m)
                         };
 
             var geofence = new GeoFence {NumVerts = 3, Verts = verts};
@@ -254,7 +253,7 @@ namespace TestSuite
         [Test]
         public void IsClockwiseLinkedGeoLoop()
         {
-            var verts = MakeGeoCoordArray(new[,]{{0.1, 0.1}, {0.2, 0.2}, {0.1, 0.2}});
+            var verts = MakeGeoCoordArray(new[,]{{0.1m, 0.1m}, {0.2m, 0.2m}, {0.1m, 0.2m}});
             var loop = CreateLinkedLoop(verts);
             Assert.IsTrue(loop.IsClockwise());
             loop.Clear();
@@ -263,7 +262,7 @@ namespace TestSuite
         [Test]
         public void IsNotClockwiseLinkedGeoLoop()
         {
-            var verts = MakeGeoCoordArray(new[,] {{0, 0}, {0, 0.4}, {0.4, 0.4}, {0.4, 0}});
+            var verts = MakeGeoCoordArray(new[,] {{0m, 0m}, {0m, 0.4m}, {0.4m, 0.4m}, {0.4m, 0m}});
             var loop = CreateLinkedLoop(verts);
             Assert.IsFalse(loop.IsClockwise());
             loop.Clear();
@@ -272,11 +271,11 @@ namespace TestSuite
         [Test]
         public void IsClockwiseGeofenceTransmeridian()
         {
-            double[,] raw = {
-                                {0.4, Constants.H3.M_PI - 0.1},
-                                {0.4, -Constants.H3.M_PI + 0.1},
-                                {-0.4, -Constants.H3.M_PI + 0.1},
-                                {-0.4, Constants.H3.M_PI - 0.1}
+            decimal[,] raw = {
+                                {0.4m, Constants.H3.M_PI - 0.1m},
+                                {0.4m, -Constants.H3.M_PI + 0.1m},
+                                {-0.4m, -Constants.H3.M_PI + 0.1m},
+                                {-0.4m, Constants.H3.M_PI - 0.1m}
                             };
             var verts = MakeGeoCoordArray(raw);
             var geofence = new GeoFence{NumVerts = 4, Verts = verts};
@@ -287,12 +286,12 @@ namespace TestSuite
         [Test]
         public void IsClockwiseLinkedGeoLoopTransmeridian()
         {
-            double[,] raw =
+            decimal[,] raw =
             {
-                {0.4, Constants.H3.M_PI - 0.1},
-                {0.4, -Constants.H3.M_PI + 0.1},
-                {-0.4, -Constants.H3.M_PI + 0.1},
-                {-0.4, Constants.H3.M_PI - 0.1}
+                {0.4m, Constants.H3.M_PI - 0.1m},
+                {0.4m, -Constants.H3.M_PI + 0.1m},
+                {-0.4m, -Constants.H3.M_PI + 0.1m},
+                {-0.4m, Constants.H3.M_PI - 0.1m}
             };
 
             var verts = MakeGeoCoordArray(raw);
@@ -305,12 +304,12 @@ namespace TestSuite
         [Test]
         public void IsNotClockwiseLinkedGeoLoopTransmeridian()
         {
-            double[,] raw =
+            decimal[,] raw =
             {
-                {0.4, Constants.H3.M_PI - 0.1},
-                {-0.4, Constants.H3.M_PI - 0.1},
-                {-0.4, -Constants.H3.M_PI + 0.1},
-                {0.4, -Constants.H3.M_PI + 0.1}
+                {0.4m, Constants.H3.M_PI - 0.1m},
+                {-0.4m, Constants.H3.M_PI - 0.1m},
+                {-0.4m, -Constants.H3.M_PI + 0.1m},
+                {0.4m, -Constants.H3.M_PI + 0.1m}
             };
 
             var verts = MakeGeoCoordArray(raw);
@@ -324,7 +323,7 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonSingle()
         {
-            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 1}, {1, 1}});
+            var verts = MakeGeoCoordArray(new decimal[,] {{0, 0}, {0, 1}, {1, 1}});
 
             var outer = CreateLinkedLoop(verts);
 
@@ -334,7 +333,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons, 1);
             Assert.AreEqual(polygon.CountLoops, 1);
             if (polygon.Loops.First() != null)
@@ -348,10 +347,10 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonTwoOuterLoops()
         {
-            var verts1 = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 1}, {1, 1}});
+            var verts1 = MakeGeoCoordArray(new decimal[,] {{0, 0}, {0, 1}, {1, 1}});
             var outer1= CreateLinkedLoop(verts1);
 
-            var verts2 = MakeGeoCoordArray(new double[,] {{2, 2}, {2, 3}, {3, 3}});
+            var verts2 = MakeGeoCoordArray(new decimal[,] {{2, 2}, {2, 3}, {3, 3}});
             var outer2 = CreateLinkedLoop(verts2);
 
             var polygon = new LinkedGeoPolygon();
@@ -361,7 +360,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons, 2);
             Assert.AreEqual(polygon.CountLoops, 1);
             Assert.AreEqual(polygon.Next.CountLoops, 1);
@@ -372,10 +371,10 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonOneHole()
         {
-            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 3}, {3, 3}, {3, 0}});
+            var verts = MakeGeoCoordArray(new decimal[,] {{0, 0}, {0, 3}, {3, 3}, {3, 0}});
             var outer = CreateLinkedLoop(verts);
 
-            var verts2 = MakeGeoCoordArray(new double[,] {{1, 1}, {2, 2}, {1, 2}});
+            var verts2 = MakeGeoCoordArray(new decimal[,] {{1, 1}, {2, 2}, {1, 2}});
             var inner = CreateLinkedLoop(verts2);
 
             var polygon = new LinkedGeoPolygon();
@@ -385,7 +384,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons, 1);
             Assert.AreEqual(polygon.CountLoops, 2);
             
@@ -401,13 +400,13 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonTwoHoles()
         {
-            var verts = MakeGeoCoordArray(new[,] {{0, 0}, {0, 0.4}, {0.4, 0.4}, {0.4, 0}});
+            var verts = MakeGeoCoordArray(new decimal[,] {{0, 0}, {0, 0.4m}, {0.4m, 0.4m}, {0.4m, 0}});
             var outer = CreateLinkedLoop(verts);
 
-            var verts2 = MakeGeoCoordArray(new[,] {{0.1, 0.1}, {0.2, 0.2}, {0.1, 0.2}});
+            var verts2 = MakeGeoCoordArray(new decimal[,] {{0.1m, 0.1m}, {0.2m, 0.2m}, {0.1m, 0.2m}});
             var inner1 = CreateLinkedLoop(verts2);
 
-            var verts3 = MakeGeoCoordArray(new[,] {{0.2, 0.2}, {0.3, 0.3}, {0.2, 0.3}});
+            var verts3 = MakeGeoCoordArray(new decimal[,] {{0.2m, 0.2m}, {0.3m, 0.3m}, {0.2m, 0.3m}});
             var inner2 = CreateLinkedLoop(verts3);
 
             var polygon = new LinkedGeoPolygon();
@@ -418,7 +417,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons, 1);
             
             Assert.IsNotNull(polygon.Loops.First());
@@ -432,16 +431,16 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonTwoDonuts()
         {
-            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 3}, {3, 3}, {3, 0}});
+            var verts = MakeGeoCoordArray(new decimal[,] {{0, 0}, {0, 3}, {3, 3}, {3, 0}});
             var outer = CreateLinkedLoop(verts);
 
-            var verts2 = MakeGeoCoordArray(new double[,] {{1, 1}, {2, 2}, {1, 2}});
+            var verts2 = MakeGeoCoordArray(new decimal[,] {{1, 1}, {2, 2}, {1, 2}});
             var inner = CreateLinkedLoop(verts2);
 
-            var verts3 = MakeGeoCoordArray(new double[,] {{0, 0}, {0, -3}, {-3, -3}, {-3, 0}});
+            var verts3 = MakeGeoCoordArray(new decimal[,] {{0, 0}, {0, -3}, {-3, -3}, {-3, 0}});
             var outer2 = CreateLinkedLoop(verts3);
 
-            var verts4 = MakeGeoCoordArray(new double[,] {{-1, -1}, {-2, -2}, {-1, -2}});
+            var verts4 = MakeGeoCoordArray(new decimal[,] {{-1, -1}, {-2, -2}, {-1, -2}});
             var inner2 = CreateLinkedLoop(verts4);
 
             var polygon = new LinkedGeoPolygon();
@@ -453,7 +452,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons, 2);
             Assert.AreEqual(polygon.CountLoops, 2);
 
@@ -477,16 +476,16 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonNestedDonuts()
         {
-            var verts = MakeGeoCoordArray(new[,] {{0.2, 0.2}, {0.2, -0.2}, {-0.2, -0.2}, {-0.2, 0.2}});
+            var verts = MakeGeoCoordArray(new[,] {{0.2m, 0.2m}, {0.2m, -0.2m}, {-0.2m, -0.2m}, {-0.2m, 0.2m}});
             var outer = CreateLinkedLoop(verts);
 
-            var verts2 = MakeGeoCoordArray(new[,] {{0.1, 0.1}, {-0.1, 0.1}, {-0.1, -0.1}, {0.1, -0.1}});
+            var verts2 = MakeGeoCoordArray(new[,] {{0.1m, 0.1m}, {-0.1m, 0.1m}, {-0.1m, -0.1m}, {0.1m, -0.1m}});
             var inner = CreateLinkedLoop(verts2);
 
-            var verts3 = MakeGeoCoordArray(new[,] {{0.6, 0.6}, {0.6, -0.6}, {-0.6, -0.6}, {-0.6, 0.6}});
+            var verts3 = MakeGeoCoordArray(new[,] {{0.6m, 0.6m}, {0.6m, -0.6m}, {-0.6m, -0.6m}, {-0.6m, 0.6m}});
             var outerBig = CreateLinkedLoop(verts3);
 
-            var verts4 = MakeGeoCoordArray(new[,] {{0.5, 0.5}, {-0.5, 0.5}, {-0.5, -0.5}, {0.5, -0.5}});
+            var verts4 = MakeGeoCoordArray(new[,] {{0.5m, 0.5m}, {-0.5m, 0.5m}, {-0.5m, -0.5m}, {0.5m, -0.5m}});
             var innerBig = CreateLinkedLoop(verts4);
 
             var polygon = new LinkedGeoPolygon();
@@ -498,7 +497,7 @@ namespace TestSuite
             int result;
             (result, polygon) = polygon.NormalizeMultiPolygon();
 
-            Assert.AreEqual(result, H3Lib.Constants.LinkedGeo.NormalizationSuccess);
+            Assert.AreEqual(result, Constants.LinkedGeo.NormalizationSuccess);
             Assert.AreEqual(polygon.CountPolygons, 2);
             Assert.AreEqual(polygon.CountLoops, 2);
 
@@ -522,10 +521,10 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonNoOuterLoops()
         {
-            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {1, 1}, {0, 1}});
+            var verts = MakeGeoCoordArray(new  decimal[,] {{0, 0}, {1, 1}, {0, 1}});
             var outer1 = CreateLinkedLoop(verts);
 
-            var verts2 = MakeGeoCoordArray(new double[,] {{2, 2}, {3, 3}, {2, 3}});
+            var verts2 = MakeGeoCoordArray(new  decimal[,] {{2, 2}, {3, 3}, {2, 3}});
             var outer2 = CreateLinkedLoop(verts2);
 
             var polygon = new LinkedGeoPolygon();
@@ -546,10 +545,10 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonAlreadyNormalized()
         {
-            var verts1 = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 1}, {1, 1}});
+            var verts1 = MakeGeoCoordArray(new  decimal[,] {{0, 0}, {0, 1}, {1, 1}});
             var outer1 = CreateLinkedLoop(verts1);
 
-            var verts2 = MakeGeoCoordArray(new double[,] {{2, 2}, {2, 3}, {3, 3}});
+            var verts2 = MakeGeoCoordArray(new  decimal[,] {{2, 2}, {2, 3}, {3, 3}});
             var outer2 = CreateLinkedLoop(verts2);
 
             var polygon = new LinkedGeoPolygon();
@@ -579,10 +578,10 @@ namespace TestSuite
         [Test]
         public void NormalizeMultiPolygonUnassignedHole()
         {
-            var verts = MakeGeoCoordArray(new double[,] {{0, 0}, {0, 1}, {1, 1}, {1, 0}});
+            var verts = MakeGeoCoordArray(new  decimal[,] {{0, 0}, {0, 1}, {1, 1}, {1, 0}});
             var outer = CreateLinkedLoop(verts);
 
-            var verts2 = MakeGeoCoordArray(new double[,] {{2, 2}, {3, 3}, {2, 3}});
+            var verts2 = MakeGeoCoordArray(new  decimal[,] {{2, 2}, {3, 3}, {2, 3}});
             var inner = CreateLinkedLoop(verts2);
 
             var polygon = new LinkedGeoPolygon();

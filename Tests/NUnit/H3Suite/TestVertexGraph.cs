@@ -8,11 +8,11 @@ namespace TestSuite
     [TestFixture]
     public class TestVertexGraph
     {
-        private static GeoCoord center = new GeoCoord().SetDegrees(37.77362016769341, -122.41673772517154);
-        private static GeoCoord vertex1 = new GeoCoord().SetDegrees(87.372002166, 166.160981117);
-        private static GeoCoord vertex2 = new GeoCoord().SetDegrees(87.370101364, 166.160184306);
-        private static GeoCoord vertex3 = new GeoCoord().SetDegrees(87.369088356, 166.196239997);
-        private static GeoCoord vertex4 = new GeoCoord().SetDegrees(87.369975080, 166.233115768);
+        private static GeoCoord center = new GeoCoord().SetDegrees(37.77362016769341m, -122.41673772517154m);
+        private static GeoCoord vertex1 = new GeoCoord().SetDegrees(87.372002166m, 166.160981117m);
+        private static GeoCoord vertex2 = new GeoCoord().SetDegrees(87.370101364m, 166.160184306m);
+        private static GeoCoord vertex3 = new GeoCoord().SetDegrees(87.369088356m, 166.196239997m);
+        private static GeoCoord vertex4 = new GeoCoord().SetDegrees(87.369975080m, 166.233115768m);
         private static GeoCoord vertex5 = new GeoCoord().SetDegrees(0, 0);
         private static GeoCoord vertex6 = new GeoCoord().SetDegrees(-10, -10);
 

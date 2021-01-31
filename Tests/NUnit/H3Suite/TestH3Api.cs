@@ -19,13 +19,14 @@ namespace TestSuite
         [Test]
         public void GeoToH3Coord()
         {
-            GeoCoord invalidLat = new GeoCoord(double.NaN, 0);
-            GeoCoord invalidLon = new GeoCoord(0, double.NaN);
-            GeoCoord invalidLatLon = new GeoCoord(double.PositiveInfinity, double.NegativeInfinity);
-
-            Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(invalidLat, 1));
-            Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(invalidLon, 1));
-            Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(invalidLatLon, 1));
+            // Test removed for now as decimals don't have NaN or infinities
+            // GeoCoord invalidLat = new GeoCoord(double.NaN, 0);
+            // GeoCoord invalidLon = new GeoCoord(0, double.NaN);
+            // GeoCoord invalidLatLon = new GeoCoord(double.PositiveInfinity, double.NegativeInfinity);
+            //
+            // Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(invalidLat, 1));
+            // Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(invalidLon, 1));
+            // Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(invalidLatLon, 1));
         }
         
         // Bug test for https://github.com/uber/h3/issues/45
@@ -54,13 +55,13 @@ namespace TestSuite
             GeoBoundary boundary = new GeoBoundary();
             boundary.NumVerts = 7;
                 
-            boundary.Verts[0] = Api.SetGeoDegs( 18.043333154, -66.27836523500002);
-            boundary.Verts[1] = Api.SetGeoDegs( 18.042238363, -66.27929062800001);
-            boundary.Verts[2] = Api.SetGeoDegs( 18.040818259, -66.27854193899998);
-            boundary.Verts[3] = Api.SetGeoDegs( 18.040492975, -66.27686786700002);
-            boundary.Verts[4] = Api.SetGeoDegs( 18.041040385, -66.27640518300001);
-            boundary.Verts[5] = Api.SetGeoDegs( 18.041757122, -66.27596711500001);
-            boundary.Verts[6] = Api.SetGeoDegs( 18.043007860, -66.27669118199998);
+            boundary.Verts[0] = Api.SetGeoDegs( 18.043333154m, -66.27836523500002m);
+            boundary.Verts[1] = Api.SetGeoDegs( 18.042238363m, -66.27929062800001m);
+            boundary.Verts[2] = Api.SetGeoDegs( 18.040818259m, -66.27854193899998m);
+            boundary.Verts[3] = Api.SetGeoDegs( 18.040492975m, -66.27686786700002m);
+            boundary.Verts[4] = Api.SetGeoDegs( 18.041040385m, -66.27640518300001m);
+            boundary.Verts[5] = Api.SetGeoDegs( 18.041757122m, -66.27596711500001m);
+            boundary.Verts[6] = Api.SetGeoDegs( 18.043007860m, -66.27669118199998m);
 
             GeoBoundary myBoundary;
             Api.H3ToGeoBoundary(h3, out myBoundary);
@@ -79,12 +80,12 @@ namespace TestSuite
             H3Index h3 = 0x87dc6d364ffffffL;
             GeoBoundary boundary = new GeoBoundary();
             boundary.NumVerts = 6;
-            boundary.Verts[0] = Api.SetGeoDegs( -52.0130533678236091, -34.6232931343713091);
-            boundary.Verts[1] = Api.SetGeoDegs( -52.0041156384652012, -34.6096733160584549);
-            boundary.Verts[2] = Api.SetGeoDegs( -51.9929610229502472, -34.6165157145896387);
-            boundary.Verts[3] = Api.SetGeoDegs( -51.9907410568096608, -34.6369680004259877);
-            boundary.Verts[4] = Api.SetGeoDegs( -51.9996738734672377, -34.6505896528323660);
-            boundary.Verts[5] = Api.SetGeoDegs( -52.0108315681413629, -34.6437571897165668);
+            boundary.Verts[0] = Api.SetGeoDegs( -52.0130533678236091m, -34.6232931343713091m);
+            boundary.Verts[1] = Api.SetGeoDegs( -52.0041156384652012m, -34.6096733160584549m);
+            boundary.Verts[2] = Api.SetGeoDegs( -51.9929610229502472m, -34.6165157145896387m);
+            boundary.Verts[3] = Api.SetGeoDegs( -51.9907410568096608m, -34.6369680004259877m);
+            boundary.Verts[4] = Api.SetGeoDegs( -51.9996738734672377m, -34.6505896528323660m);
+            boundary.Verts[5] = Api.SetGeoDegs( -52.0108315681413629m, -34.6437571897165668m);
 
             GeoBoundary myBoundary;
             Api.H3ToGeoBoundary(h3, out myBoundary);

@@ -37,7 +37,7 @@ namespace TestSuite
         [Test]
         public void KRing0()
         {
-            var sf = new GeoCoord(0.659966917655, 2 * 3.14159 - 2.1364398519396);
+            var sf = new GeoCoord(0.659966917655m, 2 * 3.14159m - 2.1364398519396m);
             var sfHex0 = sf.ToH3Index(0);
 
             var expectedK1 = new List<H3Index>

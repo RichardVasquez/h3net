@@ -9,7 +9,7 @@ namespace TestSuite
     [TestFixture]
     public class TestHexRing
     {
-        private static GeoCoord sf = new GeoCoord(0.659966917655, 2 * 3.14159 - 2.1364398519396);
+        private static GeoCoord sf = new GeoCoord(0.659966917655m, 2 * 3.14159m - 2.1364398519396m);
         private static H3Index sfHex = sf.ToH3Index(9);
 
         [Test]
