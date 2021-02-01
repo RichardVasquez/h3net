@@ -539,9 +539,9 @@ namespace H3Lib.Extensions
 
                     // find the appropriate icosahedron face edge vertexes
                     int maxDim = Constants.FaceIjk.MaxDimByCiiRes[adjRes];
-                    var v0 = new Vec2d(3.0 * maxDim, 0.0);
-                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.H3.M_SQRT3_2 * maxDim);
-                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 * Constants.H3.M_SQRT3_2 * maxDim);
+                    var v0 = new Vec2d(3.0m * maxDim, 0.0m);
+                    var v1 = new Vec2d(-1.5m * maxDim, 3.0m * Constants.H3.M_SQRT3_2 * maxDim);
+                    var v2 = new Vec2d(-1.5m * maxDim, -3.0m * Constants.H3.M_SQRT3_2 * maxDim);
 
                     int face2 = lastFace == centerIjk.Face
                                     ? fijk.Face
@@ -674,9 +674,9 @@ namespace H3Lib.Extensions
 
                     // find the appropriate icosahedron face edge vertexes
                     int maxDim = Constants.FaceIjk.MaxDimByCiiRes[adjRes];
-                    var v0 = new Vec2d(3.0 * maxDim, 0.0);
-                    var v1 = new Vec2d(-1.5 * maxDim, 3.0 * Constants.H3.M_SQRT3_2 * maxDim);
-                    var v2 = new Vec2d(-1.5 * maxDim, -3.0 *Constants. H3.M_SQRT3_2 * maxDim);
+                    var v0 = new Vec2d(3.0m * maxDim, 0.0m);
+                    var v1 = new Vec2d(-1.5m * maxDim, 3.0m * Constants.H3.M_SQRT3_2 * maxDim);
+                    var v2 = new Vec2d(-1.5m * maxDim, -3.0m *Constants. H3.M_SQRT3_2 * maxDim);
 
                     Vec2d edge0;
                     Vec2d edge1;

@@ -1,4 +1,5 @@
 using System;
+using DecimalMath;
 
 namespace H3Lib.Extensions
 {
@@ -21,58 +22,58 @@ namespace H3Lib.Extensions
             var h = new CoordIjk();
 
             // quantize into the ij system and then normalize
-            double a1 = Math.Abs(v.X);
-            double a2 = Math.Abs(v.Y);
+            decimal a1 = Math.Abs(v.X);
+            decimal a2 = Math.Abs(v.Y);
             
             // first do a reverse conversion
-            double x2 = a2 / Constants.H3.M_SIN60;
-            double x1 = a1 + x2 / 2.0;
+            decimal x2 = a2 / Constants.H3.M_SIN60;
+            decimal x1 = a1 + x2 / 2.0m;
 
             // check if we have the center of a hex
             var m1 = (int)x1;
             var m2 = (int)x2;
 
             // otherwise round correctly
-            double r1 = x1 - m1;
-            double r2 = x2 - m2;
+            decimal r1 = x1 - m1;
+            decimal r2 = x2 - m2;
 
-            if (r1 < 0.5) {
-                if (r1 < 1.0 / 3.0)
+            if (r1 < 0.5m) {
+                if (r1 < 1.0m / 3.0m)
                 {
-                    h = r2 < (1.0 + r1) / 2.0
+                    h = r2 < (1.0m + r1) / 2.0m
                             ? h.SetIJ(m1,m2)
                             : h.SetIJ(m1,m2 + 1);
                 } else
                 {
-                    h = r2 < (1.0 - r1)
+                    h = r2 < (1.0m - r1)
                             ? h.SetJ(m2)
                             : h.SetJ(m2 + 1);
 
-                    h = (1.0 - r1) <= r2 && r2 < (2.0 * r1)
+                    h = (1.0m - r1) <= r2 && r2 < (2.0m * r1)
                             ? h.SetI(m1 + 1)
                             : h.SetI(m1);
                 }
             } else {
-                if (r1 < 2.0 / 3.0)
+                if (r1 < 2.0m / 3.0m)
                 {
-                    h = r2 < (1.0 - r1)
+                    h = r2 < (1.0m - r1)
                             ? h.SetJ( m2)
                             : h.SetJ(m2 + 1);
 
-                    h = (2.0 * r1 - 1.0) < r2 && r2 < (1.0 - r1)
+                    h = (2.0m * r1 - 1.0m) < r2 && r2 < (1.0m- r1)
                             ? h.SetI(m1)
                             : h.SetI(m1 + 1);
                 }
                 else
                 {
-                    h = r2 < (r1 / 2.0)
+                    h = r2 < (r1 / 2.0m)
                             ? h.SetIJ(m1 + 1, m2)
                             : h.SetIJ(m1 + 1, m2 + 1);
                 }
             }
 
             // now fold across the axes if necessary
-            if (v.X < 0.0) 
+            if (v.X < 0.0m) 
             {
                 if (h.J % 2 == 0)  // even
                 {
@@ -88,7 +89,7 @@ namespace H3Lib.Extensions
                 }
             }
 
-            if (v.Y < 0.0)
+            if (v.Y < 0.0m)
             {
                 h=h.SetIJ(h.I - (2 * h.J + 1) / 2, -h.J);
             }
@@ -115,7 +116,7 @@ namespace H3Lib.Extensions
         public static GeoCoord ToGeoCoord(this Vec2d v, int face, int res, int substrate)
         {
             // calculate (r, theta) in hex2d
-            double r = v.Magnitude;
+            decimal r = v.Magnitude;
             bool bSubstrate = substrate != 0;
 
             if (r < Constants.H3.EPSILON)
@@ -123,7 +124,7 @@ namespace H3Lib.Extensions
                 return Constants.FaceIjk.FaceCenterGeo[face];
             }
 
-            double theta = Math.Atan2(v.Y, v.X);
+            decimal theta = DecimalEx.ATan2(v.Y, v.X);
 
             // scale for current resolution length u
             for (var i = 0; i < res; i++)
@@ -134,7 +135,7 @@ namespace H3Lib.Extensions
             // scale accordingly if this is a substrate grid
             if (substrate !=0)
             {
-                r /= 3.0;
+                r /= 3.0m;
                 if (res.IsResClassIii())
                 {
                     r /= Constants.FaceIjk.MSqrt7;
@@ -144,7 +145,7 @@ namespace H3Lib.Extensions
             r *= Constants.H3.RES0_U_GNOMONIC;
 
             // perform inverse gnomonic scaling of r
-            r = Math.Atan(r);
+            r = DecimalEx.ATan(r);
 
             // adjust theta for Class III
             // if a substrate grid, then it's already been adjusted for Class III

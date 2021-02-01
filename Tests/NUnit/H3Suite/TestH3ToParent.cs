@@ -7,7 +7,7 @@ namespace TestSuite
     [TestFixture]
     public class TestH3ToParent
     {
-        public GeoCoord sf = new GeoCoord(0.659966917655, 2 * 3.14159 - 2.1364398519396);
+        public GeoCoord sf = new GeoCoord(0.659966917655m, 2 * 3.14159m - 2.1364398519396m);
 
         [Test]
         public void AncestorsForEachRes()

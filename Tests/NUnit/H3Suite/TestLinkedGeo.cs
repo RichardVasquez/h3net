@@ -8,13 +8,13 @@ namespace TestSuite
     public class TestLinkedGeo
     {
         private static readonly GeoCoord Vertex1 =
-            new GeoCoord().SetDegrees(87.372002166, 166.160981117);
+            new GeoCoord().SetDegrees(87.372002166m, 166.160981117m);
         private static readonly GeoCoord Vertex2 =
-            new GeoCoord().SetDegrees(87.370101364, 166.160184306);
+            new GeoCoord().SetDegrees(87.370101364m, 166.160184306m);
         private static readonly GeoCoord Vertex3 = 
-            new GeoCoord().SetDegrees(87.369088356, 166.196239997);
+            new GeoCoord().SetDegrees(87.369088356m, 166.196239997m);
         private static readonly GeoCoord Vertex4 = 
-            new GeoCoord().SetDegrees(87.369975080, 166.233115768);
+            new GeoCoord().SetDegrees(87.369975080m, 166.233115768m);
         
         [Test]
         public void CreateLinkedGeo()

@@ -55,24 +55,26 @@ namespace TestSuite
                             (
                              edgeBoundary.Verts[j].Latitude -
                              revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude
-                            ) >= .000001)
+                            ) >= .000001m)
                     {
                         var k = 0;
                     }
-                    
-                    
-                    Assert.AreEqual
+
+                    Assert.IsTrue
                         (
-                         edgeBoundary.Verts[j].Latitude,
-                         revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude,
-                         0.000001, 
-                         $"\n1: {edgeBoundary.Verts[j].Latitude}\n2: {revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude}"
+                         Math.Abs(
+                         edgeBoundary.Verts[j].Latitude -
+                         revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude
+                         ) < 0.000001m, $"{h3.Value} - {h3}"
                         );
-                    Assert.AreEqual
-                        (
-                         edgeBoundary.Verts[j].Longitude,
-                         revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Longitude,
-                         0.000001
+                    Assert.IsTrue
+                    (
+                            Math.Abs
+                                (
+                                 edgeBoundary.Verts[j].Longitude -
+                                 revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Longitude
+                                ) <
+                            0.000001m
                         );
                 }
             }

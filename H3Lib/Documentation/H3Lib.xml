@@ -87,14 +87,14 @@
             <param name="h3Set"></param>
             <param name="outPolygon"></param>
         </member>
-        <member name="M:H3Lib.Api.DegreesToRadians(System.Double)">
+        <member name="M:H3Lib.Api.DegreesToRadians(System.Decimal)">
             <summary>
             converts degrees to radians
             </summary>
             <param name="degrees"></param>
             <returns></returns>
         </member>
-        <member name="M:H3Lib.Api.RadiansToDegrees(System.Double)">
+        <member name="M:H3Lib.Api.RadiansToDegrees(System.Decimal)">
             <summary>
             converts radians to degrees
             </summary>
@@ -347,7 +347,7 @@
             Returns index for the given two dimensional coordinates
             </summary>
         </member>
-        <member name="M:H3Lib.Api.SetGeoDegs(System.Double,System.Double)">
+        <member name="M:H3Lib.Api.SetGeoDegs(System.Decimal,System.Decimal)">
             <summary>
             Winging this one, returns a GeoCoord with degree values instead of radians
             </summary>
@@ -504,7 +504,7 @@
             bboxIsTransmeridian
             -->
         </member>
-        <member name="M:H3Lib.BBox.#ctor(System.Double,System.Double,System.Double,System.Double)">
+        <member name="M:H3Lib.BBox.#ctor(System.Decimal,System.Decimal,System.Decimal,System.Decimal)">
             <summary>
             constructor
             </summary>
@@ -1374,35 +1374,35 @@
             Extension methods for BBoxes
             </summary>
         </member>
-        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceNorth(H3Lib.BBox,System.Double)">
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceNorth(H3Lib.BBox,System.Decimal)">
             <summary>
             Returns a new BBox with the new North value.
             </summary>
             <param name="box">box to replace</param>
             <param name="n">North Value</param>
         </member>
-        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceSouth(H3Lib.BBox,System.Double)">
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceSouth(H3Lib.BBox,System.Decimal)">
             <summary>
             Returns a new BBox with the new South value.
             </summary>
             <param name="box">box to replace</param>
             <param name="s">South Value</param>
         </member>
-        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceEast(H3Lib.BBox,System.Double)">
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceEast(H3Lib.BBox,System.Decimal)">
             <summary>
             Returns a new BBox with the new East value.
             </summary>
             <param name="box">box to replace</param>
             <param name="e">East Value</param>
         </member>
-        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceWest(H3Lib.BBox,System.Double)">
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceWest(H3Lib.BBox,System.Decimal)">
             <summary>
             Returns a new BBox with the new West value.
             </summary>
             <param name="box">box to replace</param>
             <param name="w">West Value</param>
         </member>
-        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceEW(H3Lib.BBox,System.Double,System.Double)">
+        <member name="M:H3Lib.Extensions.BBoxExtensions.ReplaceEW(H3Lib.BBox,System.Decimal,System.Decimal)">
              <summary>
              Returns a new BBox with replaced East/West values.
             
@@ -2048,7 +2048,7 @@
             Operations for GeoCoord type
             </summary>
         </member>
-        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetDegrees(H3Lib.GeoCoord,System.Double,System.Double)">
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetDegrees(H3Lib.GeoCoord,System.Decimal,System.Decimal)">
             <summary>
             Set the components of spherical coordinates in decimal degrees.
             </summary>
@@ -2060,7 +2060,7 @@
             void setGeoDegs
             -->
         </member>
-        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetRadians(H3Lib.GeoCoord,System.Double,System.Double)">
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetRadians(H3Lib.GeoCoord,System.Decimal,System.Decimal)">
             <summary>
             Set the components of spherical coordinates in radians.
             </summary>
@@ -2068,7 +2068,7 @@
             <param name="latitude">The desired latitude in decimal radians</param>
             <param name="longitude">The desired longitude in decimal radians</param>
         </member>
-        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetGeoRads(H3Lib.GeoCoord,System.Double,System.Double)">
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetGeoRads(H3Lib.GeoCoord,System.Decimal,System.Decimal)">
             <summary>
             Set the components of spherical coordinates in radians.
             </summary>
@@ -2080,12 +2080,12 @@
             void _setGeoRads
             -->
         </member>
-        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetLatitude(H3Lib.GeoCoord,System.Double)">
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetLatitude(H3Lib.GeoCoord,System.Decimal)">
             <summary>
             Quick replacement for Latitude
             </summary>
         </member>
-        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetLongitude(H3Lib.GeoCoord,System.Double)">
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.SetLongitude(H3Lib.GeoCoord,System.Decimal)">
             <summary>
             Quick replacement for Longitude
             </summary>
@@ -2142,7 +2142,7 @@
             double _geoAzimuthRads
             -->
         </member>
-        <member name="M:H3Lib.Extensions.GeoCoordExtensions.GetAzimuthDistancePoint(H3Lib.GeoCoord,System.Double,System.Double)">
+        <member name="M:H3Lib.Extensions.GeoCoordExtensions.GetAzimuthDistancePoint(H3Lib.GeoCoord,System.Decimal,System.Decimal)">
             <summary>
             Computes the point on the sphere a specified azimuth and distance from
             another point.
@@ -3144,7 +3144,7 @@
             parameter of H3Index space
             </summary>
         </member>
-        <member name="M:H3Lib.Extensions.H3LibExtensions.NormalizeRadians(System.Double,System.Double)">
+        <member name="M:H3Lib.Extensions.H3LibExtensions.NormalizeRadians(System.Decimal,System.Decimal)">
             <summary>
             Normalizes radians to a value between 0.0 and two PI.
             </summary>
@@ -3166,7 +3166,7 @@
             double _posAngleRads
             -->
         </member>
-        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLatitude(System.Double)">
+        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLatitude(System.Decimal)">
             <summary>
             Makes sure latitudes are in the proper bounds
             </summary>
@@ -3182,7 +3182,7 @@
             Constrain Latitude to +/- PI/2
             </summary>
         </member>
-        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Double)">
+        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Decimal)">
             <summary>
             Makes sure longitudes are in the proper bounds
             </summary>
@@ -3200,7 +3200,7 @@
             <param name="longitude"></param>
             <returns></returns>
         </member>
-        <member name="M:H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Double)">
+        <member name="M:H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Decimal)">
             <summary>
             Convert from decimal degrees to radians.
             </summary>
@@ -3218,7 +3218,7 @@
             <param name="degrees"></param>
             <returns></returns>
         </member>
-        <member name="M:H3Lib.Extensions.H3LibExtensions.RadiansToDegrees(System.Double)">
+        <member name="M:H3Lib.Extensions.H3LibExtensions.RadiansToDegrees(System.Decimal)">
             <summary>
             Convert from radians to decimal degrees.
             </summary>
@@ -3266,7 +3266,7 @@
             int H3_EXPORT(h3IsResClassIII)
             -->
         </member>
-        <member name="M:H3Lib.Extensions.H3LibExtensions.Square(System.Double)">
+        <member name="M:H3Lib.Extensions.H3LibExtensions.Square(System.Decimal)">
             <summary>
             Square of a number
             </summary>
@@ -3349,7 +3349,7 @@
             int H3_EXPORT(maxKringSize)
             -->
         </member>
-        <member name="M:H3Lib.Extensions.H3LibExtensions.NormalizeLongitude(System.Double,System.Boolean)">
+        <member name="M:H3Lib.Extensions.H3LibExtensions.NormalizeLongitude(System.Decimal,System.Boolean)">
             <summary>
             Normalize longitude, dealing with transmeridian arcs
             </summary>
@@ -3500,7 +3500,7 @@
             double _pointSquareDist
             -->
         </member>
-        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetX(H3Lib.Vec3d,System.Double)">
+        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetX(H3Lib.Vec3d,System.Decimal)">
             <summary>
             Replace X value
             </summary>
@@ -3508,7 +3508,7 @@
             <param name="x"></param>
             <returns></returns>
         </member>
-        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetY(H3Lib.Vec3d,System.Double)">
+        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetY(H3Lib.Vec3d,System.Decimal)">
             <summary>
             Replace Y value
             </summary>
@@ -3516,7 +3516,7 @@
             <param name="y"></param>
             <returns></returns>
         </member>
-        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetZ(H3Lib.Vec3d,System.Double)">
+        <member name="M:H3Lib.Extensions.Vec3dExtensions.SetZ(H3Lib.Vec3d,System.Decimal)">
             <summary>
             Repalce Z value
             </summary>
@@ -3696,7 +3696,7 @@
             Longitude normally in radians
             </summary>
         </member>
-        <member name="M:H3Lib.GeoCoord.#ctor(System.Double,System.Double)">
+        <member name="M:H3Lib.GeoCoord.#ctor(System.Decimal,System.Decimal)">
             <summary>
             Constructor
             </summary>
@@ -3732,7 +3732,7 @@
             Length of cell edge at resolution in meters
             </summary>
         </member>
-        <member name="M:H3Lib.GeoCoord.TriangleEdgeLengthToArea(System.Double,System.Double,System.Double)">
+        <member name="M:H3Lib.GeoCoord.TriangleEdgeLengthToArea(System.Decimal,System.Decimal,System.Decimal)">
              <summary>
              Surface area in radians^2 of spherical triangle on unit sphere.
             
@@ -4293,7 +4293,7 @@
             Y Coordinate
             </summary>
         </member>
-        <member name="M:H3Lib.Vec2d.#ctor(System.Double,System.Double)">
+        <member name="M:H3Lib.Vec2d.#ctor(System.Decimal,System.Decimal)">
             <summary>
             Constructor
             </summary>
@@ -4380,7 +4380,7 @@
             Z Coordinate
             </summary>
         </member>
-        <member name="M:H3Lib.Vec3d.#ctor(System.Double,System.Double,System.Double)">
+        <member name="M:H3Lib.Vec3d.#ctor(System.Decimal,System.Decimal,System.Decimal)">
             <summary>
             Constructor
             </summary>

@@ -10,22 +10,22 @@ namespace H3Lib
         /// <summary>
         /// North limit
         /// </summary>
-        public readonly double North;
+        public readonly decimal North;
         
         /// <summary>
         /// South limit
         /// </summary>
-        public readonly double South;
+        public readonly decimal South;
         
         /// <summary>
         /// East limit
         /// </summary>
-        public readonly double East;
+        public readonly decimal East;
         
         /// <summary>
         /// West limit
         /// </summary>
-        public readonly double West;
+        public readonly decimal West;
 
         /// <summary>
         /// Whether the given bounding box crosses the antimeridian
@@ -39,7 +39,7 @@ namespace H3Lib
         /// <summary>
         /// constructor
         /// </summary>
-        public BBox(double n, double s, double e, double w)
+        public BBox(decimal n, decimal s, decimal e, decimal w)
         {
             North = n;
             South = s;

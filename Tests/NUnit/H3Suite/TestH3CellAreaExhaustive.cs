@@ -26,7 +26,7 @@ namespace TestSuite
             var destination = edge.DestinationFromUniDirectionalEdge();
             var b = destination.ToGeoCoord();
 
-            double ab, ba;
+            decimal ab, ba;
 
             ab = a.DistanceToRadians(b);
             ba = b.DistanceToRadians(a);
@@ -84,10 +84,10 @@ namespace TestSuite
         /// <param name="target">expected earth area in some units</param>
         /// <param name="tolerance">error tolerance allowed between expected and actual</param>
         private void earth_area_test
-            (int res, Func<H3Index, double> cellArea, double target, double tolerance)
+            (int res, Func<H3Index, decimal> cellArea, decimal target, decimal tolerance)
         {
-            double area = Utility.mapSumAllCells_double(res, cellArea);
-            Assert.Less(Math.Abs(area-target), tolerance);
+            decimal area = Utility.mapSumAllCells_double(res, cellArea);
+            Assert.Less(Math.Abs(area - target), tolerance);
         }
         
         /// <summary>
@@ -124,34 +124,34 @@ namespace TestSuite
         public void cell_area_earth()
         {
             // earth area in different units
-            double rads2 = 4 * Constants.H3.M_PI;
-            double km2 = rads2 * Constants.H3.EARTH_RADIUS_KM * Constants.H3.EARTH_RADIUS_KM;
-            double m2 = km2 * 1000 * 1000;
+            decimal rads2 = 4 * Constants.H3.M_PI;
+            decimal km2 = rads2 * Constants.H3.EARTH_RADIUS_KM * Constants.H3.EARTH_RADIUS_KM;
+            decimal m2 = km2 * 1000 * 1000;
 
             // Notice the drop in accuracy at resolution 1.
             // I think this has something to do with Class II vs Class III
             // resolutions.
 
             
-            earth_area_test(0, H3IndexExtensions.CellAreaRadians2, rads2, 1e-14);
-            earth_area_test(0, H3IndexExtensions.CellAreaKm2, km2, 1e-6);
-            earth_area_test(0, H3IndexExtensions.CellAreaM2, m2, 1e0);
+            earth_area_test(0, H3IndexExtensions.CellAreaRadians2, rads2, 1e-14m);
+            earth_area_test(0, H3IndexExtensions.CellAreaKm2, km2, 1e-6m);
+            earth_area_test(0, H3IndexExtensions.CellAreaM2, m2, 1e0m);
 
-            earth_area_test(1, H3IndexExtensions.CellAreaRadians2, rads2, 1e-9);
-            earth_area_test(1, H3IndexExtensions.CellAreaKm2, km2, 1e-1);
-            earth_area_test(1, H3IndexExtensions.CellAreaM2, m2, 1e5);
+            earth_area_test(1, H3IndexExtensions.CellAreaRadians2, rads2, 1e-9m);
+            earth_area_test(1, H3IndexExtensions.CellAreaKm2, km2, 1e-1m);
+            earth_area_test(1, H3IndexExtensions.CellAreaM2, m2, 1e5m);
 
-            earth_area_test(2, H3IndexExtensions.CellAreaRadians2, rads2, 1e-12);
-            earth_area_test(2, H3IndexExtensions.CellAreaKm2, km2, 1e-5);
-            earth_area_test(2, H3IndexExtensions.CellAreaM2, m2, 1e0);
+            earth_area_test(2, H3IndexExtensions.CellAreaRadians2, rads2, 1e-12m);
+            earth_area_test(2, H3IndexExtensions.CellAreaKm2, km2, 1e-5m);
+            earth_area_test(2, H3IndexExtensions.CellAreaM2, m2, 1e0m);
 
-            earth_area_test(3, H3IndexExtensions.CellAreaRadians2, rads2, 1e-11);
-            earth_area_test(3, H3IndexExtensions.CellAreaKm2, km2, 1e-3);
-            earth_area_test(3, H3IndexExtensions.CellAreaM2, m2, 1e3);
+            earth_area_test(3, H3IndexExtensions.CellAreaRadians2, rads2, 1e-11m);
+            earth_area_test(3, H3IndexExtensions.CellAreaKm2, km2, 1e-3m);
+            earth_area_test(3, H3IndexExtensions.CellAreaM2, m2, 1e3m);
 
-            earth_area_test(4, H3IndexExtensions.CellAreaRadians2, rads2, 1e-11);
-            earth_area_test(4, H3IndexExtensions.CellAreaKm2, km2, 1e-3);
-            earth_area_test(4, H3IndexExtensions.CellAreaM2, m2, 1e2);
+            earth_area_test(4, H3IndexExtensions.CellAreaRadians2, rads2, 1e-11m);
+            earth_area_test(4, H3IndexExtensions.CellAreaKm2, km2, 1e-3m);
+            earth_area_test(4, H3IndexExtensions.CellAreaM2, m2, 1e2m);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace TestSuite
     {
         private const int PADDED_COUNT = 10;
 
-        private static readonly GeoCoord sf = new GeoCoord(0.659966917655, 2 * 3.14159 - 2.1364398519396);
+        private static readonly GeoCoord sf = new GeoCoord(0.659966917655m, 2 * 3.14159m - 2.1364398519396m);
         private static readonly H3Index sfHex8 = sf.ToH3Index(8);
 
         private void verifyCountAndUniqueness

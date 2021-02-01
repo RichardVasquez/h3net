@@ -10,26 +10,20 @@ code from [Uber's](https://github.com/uber)
 
 ## Why? There's already a version in C!
 
-1. Because I can.
-    * I also wanted to refresh and expand my knowledge of C.
-    * I am building a mobile game, and it's using Unity, and
-      when I first started it, building C extensions wasn't
-      working for me when going from desktop to Android.
-2. Because I want to.
-    * I've wanted to go beyond my Asp.Net/MVC web experience.
-      While I also do [Project Euler](https://projecteuler.net)
-      and [Advent of Code](https://adventodcode.com) mostly in
-      C#, those are "one offs", as it were.
-    * Besides the game I'm working on, I like 
-      [hexagons](https://www.youtube.com/watch?v=thOifuHs6eY),
-      I like tilings, and while this isn't tiling, but partitioning,
-      on a local scale, it's pretty close.
+The short version:
+
+I'm working on a project that needs H3 capabilities in C#. When I first started this, I could
+make the bindings work on desktop, but not mobile, so I wrote the 3.1.1 version.  Working with
+it in my project over the past couple of years, along with some of the new things in H3, I
+came back to it to work with 3.7.1 capabilities.
+
+That's what's here now.  I'm still working on it, but it's now at a usable, albeit
+[lightly documented](H3Lib/Documentation) state.  You really should check out the
+H3 link I placed before, if you want to know what's involved here.
 
 ## History
-* Current - Sometime soon.  It'll have the capabilities of
-  3.7.1, and I'm going to try to make the stock H3 API work.
-  I'm also going to start deprecating my old API, **and**
-  implement my new API based on fluid operations.
+* Current (3rd round) - Currently has the same capability as
+  3.7.1, if not exactly the same syntax.
 * Version 2 - A horrible attempt to implement H3 v3.2.1, and
   I've removed the branch for it.
 * Version 1 - According to my Git repository, I pushed it on
@@ -40,23 +34,35 @@ code from [Uber's](https://github.com/uber)
 This doesn't work *exactly* like H3, especially under the hood,
 but it's close enough for most work, I feel.
 
-Most data types used and returned are readonly structs, though
-I have provided functions that will provide a mutated *copy*
-of the original type.
+Right now, you can probably work your way through the syntax in
+Api.cs in the lib directory.  For actual use, I've got a fluid
+API to chain commands together, though most of that is being
+used internally.
 
-The exceptions are the polygon functions, since they have to be
-modifiable to some degree, though I've done some tinkering with
-the internals to use actual the .Net LinkedList, but since most
-of that's internal, it shouldn't really affect end users.
+I'm also going to be closing off access to the internals shortly
+so that functionality reflecting the API will be the only direct
+access to the code.
 
-Starting from 3.7.1, I'll be throwing methods, fields, properties,
-etc. into the appropriate scopes of private, internal, and public
-so that entry points make sense, and people can't blow things up
-easily.
+At this point, the only comprehensive documentation is the auto-generated
+file at [H3Lib/Documentation](H3Lib/Documentation).  Keep an eye on that
+directory as I'll be cleaning that up next.
 
-In other words, I'm turning this from a proof of concept to a
-designed tool.
+## Input
+I'm going to be doing the following:
+  * Cleaning up the code, including some of the brute force translations
+  * Extracting/writing documentation for the library
+  * Probably adding a few unit tests for the modifications I've made.
 
+You can help too.  Fork and make a PR, and we'll go from there.
+
+## Caveat Emptor II
+I wanted to get this done in a month.  I have.  It's **nowhere** near
+the polished state I want it to be, but it works, and it passes 200+
+unit tests.  It's now ready to be played with.
+
+Don't go crazy with it just yet, as I'm going to clean it up some more, 
+work on documentation, deal with TODO's in the code, and so forth.  At
+some point after that, I'll have an actual release.
 
 ## Testing
 For the most part, I've converted the unit tests from the original H3
@@ -68,12 +74,6 @@ while h3net uses primarily extension methods on readonly structs.
 Where this has come up, I've documented it in the appropriate unit test
 file.
 
-## Roadmap
-For the 3.* version, it will likely just be bug fixes and code cleaning.
-
-The H3 library is moving to Version 4, and I'll likely try to keep up
-with them, but I'll always be lagging in that regards.
-
 ## Version
 I will be keeping the version number the same as the functionality of
 H3 that I'm matching.
@@ -81,3 +81,6 @@ H3 that I'm matching.
 Currently: **3.7.1**
 
 Previous: **3.1.1**
+
+## Fin
+[Hexagons are the bestagons](https://www.youtube.com/watch?v=thOifuHs6eY)

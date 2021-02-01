@@ -11,13 +11,13 @@ namespace TestSuite
         public void GeoToH3ExtremeCoordinates()
         {
             // Check that none of these cause crashes.
-            var g = new GeoCoord(0, 1E45);
+            var g = new GeoCoord(0m, 1E28m);
             var h = g.ToH3Index(14);
 
-            var g2 = new GeoCoord(1E46, 1E45);
+            var g2 = new GeoCoord(1E28m, 1E28m);
             h = g2.ToH3Index(15);
 
-            var g4 = new GeoCoord().SetDegrees(2, -3e39);
+            var g4 = new GeoCoord().SetDegrees(2, -1e28m);
             h = g4.ToH3Index(0);
         }
 

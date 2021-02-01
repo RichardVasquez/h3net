@@ -1,11 +1,14 @@
 # Old API
 
-This is a promissory note at this point, as the code hasn't
-been written and/or checked yet
+This is the old API, you might be able to call some of these from Api.cs,
+but I wouldn't recommend it.  Examine that file for the commands that you
+get when you build h3net as a DLL.
 
-Building h3net as a DLL will provide the following methods.
-See documentation for further information.
+I'd recommend taking some time to go through the documentation you'll find
+at [H3Lib/Documentation](H3Lib/Documentation).  It might be a bot more obtuse
+at this point, but it will be correct.
 
+## Try at your own risk
 - Api.H3Index GeoToH3(Code.GeoCoord gc, int res)
 - Api.GeoCoord H3ToGeo(Code.H3Index h3)
 - Api.GeoBoundary H3ToGeoBoundary(Code.H3Index h3)

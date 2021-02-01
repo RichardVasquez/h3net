@@ -8,7 +8,7 @@ namespace TestSuite
     [TestFixture]
     public class TestH3UniEdge
     {
-        private readonly GeoCoord _sfGeo = new GeoCoord(0.659966917655, -2.1364398519396);
+        private readonly GeoCoord _sfGeo = new GeoCoord(0.659966917655m, -2.1364398519396m);
 
         [Test]
         public void H3IndexesAreNeighbors()
