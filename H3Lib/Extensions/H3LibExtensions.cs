@@ -79,6 +79,14 @@ namespace H3Lib.Extensions
             return newLatitude;
         }
 
+        public static decimal ConstrainToPiAccuracy(this decimal number)
+        {
+            number *= 100000000000000000000m;
+            number = decimal.Truncate(number);
+            number /= 100000000000000000000m;
+            return number;
+        }
+        
         /// <summary>
         /// Makes sure longitudes are in the proper bounds
         /// </summary>
@@ -90,6 +98,7 @@ namespace H3Lib.Extensions
         /// -->
         public static decimal ConstrainLongitude(this decimal longitude)
         {
+            longitude = longitude.ConstrainToPiAccuracy();
             while (longitude > Constants.H3.M_PI)
             {
                 longitude -= 2 * Constants.H3.M_PI;

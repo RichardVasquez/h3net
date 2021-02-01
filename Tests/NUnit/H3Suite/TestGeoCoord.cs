@@ -126,7 +126,7 @@ namespace TestSuite
 
             start = start.SetDegrees(90, 0);
             expected = expected.SetDegrees(-90, 0);
-            var outCoord = start.GetAzimuthDistancePoint(12.DegreesToRadians(), 180.DegreesToRadians());
+            var outCoord = start.GetAzimuthDistancePoint(12.DegreesToRadians().ConstrainToPiAccuracy(), 180.DegreesToRadians().ConstrainToPiAccuracy());
             Assert.AreEqual(outCoord, expected);
 
             start = start.SetDegrees(-90, 0);

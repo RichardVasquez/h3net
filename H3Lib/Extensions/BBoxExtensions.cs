@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Http.Headers;
 
 namespace H3Lib.Extensions
 {
@@ -136,13 +137,24 @@ namespace H3Lib.Extensions
 
             // Derived constant based on: https://math.stackexchange.com/a/1921940
             // Clamped to 3 as higher values tend to rapidly drag the estimate to zero.
-            decimal a = d * d /
-                        new[]
-                            {
-                                3.0m,
-                                Math.Abs((p1.Longitude - p2.Longitude) / (p1.Latitude - p2.Latitude))
-                            }
-                           .Min();
+            var tdiv = p1.Latitude - p2.Latitude;
+            if (tdiv == 0)
+            {
+                tdiv = 0.00000000001m;
+            }
+            var divisor = 
+                new[]
+                    {
+                        3.0m,
+                        Math.Abs((p1.Longitude - p2.Longitude) / tdiv)
+                    }
+                   .Min();
+            if (divisor == 0)
+            {
+                divisor = 1;
+            }
+
+            decimal a = d * d / divisor;
 
             // Divide the two to get an estimate of the number of hexagons needed
             var estimate = (int) Math.Ceiling(a / pentagonAreaKm2);

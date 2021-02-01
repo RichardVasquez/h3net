@@ -162,7 +162,7 @@ namespace H3Lib.Extensions
                 return p1;
             }
 
-            azimuth = azimuth.NormalizeRadians();
+            azimuth = azimuth.NormalizeRadians().ConstrainToPiAccuracy();
             var p2 = new GeoCoord();
 
             // check for due north/south azimuth
@@ -195,6 +195,7 @@ namespace H3Lib.Extensions
             {
                 decimal sinLatitude = DecimalEx.Sin(p1.Latitude) * DecimalEx.Cos(distance) +
                                         DecimalEx.Cos(p1.Latitude) * DecimalEx.Sin(distance) * DecimalEx.Cos(azimuth);
+                sinLatitude = sinLatitude.ConstrainToPiAccuracy();
                 if (sinLatitude > 1.0m)
                 {
                     sinLatitude = 1.0m;
@@ -205,7 +206,7 @@ namespace H3Lib.Extensions
                     sinLatitude = 1.0m;
                 }
 
-                p2 = p2.SetLatitude(DecimalEx.ASin(sinLatitude));
+                p2 = p2.SetLatitude(DecimalEx.ASin(sinLatitude).ConstrainToPiAccuracy());
 
                 if (Math.Abs(p2.Latitude - Constants.H3.M_PI_2) < Constants.H3.EPSILON) // north pole
                 {
@@ -243,7 +244,7 @@ namespace H3Lib.Extensions
                     p2 = p2.SetLongitude
                         (
                          (p1.Longitude + DecimalEx.ATan2(sinLongitude, cosLongitude))
-                        .ConstrainLongitude()
+                        .ConstrainLongitude().ConstrainToPiAccuracy()
                         );
                 }
             }

@@ -136,7 +136,7 @@ namespace H3Lib
             /// <summary>
             /// epsilon of ~0.1mm in degrees
             /// </summary>
-            internal const decimal EPSILON_DEG =  0.000000001m;
+            internal const decimal EPSILON_DEG =  0.00000001m;
             
             /// <summary>
             /// epsilon of ~0.1mm in radians

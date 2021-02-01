@@ -65,7 +65,7 @@ namespace TestSuite
                          Math.Abs(
                          edgeBoundary.Verts[j].Latitude -
                          revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude
-                         ) < 0.000001m
+                         ) < 0.000001m, $"{h3.Value} - {h3}"
                         );
                     Assert.IsTrue
                     (

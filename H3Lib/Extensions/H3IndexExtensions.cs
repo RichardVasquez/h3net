@@ -870,10 +870,13 @@ namespace H3Lib.Extensions
                 // overages
                 if (baseCell.IsBaseCellPentagon())
                 {
-                    while (overage != Overage.NO_OVERAGE)
+                    while (
+                        (
+                            (_, fijk) = fijk.AdjustOverageClassIi(res, 0, 0)
+                            ).Item1 !=
+                        Overage.NO_OVERAGE)
                     {
-                        (overage, fijk) =
-                            fijk.AdjustOverageClassIi(res, pentLeading4, 0);
+                        ; //continue;
                     }
                 }
 
@@ -1149,7 +1152,7 @@ namespace H3Lib.Extensions
 
             // additional CCW rotation for polar neighbors or IK neighbors
             if (fijk.Face != baseFijk.Face &&
-                (baseCell.IsBaseCellPentagon() ||
+                (baseCell.IsBaseCellPolarPentagon() ||
                  fijk.Face == dirFaces[(int)Direction.IK_AXES_DIGIT - Constants.Vertex.DIRECTION_INDEX_OFFSET])
                 )
             {
