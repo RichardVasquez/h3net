@@ -16,6 +16,9 @@ as easily without the following:
   with an architecture change led to a scary amount of code to examine.
   Without having some idea what to expect, I would have probably given up and
   limped along with my initial 3.1.1 implementation.
+  
+  The folks on the Slack channel provided some good input as well when I
+  was trying to figure out a thing or two on how data was structured.
 
 * [H3Explorer](https://h3explorer.com/) - The visual debugger to make sure the
   new code worked right or figure out where the unit tests were blowing up.
@@ -57,3 +60,12 @@ as easily without the following:
   to make cool pictures or be a video game.
 
 * Mandy Oei, for reminding me that I need to do things before it's too late.
+
+* **TOOLS!**  I took shortcuts for some of the external things.
+  * For command line parsing, currently using [CommandLineParser](https://github.com/j-maly/CommandLineParser)
+  * For baseline XML-Doc to Markdown, [Vsxmd](https://github.com/lijunle/Vsxmd)
+  * Accuracy is important. It helps to know exactly where you're measuring, and
+    using trigonometry, it's really important you have tour numbers as accurate
+    as possible.  Currently, Microsoft doesn't.  So there's
+    [DecimalMath](https://github.com/nathanpjones/DecimalMath)
+  * And my favorite unit test runner, [NUnit](https://github.com/nunit/nunit)   

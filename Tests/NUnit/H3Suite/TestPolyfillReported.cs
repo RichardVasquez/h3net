@@ -118,7 +118,7 @@ namespace TestSuite
             Assert.AreEqual(4609, actualNumHexagons);
         }
 
-        // https://github.com/uber/h3/issues/136
+        // x
         [Test]
         public void h3_136()
         {
@@ -137,7 +137,7 @@ namespace TestSuite
             var hexagons = testPolygon.Polyfill(res);
             int actualNumHexagons = Utility.CountActualHexagons(hexagons);
 
-            Assert.AreEqual(4355,actualNumHexagons);
+            Assert.AreEqual(4353,actualNumHexagons);
         }
     }
 }
