@@ -4,32 +4,35 @@
   uses: dorny/test-reporter@v1.0.0
   with:
     # Name of the check run
-    name: 
+    name: All
     # Coma separated list of paths to test reports
 
     path: Tests/NUnit/H3Suite
     # Format of test report. Supported options:
-#  - dart-json
-  - dotnet-trx
-#  - flutter-json
-#  - jest-junit
+    # - dart-json
+    # - dotnet-trx
+    # - flutter-json
+    # - jest-junit
 
-    reporter: all
+    reporter: dotnet-trx
     # Limits which test suites are listed. Supported options:
-#  - all
-#  - only-failed
+    #  - all
+    #  - only-failed
 
-    list-suites: # default is all
+    list-suites: all
+    # default is all
     # Limits which test cases are listed. Supported options:
- # - all
- # - only-failed
- # - none
+    # - all
+    # - only-failed
+    # - none
 
-    list-tests: all # default is all
+    list-tests: all
+    # default is all
     # Limits number of created annotations with error message and stack trace captured during test execution.
-#Must be less or equal to 50.
+    # Must be less or equal to 50.
 
-    max-annotations: # default is 10
+    max-annotations: 50 
+    # default is 10
     # Set this action as failed if test report contain any failed test
     fail-on-error: # default is true
     # Relative path under $GITHUB_WORKSPACE where the repository was checked out
