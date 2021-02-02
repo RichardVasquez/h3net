@@ -597,6 +597,31 @@ namespace H3Lib
         {
             return new GeoCoord().SetDegrees(latDegs, lonDegs);
         }
+
+        /// <summary>
+        /// Erases all the information for a linkedgeopolygon
+        /// </summary>
+        /// <param name="polygon"></param>
+        public static void DestroyLinkedPolygon(LinkedGeoPolygon polygon)
+        {
+            polygon.Clear();
+        }
+
+        /// <summary>
+        /// Converts degrees to radians.
+        /// </summary>
+        public static decimal DegsToRads(decimal degrees)
+        {
+            return degrees.DegreesToRadians();
+        }
+        
+        /// <summary>
+        /// Converts radians to degrees
+        /// </summary>
+        public static decimal RadsToDegs(decimal radians)
+        {
+            return radians.RadiansToDegrees();
+        }
         
     }
 }

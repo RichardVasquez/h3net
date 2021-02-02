@@ -11,17 +11,17 @@
         <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/RichardVasquez/h3net</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>h3 hexagon spatial-partitioning</PackageTags>
+        <PackageTags>h3 hexagon spatial-indexing geospatial</PackageTags>
         <PackageReleaseNotes>H3Net is a geospatial indexing system using hexagonal grid that can be (approximately) subdivided into finer and finer hexagonal grids, combining the benefits of a hexagonal grid with S2 hierarchical subdivisions, mostly translated from the original C code from Uber's H3 project.</PackageReleaseNotes>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <Company>Richard Vasquez</Company>
         <AssemblyVersion>3.7.1</AssemblyVersion>
         <FileVersion>3.7.1</FileVersion>
-        <Configurations>Debug;Release;Apps Only</Configurations>
+        <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <DocumentationFile>Documentation\H3Lib.xml</DocumentationFile>
     </PropertyGroup>
 

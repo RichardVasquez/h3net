@@ -1,6 +1,6 @@
 # Indexing functions 
 
-These function are used for finding the H3 index containing coordinates,
+These functions are used for finding the H3 index containing coordinates,
 and for finding the center and boundary of H3 indexes.
 
 ## GeoToH3
@@ -48,3 +48,7 @@ assigned variable.  The preferred method would be ToGeoBoundary().
 |------|------|-------------|
 | h3 | H3Lib.H3Index | The H3Index to find the GeoBoundary of |
 | g  | **out** H3Lib.GeoBoundary | The GeoBoundary defining the vertices of the H3Index cell | 
+
+<hr>
+
+[Return to Uber API Table of Contents](Uber-Api.md)
