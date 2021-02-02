@@ -44,6 +44,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KRing", "Apps\Filters\KRing
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalIjToH3", "Apps\Filters\LocalIjToH3\LocalIjToH3.csproj", "{478F725B-999C-4BE6-A73D-BAA12D39B374}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Workflow", "GitHub Workflow", "{2F2A02C7-72E2-485B-AC71-EBC855FD39BF}"
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
+	.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,5 +121,6 @@ Global
 		{37C5B15F-7224-4B3E-81C3-68F75BD821DE} = {144E6FAA-853A-4D95-81B0-5B5C89D00224}
 		{8F5429F6-7770-472E-857C-6B63F68DC9B5} = {144E6FAA-853A-4D95-81B0-5B5C89D00224}
 		{478F725B-999C-4BE6-A73D-BAA12D39B374} = {144E6FAA-853A-4D95-81B0-5B5C89D00224}
+		{2F2A02C7-72E2-485B-AC71-EBC855FD39BF} = {1DA3C23F-3DA2-498B-B0CF-06C4DEE5729F}
 	EndGlobalSection
 EndGlobal
