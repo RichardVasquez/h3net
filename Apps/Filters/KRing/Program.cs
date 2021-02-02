@@ -11,8 +11,7 @@ namespace KRing
     {
         static void Main(string[] args)
         {
-            var parser =
-                new CommandLineParser.CommandLineParser();
+            using var parser = new CommandLineParser.CommandLineParser();
 
             args = args.Select(s => s.ToLower()).ToArray();
 

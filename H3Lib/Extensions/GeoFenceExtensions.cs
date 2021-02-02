@@ -258,8 +258,8 @@ namespace H3Lib.Extensions
         /// int _getEdgeHexagons
         /// -->
         public static int GetEdgeHexagons(this GeoFence geofence, int numHexagons, int res,
-                                                    ref int numSearchHexagons, ref List<H3Index> search,
-                                                    ref List<H3Index> found)
+                                                    ref int numSearchHexagons, List<H3Index> search,
+                                                    List<H3Index> found)
         {
             for (int i = 0; i < geofence.NumVerts; i++)
             {

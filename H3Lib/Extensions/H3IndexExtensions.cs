@@ -1650,8 +1650,7 @@ namespace H3Lib.Extensions
             {
                 return results;
             }
-            
-            var holdOrigin = origin;
+
             // Recurse to all neighbors in no particular order.
             for (var i = 0; i < 6; i++)
             {

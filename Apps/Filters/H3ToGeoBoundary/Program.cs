@@ -13,8 +13,7 @@ namespace H3ToGeoBoundary
     {
         static void Main(string[] args)
         {
-            var parser =
-                new CommandLineParser.CommandLineParser();
+            using var parser = new CommandLineParser.CommandLineParser();
 
             args = args.Select(s => s.ToLower()).ToArray();
 

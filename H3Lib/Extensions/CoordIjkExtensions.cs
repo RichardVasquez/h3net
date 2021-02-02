@@ -163,9 +163,12 @@ namespace H3Lib.Extensions
             // convert to CoordIJ
             int i = ijk.I - ijk.K;
             int j = ijk.J - ijk.K;
-
-            var newI = (int) Math.Round((3 * i - j) / 7.0, MidpointRounding.AwayFromZero);
-            var newJ = (int) Math.Round((i + 2 * j) / 7.0, MidpointRounding.AwayFromZero);
+            
+            var dividendI = (decimal)(3 * i - j);
+            var newI = (int) Math.Round(dividendI / 7.0m, MidpointRounding.AwayFromZero);
+            
+            var dividendJ = (decimal)(i + 2 * j);
+            var newJ = (int) Math.Round(dividendJ / 7.0m, MidpointRounding.AwayFromZero);
 
             return new CoordIjk(newI, newJ, 0).Normalized();
         }
