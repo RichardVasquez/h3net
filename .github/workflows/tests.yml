@@ -1,12 +1,38 @@
----
-name: Tests
+- name: Test Reporter
+  # You may pin to the exact commit or the version.
+  # uses: dorny/test-reporter@71f2f95ef0c4a3656e44272deca4a1efe096628a
+  uses: dorny/test-reporter@v1.0.0
+  with:
+    # Name of the check run
+    name: 
+    # Coma separated list of paths to test reports
 
-on: push
+    path: Tests/NUnit/H3Suite
+    # Format of test report. Supported options:
+#  - dart-json
+  - dotnet-trx
+#  - flutter-json
+#  - jest-junit
 
-jobs:
-  tests:
-    name: Unit Testing
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2.1.0
-      - run: dotnet test
+    reporter: all
+    # Limits which test suites are listed. Supported options:
+#  - all
+#  - only-failed
+
+    list-suites: # default is all
+    # Limits which test cases are listed. Supported options:
+ # - all
+ # - only-failed
+ # - none
+
+    list-tests: all # default is all
+    # Limits number of created annotations with error message and stack trace captured during test execution.
+#Must be less or equal to 50.
+
+    max-annotations: # default is 10
+    # Set this action as failed if test report contain any failed test
+    fail-on-error: # default is true
+    # Relative path under $GITHUB_WORKSPACE where the repository was checked out
+    working-directory: # optional
+    # GitHub Access Token
+    token: # optional, default is ${{ github.token }}
