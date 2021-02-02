@@ -126,6 +126,7 @@ namespace TestSuite
             Assert.IsFalse(expected.Contains(eastOutside));
         }
 
+        
         [Test]
         public void EdgeOnNorthPole()
         {
