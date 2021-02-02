@@ -82,5 +82,8 @@ Currently: **3.7.1**
 
 Previous: **3.1.1**
 
+## Badges
+![.NET](https://github.com/RichardVasquez/h3net/workflows/.NET/badge.svg)
+
 ## Fin
 [Hexagons are the bestagons](https://www.youtube.com/watch?v=thOifuHs6eY)
