@@ -115,6 +115,7 @@ namespace TestSuite
 
             var westInside = new GeoCoord(0.1m, Constants.H3.M_PI - 0.05m);
             Assert.IsTrue(expected.Contains(westInside));
+            
 
             var eastInside = new GeoCoord(0.1m, -Constants.H3.M_PI + 0.05m);
             Assert.IsTrue(expected.Contains(eastInside));
