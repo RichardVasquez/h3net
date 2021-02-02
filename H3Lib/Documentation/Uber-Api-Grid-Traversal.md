@@ -142,7 +142,7 @@ Returns 0 if no pentagonal distortion was encountered.
 |------|------|-------------|
 |origin|H3Lib.H3Index|Origin cell for HexRing|
 |k|int|Radius of HexRing|
-|outCells|List&lt;H3Lib.H3Index&gt;|Collection of H3Index cells making the HexRing|
+|outCells|**out** List&lt;H3Lib.H3Index&gt;|Collection of H3Index cells making the HexRing|
 
 ## H3Line
 ```c#
@@ -187,7 +187,7 @@ Returns a negative number if the line cannot be computed.
 |start|H3Lib.H3Index|Starting H3Index cell|
 |end|H3Lib.H3Index|Ending H3Index cell|
 
-## h3Distance
+## H3Distance
 ```c#
 int Api.H3Distance(H3Index origin, H3Index h3)
 ```
@@ -204,7 +204,6 @@ limitations as the local IJ coordinate space functions.
 |------|------|-------------|
 |origin|H3Lib.H3Index|origin|
 |h3|H3Lib.H3Index|destination|
-int h3Distance(H3Index origin, H3Index h3);
 
 ## ExperimentalH3ToLocalIj
 ```c#
@@ -237,7 +236,7 @@ compatible across different versions of H3.
 |------|------|-------------|
 |orgin|H3Lib.H3Index|Anchor H3Index cell|
 |ij|H3Lib.CoordIj|IJ Coordinate|
-|outcell|H3Lib.H3Index|H3Index cell converted from CoordIj|
+|outCell|**out** H3Lib.H3Index|H3Index cell converted from CoordIj|
 
 <hr>
 

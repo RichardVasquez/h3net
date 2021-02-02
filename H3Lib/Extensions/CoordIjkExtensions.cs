@@ -79,7 +79,7 @@ namespace H3Lib.Extensions
         /// coordijk,c
         /// void _ijkToHex2d
         /// -->
-        public static Vec2d ToHex2d(this CoordIjk h)
+        internal static Vec2d ToHex2d(this CoordIjk h)
         {
             int i = h.I - h.K;
             int j = h.J - h.K;
@@ -96,7 +96,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _ijkNormalize
         /// -->
-        public static CoordIjk Normalized(this CoordIjk coord)
+        internal static CoordIjk Normalized(this CoordIjk coord)
         {
             (int i, int j, int k) = (coord.I, coord.J, coord.K);
             
@@ -139,7 +139,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// Direction _unitIjkToDigit
         /// -->
-        public static Direction ToDirection(this CoordIjk ijk)
+        internal static Direction ToDirection(this CoordIjk ijk)
         {
             var c = ijk.Normalized();
             var test = Constants.CoordIjk.UnitVectors.Where(pair => pair.Value == c).ToList();
@@ -158,7 +158,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _upAp7
         /// -->
-        public static CoordIjk UpAp7(this CoordIjk ijk)
+        internal static CoordIjk UpAp7(this CoordIjk ijk)
         {
             // convert to CoordIJ
             int i = ijk.I - ijk.K;
@@ -179,7 +179,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _upAp7r
         /// -->
-        public static CoordIjk UpAp7R(this CoordIjk ijk)
+        internal static CoordIjk UpAp7R(this CoordIjk ijk)
         {
             // convert to CoordIJ
             int i = ijk.I - ijk.K;
@@ -201,7 +201,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _downAp7
         /// -->
-        public static CoordIjk DownAp7(this CoordIjk ijk)
+        internal static CoordIjk DownAp7(this CoordIjk ijk)
         {
             var iVec = new CoordIjk(3, 0, 1) * ijk.I;
             var jVec = new CoordIjk(1, 3, 0) * ijk.J;
@@ -219,7 +219,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _downAp7r
         /// -->
-        public static CoordIjk DownAp7R(this CoordIjk ijk)
+        internal static CoordIjk DownAp7R(this CoordIjk ijk)
         {
             var iVec = new CoordIjk(3, 1, 0) * ijk.I;
             var jVec = new CoordIjk(0, 3, 1) * ijk.J;
@@ -238,7 +238,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _neighbor
         /// -->
-        public static CoordIjk Neighbor(this CoordIjk ijk, Direction digit)
+        internal static CoordIjk Neighbor(this CoordIjk ijk, Direction digit)
         {
             if (digit <= Direction.CENTER_DIGIT || digit >= Direction.NUM_DIGITS)
             {
@@ -256,7 +256,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _ijkRotate60ccw
         /// -->
-        public static CoordIjk Rotate60CounterClockwise(this CoordIjk ijk)
+        internal static CoordIjk Rotate60CounterClockwise(this CoordIjk ijk)
         {
             // unit vector rotations
             var iVec = new CoordIjk(1, 1, 0) * ijk.I;
@@ -274,7 +274,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _ijkRotate60cw
         /// -->
-        public static CoordIjk Rotate60Clockwise(this CoordIjk ijk)
+        internal static CoordIjk Rotate60Clockwise(this CoordIjk ijk)
         {
             // unit vector rotations
             var iVec = new CoordIjk(1, 0, 1) * ijk.I;
@@ -294,7 +294,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _downAp3
         /// -->
-        public static CoordIjk DownAp3(this CoordIjk ijk)
+        internal static CoordIjk DownAp3(this CoordIjk ijk)
         {
             // res r unit vectors in res r+1
             var iVec = new CoordIjk(2, 0, 1) * ijk.I;
@@ -313,7 +313,7 @@ namespace H3Lib.Extensions
         /// coordijk.c
         /// void _downAp3r
         /// -->
-        public static CoordIjk DownAp3R(this CoordIjk ijk)
+        internal static CoordIjk DownAp3R(this CoordIjk ijk)
         {
             // res r unit vectors in res r+1
             var iVec = new CoordIjk(2, 1, 0) * ijk.I;

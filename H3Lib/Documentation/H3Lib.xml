@@ -352,6 +352,22 @@
             Winging this one, returns a GeoCoord with degree values instead of radians
             </summary>
         </member>
+        <member name="M:H3Lib.Api.DestroyLinkedPolygon(H3Lib.LinkedGeoPolygon)">
+            <summary>
+            Erases all the information for a linkedgeopolygon
+            </summary>
+            <param name="polygon"></param>
+        </member>
+        <member name="M:H3Lib.Api.DegsToRads(System.Decimal)">
+            <summary>
+            Converts degrees to radians.
+            </summary>
+        </member>
+        <member name="M:H3Lib.Api.RadsToDegs(System.Decimal)">
+            <summary>
+            Converts radians to degrees
+            </summary>
+        </member>
         <member name="T:H3Lib.BaseCellData">
             <summary>
             Information on a single base cell
@@ -1358,11 +1374,6 @@
             baseCells.c
             bool _baseCellIsCwOffset
             -->
-        </member>
-        <member name="P:H3Lib.Extensions.BaseCellsExtensions.Res0IndexCount">
-            <summary>
-            NOTE: Looks like this is not needed.
-            </summary>
         </member>
         <member name="M:H3Lib.Extensions.BaseCellsExtensions.GetRes0Indexes">
             <summary>
@@ -3182,6 +3193,11 @@
             Constrain Latitude to +/- PI/2
             </summary>
         </member>
+        <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainToPiAccuracy(System.Decimal)">
+            <summary>
+            Constants only covers PI to a certain value.  Who am I to improve on that?
+            </summary>
+        </member>
         <member name="M:H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Decimal)">
             <summary>
             Makes sure longitudes are in the proper bounds
@@ -3907,6 +3923,11 @@
             h3index.c
             Direction _h3LeadingNonZeroDigit
             -->
+        </member>
+        <member name="P:H3Lib.H3Index.IsPentagon">
+            <summary>
+            I needed this for debugging too many times.
+            </summary>
         </member>
         <member name="P:H3Lib.H3Index.Mode">
             <summary>

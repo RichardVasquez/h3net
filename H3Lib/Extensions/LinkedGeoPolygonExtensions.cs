@@ -62,10 +62,6 @@ namespace H3Lib.Extensions
             // Get the first loop and unlink it from root
             var testLoops = root.Loops;//.GeoLoopList.First;
 
-//            var linkedGeoArray = new LinkedGeoLoop[root.GeoLoopList.Count];
-//            root.GeoLoopList.CopyTo(linkedGeoArray,0);
-
-//            var testLoops = linkedGeoArray.ToList();// root.LinkedGeoList.ToList();
             root = new LinkedGeoPolygon();
 
             foreach (LinkedGeoLoop geoLoop in testLoops)
@@ -85,34 +81,7 @@ namespace H3Lib.Extensions
                     outerCount++;
                 }
             }
-            
-            /*
-            // Iterate over all loops, moving inner loops into an array and
-            // assigning outer loops to new polygons
-            // TODO: Make sure you're not confusing LinkedList references
-            while (loop != null)
-            {
-                if (loop.IsClockwise())
-                {
-                    innerLoops[innerCount] = loop;
-                    innerCount++;
-                }
-                else
-                {
-                    polygon = polygon == null
-                                  ? root
-                                  : polygon.AddNew();
-                    polygon.Loop.AddLast(loop);
-                    bboxes[outerCount] = loop.ToBBox();
-                    outerCount++;
-                }
-                // get the next loop and unlink it from this one
-                next = loop.Next;
-                loop.Next = null;
-                loop = next;
-            }
-            */
-            
+
             // Find polygon for each inner loop and assign the hole to it
             for (int i = 0; i < innerCount; i++)
             {

@@ -69,7 +69,7 @@ Returns 0 on success.
 | Name | Type | Description |
 |------|------|-------------|
 |h3Set|List&lt;H3Lib.H3Index&gt;|Cells to compact|
-|outCompacted|List&lt;H3Lib.H3Index&gt;|Compacted cells|
+|outCompacted|**out** List&lt;H3Lib.H3Index&gt;|Compacted cells|
 
 ## Uncompact
 ```c#
@@ -83,7 +83,7 @@ Returns 0 on success.
 | Name | Type | Description |
 |------|------|-------------|
 |compactedSet|List&lt;H3Lib.H3Index&gt;|Compacted cells|
-|outCells|List&lt;H3Lib.H3Index&gt;|Uncompacted cells|
+|outCells|**out** List&lt;H3Lib.H3Index&gt;|Uncompacted cells|
 |res|int|Resolution to uncompact to|
 
 ## MaxUncompactSize

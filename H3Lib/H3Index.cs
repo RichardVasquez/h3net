@@ -53,7 +53,6 @@ namespace H3Lib
             Value = h.Value;
         }
 
-
         /// <summary>
         /// Integer resolution of an H3 index.  
         /// </summary>
@@ -98,6 +97,11 @@ namespace H3Lib
                 return Direction.CENTER_DIGIT;
             }
         }
+
+        /// <summary>
+        /// I needed this for debugging too many times.
+        /// </summary>
+        public bool IsPentagon => this.IsPentagon();
 
         /// <summary>
         /// Integer mode of H3

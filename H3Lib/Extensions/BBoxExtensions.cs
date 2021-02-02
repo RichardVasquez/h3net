@@ -116,7 +116,7 @@ namespace H3Lib.Extensions
         /// bbox.c
         /// int bboxHexEstimate
         /// -->
-        public static int HexEstimate(this BBox box, int res)
+        internal static int HexEstimate(this BBox box, int res)
         {
             // Get the area of the pentagon as the maximally-distorted area possible
             var pentagons = res.GetPentagonIndexes();

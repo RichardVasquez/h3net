@@ -51,15 +51,6 @@ namespace TestSuite
 
                 for (var j = 0; j < edgeBoundary.NumVerts; j++)
                 {
-                    if (Math.Abs
-                            (
-                             edgeBoundary.Verts[j].Latitude -
-                             revEdgeBoundary.Verts[revEdgeBoundary.NumVerts - 1 - j].Latitude
-                            ) >= .000001m)
-                    {
-                        var k = 0;
-                    }
-
                     Assert.IsTrue
                         (
                          Math.Abs(
