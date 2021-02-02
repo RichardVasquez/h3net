@@ -324,7 +324,7 @@ namespace H3Lib.Extensions
         /// h3index.c
         /// H3Index _h3RotatePent60ccw
         /// -->
-        public static H3Index RotatePent60CounterClockwise(this H3Index h)
+        internal static H3Index RotatePent60CounterClockwise(this H3Index h)
         {
             // rotate in place; skips any leading 1 digits (k-axis)
             var foundFirstNonZeroDigit = 0;
@@ -359,7 +359,7 @@ namespace H3Lib.Extensions
         /// h3Index.c
         /// H3Index _h3RotatePent60cw
         /// -->
-        public static H3Index RotatePent60Clockwise(this H3Index h)
+        internal static H3Index RotatePent60Clockwise(this H3Index h)
         {
             // rotate in place; skips any leading 1 digits (k-axis)
             var foundFirstNonZeroDigit = false;
@@ -394,7 +394,7 @@ namespace H3Lib.Extensions
         /// h3Index.c
         /// H3Index _h3Rotate60ccw(H3Index h)
         /// -->
-        public static H3Index Rotate60CounterClockwise(this H3Index h)
+        internal static H3Index Rotate60CounterClockwise(this H3Index h)
         {
             for (int r = 1, res = h.Resolution; r <= res; r++)
             {
@@ -413,7 +413,7 @@ namespace H3Lib.Extensions
         /// h3Index.c
         /// H3Index _h3Rotate60cw
         /// --> 
-        public static H3Index Rotate60Clockwise(this H3Index h)
+        internal static H3Index Rotate60Clockwise(this H3Index h)
         {
             for (int r = 1, res = h.Resolution; r <= res; r++)
             {
@@ -440,7 +440,7 @@ namespace H3Lib.Extensions
         /// h3Index.c
         /// int _h3ToFaceIjkWithInitializedFijk
         /// -->
-        public static (int, FaceIjk) ToFaceIjkWithInitializedFijk(this H3Index h, FaceIjk fijk)
+        internal static (int, FaceIjk) ToFaceIjkWithInitializedFijk(this H3Index h, FaceIjk fijk)
         {
             var ijk = fijk.Coord;
             int res = h.Resolution;
@@ -1625,7 +1625,7 @@ namespace H3Lib.Extensions
         /// algos.c
         /// void _kRingInternal
         /// -->
-        public static Dictionary<H3Index, int> KRingInternal(this H3Index origin, int k, int currentK=0, Dictionary<H3Index, int> outData=null)
+        internal static Dictionary<H3Index, int> KRingInternal(this H3Index origin, int k, int currentK=0, Dictionary<H3Index, int> outData=null)
         {
             if (origin == 0)
             {
@@ -2078,7 +2078,7 @@ namespace H3Lib.Extensions
         /// bbox.c
         /// double _hexRadiusKm
         /// -->
-        public static decimal HexRadiusKm(this H3Index h3)
+        internal static decimal HexRadiusKm(this H3Index h3)
         {
             // There is probably a cheaper way to determine the radius of a
             // hexagon, but this way is conceptually simple

@@ -32,7 +32,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double _posAngleRads
         /// -->
-        public static decimal NormalizeRadians(this decimal rads, decimal limit = Constants.H3.M_2PI)
+        internal static decimal NormalizeRadians(this decimal rads, decimal limit = Constants.H3.M_2PI)
         {
             decimal tmp = rads < 0.0m
                              ? rads + Constants.H3.M_2PI
@@ -79,7 +79,10 @@ namespace H3Lib.Extensions
             return newLatitude;
         }
 
-        public static decimal ConstrainToPiAccuracy(this decimal number)
+        /// <summary>
+        /// Constants only covers PI to a certain value.  Who am I to improve on that?
+        /// </summary>
+        internal static decimal ConstrainToPiAccuracy(this decimal number)
         {
             number *= 100000000000000000000m;
             number = decimal.Truncate(number);
@@ -184,7 +187,7 @@ namespace H3Lib.Extensions
         /// mathExtensions.c
         /// int64_t _ipow
         /// -->
-        public static long Power(this long baseValue, long power)
+        internal static long Power(this long baseValue, long power)
         {
             long result = 1;
 
@@ -236,7 +239,7 @@ namespace H3Lib.Extensions
         /// vec3d.c
         /// double _square
         /// -->
-        public static decimal Square(this decimal x)
+        internal static decimal Square(this decimal x)
         {
             return x * x;
         }
@@ -277,7 +280,7 @@ namespace H3Lib.Extensions
         /// h3Index.c
         /// static bool _isValidChildRes
         /// -->
-        public static bool IsValidChildRes(this int parentRes, int childRes)
+        internal static bool IsValidChildRes(this int parentRes, int childRes)
         {
             return childRes >= parentRes &&
                    childRes <= Constants.H3.MAX_H3_RES;
@@ -350,8 +353,6 @@ namespace H3Lib.Extensions
 
             return h3Set.FlexiCompact();
         }
-        
-        
 
         /// A slightly different approach to the problem of compacting with some
         /// flexibility.  All resolutions are handled, duplicates are avoided,

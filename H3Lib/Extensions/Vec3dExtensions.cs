@@ -15,7 +15,7 @@ namespace H3Lib.Extensions
         /// vec3d.c
         /// double _pointSquareDist
         /// -->
-        public static decimal PointSquareDistance(this Vec3d v1, Vec3d v2)
+        internal static decimal PointSquareDistance(this Vec3d v1, Vec3d v2)
         {
             return (v1.X - v2.X).Square() + (v1.Y - v2.Y).Square() + (v1.Z - v2.Z).Square();
         }

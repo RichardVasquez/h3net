@@ -21,7 +21,6 @@ namespace H3Lib.Extensions
             {
                 return false;
             }
-            
 
             bool isTransmeridian = box.IsTransmeridian;
             var contains = false;
@@ -29,8 +28,6 @@ namespace H3Lib.Extensions
             decimal lat = coord.Latitude;
             decimal lng = coord.Longitude.NormalizeLongitude(isTransmeridian);
 
-            // TODO: Incorporate equivalent from LinkedGeoLoopExtensions.cs
-            
             GeoCoord a;
             GeoCoord b;
 
@@ -39,12 +36,6 @@ namespace H3Lib.Extensions
 
             while (true)
             {
-                //  #define ITERATE_GEOFENCE(geofence, vertexA, vertexB) \
-                //      if (++loopIndex >= geofence->numVerts) break;    \
-                //      vertexA = geofence->verts[loopIndex];            \
-                //      vertexB = geofence->verts[(loopIndex + 1) % geofence->numVerts]
-                //               ITERATE(loop, a, b);
-
                  if (++loopIndex >= loop.NumVerts)
                  {
                      break;
@@ -201,7 +192,7 @@ namespace H3Lib.Extensions
         /// <param name="loop"></param>
         /// <param name="isTransmeridian"></param>
         /// <returns></returns>
-        public static bool IsClockwiseNormalized(this GeoFence loop, bool isTransmeridian)
+        internal static bool IsClockwiseNormalized(this GeoFence loop, bool isTransmeridian)
         {
             decimal sum = 0m;
             GeoCoord a;

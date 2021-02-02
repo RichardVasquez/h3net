@@ -161,7 +161,5 @@ namespace H3Lib.Extensions
             return Constants.FaceIjk.FaceCenterGeo[face]
                             .GetAzimuthDistancePoint(theta, r);
         }
-        
-
     }
 }

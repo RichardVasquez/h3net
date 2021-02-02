@@ -162,7 +162,7 @@ namespace H3Lib.Extensions
         /// algos.c
         /// int _polyfillInternal
         /// -->
-        public static (int, List<H3Index>) PolyFillInternal(this GeoPolygon geoPolygon, int res)
+        internal static (int, List<H3Index>) PolyFillInternal(this GeoPolygon geoPolygon, int res)
         {
             // One of the goals of the polyfill algorithm is that two adjacent polygons
             // with zero overlap have zero overlapping hexagons. That the hexagons are

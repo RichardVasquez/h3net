@@ -115,7 +115,7 @@ Provides the coordinates defining the unidirectional edge.
 | Name | Type | Description |
 |------|------|-------------|
 |edge|H3Lib.H3Index|Edge to find coordinates of|
-|gb|H3Lib.GeoBoundary|The geoboundary that defines the edge in terms of vertices|
+|gb|**out** H3Lib.GeoBoundary|The geoboundary that defines the edge in terms of vertices|
 
 <hr>
 

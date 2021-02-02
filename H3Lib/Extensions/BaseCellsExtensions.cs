@@ -48,7 +48,7 @@ namespace H3Lib.Extensions
         /// baseCells.c
         /// bool _isBaseCellPolarPentagon
         /// -->
-        public static bool IsBaseCellPolarPentagon(this int baseCell)
+        internal static bool IsBaseCellPolarPentagon(this int baseCell)
         {
             return baseCell == 4 || baseCell == 117;
         }
@@ -60,7 +60,7 @@ namespace H3Lib.Extensions
         /// baseCells.c
         /// _baseCellToFaceIjk
         /// -->
-        public static FaceIjk ToFaceIjk(this int baseCell)
+        internal static FaceIjk ToFaceIjk(this int baseCell)
         {
             return new FaceIjk(Constants.BaseCells.BaseCellData[baseCell].HomeFijk);
         }
@@ -78,7 +78,7 @@ namespace H3Lib.Extensions
         /// baseCells.c
         /// int _baseCellToCCWrot60
         /// -->
-        public static int ToCounterClockwiseRotate60(this int baseCell, int face)
+        internal static int ToCounterClockwiseRotate60(this int baseCell, int face)
         {
             if (face < 0 || face > Constants.H3.NUM_ICOSA_FACES)
             {
@@ -121,17 +121,12 @@ namespace H3Lib.Extensions
         /// baseCells.c
         /// bool _baseCellIsCwOffset
         /// -->
-        public static bool IsClockwiseOffset(this int baseCell, int testFace)
+        internal static bool IsClockwiseOffset(this int baseCell, int testFace)
         {
             return Constants.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[0] == testFace ||
                    Constants.BaseCells.BaseCellData[baseCell].ClockwiseOffsetPentagon[1] == testFace;
         }
         
-        /// <summary>
-        /// NOTE: Looks like this is not needed.
-        /// </summary>
-        public static int Res0IndexCount => Constants.H3.NUM_BASE_CELLS;
-
         /// <summary>
         /// getRes0Indexes generates all base cells
         /// </summary>

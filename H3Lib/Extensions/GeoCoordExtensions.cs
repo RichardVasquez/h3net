@@ -33,7 +33,6 @@ namespace H3Lib.Extensions
         {
             return gc.SetGeoRads(latitude, longitude);
         }
-
         
         /// <summary>
         /// Set the components of spherical coordinates in radians.
@@ -45,7 +44,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// void _setGeoRads
         /// -->
-        public static GeoCoord SetGeoRads(this GeoCoord gc, decimal latitudeRadians, decimal longitudeRadians)
+        internal static GeoCoord SetGeoRads(this GeoCoord gc, decimal latitudeRadians, decimal longitudeRadians)
         {
             gc =  new GeoCoord(latitudeRadians, longitudeRadians);
             return gc;
@@ -131,7 +130,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// double _geoAzimuthRads
         /// -->
-        public static decimal AzimuthRadiansTo(this GeoCoord p1, GeoCoord p2)
+        internal static decimal AzimuthRadiansTo(this GeoCoord p1, GeoCoord p2)
         {
             return
                 DecimalEx.ATan2
@@ -155,7 +154,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// void _geoAzDistanceRads
         /// -->
-        public static GeoCoord GetAzimuthDistancePoint(this GeoCoord p1, decimal azimuth, decimal distance)
+        internal static GeoCoord GetAzimuthDistancePoint(this GeoCoord p1, decimal azimuth, decimal distance)
         {
             if (distance < Constants.H3.EPSILON)
             {
@@ -387,17 +386,12 @@ namespace H3Lib.Extensions
                 return Constants.H3Index.H3_INVALID_INDEX;
             }
 
-            //  NOTE: Find a better solution
+            // Decimals don't do infinities. Cross our fingers.
             if (!(Math.Abs(g.Latitude) < decimal.MaxValue) || !(Math.Abs(g.Longitude) < decimal.MaxValue))
             {
                 return Constants.H3Index.H3_INVALID_INDEX;
             }
                 
-            // if (!double.IsFinite(g.Latitude) || !double.IsFinite(g.Longitude))
-            // {
-            //     return Constants.H3Index.H3_INVALID_INDEX;
-            // }
-
             return g.ToFaceIjk(res).ToH3(res);
         }
 
@@ -426,8 +420,6 @@ namespace H3Lib.Extensions
                 estimate = 1;
             }
             return estimate;
-
         }
-        
     }
 }

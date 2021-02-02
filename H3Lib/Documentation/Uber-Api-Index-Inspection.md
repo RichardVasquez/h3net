@@ -103,7 +103,7 @@ maxFaceCount
 | Name | Type | Description |
 |------|------|-------------|
 | h3 | H3Lib.H3Index | H3Index cell under investigation |
-| outFaces | **out** List<int> | List of faces overlapped by H3Index cell |
+| outFaces | **out** List&lt;int&gt; | List of faces overlapped by H3Index cell |
 
 ## int MaxFaceCount(H3Index h3);
 ```c#

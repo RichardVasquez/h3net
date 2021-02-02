@@ -16,6 +16,8 @@
   - [CellAreaRads2()](#M-H3Lib-Api-CellAreaRads2-H3Lib-H3Index- 'H3Lib.Api.CellAreaRads2(H3Lib.H3Index)')
   - [Compact()](#M-H3Lib-Api-Compact-System-Collections-Generic-List{H3Lib-H3Index},System-Collections-Generic-List{H3Lib-H3Index}@- 'H3Lib.Api.Compact(System.Collections.Generic.List{H3Lib.H3Index},System.Collections.Generic.List{H3Lib.H3Index}@)')
   - [DegreesToRadians(degrees)](#M-H3Lib-Api-DegreesToRadians-System-Decimal- 'H3Lib.Api.DegreesToRadians(System.Decimal)')
+  - [DegsToRads()](#M-H3Lib-Api-DegsToRads-System-Decimal- 'H3Lib.Api.DegsToRads(System.Decimal)')
+  - [DestroyLinkedPolygon(polygon)](#M-H3Lib-Api-DestroyLinkedPolygon-H3Lib-LinkedGeoPolygon- 'H3Lib.Api.DestroyLinkedPolygon(H3Lib.LinkedGeoPolygon)')
   - [EdgeLengthKm()](#M-H3Lib-Api-EdgeLengthKm-System-Int32- 'H3Lib.Api.EdgeLengthKm(System.Int32)')
   - [EdgeLengthM()](#M-H3Lib-Api-EdgeLengthM-System-Int32- 'H3Lib.Api.EdgeLengthM(System.Int32)')
   - [ExactEdgeLengthKm()](#M-H3Lib-Api-ExactEdgeLengthKm-H3Lib-H3Index- 'H3Lib.Api.ExactEdgeLengthKm(H3Lib.H3Index)')
@@ -70,6 +72,7 @@
   - [PointDistRads(a,b)](#M-H3Lib-Api-PointDistRads-H3Lib-GeoCoord,H3Lib-GeoCoord- 'H3Lib.Api.PointDistRads(H3Lib.GeoCoord,H3Lib.GeoCoord)')
   - [PolyFill(polygon,r,outCells)](#M-H3Lib-Api-PolyFill-H3Lib-GeoPolygon,System-Int32,System-Collections-Generic-List{H3Lib-H3Index}@- 'H3Lib.Api.PolyFill(H3Lib.GeoPolygon,System.Int32,System.Collections.Generic.List{H3Lib.H3Index}@)')
   - [RadiansToDegrees()](#M-H3Lib-Api-RadiansToDegrees-System-Decimal- 'H3Lib.Api.RadiansToDegrees(System.Decimal)')
+  - [RadsToDegs()](#M-H3Lib-Api-RadsToDegs-System-Decimal- 'H3Lib.Api.RadsToDegs(System.Decimal)')
   - [Res0IndexCount()](#M-H3Lib-Api-Res0IndexCount 'H3Lib.Api.Res0IndexCount')
   - [SetGeoDegs()](#M-H3Lib-Api-SetGeoDegs-System-Decimal,System-Decimal- 'H3Lib.Api.SetGeoDegs(System.Decimal,System.Decimal)')
   - [StringToH3()](#M-H3Lib-Api-StringToH3-System-String- 'H3Lib.Api.StringToH3(System.String)')
@@ -122,7 +125,6 @@
   - [InvalidRotations](#F-H3Lib-Constants-BaseCells-InvalidRotations 'H3Lib.Constants.BaseCells.InvalidRotations')
   - [MaxFaceCoord](#F-H3Lib-Constants-BaseCells-MaxFaceCoord 'H3Lib.Constants.BaseCells.MaxFaceCoord')
 - [BaseCellsExtensions](#T-H3Lib-Extensions-BaseCellsExtensions 'H3Lib.Extensions.BaseCellsExtensions')
-  - [Res0IndexCount](#P-H3Lib-Extensions-BaseCellsExtensions-Res0IndexCount 'H3Lib.Extensions.BaseCellsExtensions.Res0IndexCount')
   - [GetBaseCellDirection()](#M-H3Lib-Extensions-BaseCellsExtensions-GetBaseCellDirection-System-Int32,System-Int32- 'H3Lib.Extensions.BaseCellsExtensions.GetBaseCellDirection(System.Int32,System.Int32)')
   - [GetNeighbor()](#M-H3Lib-Extensions-BaseCellsExtensions-GetNeighbor-System-Int32,H3Lib-Direction- 'H3Lib.Extensions.BaseCellsExtensions.GetNeighbor(System.Int32,H3Lib.Direction)')
   - [GetRes0Indexes()](#M-H3Lib-Extensions-BaseCellsExtensions-GetRes0Indexes 'H3Lib.Extensions.BaseCellsExtensions.GetRes0Indexes')
@@ -381,6 +383,7 @@
   - [Value](#F-H3Lib-H3Index-Value 'H3Lib.H3Index.Value')
   - [BaseCell](#P-H3Lib-H3Index-BaseCell 'H3Lib.H3Index.BaseCell')
   - [HighBit](#P-H3Lib-H3Index-HighBit 'H3Lib.H3Index.HighBit')
+  - [IsPentagon](#P-H3Lib-H3Index-IsPentagon 'H3Lib.H3Index.IsPentagon')
   - [IsResClassIii](#P-H3Lib-H3Index-IsResClassIii 'H3Lib.H3Index.IsResClassIii')
   - [LeadingNonZeroDigit](#P-H3Lib-H3Index-LeadingNonZeroDigit 'H3Lib.H3Index.LeadingNonZeroDigit')
   - [Mode](#P-H3Lib-H3Index-Mode 'H3Lib.H3Index.Mode')
@@ -461,6 +464,7 @@
   - [ConstrainLatitude()](#M-H3Lib-Extensions-H3LibExtensions-ConstrainLatitude-System-Int32- 'H3Lib.Extensions.H3LibExtensions.ConstrainLatitude(System.Int32)')
   - [ConstrainLongitude(longitude)](#M-H3Lib-Extensions-H3LibExtensions-ConstrainLongitude-System-Decimal- 'H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Decimal)')
   - [ConstrainLongitude(longitude)](#M-H3Lib-Extensions-H3LibExtensions-ConstrainLongitude-System-Int32- 'H3Lib.Extensions.H3LibExtensions.ConstrainLongitude(System.Int32)')
+  - [ConstrainToPiAccuracy()](#M-H3Lib-Extensions-H3LibExtensions-ConstrainToPiAccuracy-System-Decimal- 'H3Lib.Extensions.H3LibExtensions.ConstrainToPiAccuracy(System.Decimal)')
   - [DegreesToRadians(degrees)](#M-H3Lib-Extensions-H3LibExtensions-DegreesToRadians-System-Decimal- 'H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Decimal)')
   - [DegreesToRadians(degrees)](#M-H3Lib-Extensions-H3LibExtensions-DegreesToRadians-System-Int32- 'H3Lib.Extensions.H3LibExtensions.DegreesToRadians(System.Int32)')
   - [FlexiCompact()](#M-H3Lib-Extensions-H3LibExtensions-FlexiCompact-System-Collections-Generic-List{H3Lib-H3Index}- 'H3Lib.Extensions.H3LibExtensions.FlexiCompact(System.Collections.Generic.List{H3Lib.H3Index})')
@@ -741,6 +745,30 @@ converts degrees to radians
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | degrees | [System.Decimal](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Decimal 'System.Decimal') |  |
+
+<a name='M-H3Lib-Api-DegsToRads-System-Decimal-'></a>
+### DegsToRads() `method`
+
+##### Summary
+
+Converts degrees to radians.
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-H3Lib-Api-DestroyLinkedPolygon-H3Lib-LinkedGeoPolygon-'></a>
+### DestroyLinkedPolygon(polygon) `method`
+
+##### Summary
+
+Erases all the information for a linkedgeopolygon
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| polygon | [H3Lib.LinkedGeoPolygon](#T-H3Lib-LinkedGeoPolygon 'H3Lib.LinkedGeoPolygon') |  |
 
 <a name='M-H3Lib-Api-EdgeLengthKm-System-Int32-'></a>
 ### EdgeLengthKm() `method`
@@ -1382,6 +1410,17 @@ converts radians to degrees
 
 This method has no parameters.
 
+<a name='M-H3Lib-Api-RadsToDegs-System-Decimal-'></a>
+### RadsToDegs() `method`
+
+##### Summary
+
+Converts radians to degrees
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-H3Lib-Api-Res0IndexCount'></a>
 ### Res0IndexCount() `method`
 
@@ -1980,13 +2019,6 @@ H3Lib.Extensions
 ##### Summary
 
 Extension methods for BaseCells
-
-<a name='P-H3Lib-Extensions-BaseCellsExtensions-Res0IndexCount'></a>
-### Res0IndexCount `property`
-
-##### Summary
-
-NOTE: Looks like this is not needed.
 
 <a name='M-H3Lib-Extensions-BaseCellsExtensions-GetBaseCellDirection-System-Int32,System-Int32-'></a>
 ### GetBaseCellDirection() `method`
@@ -4965,6 +4997,13 @@ Integer base cell of H3
 
 High bit of H3
 
+<a name='P-H3Lib-H3Index-IsPentagon'></a>
+### IsPentagon `property`
+
+##### Summary
+
+I needed this for debugging too many times.
+
 <a name='P-H3Lib-H3Index-IsResClassIii'></a>
 ### IsResClassIii `property`
 
@@ -6289,6 +6328,17 @@ Constrain Longitude to +/- PI
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | longitude | [System.Int32](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32 'System.Int32') |  |
+
+<a name='M-H3Lib-Extensions-H3LibExtensions-ConstrainToPiAccuracy-System-Decimal-'></a>
+### ConstrainToPiAccuracy() `method`
+
+##### Summary
+
+Constants only covers PI to a certain value.  Who am I to improve on that?
+
+##### Parameters
+
+This method has no parameters.
 
 <a name='M-H3Lib-Extensions-H3LibExtensions-DegreesToRadians-System-Decimal-'></a>
 ### DegreesToRadians(degrees) `method`
