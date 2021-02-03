@@ -86,5 +86,6 @@ Previous: **3.1.1**
 ![.NET](https://github.com/RichardVasquez/h3net/workflows/.NET/badge.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ed65501f16bda4b50200/maintainability)](https://codeclimate.com/github/RichardVasquez/h3net/maintainability)
 ![JetBrains Rider](https://img.shields.io/badge/-Rider-blue?style=flat-square&logo=JetBrains)
+![H3 3.7.1](https://img.shields.io/badge/H3-3.7.1-red)
 ## Fin
 [Hexagons are the bestagons](https://www.youtube.com/watch?v=thOifuHs6eY)
