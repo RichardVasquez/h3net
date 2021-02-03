@@ -396,7 +396,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns the center child of the given hexagon at the specified
+        /// returns the center child of the given hexagon at the specified resolution
         /// </summary>
         public static H3Index H3ToCenterChild(H3Index h, int childRes)
         {
@@ -537,7 +537,7 @@ namespace H3Lib
         /// </summary>
         public static void GetH3UnidirectionalEdgeBoundary(H3Index edge, out GeoBoundary gb)
         {
-            gb = edge.ToGeoBoundary();
+            gb = edge.UniEdgeToGeoBoundary();
         }
 
 

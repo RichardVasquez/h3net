@@ -50,6 +50,10 @@ ProjectSection(SolutionItems) = preProject
 	.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Experiments", "Experiments", "{C542AD8D-4F54-4EFE-B902-34AC9E5F0774}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtsj", "Apps\dtsj\dtsj.csproj", "{B66D505B-F322-43A7-AFCB-A5D560899AC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +104,10 @@ Global
 		{478F725B-999C-4BE6-A73D-BAA12D39B374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{478F725B-999C-4BE6-A73D-BAA12D39B374}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{478F725B-999C-4BE6-A73D-BAA12D39B374}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B66D505B-F322-43A7-AFCB-A5D560899AC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B66D505B-F322-43A7-AFCB-A5D560899AC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B66D505B-F322-43A7-AFCB-A5D560899AC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B66D505B-F322-43A7-AFCB-A5D560899AC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,5 +130,7 @@ Global
 		{8F5429F6-7770-472E-857C-6B63F68DC9B5} = {144E6FAA-853A-4D95-81B0-5B5C89D00224}
 		{478F725B-999C-4BE6-A73D-BAA12D39B374} = {144E6FAA-853A-4D95-81B0-5B5C89D00224}
 		{2F2A02C7-72E2-485B-AC71-EBC855FD39BF} = {1DA3C23F-3DA2-498B-B0CF-06C4DEE5729F}
+		{C542AD8D-4F54-4EFE-B902-34AC9E5F0774} = {21E24D2C-95AA-4317-B365-9262F8850A15}
+		{B66D505B-F322-43A7-AFCB-A5D560899AC2} = {C542AD8D-4F54-4EFE-B902-34AC9E5F0774}
 	EndGlobalSection
 EndGlobal

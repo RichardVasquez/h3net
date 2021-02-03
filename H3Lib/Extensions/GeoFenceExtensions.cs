@@ -9,7 +9,7 @@ namespace H3Lib.Extensions
     public static class GeoFenceExtensions
     {
         /// <summary>
-        /// Is boint within the loo?
+        /// Is point within the loop?
         /// </summary>
         /// <param name="loop"></param>
         /// <param name="box"></param>
@@ -258,8 +258,8 @@ namespace H3Lib.Extensions
         /// int _getEdgeHexagons
         /// -->
         public static int GetEdgeHexagons(this GeoFence geofence, int numHexagons, int res,
-                                                    ref int numSearchHexagons, List<H3Index> search,
-                                                    List<H3Index> found)
+                                                    ref int numSearchHexagons, ref List<H3Index> search,
+                                                    ref List<H3Index> found)
         {
             for (int i = 0; i < geofence.NumVerts; i++)
             {

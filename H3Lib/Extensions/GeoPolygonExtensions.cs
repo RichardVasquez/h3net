@@ -204,7 +204,7 @@ namespace H3Lib.Extensions
 
             //  TODO: Get rid of these refs if at all possible
             int failure = geofence
-               .GetEdgeHexagons(numHexagons, res, ref numSearchHexes,  search,  found);
+               .GetEdgeHexagons(numHexagons, res, ref numSearchHexes,  ref search, ref found);
 
             // If this branch is reached, we have exceeded the maximum number of
             // hexagons possible and need to clean up the allocated memory.
@@ -227,7 +227,7 @@ namespace H3Lib.Extensions
                 var hole = geoPolygon.Holes[i];
                 //  TODO: Get rid of these refs is possible.
                 failure = hole
-                   .GetEdgeHexagons( numHexagons, res, ref numSearchHexes,  search,  found);
+                   .GetEdgeHexagons( numHexagons, res, ref numSearchHexes,  ref search, ref found);
 
                 // If this branch is reached, we have exceeded the maximum number of
                 // hexagons possible and need to clean up the allocated memory.
