@@ -417,7 +417,7 @@ namespace H3Lib
         /// determines the maximum number of hexagons that could be uncompacted
         /// from the compacted set
         /// </summary>
-        public static long MaxUncompactSize(H3Index compacted, int r)
+        public static long MaxUncompactSize(List<H3Index> compacted, int r)
         {
             return compacted.MaxUncompactSize(r);
         }

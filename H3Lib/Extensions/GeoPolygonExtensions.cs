@@ -97,11 +97,9 @@ namespace H3Lib.Extensions
             // not large enough for the polygon, but this should be impossible given the
             // conservative overestimation of the number of hexagons possible.
             int numHexagons = polygon.MaxPolyFillSize(res);
-            return Enumerable.Range(1, numHexagons)
-                             .Select(r => (H3Index) Constants.H3Index.H3_NULL)
-                             .ToList();
+            return new H3Index[numHexagons].ToList();
         }
-        
+
         /// <summary>
         /// maxPolyfillSize returns the number of hexagons to allocate space for when
         /// performing a polyfill on the given GeoJSON-like data structure.
@@ -137,7 +135,7 @@ namespace H3Lib.Extensions
             // When the polygon is very small, near an icosahedron edge and is an odd
             // resolution, the line tracing needs an extra buffer than the estimator
             // function provides (but beefing that up to cover causes most situations to
-            // overallocate memory)
+            // over allocate memory)
             numHexagons += Constants.Algos.PolyfillBuffer;
             return numHexagons;
         }
@@ -151,7 +149,12 @@ namespace H3Lib.Extensions
         /// array and the found array is wiped and the process repeats until no new
         /// hexagons can be found.
         /// </summary>
-        /// <param name="geoPolygon">The geofence and holes defining the relevant area</param>
+        /// <remarks>
+        /// This comes at it a little differently using C#'s internal HashSet rather
+        /// than a collision bucket.  I've tweaked it to where it matches the speed
+        /// of the original in benchmark tests, but it liekly could be made faster.
+        /// </remarks>
+        /// <param name="polygon">The geofence and holes defining the relevant area</param>
         /// <param name="res">The Hexagon resolution (0-15)</param>
         /// <returns>
         /// Tuple
@@ -162,189 +165,73 @@ namespace H3Lib.Extensions
         /// algos.c
         /// int _polyfillInternal
         /// -->
-        internal static (int, List<H3Index>) PolyFillInternal(this GeoPolygon geoPolygon, int res)
+        public static (int, List<H3Index>) PolyFillInternal(this GeoPolygon polygon, int res)
         {
-            // One of the goals of the polyfill algorithm is that two adjacent polygons
-            // with zero overlap have zero overlapping hexagons. That the hexagons are
-            // uniquely assigned. There are a few approaches to take here, such as
-            // deciding based on which polygon has the greatest overlapping area of the
-            // hexagon, or the most number of contained points on the hexagon (using the
-            // center point as a tiebreaker).
-            //
-            // But if the polygons are convex, both of these more complex algorithms can
-            // be reduced down to checking whether or not the center of the hexagon is
-            // contained in the polygon, and so this is the approach that this polyfill
-            // algorithm will follow, as it's simpler, faster, and the error for concave
-            // polygons is still minimal (only affecting concave shapes on the order of
-            // magnitude of the hexagon size or smaller, not impacting larger concave
-            // shapes)
-            //
-            // This first part is identical to the maxPolyfillSize above.
+            //  Get bounding boxes
+            var bboxes = polygon.ToBBoxes();
 
-            // Get the bounding boxes for the polygon and any holes
-            var bboxes = geoPolygon.ToBBoxes();
+            // Get the traced hexagons around the outer polygon;
+            var geofence = polygon.GeoFence;
 
-            // Get the estimated number of hexagons and allocate some temporary memory
-            // for the hexagons
-            int numHexagons = geoPolygon.MaxPolyFillSize(res);
-            var search = new H3Index[numHexagons].ToList();
-            var found = new H3Index[numHexagons].ToList();
-            var results = new H3Index[numHexagons].ToList();
+            var preSearch = new List<H3Index>();
+            var search = geofence.GetEdgeHexagons(res);
+            preSearch.AddRange(search);
 
-            // Some metadata for tracking the state of the search and found memory
-            // blocks
-            var numSearchHexes = 0;
-            var numFoundHexes = 0;
+            int numHexagons = polygon.MaxPolyFillSize(res);
 
-            // 1. Trace the hexagons along the polygon defining the outer geofence and
-            // add them to the search hash. The hexagon containing the geofence point
-            // may or may not be contained by the geofence (as the hexagon's center
-            // point may be outside of the boundary.)
-            var geofence = geoPolygon.GeoFence;
-
-            //  TODO: Get rid of these refs if at all possible
-            int failure = geofence
-               .GetEdgeHexagons(numHexagons, res, ref numSearchHexes,  ref search, ref found);
-
-            // If this branch is reached, we have exceeded the maximum number of
-            // hexagons possible and need to clean up the allocated memory.
-            if (failure > 0)
+            //  Check inner holes
+            for (int i = 0; i < polygon.NumHoles; i++)
             {
-                search.Clear();
-                found.Clear();
-                bboxes.Clear();
-                results.Clear();
-                return (failure, null);
+                var hole = polygon.Holes[i];
+                var innerHex = hole.GetEdgeHexagons(res);
+                preSearch.AddRange(innerHex);
             }
 
-            // 2. Iterate over all holes, trace the polygons defining the holes with
-            // hexagons and add to only the search hash. We're going to temporarily use
-            // the `found` hash to use for dedupe purposes and then re-zero it once
-            // we're done here, otherwise we'd have to scan the whole set on each insert
-            // to make sure there's no duplicates, which is very inefficient.
-            for (int i = 0; i < geoPolygon.NumHoles; i++)
-            {
-                var hole = geoPolygon.Holes[i];
-                //  TODO: Get rid of these refs is possible.
-                failure = hole
-                   .GetEdgeHexagons( numHexagons, res, ref numSearchHexes,  ref search, ref found);
+            search = new HashSet<H3Index>(numHexagons);
+            search.UnionWith(preSearch);
+            
+            HashSet<H3Index> found = new HashSet<H3Index>();
+            HashSet<H3Index> results = new HashSet<H3Index>(numHexagons);
+            var numSearchHexes = search.Count;
+            int numFoundHexes = 0;
 
-                // If this branch is reached, we have exceeded the maximum number of
-                // hexagons possible and need to clean up the allocated memory.
-                if (failure > 0)
-                {
-                    search.Clear();
-                    found.Clear();
-                    bboxes.Clear();
-                    results.Clear();
-                    return (failure, null);
-                }
-            }
-
-            // 3. Re-zero the found hash so it can be used in the main loop below
-            for (int i = 0; i < numHexagons; i++)
-            {
-                found[i] = 0;
-            }
-
-            // 4. Begin main loop. While the search hash is not empty do the following
             while (numSearchHexes > 0)
             {
-                // Iterate through all hexagons in the current search hash, then loop
-                // through all neighbors and test Point-in-Poly, if point-in-poly
-                // succeeds, add to out and found hashes if not already there.
                 int currentSearchNum = 0;
-                int i = 0;
                 while (currentSearchNum < numSearchHexes)
                 {
-                    H3Index searchHex = search[i];
-                    var ring = searchHex.KRing(1);
-                    for (var kr = ring.Count; kr < Constants.Algos.MaxOneRingSize; kr++)
+                    foreach (var ring in search
+                       .Select
+                            (
+                             index => index.KRing(1)
+                                           .Where(h => h != Constants.H3Index.H3_NULL)
+                            ))
                     {
-                        ring.Add(0);
+                        foreach (
+                            var hex in ring
+                               .Where
+                                    (
+                                     hex => !results.Contains(hex) &&
+                                            !found.Contains(hex) &&
+                                            polygon.PointInside(bboxes, hex.ToGeoCoord())
+                                    ))
+                        {
+                            found.Add(hex);
+                            numFoundHexes++;
+                        }
+
+                        currentSearchNum++;
                     }
-
-                    for (int j = 0; j < Constants.Algos.MaxOneRingSize; j++)
-                    {
-                        if (ring[j] == Constants.H3Index.H3_NULL)
-                        {
-                            continue;  // Skip if this was a pentagon and only had 5
-                                       // neighbors
-                        }
-
-                        H3Index hex = ring[j];
-
-                        // A simple hash to store the hexagon, or move to another place
-                        // if needed. This MUST be done before the point-in-poly check
-                        // since that's far more expensive
-                        int loc = (int) (hex % (ulong) numHexagons);
-                        int loopCount = 0;
-                        while (results[loc] != 0)
-                        {
-                            // If this branch is reached, we have exceeded the maximum
-                            // number of hexagons possible and need to clean up the
-                            // allocated memory.
-                            // LCOV_EXCL_START
-                            if (loopCount > numHexagons)
-                            {
-                                search.Clear();
-                                found.Clear();
-                                bboxes.Clear();
-                                results.Clear();
-                                return (-1, null);
-                            }
-                            // LCOV_EXCL_STOP
-                            if (results[loc] == hex)
-                            {
-                                break;  // Skip duplicates found
-                            }
-                            loc = (loc + 1) % numHexagons;
-                            loopCount++;
-                        }
-                        if (results[loc] == hex)
-                        {
-                            continue;  // Skip this hex, already exists in the out hash
-                        }
-
-                        // Check if the hexagon is in the polygon or not
-                        GeoCoord hexCenter = hex.ToGeoCoord();
-
-                        // If not, skip
-                        if (!geoPolygon.PointInside(bboxes,hexCenter))
-                        {
-                            continue;
-                        }
-
-                        // Otherwise set it in the output array
-                        results[loc] = hex;
-
-                        // Set the hexagon in the found hash
-                        found[numFoundHexes] = hex;
-                        numFoundHexes++;
-                    }
-                    currentSearchNum++;
-                    i++;
                 }
 
-                // Swap the search and found pointers, copy the found hex count to the
-                // search hex count, and zero everything related to the found memory.
-                var temp = search;
-                search = found;
-                found = temp;
-
-                for (int j = 0; j < numSearchHexes; j++)
-                {
-                    found[j] = 0;
-                }
+                search = new HashSet<H3Index>(found);
                 numSearchHexes = numFoundHexes;
                 numFoundHexes = 0;
-                // Repeat until no new hexagons are found
+                results.UnionWith(found);
+                found.Clear();
             }
-            // The out memory structure should be complete, end it here
-            bboxes.Clear();
-            search.Clear();
-            found.Clear();
-            return (0, results);
+
+            return (0, results.ToList());
         }
     }
 }

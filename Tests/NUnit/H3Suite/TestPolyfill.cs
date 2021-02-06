@@ -193,6 +193,7 @@ namespace TestSuite
             var someHexagon = new GeoPolygon {GeoFence = someGeofence, NumHoles = 0};
 
             var hexagons = someHexagon.Polyfill(9);
+
             var actualNumHexagons = Utility.CountActualHexagons(hexagons);
             Assert.AreEqual(1, actualNumHexagons);            
         }

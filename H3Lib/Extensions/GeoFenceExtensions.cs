@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace H3Lib.Extensions
 {
@@ -236,6 +237,41 @@ namespace H3Lib.Extensions
         }
 
         /// <summary>
+        /// NOTE: Trying to do this with C# tool belt
+        /// </summary>
+        /// <param name="geofence"></param>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        public static HashSet<H3Index> GetEdgeHexagons(this GeoFence geofence, int res)
+        {
+            var found = new List<H3Index>();
+            for (var i = 0; i < geofence.NumVerts; i++)
+            {
+                var origin = geofence.Verts[i];
+                var destination = i == geofence.NumVerts - 1
+                                      ? geofence.Verts[0]
+                                      : geofence.Verts[i + 1];
+                int numHexesEstimate = origin.LineHexEstimate(destination, res);
+
+                for (var j = 0; j < numHexesEstimate; j++)
+                {
+                    var interpolate =
+                        new GeoCoord
+                            (
+                             origin.Latitude * (numHexesEstimate - j) / numHexesEstimate +
+                             destination.Latitude * j / numHexesEstimate,
+                             origin.Longitude * (numHexesEstimate - j) / numHexesEstimate +
+                             destination.Longitude * j / numHexesEstimate
+                            );
+                    var pointHex = interpolate.ToH3Index(res);
+
+                    found.Add(pointHex);
+                }
+            }
+            return new HashSet<H3Index>(found);
+        }
+        
+        /// <summary>
         /// _getEdgeHexagons takes a given geofence ring (either the main geofence or
         /// one of the holes) and traces it with hexagons and updates the search and
         /// found memory blocks. This is used for determining the initial hexagon set
@@ -257,7 +293,7 @@ namespace H3Lib.Extensions
         /// algos.c
         /// int _getEdgeHexagons
         /// -->
-        public static int GetEdgeHexagons(this GeoFence geofence, int numHexagons, int res,
+        public static int GetEdgeHexagons2(this GeoFence geofence, int numHexagons, int res,
                                                     ref int numSearchHexagons, ref List<H3Index> search,
                                                     ref List<H3Index> found)
         {
@@ -268,7 +304,7 @@ namespace H3Lib.Extensions
                                       ? geofence.Verts[0]
                                       : geofence.Verts[i + 1];
                 int numHexesEstimate = origin.LineHexEstimate(destination, res);
-
+        
                 for (var j = 0; j < numHexesEstimate; j++)
                 {
                     var interpolate = 
@@ -278,7 +314,7 @@ namespace H3Lib.Extensions
                                      origin.Longitude * (numHexesEstimate - j) / numHexesEstimate +
                                      destination.Longitude * j / numHexesEstimate
                                      );
-
+        
                     var pointHex = interpolate.ToH3Index(res);
                     
                     // A simple hash to store the hexagon, or move to another place if
@@ -306,12 +342,12 @@ namespace H3Lib.Extensions
                     }
                     // Otherwise, set it in the found hash for now
                     found[loc] = pointHex;
-
+        
                     search[numSearchHexagons] = pointHex;
                     numSearchHexagons++;
                 }
             }
-
+        
             return 0;
         }
     }

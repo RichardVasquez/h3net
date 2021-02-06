@@ -18,7 +18,7 @@ namespace GeoToH3
                 var argParser = new GeoToH3Parser();
                 parser.ExtractArgumentAttributes(argParser);
                 parser.ParseCommandLine(args);
-                ProcessParser(parser);
+                ProcessParser(argParser);
             }
             catch (Exception)
             {
@@ -27,12 +27,10 @@ namespace GeoToH3
             }
         }
 
-        private static void ProcessParser(CommandLineParser.CommandLineParser parser)
+        private static void ProcessParser(GeoToH3Parser target)
         {
-            var target = new GeoToH3Parser();
-            parser.ExtractArgumentAttributes(target);
 
-            var h3 = new GeoCoord((decimal)target.Latitude, (decimal)target.Longitude)
+            var h3 = new GeoCoord(((decimal)target.Latitude).DegreesToRadians(), ((decimal)target.Longitude).DegreesToRadians())
                .ToH3Index(target.Resolution);
 
             Console.WriteLine(h3.ToString());
