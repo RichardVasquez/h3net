@@ -13,7 +13,6 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>h3 hexagon spatial-indexing geospatial</PackageTags>
         <PackageReleaseNotes>H3Net is a geospatial indexing system using hexagonal grid that can be (approximately) subdivided into finer and finer hexagonal grids, combining the benefits of a hexagonal grid with S2 hierarchical subdivisions, mostly translated from the original C code from Uber's H3 project.</PackageReleaseNotes>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <Company>Richard Vasquez</Company>
         <AssemblyVersion>3.7.1</AssemblyVersion>
         <FileVersion>3.7.1</FileVersion>

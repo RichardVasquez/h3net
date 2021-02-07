@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Version.txt = Version.txt
 		Credits.md = Credits.md
 		OldApi.md = OldApi.md
+		..\..\h3net.300.png = ..\..\h3net.300.png
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "H3Lib", "H3Lib\H3Lib.csproj", "{B20B012E-5091-4861-9E33-7248592E1473}"

@@ -1,6 +1,6 @@
 # H3NET: A Hexagonal Hierarchical Geospatial Indexing System In C# #
 
-H3Net is a geospatial indexing system using hexagonal grid that can
+![h3net logo](h3net.300.png) H3Net is a geospatial indexing system using hexagonal grid that can
 be (approximately) subdivided into finer and finer hexagonal grids,
 combining the benefits of a hexagonal grid with
 [S2](https://code.google.com/archive/p/s2-geometry-library/)
