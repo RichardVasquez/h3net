@@ -43,7 +43,7 @@ namespace H3Lib.Extensions
         }
 
         /// <summary>
-        /// Repalce Z value
+        /// Replace Z value
         /// </summary>
         /// <param name="v3"></param>
         /// <param name="z"></param>

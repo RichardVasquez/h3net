@@ -48,8 +48,8 @@ namespace H3Lib.Extensions
 
             int resultCode = Constants.LinkedGeo.NormalizationSuccess;
             LinkedGeoPolygon polygon = null;
-            int innerCount = 0;
-            int outerCount = 0;
+            var innerCount = 0;
+            var outerCount = 0;
 
 
             // Create an array to hold all of the inner loops. Note that
@@ -64,7 +64,7 @@ namespace H3Lib.Extensions
 
             root = new LinkedGeoPolygon();
 
-            foreach (LinkedGeoLoop geoLoop in testLoops)
+            foreach (var geoLoop in testLoops)
             {
                 if (geoLoop.IsClockwise())
                 {
@@ -83,7 +83,7 @@ namespace H3Lib.Extensions
             }
 
             // Find polygon for each inner loop and assign the hole to it
-            for (int i = 0; i < innerCount; i++)
+            for (var i = 0; i < innerCount; i++)
             {
                 polygon = innerLoops[i].FindPolygonForHole(root, bboxes, outerCount);
                 if (polygon != null)
@@ -120,7 +120,7 @@ namespace H3Lib.Extensions
         /// linkedGeo.c
         /// static const LinkedGeoPolygon* findPolygonForHole
         /// -->
-        public static LinkedGeoPolygon FindPolygonForHole(
+        private static LinkedGeoPolygon FindPolygonForHole(
                 this LinkedGeoLoop loop, LinkedGeoPolygon polygon, List<BBox> boxes,
                 int polygonCount
             )

@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Net.Http.Headers;
 
 namespace H3Lib.Extensions
 {
@@ -137,12 +136,12 @@ namespace H3Lib.Extensions
 
             // Derived constant based on: https://math.stackexchange.com/a/1921940
             // Clamped to 3 as higher values tend to rapidly drag the estimate to zero.
-            var tdiv = p1.Latitude - p2.Latitude;
+            decimal tdiv = p1.Latitude - p2.Latitude;
             if (tdiv == 0)
             {
                 tdiv = 0.00000000001m;
             }
-            var divisor = 
+            decimal divisor = 
                 new[]
                     {
                         3.0m,

@@ -14,7 +14,7 @@ namespace H3Lib.Extensions
         /// <param name="fijk">FaceIjk to replace Face value of</param>
         /// <param name="face">new Face value to slot in</param>
         /// <returns>A new instance with the correct values</returns>
-        public static FaceIjk ReplaceFace(this FaceIjk fijk, int face)
+        private static FaceIjk ReplaceFace(this FaceIjk fijk, int face)
         {
             return new FaceIjk(face, fijk.Coord);
         }
@@ -431,7 +431,7 @@ namespace H3Lib.Extensions
         /// baseCells.c
         /// int _faceIjkToBaseCell
         /// -->
-        public static int ToBaseCell(this FaceIjk h)
+        private static int ToBaseCell(this FaceIjk h)
         {
             return Constants.BaseCells
                             .FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
@@ -451,7 +451,7 @@ namespace H3Lib.Extensions
         /// baseCells.c
         /// int _faceIjkToBaseCellCCWrot60
         /// -->
-        public static int ToBaseCellCounterClockwiseRotate60(this FaceIjk h)
+        private static int ToBaseCellCounterClockwiseRotate60(this FaceIjk h)
         {
             return Constants.BaseCells
                             .FaceIjkBaseCells[h.Face, h.Coord.I, h.Coord.J, h.Coord.K]
@@ -503,21 +503,20 @@ namespace H3Lib.Extensions
                                           ? 1
                                           : 0;
 
-            var g = new GeoBoundary();
-            Overage overage = default;
+            var g = new GeoBoundary {NumVerts = 0};
             // convert each vertex to lat/lon
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
-            g.NumVerts = 0;
             int lastFace = -1;
-            Overage lastOverage = Overage.NO_OVERAGE;
+            var lastOverage = Overage.NO_OVERAGE;
 
             for (int vert = start; vert < start + length + additionalIteration; vert++)
             {
                 int v = vert % Constants.H3.NUM_HEX_VERTS;
                 var fijk = fijkVerts[v];
-                var pentLeading4 = 0;
+                const int pentLeading4 = 0;
 
+                Overage overage;
                 (overage, fijk) = fijk.AdjustOverageClassIi(adjRes, pentLeading4, 1);
                 
                 /*

@@ -44,7 +44,7 @@ namespace H3Lib.Extensions
         /// geoCoord.c
         /// void _setGeoRads
         /// -->
-        internal static GeoCoord SetGeoRads(this GeoCoord gc, decimal latitudeRadians, decimal longitudeRadians)
+        private static GeoCoord SetGeoRads(this GeoCoord gc, decimal latitudeRadians, decimal longitudeRadians)
         {
             gc =  new GeoCoord(latitudeRadians, longitudeRadians);
             return gc;
@@ -288,14 +288,14 @@ namespace H3Lib.Extensions
         /// -->
         public static (int, Vec2d) ToHex2d(this GeoCoord g, int res)
         {
-            Vec3d v3d = g.ToVec3d();
+            var v3d = g.ToVec3d();
             
-            int newFace = 0;
+            var newFace = 0;
 
             // determine the icosahedron face
             decimal sqd = v3d.PointSquareDistance(Constants.FaceIjk.FaceCenterPoint[0]);
 
-            for (int f = 1; f < Constants.H3.NUM_ICOSA_FACES; f++)
+            for (var f = 1; f < Constants.H3.NUM_ICOSA_FACES; f++)
             {
                 decimal sqdT = v3d.PointSquareDistance(Constants.FaceIjk.FaceCenterPoint[f]);
                 if (!(sqdT < sqd))

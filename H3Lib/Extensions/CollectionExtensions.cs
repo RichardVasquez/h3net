@@ -252,7 +252,6 @@ namespace H3Lib.Extensions
             }
 
             return parent;
-            
         }
 
     }

@@ -17,7 +17,7 @@ namespace H3Lib.Extensions
         /// summing up their areas. Note that some H3 cells (hexagons and pentagons)
         /// are irregular, and have more than 6 or 5 sides.
         ///
-        /// todo: optimize the computation by re-using the edges shared between triangles
+        /// TODO: optimize the computation by re-using the edges shared between triangles
         /// </summary>
         /// <param name="cell">H3 cell</param>
         /// <returns>cell area in radians^2</returns>
@@ -239,7 +239,7 @@ namespace H3Lib.Extensions
                 }
                 else if (indexOnPent == 1)
                 {
-                    int indexLeadingDigit = (int) h3.LeadingNonZeroDigit;
+                    var indexLeadingDigit = (int) h3.LeadingNonZeroDigit;
 
                     if (Constants.LocalIJ.FAILED_DIRECTIONS[indexLeadingDigit,(int)revDir])
                     {
@@ -262,7 +262,7 @@ namespace H3Lib.Extensions
                     throw new Exception("directionRotations >= 0");
                 }
 
-                for (int i = 0; i < pentagonRotations; i++)
+                for (var i = 0; i < pentagonRotations; i++)
                 {
                     indexFijk = indexFijk.ReplaceCoord(indexFijk.Coord.Rotate60Clockwise());
                 }
@@ -822,7 +822,7 @@ namespace H3Lib.Extensions
         /// h3Index.cs
         /// void _h3ToFaceIjk
         /// -->
-        public static FaceIjk ToFaceIjk(this H3Index h)
+        private static FaceIjk ToFaceIjk(this H3Index h)
         {
             int baseCell = h.BaseCell;
             // adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
@@ -870,14 +870,9 @@ namespace H3Lib.Extensions
                 // overages
                 if (baseCell.IsBaseCellPentagon())
                 {
-                    while (
-                        (
-                            (_, fijk) = fijk.AdjustOverageClassIi(res, 0, 0)
-                            ).Item1 !=
+                    while (((_, fijk) = fijk.AdjustOverageClassIi(res, 0, 0)).Item1 !=
                         Overage.NO_OVERAGE)
-                    {
-                        ; //continue;
-                    }
+                    { }
                 }
 
                 if (res != h.Resolution)
@@ -1125,7 +1120,7 @@ namespace H3Lib.Extensions
         /// vertex.c
         /// int vertexRotations
         /// -->
-        public static int VertexRotations(this H3Index cell)
+        private static int VertexRotations(this H3Index cell)
         {
             // Get the face and other info for the origin
             var fijk = cell.ToFaceIjk();
@@ -1323,7 +1318,6 @@ namespace H3Lib.Extensions
                  direction < Direction.NUM_DIGITS; direction++)
             {
                 {
-                    // TODO: Circle back after retrofitting Algos.cs
                     const int rotations = 0;
                     var (neighbor, _) = origin.NeighborRotations(direction, rotations);
                     //Algos.h3NeighborRotations(origin,direction, ref rotations);
@@ -1390,14 +1384,14 @@ namespace H3Lib.Extensions
         /// h3UniEdge.c
         /// int H3_EXPORT(h3UnidirectionalEdgeIsValid)
         /// -->
-        public static bool IsValidUniEdge(this H3Index edge)
+        internal static bool IsValidUniEdge(this H3Index edge)
         {
             if (edge.Mode != H3Mode.UniEdge)
             {
                 return false;
             }
 
-            Direction neighborDirection = (Direction) edge.ReservedBits;
+            var neighborDirection = (Direction) edge.ReservedBits;
 
             if (neighborDirection <= Direction.CENTER_DIGIT || neighborDirection >= Direction.NUM_DIGITS)
             {
@@ -1405,7 +1399,6 @@ namespace H3Lib.Extensions
             }
 
             var origin = edge.OriginFromUniDirectionalEdge();
-            //return (!origin.IsPentagon() || neighborDirection != Direction.K_AXES_DIGIT) && origin.IsValid();
             
             if(origin.IsPentagon() && neighborDirection == Direction.K_AXES_DIGIT)
             {
@@ -1618,9 +1611,6 @@ namespace H3Lib.Extensions
         /// Key - element either an H3Index or 0
         /// Value - indicate ijk distance from the origin cell to Item2
         /// </returns>
-        /// <remarks>
-        /// NOTE: You _should_ be able to just call this with h3.KRingInternal(k).  We'll see.
-        /// </remarks>
         /// <!--
         /// algos.c
         /// void _kRingInternal
@@ -1738,33 +1728,31 @@ namespace H3Lib.Extensions
                     }
                     break;
                 }
+
+                Direction oldDigit = outHex.GetIndexDigit(r + 1);
+                Direction nextDir;
+                    
+                if((r+1).IsResClassIii())
+                {
+                    outHex = outHex.SetIndexDigit
+                        (r + 1, (ulong) Constants.Algos.NewDigitIi[(int) oldDigit, (int) dir]);
+                    nextDir = Constants.Algos.NewAdjustmentIi[(int) oldDigit, (int) dir];
+                }
                 else
                 {
-                    Direction oldDigit = outHex.GetIndexDigit(r + 1);
-                    Direction nextDir = Direction.CENTER_DIGIT;
-                    
-                    if((r+1).IsResClassIii())
-                    {
-                        outHex = outHex.SetIndexDigit
-                            (r + 1, (ulong) Constants.Algos.NewDigitIi[(int) oldDigit, (int) dir]);
-                        nextDir = Constants.Algos.NewAdjustmentIi[(int) oldDigit, (int) dir];
-                    }
-                    else
-                    {
-                        outHex = outHex.SetIndexDigit(r + 1, (ulong) Constants.Algos.NewDigitIii[(int) oldDigit, (int) dir]);
-                        nextDir = Constants.Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
-                    }
+                    outHex = outHex.SetIndexDigit(r + 1, (ulong) Constants.Algos.NewDigitIii[(int) oldDigit, (int) dir]);
+                    nextDir = Constants.Algos.NewAdjustmentIii[(int) oldDigit, (int) dir];
+                }
 
-                    if (nextDir != Direction.CENTER_DIGIT)
-                    {
-                        dir = nextDir;
-                        r--;
-                    }
-                    else
-                    {
-                        // No more adjustment to perform
-                        break;
-                    }
+                if (nextDir != Direction.CENTER_DIGIT)
+                {
+                    dir = nextDir;
+                    r--;
+                }
+                else
+                {
+                    // No more adjustment to perform
+                    break;
                 }
             }
 
@@ -1844,8 +1832,7 @@ namespace H3Lib.Extensions
                             outRotations++;
                         }
                     }
-                    else if (outHex.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT &&
-                       !alreadyAdjustedKSubsequence)
+                    else if (outHex.LeadingNonZeroDigit == Direction.IK_AXES_DIGIT && !alreadyAdjustedKSubsequence)
                     {
                         // account for distortion introduced to the 5 neighbor by the
                         // deleted k subsequence.
@@ -1855,7 +1842,7 @@ namespace H3Lib.Extensions
             }
             else
             {
-                for (int i = 0; i < newRotations; i++)
+                for (var i = 0; i < newRotations; i++)
                 {
                     outHex = outHex.Rotate60CounterClockwise();
                 }

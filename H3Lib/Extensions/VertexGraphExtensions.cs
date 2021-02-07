@@ -33,10 +33,6 @@ namespace H3Lib.Extensions
                     edge = graph.FindVertex(nextVertex);
                 }
 
-                // if (loop.CountCoords > 0)
-                // {
-                //     result.GeoLoopList.AddLast(loop);
-                // }
                 if (loop.Count > 0)
                 {
                     result.AddLinkedLoop(loop);

@@ -576,13 +576,13 @@ namespace H3Lib.Extensions
                         throw new Exception("pentagonRotations >= 0");
                     }
 
-                    for (int i = 0; i < pentagonRotations; i++)
+                    for (var i = 0; i < pentagonRotations; i++)
                     {
                         outH3 = outH3.Rotate60CounterClockwise();
                     }
 
                     // Adjust for the different coordinate space in the two base cells.
-                    for (int i = 0; i < baseCellRotations; i++)
+                    for (var i = 0; i < baseCellRotations; i++)
                     {
                         outH3 = outH3.Rotate60CounterClockwise();
                         

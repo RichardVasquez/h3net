@@ -25,7 +25,7 @@ namespace H3Lib.Extensions
             }
 
             bool isTransmeridian = box.IsTransmeridian;
-            bool contains = false;
+            var contains = false;
 
             decimal targetLatitude = coord.Latitude;
             decimal targetLongitude = coord.Longitude.NormalizeLongitude(isTransmeridian);
@@ -160,12 +160,12 @@ namespace H3Lib.Extensions
         /// <param name="loop"></param>
         /// <param name="isTransmeridian"></param>
         /// <returns></returns>
-        public static bool IsClockwiseNormalized(this LinkedGeoLoop loop, bool isTransmeridian)
+        private static bool IsClockwiseNormalized(this LinkedGeoLoop loop, bool isTransmeridian)
         {
-            decimal sum = 0m;
+            var sum = 0m;
 
             var nodes = loop.Nodes;
-            for (int idx = 0; idx < nodes.Count; idx++)
+            for (var idx = 0; idx < nodes.Count; idx++)
             {
                 var a = nodes[idx];
                 var b = nodes[(idx + 1) % nodes.Count];

@@ -156,9 +156,9 @@ namespace TestSuite
             // duplicate one index
             children[^1] = children[0];
 
-            //  NOTE: FlexiCompact takes duplicates. Compact() is more rigid
+            //  FlexiCompact takes duplicates. Compact() is more rigid
             var (status, _) = children.FlexiCompact();
-            Assert.AreEqual(H3Lib.Constants.H3Index.COMPACT_SUCCESS, status);
+            Assert.AreEqual(Constants.H3Index.COMPACT_SUCCESS, status);
         }
 
         [Test]
@@ -231,9 +231,8 @@ namespace TestSuite
             H3Index origin = new H3Index().SetIndex(1, 5, Direction.CENTER_DIGIT);
 
             var children = origin.ToChildren(2);
-            // #NOTE: ToChildren() is supposed to return (int, Liat<h3index>)
             Assert.AreNotEqual(0, children.Count);
-
+            
             (var result2, var compacted) = children.Compact();
             Assert.AreEqual(0,result2);
             

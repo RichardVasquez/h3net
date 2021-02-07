@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic.CompilerServices;
-
 namespace H3Lib.Extensions
 {
     /// <summary>

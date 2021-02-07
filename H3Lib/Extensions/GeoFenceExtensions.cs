@@ -237,12 +237,12 @@ namespace H3Lib.Extensions
         }
 
         /// <summary>
-        /// NOTE: Trying to do this with C# tool belt
+        /// Get hexagons along edge of lines of a polygon
         /// </summary>
         /// <param name="geofence"></param>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static HashSet<H3Index> GetEdgeHexagons(this GeoFence geofence, int res)
+        internal static HashSet<H3Index> GetEdgeHexagons(this GeoFence geofence, int res)
         {
             var found = new List<H3Index>();
             for (var i = 0; i < geofence.NumVerts; i++)

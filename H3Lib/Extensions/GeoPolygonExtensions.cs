@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -123,7 +122,7 @@ namespace H3Lib.Extensions
             // the number of hexagons, but when it's wrong, this will keep it from
             // failing
             int totalVerts = geoPolygon.GeoFence.NumVerts;
-            for (int i = 0; i < geoPolygon.NumHoles; i++)
+            for (var i = 0; i < geoPolygon.NumHoles; i++)
             {
                 totalVerts += geoPolygon.Holes[i].NumVerts;
             }
@@ -180,7 +179,7 @@ namespace H3Lib.Extensions
             int numHexagons = polygon.MaxPolyFillSize(res);
 
             //  Check inner holes
-            for (int i = 0; i < polygon.NumHoles; i++)
+            for (var i = 0; i < polygon.NumHoles; i++)
             {
                 var hole = polygon.Holes[i];
                 var innerHex = hole.GetEdgeHexagons(res);
@@ -190,14 +189,14 @@ namespace H3Lib.Extensions
             search = new HashSet<H3Index>(numHexagons);
             search.UnionWith(preSearch);
             
-            HashSet<H3Index> found = new HashSet<H3Index>();
-            HashSet<H3Index> results = new HashSet<H3Index>(numHexagons);
-            var numSearchHexes = search.Count;
-            int numFoundHexes = 0;
+            var found = new HashSet<H3Index>();
+            var results = new HashSet<H3Index>(numHexagons);
+            int numSearchHexes = search.Count;
+            var numFoundHexes = 0;
 
             while (numSearchHexes > 0)
             {
-                int currentSearchNum = 0;
+                var currentSearchNum = 0;
                 while (currentSearchNum < numSearchHexes)
                 {
                     foreach (var ring in search

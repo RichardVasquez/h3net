@@ -154,21 +154,6 @@ namespace TestSuite
             //  Not really applicable since H3Index already has
             //  its own ToString(), though there may be some
             //  options added to it in the future.
-            
-            /*
-                const size_t bufSz = 17;
-                char buf[17] = {0};
-                H3_EXPORT(h3ToString)(0x1234, buf, bufSz - 1);
-                // Buffer should be unmodified because the size was too small
-                t_assert(buf[0] == 0, "h3ToString failed on buffer too small");
-                H3_EXPORT(h3ToString)(0xcafe, buf, bufSz);
-                t_assert(strcmp(buf, "cafe") == 0,
-                         "h3ToString failed to produce base 16 results");
-                H3_EXPORT(h3ToString)(0xffffffffffffffff, buf, bufSz);
-                t_assert(strcmp(buf, "ffffffffffffffff") == 0,
-                         "h3ToString failed on large input");
-                t_assert(buf[bufSz - 1] == 0, "didn't null terminate");
-             */
         }
 
         [Test]
