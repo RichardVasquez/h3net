@@ -1,12 +1,9 @@
 # H3NET: A Hexagonal Hierarchical Geospatial Indexing System In C# #
+| | |
+|---|---|
+| H3Net is a geospatial indexing system using hexagonal grid that can be (approximately) subdivided into finer and finer hexagonal grids, combining the benefits of a hexagonal grid with [S2](https://code.google.com/archive/p/s2-geometry-library/) hierarchical subdivisions, mostly translated from the original C code from [Uber's](https://github.com/uber) [H3](https://github.com/uber/h3) project.| ![h3net logo](./h3net.300.png)|
 
-![h3net logo](h3net.300.png) H3Net is a geospatial indexing system using hexagonal grid that can
-be (approximately) subdivided into finer and finer hexagonal grids,
-combining the benefits of a hexagonal grid with
-[S2](https://code.google.com/archive/p/s2-geometry-library/)
-hierarchical subdivisions, mostly translated from the original C
-code from [Uber's](https://github.com/uber)
-[H3](https://github.com/uber/h3) project.
+
 
 ## Why? There's already a version in C!
 
