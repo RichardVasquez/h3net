@@ -72,9 +72,9 @@ namespace TestSuite
                 0x81293ffffffffff,
                 0x8150bffffffffff,
                 0x8151bffffffffff,
-                H3Lib.Constants.H3Index.H3_NULL,
-                H3Lib.Constants.H3Index.H3_NULL,
-                H3Lib.Constants.H3Index.H3_NULL,
+                H3Lib.Constants.H3Index.Null,
+                H3Lib.Constants.H3Index.Null,
+                H3Lib.Constants.H3Index.Null,
             };
 
             for (var i = 0; i < numCoords; i++)
@@ -82,7 +82,7 @@ namespace TestSuite
                 
                 (int err, var result) = coords[i].ToH3Experimental(expected[0]);
 
-                if (expected[i] == H3Lib.Constants.H3Index.H3_NULL)
+                if (expected[i] == H3Lib.Constants.H3Index.Null)
                 {
                     Assert.AreNotEqual(0, err);
                 }
@@ -122,24 +122,24 @@ namespace TestSuite
         {
             //  Test that coming from the same direction outside the pentagon is handled
             //  the same as coming from the same direction inside the pentagon.
-            for (var bc = 0; bc < Constants.H3.NUM_BASE_CELLS; bc++)
+            for (var bc = 0; bc < Constants.H3.BaseCellsCount; bc++)
             {
-                for (var res = 1; res <= Constants.H3.MAX_H3_RES; res++)
+                for (var res = 1; res <= Constants.H3.MaxH3Resolution; res++)
                 {
                     // K_AXES_DIGIT is the first internal direction, and it's also
                     // invalid for pentagons, so skip to next.
-                    var startDir = Direction.K_AXES_DIGIT;
+                    var startDir = Direction.KAxesDigit;
                     if (bc.IsBaseCellPentagon())
                     {
                         startDir++;
                     }
 
-                    for (var dir = startDir; dir < Direction.NUM_DIGITS; dir++)
+                    for (var dir = startDir; dir < Direction.NumDigits; dir++)
                     {
                         var internalOrigin = new H3Index(res, bc, dir);
-                        var externalOrigin = new H3Index(res, bc.GetNeighbor(dir), Direction.CENTER_DIGIT);
+                        var externalOrigin = new H3Index(res, bc.GetNeighbor(dir), Direction.CenterDigit);
 
-                        for (var testDir = startDir; testDir < Direction.NUM_DIGITS; testDir++)
+                        for (var testDir = startDir; testDir < Direction.NumDigits; testDir++)
                         {
                             var testIndex = new H3Index(res, bc, testDir);
                             (int internalIjFailed, var internalIj) = internalOrigin.ToLocalIjExperimental(testIndex);

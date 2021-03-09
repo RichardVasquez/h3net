@@ -89,7 +89,7 @@ namespace TestSuite
         {
             for (int res = 0; res < 2; res++)
             {
-                for (int i = 0; i < Constants.H3.NUM_BASE_CELLS; i++)
+                for (int i = 0; i < Constants.H3.BaseCellsCount; i++)
                 {
                     H3Index bc = new H3Index(0, i, 0);
                     (int stat, List<H3Index> children) = bc.Uncompact(res);

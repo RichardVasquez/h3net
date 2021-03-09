@@ -5,10 +5,11 @@ namespace H3Lib
     /// <summary>
     /// base cell at a given ijk and required rotations into its system
     /// </summary>
-    /// <!--
+    /// <remarks>
+    /// 3.7.1
     /// baseCells.c
     /// typedef struct BaseCellRotation
-    /// -->
+    /// </remarks>
     public readonly struct BaseCellRotation:IEquatable<BaseCellRotation>
     {
         /// <summary>

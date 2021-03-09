@@ -14,10 +14,11 @@ namespace H3Lib.Extensions
         /// <param name="gc">The spherical coordinates</param>
         /// <param name="latitude">The desired latitude in decimal degrees</param>
         /// <param name="longitude">The desired longitude in decimal degrees</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// void setGeoDegs
-        /// -->
+        /// </remarks>
         public static GeoCoord SetDegrees(this GeoCoord gc, decimal latitude, decimal longitude)
         {
             return gc.SetGeoRads(latitude.DegreesToRadians(), longitude.DegreesToRadians());
@@ -40,10 +41,11 @@ namespace H3Lib.Extensions
         /// <param name="gc">The spherical coordinates</param>
         /// <param name="latitudeRadians">The desired latitude in decimal radians</param>
         /// <param name="longitudeRadians">The desired longitude in decimal radians</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// void _setGeoRads
-        /// -->
+        /// </remarks>
         private static GeoCoord SetGeoRads(this GeoCoord gc, decimal latitudeRadians, decimal longitudeRadians)
         {
             gc =  new GeoCoord(latitudeRadians, longitudeRadians);
@@ -78,10 +80,11 @@ namespace H3Lib.Extensions
         /// <returns>
         /// the great circle distance in radians between a and b
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double H3_EXPORT(pointDistRads)
-        /// -->
+        /// </remarks>
         public static decimal DistanceToRadians(this GeoCoord a, GeoCoord b)
         {
             decimal sinLat = DecimalEx.Sin((b.Latitude - a.Latitude) / 2.0m);
@@ -97,10 +100,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="a">the first lat/lng pair (in radians)</param>
         /// <param name="b">the second lat/lng pair (in radians)</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double H3_EXPORT(pointDistKm)
-        /// -->
+        /// </remarks>
         public static decimal DistanceToKm(this GeoCoord a, GeoCoord b)
         {
             return a.DistanceToRadians(b) * Constants.H3.EARTH_RADIUS_KM;
@@ -111,10 +115,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="a">the first lat/lng pair (in radians)</param>
         /// <param name="b">the second lat/lng pair (in radians)</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double H3_EXPORT(pointDistM)
-        /// -->
+        /// </remarks>
         public static decimal DistanceToM(this GeoCoord a, GeoCoord b)
         {
             return a.DistanceToKm(b) * 1000;
@@ -126,11 +131,12 @@ namespace H3Lib.Extensions
         /// <param name="p1">The first spherical coordinates</param>
         /// <param name="p2">The second spherical coordinates</param>
         /// <returns>The azimuth in radians from p1 to p2</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double _geoAzimuthRads
-        /// -->
-        internal static decimal AzimuthRadiansTo(this GeoCoord p1, GeoCoord p2)
+        /// </remarks>
+        private static decimal AzimuthRadiansTo(this GeoCoord p1, GeoCoord p2)
         {
             return
                 DecimalEx.ATan2
@@ -150,10 +156,11 @@ namespace H3Lib.Extensions
         /// <param name="azimuth">The desired azimuth from p1.</param>
         /// <param name="distance">The desired distance from p1, must be non-negative.</param>
         /// <returns>The spherical coordinates at the desired azimuth and distance from p1.</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// void _geoAzDistanceRads
-        /// -->
+        /// </remarks>
         internal static GeoCoord GetAzimuthDistancePoint(this GeoCoord p1, decimal azimuth, decimal distance)
         {
             if (distance < Constants.H3.EPSILON)
@@ -258,11 +265,12 @@ namespace H3Lib.Extensions
         /// <param name="g">The spherical coordinates to encode.</param>
         /// <param name="res">The desired H3 resolution for the encoding.</param>
         /// <returns>The FaceIJK address of the containing cell at resolution res.</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceijk.c
         /// void _geoToFaceIjk
-        /// -->
-        public static FaceIjk ToFaceIjk(this GeoCoord g, int res)
+        /// </remarks>
+        private static FaceIjk ToFaceIjk(this GeoCoord g, int res)
         {
             // first convert to hex2d
             (int newFace, var v) = g.ToHex2d(res);
@@ -282,11 +290,12 @@ namespace H3Lib.Extensions
         /// Item1: The resulting face
         /// Item2: The 2D hex coordinates of the cell containing the point.
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceijk.c
         /// void _geoToHex2d
-        /// -->
-        public static (int, Vec2d) ToHex2d(this GeoCoord g, int res)
+        /// </remarks>
+        private static (int, Vec2d) ToHex2d(this GeoCoord g, int res)
         {
             var v3d = g.ToVec3d();
             
@@ -295,7 +304,7 @@ namespace H3Lib.Extensions
             // determine the icosahedron face
             decimal sqd = v3d.PointSquareDistance(Constants.FaceIjk.FaceCenterPoint[0]);
 
-            for (var f = 1; f < Constants.H3.NUM_ICOSA_FACES; f++)
+            for (var f = 1; f < Constants.H3.IcosahedronFaces; f++)
             {
                 decimal sqdT = v3d.PointSquareDistance(Constants.FaceIjk.FaceCenterPoint[f]);
                 if (!(sqdT < sqd))
@@ -334,7 +343,7 @@ namespace H3Lib.Extensions
             r /= Constants.H3.RES0_U_GNOMONIC;
             for (var i = 0; i < res; i++)
             {
-                r *= Constants.FaceIjk.MSqrt7;
+                r *= Constants.FaceIjk.Sqrt7;
             }
             
             // we now have (r, theta) in hex2d with theta ccw from x-axes
@@ -351,10 +360,11 @@ namespace H3Lib.Extensions
         /// Calculate the 3D coordinate on unit sphere from the latitude and longitude.
         /// </summary>
         /// <param name="geo">The latitude and longitude of the point</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// vec3d.c
         /// void _geoToVec3d
-        /// -->
+        /// </remarks>
         public static Vec3d ToVec3d(this GeoCoord geo)
         {
             decimal r = DecimalEx.Cos(geo.Latitude);
@@ -375,21 +385,22 @@ namespace H3Lib.Extensions
         /// <param name="g">The spherical coordinates to encode.</param>
         /// <param name="res">The desired H3 resolution for the encoding.</param>
         /// <returns>The encoded H3Index (or H3_NULL on failure).</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// h3Index.c
         /// H3Index H3_EXPORT(geoToH3)
-        /// -->
+        /// </remarks>
         public static H3Index ToH3Index(this GeoCoord g, int res)
         {
-            if (res < 0 || res > Constants.H3.MAX_H3_RES)
+            if (res < 0 || res > Constants.H3.MaxH3Resolution)
             {
-                return Constants.H3Index.H3_INVALID_INDEX;
+                return Constants.H3Index.InvalidIndex;
             }
 
             // Decimals don't do infinities. Cross our fingers.
             if (!(Math.Abs(g.Latitude) < decimal.MaxValue) || !(Math.Abs(g.Longitude) < decimal.MaxValue))
             {
-                return Constants.H3Index.H3_INVALID_INDEX;
+                return Constants.H3Index.InvalidIndex;
             }
                 
             return g.ToFaceIjk(res).ToH3(res);
@@ -403,10 +414,11 @@ namespace H3Lib.Extensions
         /// <param name="destination">the destination coordinates</param>
         /// <param name="res">the resolution of the H3 hexagons to trace the line</param>
         /// <returns>the estimated number of hexagons required to trace the line</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// bbox.c
         /// int lineHexEstimate
-        /// -->
+        /// </remarks>
         public static int LineHexEstimate(this GeoCoord origin, GeoCoord destination, int res)
         {
             // Get the area of the pentagon as the maximally-distorted area possible
@@ -421,5 +433,18 @@ namespace H3Lib.Extensions
             }
             return estimate;
         }
+
+        /// <summary>
+        /// This converts a radian based coordinate to a degree based coordinate for quick
+        /// conversion. This has the possibility of losing accuracy if the conversion
+        /// round trips, but should be good enough for a one way conversion.
+        /// </summary>
+        /// <param name="coord">GeoCoord to convert</param>
+        /// <returns>A new DegreeCoord struct</returns>
+        public static DegreeCoord ToDecimalCoord(this GeoCoord coord)
+        {
+            return new DegreeCoord(coord.Latitude.RadiansToDegrees(), coord.Longitude.RadiansToDegrees());
+        }
+
     }
 }

@@ -99,6 +99,5 @@ namespace H3Lib
         {
             return new CoordIj(c.I * scalar, c.J * scalar);
         }
-
     }
 }

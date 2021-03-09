@@ -55,7 +55,7 @@ namespace TestSuite
             Assert.LessOrEqual(r, 5);
             int maxK = MAX_DISTANCES[r];
 
-            if (h3.IsPentagon())
+            if (h3.IsPentagon)
             {
                 return;
             }

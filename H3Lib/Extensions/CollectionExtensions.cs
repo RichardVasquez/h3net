@@ -20,10 +20,11 @@ namespace H3Lib.Extensions
         /// <returns>
         /// A status code and the uncompacted hexagons.
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// h3index.c
         /// int H3_EXPORT(uncompact)
-        /// -->
+        /// </remarks>
         public static (int, List<H3Index>) Uncompact(this List<H3Index> compactedSet, int res)
         {
             //  Let's deal with the resolution issue first
@@ -70,10 +71,11 @@ namespace H3Lib.Extensions
         /// The number of hexagons to allocate memory for, or a negative
         /// number if an error occurs.
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// h3Index.c
         /// int H3_EXPORT(maxUncompactSize)
-        /// -->
+        /// </remarks>
         public static long MaxUncompactSize(this List<H3Index> compactedSet, int res)
         {
             long maxCount = 0;
@@ -122,7 +124,7 @@ namespace H3Lib.Extensions
             var results = new List<H3Index>();
             foreach (var h3Cell in h3Set)
             {
-                (int success, List<H3Index> temp) = h3Cell.HexRange(k);
+                (int success, var temp) = h3Cell.HexRange(k);
                 if (success != 0)
                 {
                     return (success, results);
@@ -140,10 +142,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h3Set">Set of hexagons</param>
         /// <returns>Output graph</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// algos.c
         /// h3SetToVertexGraph
-        /// -->
+        /// </remarks>
         public static VertexGraph ToVertexGraph(this List<H3Index> h3Set)
         {
             if (h3Set.Count<1)
@@ -155,10 +158,10 @@ namespace H3Lib.Extensions
 
             var graph = new VertexGraph();
 
-            for (int i = 0; i < h3Set.Count; i++)
+            for (var i = 0; i < h3Set.Count; i++)
             {
                 var vertices = h3Set[i].ToGeoBoundary();
-                for (int j = 0; j < vertices.NumVerts; j++)
+                for (var j = 0; j < vertices.NumVerts; j++)
                 {
                     var fromVtx = vertices.Verts[j];
                     var toVtx = vertices.Verts[(j + 1) % vertices.NumVerts];
@@ -193,10 +196,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h3Set">Set of Hexagons</param>
         /// <returns>Output polygon</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// algos.c
         /// void H3_EXPORT(h3SetToLinkedGeo)
-        /// -->
+        /// </remarks>
         public static LinkedGeoPolygon ToLinkedGeoPolygon(this List<H3Index> h3Set)
         {
             var graph = h3Set.ToVertexGraph();
@@ -215,10 +219,11 @@ namespace H3Lib.Extensions
         /// <param name="polygons">Polygon containers to check</param>
         /// <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
         /// <returns>Deepest container, or null if list is empty</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// linkedGeo.c
         /// static const LinkedGeoPolygon* findDeepestContainer
-        /// -->
+        /// </remarks>
         public static LinkedGeoPolygon FindDeepestContainer(
                 this List<LinkedGeoPolygon> polygons, List<BBox> boxes
             )

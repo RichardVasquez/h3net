@@ -12,7 +12,7 @@ namespace TestSuite
         {
             decimal last = 0;
             decimal next;
-            for (int i = Constants.H3.MAX_H3_RES; i >= 0; i--)
+            for (int i = Constants.H3.MaxH3Resolution; i >= 0; i--)
             {
                 next = function(i);
                 Assert.Greater(next, last);
@@ -26,7 +26,7 @@ namespace TestSuite
             decimal originalRads = 1;
             decimal degs = originalRads.RadiansToDegrees();
             decimal rads = degs.DegreesToRadians();
-            Assert.Less(rads-originalRads, Constants.H3.EPSILON_RAD);
+            Assert.Less(rads-originalRads, Constants.H3.EpsilonRadian);
         }
 
         [Test]
@@ -36,8 +36,8 @@ namespace TestSuite
             var p2 = new GeoCoord().SetDegrees(0, 10);
 
             // TODO: Epsilon is relatively large
-            Assert.Less(p1.DistanceToRadians(p1),Constants.H3.EPSILON_RAD * 1000);
-            Assert.Less(p1.DistanceToRadians(p2) - (10.0m).DegreesToRadians(), Constants.H3.EPSILON_RAD * 1000);
+            Assert.Less(p1.DistanceToRadians(p1),Constants.H3.EpsilonRadian * 1000);
+            Assert.Less(p1.DistanceToRadians(p2) - (10.0m).DegreesToRadians(), Constants.H3.EpsilonRadian * 1000);
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace TestSuite
             decimal distance = 15.DegreesToRadians();
 
             outCoord = start.GetAzimuthDistancePoint(azimuth, distance);
-            Assert.Less(Math.Abs(start.DistanceToRadians(outCoord) - distance), Constants.H3.EPSILON_RAD);
+            Assert.Less(Math.Abs(start.DistanceToRadians(outCoord) - distance), Constants.H3.EpsilonRadian);
 
             var start2 = outCoord;
             outCoord = start2.GetAzimuthDistancePoint(azimuth + degrees180, distance);
@@ -161,8 +161,8 @@ namespace TestSuite
             var negativeLongitude = new GeoCoord(0, -(Constants.H3.M_PI + Constants.H3.M_PI_2));
             GeoCoord zero = default;
 
-            Assert.Less(Math.Abs(Constants.H3.M_PI_2 - negativeLongitude.DistanceToRadians(zero)), Constants.H3.EPSILON_RAD);
-            Assert.Less(Math.Abs(Constants.H3.M_PI_2 - zero.DistanceToRadians(negativeLongitude)), Constants.H3.EPSILON_RAD);
+            Assert.Less(Math.Abs(Constants.H3.M_PI_2 - negativeLongitude.DistanceToRadians(zero)), Constants.H3.EpsilonRadian);
+            Assert.Less(Math.Abs(Constants.H3.M_PI_2 - zero.DistanceToRadians(negativeLongitude)), Constants.H3.EpsilonRadian);
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace TestSuite
             // Simple checks for ordering of values
             long last = 0;
             long next;
-            for (int i = 0; i <= Constants.H3.MAX_H3_RES; i++)
+            for (int i = 0; i <= Constants.H3.MaxH3Resolution; i++)
             {
                 next = i.NumHexagons();
                 Assert.Greater(next, last);
@@ -213,7 +213,7 @@ namespace TestSuite
                 569707381193162L
             };
 
-            for (var r = 0; r <= Constants.H3.MAX_H3_RES; r++)
+            for (var r = 0; r <= Constants.H3.MaxH3Resolution; r++)
             {
                 long num = r.NumHexagons();
                 Assert.AreEqual(expected[r], num);

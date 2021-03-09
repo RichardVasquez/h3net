@@ -37,15 +37,6 @@ namespace H3Lib
         /// -->
         public decimal Magnitude => DecimalEx.Sqrt(X * X + Y * Y);
 
-        /**
-         * Finds the intersection between two lines. Assumes that the lines intersect
-         * and that the intersection is not at an endpoint of either line.
-         * @param p0 The first endpoint of the first line.
-         * @param p1 The second endpoint of the first line.
-         * @param p2 The first endpoint of the second line.
-         * @param p3 The second endpoint of the second line.
-         * @param inter The intersection point.
-         */
         /// <summary>
         /// Finds the intersection between two lines. Assumes that the lines intersect
         /// and that the intersection is not at an endpoint of either line.
@@ -55,10 +46,11 @@ namespace H3Lib
         /// <param name="p2">The first endpoint of the second line</param>
         /// <param name="p3">The first endpoint of the first line</param>
         /// <returns>The intersection point.</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// vec2d.c
         /// _v2dIntersect
-        /// -->
+        /// </remarks>
         public static Vec2d FindIntersection(Vec2d p0,  Vec2d p1,  Vec2d p2, Vec2d p3)
         {
             var s1 = new Vec2d(p1.X - p0.X, p1.Y - p0.Y);
@@ -80,8 +72,8 @@ namespace H3Lib
         public bool Equals(Vec2d other)
         {
             return
-                Math.Abs(X - other.X) < Constants.H3.DBL_EPSILON &&
-                Math.Abs(Y - other.Y) < Constants.H3.DBL_EPSILON;
+                Math.Abs(X - other.X) < Constants.H3.DoubleEpsilon &&
+                Math.Abs(Y - other.Y) < Constants.H3.DoubleEpsilon;
             
         }
         

@@ -61,7 +61,6 @@ namespace H3Lib
         /// <summary>
         /// Hashcode for identity
         /// </summary>
-        /// <returns></returns>
         public override int GetHashCode()
         {
             return HashCode.Combine(X, Y, Z);
@@ -70,9 +69,6 @@ namespace H3Lib
         /// <summary>
         /// Equality operator
         /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
         public static bool operator ==(Vec3d left, Vec3d right)
         {
             return left.Equals(right);

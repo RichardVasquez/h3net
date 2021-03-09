@@ -8,14 +8,14 @@ namespace H3Lib
         /// <summary>
         /// No overage
         /// </summary>
-        NO_OVERAGE = 0,
+        NoOverage = 0,
         /// <summary>
         /// Overage at face edge
         /// </summary>
-        FACE_EDGE = 1,
+        FaceEdge = 1,
         /// <summary>
         /// Overage goes on next face
         /// </summary>
-        NEW_FACE = 2
+        NewFace = 2
     }
 }

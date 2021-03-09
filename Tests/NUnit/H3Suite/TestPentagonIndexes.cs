@@ -30,7 +30,7 @@ namespace TestSuite
                     {
                         numFound++;
                         Assert.IsTrue(h3Index.IsValid());
-                        Assert.IsTrue(h3Index.IsPentagon());
+                        Assert.IsTrue(h3Index.IsPentagon);
                         Assert.AreEqual(res, h3Index.Resolution);
 
 

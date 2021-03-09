@@ -654,12 +654,12 @@
             The number of faces on an icosahedron
             </summary>
         </member>
-        <member name="F:H3Lib.Constants.H3.NUM_BASE_CELLS">
+        <member name="F:H3Lib.Constants.H3.BaseCellsCount">
             <summary>
             The number of H3 base cells
             </summary>
         </member>
-        <member name="F:H3Lib.Constants.H3.NUM_HEX_VERTS">
+        <member name="F:H3Lib.Constants.H3.HexVertices">
             <summary>
             The number of vertices in a hexagon;
             </summary>
@@ -768,17 +768,17 @@
              NEW_ADJUSTMENT_III
              -->
         </member>
-        <member name="F:H3Lib.Constants.BaseCells.MaxFaceCoord">
+        <member name="F:H3Lib.Constants.BaseCellsCount.MaxFaceCoord">
             <summary>
             Maximum input for any component to face-to-base-cell lookup functions
             </summary>
         </member>
-        <member name="F:H3Lib.Constants.BaseCells.InvalidRotations">
+        <member name="F:H3Lib.Constants.BaseCellsCount.InvalidRotations">
             <summary>
             Invalid number of rotations
             </summary>
         </member>
-        <member name="F:H3Lib.Constants.BaseCells.BaseCellNeighbors">
+        <member name="F:H3Lib.Constants.BaseCellsCount.BaseCellNeighbors">
              <summary>
              Neighboring base cell ID in each IJK direction.
             
@@ -786,7 +786,7 @@
              cell ID is given. 127 indicates there is no neighbor in that direction.
              </summary>
         </member>
-        <member name="F:H3Lib.Constants.BaseCells.BaseCellNeighbor60CounterClockwiseRotation">
+        <member name="F:H3Lib.Constants.BaseCellsCount.BaseCellNeighbor60CounterClockwiseRotation">
              <summary>
              Neighboring base cell rotations in each IJK direction.
             
@@ -799,7 +799,7 @@
              baseCellNeighbor60CCWRots
              -->
         </member>
-        <member name="F:H3Lib.Constants.BaseCells.FaceIjkBaseCells">
+        <member name="F:H3Lib.Constants.BaseCellsCount.FaceIjkBaseCells">
              <summary>
              Resolution 0 base cell lookup table for each face.
             
@@ -810,11 +810,11 @@
             
              Valid lookup coordinates are from (0, 0, 0) to (2, 2, 2).
             
-             This table can be accessed using the functions BaseCells._faceIjkToBaseCell
-             and BaseCells.ToBaseCellCounterClockwiseRotate60
+             This table can be accessed using the functions BaseCellsCount._faceIjkToBaseCell
+             and BaseCellsCount.ToBaseCellCounterClockwiseRotate60
              </summary>
         </member>
-        <member name="F:H3Lib.Constants.BaseCells.BaseCellData">
+        <member name="F:H3Lib.Constants.BaseCellsCount.BaseCellData">
              <summary>
              Resolution 0 base cell data table.
             
@@ -1301,7 +1301,7 @@
         </member>
         <member name="T:H3Lib.Extensions.BaseCellsExtensions">
             <summary>
-            Extension methods for BaseCells
+            Extension methods for BaseCellsCount
             </summary>
         </member>
         <member name="M:H3Lib.Extensions.BaseCellsExtensions.IsBaseCellPentagon(System.Int32)">

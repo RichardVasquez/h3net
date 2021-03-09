@@ -18,6 +18,7 @@
         <FileVersion>3.7.1</FileVersion>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
+        <PackageIconUrl>https://raw.githubusercontent.com/RichardVasquez/h3net/v3.7.1/h3net.300.png</PackageIconUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

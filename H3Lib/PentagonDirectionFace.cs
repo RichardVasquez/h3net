@@ -25,7 +25,7 @@ namespace H3Lib
         public PentagonDirectionFace(int bc, IList<int> faces)
         {
             BaseCell = bc;
-            Faces = faces.Take(Constants.H3.NUM_PENT_VERTS).ToArray();
+            Faces = faces.Take(Constants.H3.PentagonVertices).ToArray();
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace H3Lib
         public PentagonDirectionFace(IList<int> raw)
         {
             BaseCell = raw[0];
-            Faces = raw.Skip(1).Take(Constants.H3.NUM_PENT_VERTS).ToArray();
+            Faces = raw.Skip(1).Take(Constants.H3.PentagonVertices).ToArray();
         }
 
         /// <summary>

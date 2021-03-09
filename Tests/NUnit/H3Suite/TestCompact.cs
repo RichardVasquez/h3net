@@ -56,10 +56,10 @@ namespace TestSuite
         [Test]
         public void Res0()
         {
-            const int hexCount = Constants.H3.NUM_BASE_CELLS;
+            const int hexCount = Constants.H3.BaseCellsCount;
 
             var res0Hexes = Enumerable.Range(0, hexCount).Select
-                (s => new H3Index().SetIndex(0, s, Direction.CENTER_DIGIT)).ToList();
+                (s => new H3Index(0, s, Direction.CenterDigit)).ToList();
 
             (int status, var compressed) = res0Hexes.Compact();
 
@@ -100,7 +100,7 @@ namespace TestSuite
 
             for (var i = 0; i < numHex; i++)
             {
-                someHexagons.Add(new H3Index().SetIndex(5, 0, Direction.J_AXES_DIGIT));
+                someHexagons.Add(new H3Index(5, 0, Direction.JAxesDigit));
             }
 
             (int status, _) = someHexagons.Compact();
@@ -114,7 +114,7 @@ namespace TestSuite
             // Test that the minimum number of duplicate hexagons causes failure
             const int res = 10;
             // Arbitrary index
-            var h3 = new H3Index().SetIndex(res, 0, Direction.J_AXES_DIGIT);
+            var h3 = new H3Index(res, 0, Direction.JAxesDigit);
 
             var children = h3.ToChildren(res + 1);
             
@@ -130,7 +130,7 @@ namespace TestSuite
             // Test that the minimum number of duplicate hexagons causes failure
             const int res = 10;
             // Arbitrary pentagon parent cell
-            var h3 = new H3Index().SetIndex(res, 4, Direction.CENTER_DIGIT);
+            var h3 = new H3Index(res, 4, Direction.CenterDigit);
 
             var children = h3.ToChildren(res + 1);
 
@@ -149,7 +149,7 @@ namespace TestSuite
             // existing behavior.
             int res = 10;
             // Arbitrary index
-            H3Index h3=new H3Index().SetIndex(res, 0, Direction.J_AXES_DIGIT);
+            H3Index h3=new H3Index(res, 0, Direction.JAxesDigit);
 
             var children = h3.ToChildren(res + 1);
 
@@ -179,7 +179,7 @@ namespace TestSuite
             var disparate = new List<H3Index>();
             for (int i = 0; i<numHex;i++)
             {
-                disparate.Add(new H3Index().SetIndex(1, i, Direction.CENTER_DIGIT));
+                disparate.Add(new H3Index(1, i, Direction.CenterDigit));
             }
 
             var (status, attempt) = disparate.Compact();
@@ -198,7 +198,7 @@ namespace TestSuite
             var someHexagons = new List<H3Index>();
             for (var i = 0; i < numHex; i++)
             {
-                someHexagons.Add(new H3Index().SetIndex(5, i, Direction.CENTER_DIGIT));
+                someHexagons.Add(new H3Index(5, i, Direction.CenterDigit));
             }
 
             long sizeResult = someHexagons.MaxUncompactSize(4);
@@ -207,7 +207,7 @@ namespace TestSuite
             sizeResult = someHexagons.MaxUncompactSize(-1);
             Assert.IsTrue(sizeResult < 0);
 
-            sizeResult = someHexagons.MaxUncompactSize(Constants.H3.MAX_H3_RES + 1);
+            sizeResult = someHexagons.MaxUncompactSize(Constants.H3.MaxH3Resolution + 1);
             Assert.IsTrue(sizeResult < 0);
 
             (int status, _) = someHexagons.Uncompact(0);
@@ -218,17 +218,17 @@ namespace TestSuite
             someHexagons.Clear();
             for(var i =0; i < numHex;i++)
             {
-                someHexagons.Add(new H3Index().SetIndex(Constants.H3.MAX_H3_RES, i, 0));
+                someHexagons.Add(new H3Index(Constants.H3.MaxH3Resolution, i, 0));
             }
 
-            (status, _) = someHexagons.Uncompact(Constants.H3.MAX_H3_RES + 1);
+            (status, _) = someHexagons.Uncompact(Constants.H3.MaxH3Resolution + 1);
             Assert.AreNotEqual(0,status);
         }
 
         [Test]
         public void SomeHexagon()
         {
-            H3Index origin = new H3Index().SetIndex(1, 5, Direction.CENTER_DIGIT);
+            H3Index origin = new H3Index(1, 5, Direction.CenterDigit);
 
             var children = origin.ToChildren(2);
             Assert.AreNotEqual(0, children.Count);
@@ -274,7 +274,7 @@ namespace TestSuite
         [Test]
         public void Pentagon()
         {
-            var pentagon = new H3Index().SetIndex(1, 4, Direction.CENTER_DIGIT);
+            var pentagon = new H3Index(1, 4, Direction.CenterDigit);
 
             (int status1, var result1) = pentagon.Uncompact(2);
             Assert.AreEqual(0, status1);

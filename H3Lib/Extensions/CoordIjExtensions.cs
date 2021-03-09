@@ -54,10 +54,11 @@ namespace H3Lib.Extensions
         /// Item1 indicates status => 0 = Success, other = failure
         /// Item2 contains H3Index upon success.
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// localij,c
         /// int H3_EXPORT(experimentalLocalIjToH3)
-        /// -->
+        /// </remarks>
         public static (int, H3Index) ToH3Experimental(this CoordIj ij, H3Index origin)
         {
             // This function is currently experimental. Once ready to be part of the

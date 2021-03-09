@@ -15,11 +15,6 @@ namespace H3Lib
         private readonly HashSet<VertexNode> _pool;
         
         /// <summary>
-        /// Resolution of nodes, but not needed. Probably needs to be phased out
-        /// </summary>
-        public readonly int Resolution;
-
-        /// <summary>
         /// Number of vertices
         /// </summary>
         public int Count => _pool.Count;
@@ -39,7 +34,6 @@ namespace H3Lib
         public VertexGraph()
         {
             _pool = new HashSet<VertexNode>();
-            Resolution = 0;
         }
 
         /// <summary>
@@ -53,7 +47,6 @@ namespace H3Lib
         public VertexGraph(int res)
         {
             _pool = new HashSet<VertexNode>();
-            Resolution = res;
         }
 
         /// <summary>
@@ -113,14 +106,6 @@ namespace H3Lib
             }
 
             return edge1;
-            
-            // var edge = InitNode(fromNode, toNode);
-            // if (!_pool.Contains(edge))
-            // {
-            //     _pool.Add(edge);
-            // }
-            //
-            // return edge;
         }
         
         /// <summary>
@@ -157,10 +142,11 @@ namespace H3Lib
         /// <param name="fromNode">Start vertex</param>
         /// <param name="toNode">End vertex, or NULL if we don't care</param>
         /// <returns>Reference to the vertex node, if found</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// vertexGraph.c
         /// VertexNode* findNodeForVertex
-        /// -->
+        /// </remarks>
         public VertexNode? FindEdge(GeoCoord fromNode, GeoCoord? toNode)
         {
             var possibles = _pool.Where(p =>  p.From == fromNode).ToList();
@@ -174,7 +160,7 @@ namespace H3Lib
                 return possibles.First();//good luck!
             }
 
-            List<VertexNode> answer = possibles.Where(p => p.To == toNode).ToList();
+            var answer = possibles.Where(p => p.To == toNode).ToList();
             if (answer.Count == 0)
             {
                 return null;
@@ -186,10 +172,11 @@ namespace H3Lib
         /// <summary>Find a Vertex node starting at the given vertex</summary>
         /// <param name="vertex">fromVtx Start vertex</param>
         /// <returns>Pointer to the vertex node, if found</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// vertexGraph.c
         /// VertexNode* findNodeForVertex
-        /// -->
+        /// </remarks>
         public VertexNode? FindVertex(GeoCoord vertex)
         {
             return FindEdge(vertex, null);
@@ -198,10 +185,11 @@ namespace H3Lib
         /// <summary>
         /// Picks whatever HashSet says is the first VertexNode
         /// </summary>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// VertexGraph.c
         /// VertexNode* firstVertexNode
-        /// -->
+        /// </remarks>
         public VertexNode? FirstNode()
         {
             if (_pool.Count == 0)

@@ -69,7 +69,7 @@ namespace TestSuite
         [Test]
         public void KRingPolarPentagon()
         {
-            H3Index polar = new H3Index().SetIndex(0, 4, Direction.CENTER_DIGIT);
+            H3Index polar = new H3Index(0, 4, Direction.CenterDigit);
 
             H3Index[] expectedK2 =
             {
@@ -99,7 +99,7 @@ namespace TestSuite
         [Test]
         public void KRing1PolarPentagon()
         {
-            H3Index polar = new H3Index().SetIndex(1, 4, 0);
+            H3Index polar = new H3Index(1, 4, 0);
 
             H3Index[] expectedK2 =
             {
@@ -127,7 +127,7 @@ namespace TestSuite
         [Test]
         public void KRing1PolarPentagonK3()
         {
-            var polar = new H3Index().SetIndex(1, 4, 0);
+            var polar = new H3Index(1, 4, 0);
 
             var expectedK2 = new List<H3Index>
                  {
@@ -208,7 +208,7 @@ namespace TestSuite
             H3Index origin = 0x811d7ffffffffffL;
             int rotations = 0;
 
-            var (result, _) = origin.NeighborRotations(Direction.CENTER_DIGIT, rotations);
+            var (result, _) = origin.NeighborRotations(Direction.CenterDigit, rotations);
             Assert.AreEqual(result, origin);
         }
 
@@ -223,14 +223,14 @@ namespace TestSuite
             // base cell, and neither of the cwOffsetPent values are the original
             // base cell's face.
 
-            for (int pentagon = 0; pentagon < Constants.H3.NUM_BASE_CELLS; pentagon++)
+            for (int pentagon = 0; pentagon < Constants.H3.BaseCellsCount; pentagon++)
             {
                 if (!pentagon.IsBaseCellPentagon())
                 {
                     continue;
                 }
 
-                for (int neighbor = 0; neighbor < Constants.H3.NUM_BASE_CELLS; neighbor++)
+                for (int neighbor = 0; neighbor < Constants.H3.BaseCellsCount; neighbor++)
                 {
                     var homeFaceIjk = neighbor.ToFaceIjk();
                     int neighborFace = homeFaceIjk.Face;
@@ -239,7 +239,7 @@ namespace TestSuite
                     // only direction where we can move from digit 2 to digit 1, and
                     // into the deleted k subsequence.
                     Assert.IsTrue(
-                                  neighbor.GetNeighbor(Direction.J_AXES_DIGIT) != pentagon ||
+                                  neighbor.GetNeighbor(Direction.JAxesDigit) != pentagon ||
                                   pentagon.IsClockwiseOffset(neighborFace)
                                   );
                 }

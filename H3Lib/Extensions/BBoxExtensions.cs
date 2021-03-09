@@ -61,17 +61,17 @@ namespace H3Lib.Extensions
         {
             return new BBox(box.North, box.South, e, w);
         }
-        
 
         /// <summary>
         /// Gets the center of a bounding box
         /// </summary>
         /// <param name="box">input bounding box</param>
         /// <returns>output center coordinate</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// bbox.c
         /// void bboxCenter
-        /// -->
+        /// </remarks>
         public static GeoCoord Center(this BBox box)
         {
             decimal latitude = (box.North + box.South) / 2.0m;
@@ -89,10 +89,11 @@ namespace H3Lib.Extensions
         /// <param name="box">Bounding box</param>
         /// <param name="point">Point to test</param>
         /// <returns>Whether the point is contained</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// bbox.c
-        /// ool bboxContains
-        /// -->
+        /// bool bboxContains
+        /// </remarks>
         public static bool Contains(this BBox box, GeoCoord point)
         {
             return point.Latitude >= box.South &&
@@ -111,10 +112,11 @@ namespace H3Lib.Extensions
         /// <param name="box">bounding box to estimate the hexagon fill level</param>
         /// <param name="res">resolution of the H3 hexagons to fill the bounding box</param>
         /// <returns>estimated number of hexagons to fill the bounding box</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// bbox.c
         /// int bboxHexEstimate
-        /// -->
+        /// </remarks>
         internal static int HexEstimate(this BBox box, int res)
         {
             // Get the area of the pentagon as the maximally-distorted area possible

@@ -24,7 +24,7 @@ namespace TestSuite
         [Test]
         public void IjkToIjRoundtrip()
         {
-            for (Direction dir = Direction.CENTER_DIGIT; dir < Direction.NUM_DIGITS; dir++)
+            for (Direction dir = Direction.CenterDigit; dir < Direction.NumDigits; dir++)
             {
                 var ijk = new CoordIjk();
                 ijk = ijk.Neighbor(dir);
@@ -40,7 +40,7 @@ namespace TestSuite
         [Test]
         public void IjkToCubeRoundtrip()
         {
-            for (Direction dir = Direction.CENTER_DIGIT; dir < Direction.NUM_DIGITS; dir++)
+            for (Direction dir = Direction.CenterDigit; dir < Direction.NumDigits; dir++)
             {
                 var ijk = new CoordIjk().Neighbor(dir);
                 var original = ijk;

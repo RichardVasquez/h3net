@@ -15,7 +15,6 @@ namespace H3Lib.Extensions
         /// <param name="loop"></param>
         /// <param name="box"></param>
         /// <param name="coord"></param>
-        /// <returns></returns>
         public static bool PointInside(this LinkedGeoLoop loop, BBox box, GeoCoord coord)
         {
             // fail fast if we're outside the bounding box
@@ -57,10 +56,10 @@ namespace H3Lib.Extensions
 
                 // Rays are cast in the longitudinal direction, in case a point
                 // exactly matches, to decide tiebreakers, bias westerly
-                if (Math.Abs(aLng - targetLongitude) < Constants.H3.DBL_EPSILON ||
-                    Math.Abs(bLng - targetLongitude) < Constants.H3.DBL_EPSILON)
+                if (Math.Abs(aLng - targetLongitude) < Constants.H3.DoubleEpsilon ||
+                    Math.Abs(bLng - targetLongitude) < Constants.H3.DoubleEpsilon)
                 {
-                    targetLongitude -= Constants.H3.DBL_EPSILON;
+                    targetLongitude -= Constants.H3.DoubleEpsilon;
                 }
 
                 // For the latitude of the point, compute the longitude of the
@@ -86,7 +85,6 @@ namespace H3Lib.Extensions
         /// Convert GeoLoop to bounding box for loop
         /// </summary>
         /// <param name="loop"></param>
-        /// <returns></returns>
         public static BBox ToBBox(this LinkedGeoLoop loop)
         {
             if (loop.IsEmpty)
@@ -95,15 +93,15 @@ namespace H3Lib.Extensions
             }
 
             var box = new BBox(-decimal.MaxValue, decimal.MaxValue, -decimal.MaxValue, decimal.MaxValue);
-            decimal minPosLon = decimal.MaxValue;
+            var minPosLon = decimal.MaxValue;
             decimal maxNegLon = -decimal.MaxValue;
-            bool isTransmeridian = false;
+            var isTransmeridian = false;
 
             decimal lat;
             decimal lon;
 
             var nodes = loop.Nodes;
-            for (int idx = 0; idx < nodes.Count; idx++)
+            for (var idx = 0; idx < nodes.Count; idx++)
             {
                 var coord = nodes[idx];
                 var next = nodes[(idx + 1) % nodes.Count];
@@ -159,7 +157,6 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="loop"></param>
         /// <param name="isTransmeridian"></param>
-        /// <returns></returns>
         private static bool IsClockwiseNormalized(this LinkedGeoLoop loop, bool isTransmeridian)
         {
             var sum = 0m;
@@ -188,7 +185,6 @@ namespace H3Lib.Extensions
         /// Is loop clockwise?
         /// </summary>
         /// <param name="loop"></param>
-        /// <returns></returns>
         public static bool IsClockwise(this LinkedGeoLoop loop)
         {
             return loop.IsClockwiseNormalized(false);
@@ -201,10 +197,11 @@ namespace H3Lib.Extensions
         /// <param name="polygons">Polygons to test</param>
         /// <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
         /// <returns>Number of polygons containing the loop</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// linkedGeo.c
         /// static int countContainers
-        /// -->
+        /// </remarks>
         public static int CountContainers(this LinkedGeoLoop loop, List<LinkedGeoPolygon> polygons, List<BBox> boxes)
         {
             return polygons

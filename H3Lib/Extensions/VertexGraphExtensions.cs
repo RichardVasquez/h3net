@@ -12,10 +12,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="graph">Input graph</param>
         /// <returns>Output polygon</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// algos.c
         /// void _vertexGraphToLinkedGeo
-        /// -->
+        /// </remarks>
         public static LinkedGeoPolygon ToLinkedGeoPolygon(this VertexGraph graph)
         {
             var result = new LinkedGeoPolygon();

@@ -13,10 +13,10 @@ namespace H3Lib.Extensions
         /// coordinate vector (from <a href="http://www.discreteglobalgrids.org/software/">DGGRID</a>).
         /// </summary>
         /// <param name="v">The 2D cartesian coordinate vector.</param>
-        /// <!--
+        /// <remarks>
         /// coordijk.c
         /// void _hex2dToCoordIJK
-        /// -->
+        /// </remarks>
         public static CoordIjk ToCoordIjk(this Vec2d v)
         {
             var h = new CoordIjk();
@@ -129,7 +129,7 @@ namespace H3Lib.Extensions
             // scale for current resolution length u
             for (var i = 0; i < res; i++)
             {
-                r /= Constants.FaceIjk.MSqrt7;
+                r /= Constants.FaceIjk.Sqrt7;
             }
 
             // scale accordingly if this is a substrate grid
@@ -138,7 +138,7 @@ namespace H3Lib.Extensions
                 r /= 3.0m;
                 if (res.IsResClassIii())
                 {
-                    r /= Constants.FaceIjk.MSqrt7;
+                    r /= Constants.FaceIjk.Sqrt7;
                 }
             }
 

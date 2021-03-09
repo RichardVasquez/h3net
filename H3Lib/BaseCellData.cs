@@ -5,10 +5,11 @@ namespace H3Lib
     /// <summary>
     /// Information on a single base cell
     /// </summary>
-    /// <!--
+    /// <remarks>
+    /// 3.7.1
     /// baseCells.h
     /// typedef struct BaseCellData
-    /// -->
+    /// </remarks>
     public readonly struct BaseCellData:IEquatable<BaseCellData>
     {
         /// <summary>
@@ -40,7 +41,7 @@ namespace H3Lib
             IsPentagon = isPentagon;
             ClockwiseOffsetPentagon = new[] {offset1, offset2};
         }
-
+        
         /// <summary>
         /// Test for equality
         /// </summary>

@@ -98,10 +98,11 @@ namespace H3Lib
         /// <param name="b">length of triangle side B in radians</param>
         /// <param name="c">length of triangle side C in radians</param>
         /// <returns>area in radians^2 of triangle on unit sphere</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double triangleEdgeLengthsToArea
-        /// -->
+        /// </remarks>
         private static decimal TriangleEdgeLengthToArea(decimal a, decimal b, decimal c)
         {
             decimal s = (a + b + c) / 2;
@@ -125,10 +126,11 @@ namespace H3Lib
         /// <param name="b">vertex lat/lng in radians</param>
         /// <param name="c">vertex lat/lng in radians</param>
         /// <returns>area of triangle on unit sphere, in radians^2</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double triangleArea
-        /// -->
+        /// </remarks>
         public static decimal TriangleArea(GeoCoord a, GeoCoord b, GeoCoord c)
         {
             return TriangleEdgeLengthToArea
@@ -143,8 +145,8 @@ namespace H3Lib
         public bool Equals(GeoCoord other)
         {
             return
-                Math.Abs(Latitude - other.Latitude) < Constants.H3.EPSILON_RAD &&
-                Math.Abs(Longitude - other.Longitude) < Constants.H3.EPSILON_RAD;
+                Math.Abs(Latitude - other.Latitude) < Constants.H3.EpsilonRadian &&
+                Math.Abs(Longitude - other.Longitude) < Constants.H3.EpsilonRadian;
         }
 
         /// <summary>

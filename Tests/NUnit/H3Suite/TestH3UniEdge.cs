@@ -58,7 +58,7 @@ namespace TestSuite
             var sf3 = largerRing[0];
 
             var notEdge = sf.UniDirectionalEdgeTo(sf3);
-            Assert.AreEqual(H3Lib.Constants.H3Index.H3_NULL, notEdge);
+            Assert.AreEqual(H3Lib.Constants.H3Index.Null, notEdge);
         }
 
         [Test]
@@ -66,8 +66,8 @@ namespace TestSuite
         {
             H3Index hexagon = 0x891ea6d6533ffff;
 
-            Assert.AreEqual(hexagon.OriginFromUniDirectionalEdge(), H3Lib.Constants.H3Index.H3_NULL);
-            Assert.AreEqual(hexagon.DestinationFromUniDirectionalEdge(), H3Lib.Constants.H3Index.H3_NULL);
+            Assert.AreEqual(hexagon.OriginFromUniDirectionalEdge(), H3Lib.Constants.H3Index.Null);
+            Assert.AreEqual(hexagon.DestinationFromUniDirectionalEdge(), H3Lib.Constants.H3Index.Null);
         }
 
         [Test]
@@ -75,11 +75,11 @@ namespace TestSuite
         {
             H3Index hexagon = 0x891ea6d6533ffff;
 
-            Assert.AreEqual(hexagon.DestinationFromUniDirectionalEdge(), H3Lib.Constants.H3Index.H3_NULL);
+            Assert.AreEqual(hexagon.DestinationFromUniDirectionalEdge(), H3Lib.Constants.H3Index.Null);
             var z = (H3Index) 0;
             Assert.AreEqual(((H3Index) 0)
                            .DestinationFromUniDirectionalEdge(),
-                            H3Lib.Constants.H3Index.H3_NULL
+                            H3Lib.Constants.H3Index.Null
                            );
         }
 
@@ -92,18 +92,18 @@ namespace TestSuite
             H3Index pentagon;
             H3Index edge;
 
-            for (int res = 0; res < Constants.H3.MAX_H3_RES; res++)
+            for (int res = 0; res < Constants.H3.MaxH3Resolution; res++)
             {
                 var pentagons = res.GetPentagonIndexes();
 
-                for (int p = 0; p < Constants.H3.NUM_PENTAGONS; p++)
+                for (int p = 0; p < Constants.H3.PentagonsCount; p++)
                 {
                     pentagon = pentagons[p];
                     var ring = pentagon.KRing(1);
 
                     foreach (var neighbor in ring
                        .Where(neighbor => neighbor != pentagon &&
-                                          neighbor != H3Lib.Constants.H3Index.H3_NULL))
+                                          neighbor != H3Lib.Constants.H3Index.Null))
                     {
                         edge = pentagon.UniDirectionalEdgeTo(neighbor);
                         Assert.IsTrue(edge.IsValidUniEdge());
@@ -129,7 +129,7 @@ namespace TestSuite
             Assert.IsFalse(fakeEdge.IsValidUniEdge());
 
             var invalidEdge = sf.SetMode(H3Mode.UniEdge)
-                                .SetReservedBits((int) Direction.INVALID_DIGIT);
+                                .SetReservedBits((int) Direction.InvalidDigit);
             Assert.IsFalse(invalidEdge.IsValidUniEdge());
 
             H3Index pentagon = 0x821c07fffffffff;
@@ -190,7 +190,7 @@ namespace TestSuite
                                        {5, 0}, {4, 5}, {0, 1}
                                    };
 
-            for (var res = 0; res < Constants.H3.MAX_H3_RES; res++)
+            for (var res = 0; res < Constants.H3.MaxH3Resolution; res++)
             {
                 var sf = _sfGeo.ToH3Index(res);
                 var boundary = sf.ToGeoBoundary();
@@ -219,7 +219,7 @@ namespace TestSuite
                     {8, 9, 0}, {6, 7, 8}, {0, 1, 2}
                 };
 
-            for (var res = 1; res < Constants.H3.MAX_H3_RES; res += 2)
+            for (var res = 1; res < Constants.H3.MaxH3Resolution; res += 2)
             {
                 var pentagon = new H3Index(res, 24, 0);
                 var boundary = pentagon.ToGeoBoundary();
@@ -257,7 +257,7 @@ namespace TestSuite
                     {4, 0}, {3, 4}, {0, 1}
                 };
 
-            for (int res = 0; res < Constants.H3.MAX_H3_RES; res += 2)
+            for (int res = 0; res < Constants.H3.MaxH3Resolution; res += 2)
             {
                 var pentagon = new H3Index(res, 24, 0);
                 var boundary = pentagon.ToGeoBoundary();

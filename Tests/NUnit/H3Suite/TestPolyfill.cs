@@ -105,10 +105,10 @@ namespace TestSuite
                 var children = h.ToChildren(nextRes);
                 int h3ToChildrenCount = Utility.CountActualHexagons(children);
 
-                polyfillOut = polyfillOut.Where(p => p != Constants.H3Index.H3_NULL).ToList();
+                polyfillOut = polyfillOut.Where(p => p != Constants.H3Index.Null).ToList();
                 polyfillOut.Sort();
 
-                children = children.Where(p => p != Constants.H3Index.H3_NULL).ToList();
+                children = children.Where(p => p != Constants.H3Index.Null).ToList();
                 children.Sort();
 
                 Assert.AreEqual(h3ToChildrenCount, polyfillCount, $"h: {h}\nnextRes: {nextRes}\ncurrentRes: {currentRes}");
@@ -330,7 +330,7 @@ namespace TestSuite
             var hexagons = polygon.Polyfill(9);
 
             Assert.AreEqual(1, hexagons.Count);
-            Assert.IsTrue(hexagons.First().IsPentagon());
+            Assert.IsTrue(hexagons.First().IsPentagon);
         }
 
         [Test]

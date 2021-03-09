@@ -16,10 +16,11 @@ namespace H3Lib.Extensions
         /// <param name="boxes">The bboxes for the main geofence and each of its holes</param>
         /// <param name="coord">The coordinate to check</param>
         /// <returns>Whether the point is contained</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// polygon.c
         /// bool pointInsidePolygon
-        /// -->
+        /// </remarks>
         public static bool PointInside(this GeoPolygon polygon, List<BBox> boxes, GeoCoord coord)
         {
             // Start with contains state of primary geofence
@@ -51,10 +52,11 @@ namespace H3Lib.Extensions
         /// <returns>
         /// Output bboxes, one for the outer loop and one for each hole
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// polygon.c
         /// void bboxesFromGeoPolygon
-        /// -->
+        /// </remarks>
         public static List<BBox> ToBBoxes(this GeoPolygon polygon)
         {
             var results = new List<BBox> {polygon.GeoFence.ToBBox()};
@@ -80,10 +82,11 @@ namespace H3Lib.Extensions
         /// <param name="polygon">The geofence and holes defining the relevant area</param>
         /// <param name="res">The Hexagon resolution (0-15)</param>
         /// <returns>List of H3Index that compose the polyfill</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// algos.c
         /// void H3_EXPORT(polyfill)
-        /// -->
+        /// </remarks>
         public static List<H3Index> Polyfill(this GeoPolygon polygon, int res)
         {
             // TODO: Eliminate this wrapper with the H3 4.0.0 release
@@ -109,10 +112,11 @@ namespace H3Lib.Extensions
         /// <param name="geoPolygon">A GeoJSON-like data structure indicating the poly to fill</param>
         /// <param name="res">Hexagon resolution (0-15)</param>
         /// <returns>number of hexagons to allocate for</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// algos.c
         /// int H3_EXPORT(maxPolyfillSize)
-        /// -->
+        /// </remarks>
         public static int MaxPolyFillSize(this GeoPolygon geoPolygon, int res)
         {
             // Get the bounding box for the GeoJSON-like struct
@@ -160,10 +164,11 @@ namespace H3Lib.Extensions
         /// Item1 - Status code
         /// Item2 - List of H3Index values
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// algos.c
         /// int _polyfillInternal
-        /// -->
+        /// </remarks>
         public static (int, List<H3Index>) PolyFillInternal(this GeoPolygon polygon, int res)
         {
             //  Get bounding boxes
@@ -203,20 +208,16 @@ namespace H3Lib.Extensions
                        .Select
                             (
                              index => index.KRing(1)
-                                           .Where(h => h != Constants.H3Index.H3_NULL)
+                                           .Where(h => h != Constants.H3Index.Null)
                             ))
                     {
-                        foreach (
-                            var hex in ring
-                               .Where
-                                    (
-                                     hex => !results.Contains(hex) &&
-                                            !found.Contains(hex) &&
-                                            polygon.PointInside(bboxes, hex.ToGeoCoord())
-                                    ))
+                        foreach (var hex in ring)
                         {
-                            found.Add(hex);
-                            numFoundHexes++;
+                            if (!results.Contains(hex) && !found.Contains(hex) && polygon.PointInside(bboxes, hex.ToGeoCoord()))
+                            {
+                                found.Add(hex);
+                                numFoundHexes++;
+                            }
                         }
 
                         currentSearchNum++;

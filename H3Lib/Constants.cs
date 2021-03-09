@@ -18,15 +18,15 @@ namespace H3Lib
         /// <summary>
         /// Major version
         /// </summary>
-        internal const int H3_VERSION_MAJOR = 3;
+        internal const int VersionMajor = 3;
         /// <summary>
         /// Minor version
         /// </summary>
-        internal const int H3_VERSION_MINOR = 7;
+        internal const int VersionMinor = 7;
         /// <summary>
         /// Patch version
         /// </summary>
-        internal const int H3_VERSION_PATCH = 1;
+        internal const int VersionPatch = 1;
 
         /// <summary>
         /// Internal values for all of H3
@@ -80,12 +80,12 @@ namespace H3Lib
             internal const decimal M_AP7_ROT_RADS = 0.333473172251832115336090755351601070065900389m;
 
             /// <summary>
-            /// sin(<see cref="M_AP7_ROT_RADS"/>
+            /// sin(<see cref="M_AP7_ROT_RADS"/>)
             /// </summary>
             internal const decimal M_SIN_AP7_ROT = 0.3273268353539885718950318m;
 
             /// <summary>
-            /// cos(<see cref="M_AP7_ROT_RADS"/>
+            /// cos(<see cref="M_AP7_ROT_RADS"/>)
             /// </summary>
             internal const decimal M_COS_AP7_ROT = 0.9449111825230680680167902m;
 
@@ -104,54 +104,39 @@ namespace H3Lib
             /// <summary>
             /// H3 resolution; H3 version 1 has 16 resolutions, numbered 0 through 15
             /// </summary>
-            internal const int MAX_H3_RES = 15;
+            internal const int MaxH3Resolution = 15;
 
             /// <summary>
             /// The number of faces on an icosahedron
             /// </summary>
-            internal const int NUM_ICOSA_FACES = 20;
+            internal const int IcosahedronFaces = 20;
 
             /// <summary>
             /// The number of H3 base cells
             /// </summary>
-            internal const int NUM_BASE_CELLS = 122;
+            internal const int BaseCellsCount = 122;
 
             /// <summary>
             /// The number of vertices in a hexagon;
             /// </summary>
-            internal const int NUM_HEX_VERTS = 6;
+            internal const int HexVertices = 6;
 
             /// <summary>
             /// The number of vertices in a pentagon
             /// </summary>
-            internal const int NUM_PENT_VERTS = 5;
-
-            /// <summary>
-            /// H3 Index modes
-            /// </summary>
-            internal const int H3_HEXAGON_MODE = 1;
-
-            internal const int H3_UNIEDGE_MODE = 2;
+            internal const int PentagonVertices = 5;
 
             /// <summary>
             /// epsilon of ~0.1mm in degrees
             /// </summary>
-            internal const decimal EPSILON_DEG =  0.00000001m;
+            private const decimal EpsilonDegrees =  0.00000001m;
             
             /// <summary>
             /// epsilon of ~0.1mm in radians
             /// </summary>
-            internal const decimal EPSILON_RAD = EPSILON_DEG * M_PI_180;
+            internal const decimal EpsilonRadian = EpsilonDegrees * M_PI_180;
 
-            internal const int MAX_CELL_BNDRY_VERTS = 10;
-
-            // /// <summary>
-            // /// Return codes from Algos.hexRange and related functions.
-            // /// </summary>
-            // internal const int HEX_RANGE_SUCCESS = 0;
-            //
-            // internal const int HEX_RANGE_PENTAGON = 1;
-            // internal const int HEX_RANGE_K_SUBSEQUENCE = 1;
+            internal const int MaxCellBoundaryVertices = 10;
 
             /// <summary>
             /// General margin of error in differences between double values
@@ -161,14 +146,9 @@ namespace H3Lib
             /// https://github.com/dotnet/runtime/issues/8528
             /// 
             /// </summary>
-            internal const decimal DBL_EPSILON = 0.0000000001m;
+            internal const decimal DoubleEpsilon = 0.0000000001m;
 
-            /// <summary>
-            /// Direction used for traversing to the next outward hexagonal ring. 
-            /// </summary>
-            internal const Direction NEXT_RING_DIRECTION = Direction.I_AXES_DIGIT;
-
-            internal const int NUM_PENTAGONS = 12;
+            internal const int PentagonsCount = 12;
         }
 
         internal static class Algos
@@ -199,9 +179,9 @@ namespace H3Lib
             /// -->
             internal static readonly Direction[] Directions =
             {
-                Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT,
-                Direction.K_AXES_DIGIT, Direction.IK_AXES_DIGIT,
-                Direction.I_AXES_DIGIT, Direction.IJ_AXES_DIGIT
+                Direction.JAxesDigit, Direction.JKAxesDigit,
+                Direction.KAxesDigit, Direction.IKAxesDigit,
+                Direction.IAxesDigit, Direction.IJAxesDigit
             };
 
             /// <summary>
@@ -211,7 +191,7 @@ namespace H3Lib
             /// Algos.c
             /// NEXT_RING_DIRECTION
             /// -->
-            internal const Direction NextRingDirection = Direction.I_AXES_DIGIT;
+            internal const Direction NextRingDirection = Direction.IAxesDigit;
 
             /// <summary>
             /// New digit when traversing along class II grids.
@@ -225,39 +205,39 @@ namespace H3Lib
             internal static readonly Direction[,] NewDigitIi =
             {
                 {
-                    Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.J_AXES_DIGIT,
-                    Direction.JK_AXES_DIGIT, Direction.I_AXES_DIGIT, Direction.IK_AXES_DIGIT,
-                    Direction.IJ_AXES_DIGIT
+                    Direction.CenterDigit, Direction.KAxesDigit, Direction.JAxesDigit,
+                    Direction.JKAxesDigit, Direction.IAxesDigit, Direction.IKAxesDigit,
+                    Direction.IJAxesDigit
                 },
                 {
-                    Direction.K_AXES_DIGIT, Direction.I_AXES_DIGIT, Direction.JK_AXES_DIGIT,
-                    Direction.IJ_AXES_DIGIT, Direction.IK_AXES_DIGIT, Direction.J_AXES_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.KAxesDigit, Direction.IAxesDigit, Direction.JKAxesDigit,
+                    Direction.IJAxesDigit, Direction.IKAxesDigit, Direction.JAxesDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT, Direction.K_AXES_DIGIT,
-                    Direction.I_AXES_DIGIT, Direction.IJ_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.IK_AXES_DIGIT
+                    Direction.JAxesDigit, Direction.JKAxesDigit, Direction.KAxesDigit,
+                    Direction.IAxesDigit, Direction.IJAxesDigit, Direction.CenterDigit,
+                    Direction.IKAxesDigit
                 },
                 {
-                    Direction.JK_AXES_DIGIT, Direction.IJ_AXES_DIGIT, Direction.I_AXES_DIGIT,
-                    Direction.IK_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT,
-                    Direction.J_AXES_DIGIT
+                    Direction.JKAxesDigit, Direction.IJAxesDigit, Direction.IAxesDigit,
+                    Direction.IKAxesDigit, Direction.CenterDigit, Direction.KAxesDigit,
+                    Direction.JAxesDigit
                 },
                 {
-                    Direction.I_AXES_DIGIT, Direction.IK_AXES_DIGIT, Direction.IJ_AXES_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT,
-                    Direction.K_AXES_DIGIT
+                    Direction.IAxesDigit, Direction.IKAxesDigit, Direction.IJAxesDigit,
+                    Direction.CenterDigit, Direction.JAxesDigit, Direction.JKAxesDigit,
+                    Direction.KAxesDigit
                 },
                 {
-                    Direction.IK_AXES_DIGIT, Direction.J_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.K_AXES_DIGIT, Direction.JK_AXES_DIGIT, Direction.IJ_AXES_DIGIT,
-                    Direction.I_AXES_DIGIT
+                    Direction.IKAxesDigit, Direction.JAxesDigit, Direction.CenterDigit,
+                    Direction.KAxesDigit, Direction.JKAxesDigit, Direction.IJAxesDigit,
+                    Direction.IAxesDigit
                 },
                 {
-                    Direction.IJ_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.IK_AXES_DIGIT,
-                    Direction.J_AXES_DIGIT, Direction.K_AXES_DIGIT, Direction.I_AXES_DIGIT,
-                    Direction.JK_AXES_DIGIT
+                    Direction.IJAxesDigit, Direction.CenterDigit, Direction.IKAxesDigit,
+                    Direction.JAxesDigit, Direction.KAxesDigit, Direction.IAxesDigit,
+                    Direction.JKAxesDigit
                 }
             };
 
@@ -273,39 +253,39 @@ namespace H3Lib
             internal static readonly Direction[,] NewAdjustmentIi =
             {
                 {
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.K_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.IK_AXES_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.CenterDigit, Direction.KAxesDigit, Direction.CenterDigit,
+                    Direction.KAxesDigit, Direction.CenterDigit, Direction.IKAxesDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.J_AXES_DIGIT,
-                    Direction.JK_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.J_AXES_DIGIT
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.JAxesDigit,
+                    Direction.JKAxesDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.JAxesDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.JK_AXES_DIGIT,
-                    Direction.JK_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.CenterDigit, Direction.KAxesDigit, Direction.JKAxesDigit,
+                    Direction.JKAxesDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.I_AXES_DIGIT, Direction.I_AXES_DIGIT,
-                    Direction.IJ_AXES_DIGIT
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.CenterDigit, Direction.IAxesDigit, Direction.IAxesDigit,
+                    Direction.IJAxesDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.IK_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.I_AXES_DIGIT, Direction.IK_AXES_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.CenterDigit, Direction.IKAxesDigit, Direction.CenterDigit,
+                    Direction.CenterDigit, Direction.IAxesDigit, Direction.IKAxesDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.J_AXES_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.IJ_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.IJ_AXES_DIGIT
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.JAxesDigit,
+                    Direction.CenterDigit, Direction.IJAxesDigit, Direction.CenterDigit,
+                    Direction.IJAxesDigit
                 }
             };
 
@@ -321,39 +301,39 @@ namespace H3Lib
             internal static readonly Direction[,] NewDigitIii =
             {
                 {
-                    Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.J_AXES_DIGIT,
-                    Direction.JK_AXES_DIGIT, Direction.I_AXES_DIGIT, Direction.IK_AXES_DIGIT,
-                    Direction.IJ_AXES_DIGIT
+                    Direction.CenterDigit, Direction.KAxesDigit, Direction.JAxesDigit,
+                    Direction.JKAxesDigit, Direction.IAxesDigit, Direction.IKAxesDigit,
+                    Direction.IJAxesDigit
                 },
                 {
-                    Direction.K_AXES_DIGIT, Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT,
-                    Direction.I_AXES_DIGIT, Direction.IK_AXES_DIGIT, Direction.IJ_AXES_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.KAxesDigit, Direction.JAxesDigit, Direction.JKAxesDigit,
+                    Direction.IAxesDigit, Direction.IKAxesDigit, Direction.IJAxesDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT, Direction.I_AXES_DIGIT,
-                    Direction.IK_AXES_DIGIT, Direction.IJ_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.K_AXES_DIGIT
+                    Direction.JAxesDigit, Direction.JKAxesDigit, Direction.IAxesDigit,
+                    Direction.IKAxesDigit, Direction.IJAxesDigit, Direction.CenterDigit,
+                    Direction.KAxesDigit
                 },
                 {
-                    Direction.JK_AXES_DIGIT, Direction.I_AXES_DIGIT, Direction.IK_AXES_DIGIT,
-                    Direction.IJ_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT,
-                    Direction.J_AXES_DIGIT
+                    Direction.JKAxesDigit, Direction.IAxesDigit, Direction.IKAxesDigit,
+                    Direction.IJAxesDigit, Direction.CenterDigit, Direction.KAxesDigit,
+                    Direction.JAxesDigit
                 },
                 {
-                    Direction.I_AXES_DIGIT, Direction.IK_AXES_DIGIT, Direction.IJ_AXES_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.J_AXES_DIGIT,
-                    Direction.JK_AXES_DIGIT
+                    Direction.IAxesDigit, Direction.IKAxesDigit, Direction.IJAxesDigit,
+                    Direction.CenterDigit, Direction.KAxesDigit, Direction.JAxesDigit,
+                    Direction.JKAxesDigit
                 },
                 {
-                    Direction.IK_AXES_DIGIT, Direction.IJ_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.K_AXES_DIGIT, Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT,
-                    Direction.I_AXES_DIGIT
+                    Direction.IKAxesDigit, Direction.IJAxesDigit, Direction.CenterDigit,
+                    Direction.KAxesDigit, Direction.JAxesDigit, Direction.JKAxesDigit,
+                    Direction.IAxesDigit
                 },
                 {
-                    Direction.IJ_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT,
-                    Direction.J_AXES_DIGIT, Direction.JK_AXES_DIGIT, Direction.I_AXES_DIGIT,
-                    Direction.IK_AXES_DIGIT
+                    Direction.IJAxesDigit, Direction.CenterDigit, Direction.KAxesDigit,
+                    Direction.JAxesDigit, Direction.JKAxesDigit, Direction.IAxesDigit,
+                    Direction.IKAxesDigit
                 }
             };
 
@@ -369,39 +349,39 @@ namespace H3Lib
             internal static readonly Direction[,] NewAdjustmentIii =
             {
                 {
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.JK_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.CenterDigit, Direction.KAxesDigit, Direction.CenterDigit,
+                    Direction.JKAxesDigit, Direction.CenterDigit, Direction.KAxesDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.J_AXES_DIGIT,
-                    Direction.J_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.IJ_AXES_DIGIT
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.JAxesDigit,
+                    Direction.JAxesDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.IJAxesDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.JK_AXES_DIGIT, Direction.J_AXES_DIGIT,
-                    Direction.JK_AXES_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.CenterDigit, Direction.JKAxesDigit, Direction.JAxesDigit,
+                    Direction.JKAxesDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.I_AXES_DIGIT, Direction.IK_AXES_DIGIT,
-                    Direction.I_AXES_DIGIT
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.CenterDigit,
+                    Direction.CenterDigit, Direction.IAxesDigit, Direction.IKAxesDigit,
+                    Direction.IAxesDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.K_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.IK_AXES_DIGIT, Direction.IK_AXES_DIGIT,
-                    Direction.CENTER_DIGIT
+                    Direction.CenterDigit, Direction.KAxesDigit, Direction.CenterDigit,
+                    Direction.CenterDigit, Direction.IKAxesDigit, Direction.IKAxesDigit,
+                    Direction.CenterDigit
                 },
                 {
-                    Direction.CENTER_DIGIT, Direction.CENTER_DIGIT, Direction.IJ_AXES_DIGIT,
-                    Direction.CENTER_DIGIT, Direction.I_AXES_DIGIT, Direction.CENTER_DIGIT,
-                    Direction.IJ_AXES_DIGIT
+                    Direction.CenterDigit, Direction.CenterDigit, Direction.IJAxesDigit,
+                    Direction.CenterDigit, Direction.IAxesDigit, Direction.CenterDigit,
+                    Direction.IJAxesDigit
                 }
             };
 
@@ -700,8 +680,8 @@ namespace H3Lib
             ///
             /// Valid lookup coordinates are from (0, 0, 0) to (2, 2, 2).
             ///
-            /// This table can be accessed using the functions BaseCells._faceIjkToBaseCell
-            /// and BaseCells.ToBaseCellCounterClockwiseRotate60
+            /// This table can be accessed using the functions BaseCellsCount._faceIjkToBaseCell
+            /// and BaseCellsCount.ToBaseCellCounterClockwiseRotate60
             /// </summary>
             internal static readonly BaseCellRotation[,,,] FaceIjkBaseCells =
             {
@@ -1337,13 +1317,13 @@ namespace H3Lib
             public static readonly Dictionary<Direction, H3Lib.CoordIjk> UnitVectors =
                 new Dictionary<Direction, H3Lib.CoordIjk>
                 {
-                    {Direction.CENTER_DIGIT, new H3Lib.CoordIjk(0, 0, 0)},
-                    {Direction.K_AXES_DIGIT, new H3Lib.CoordIjk(0, 0, 1)},
-                    {Direction.J_AXES_DIGIT, new H3Lib.CoordIjk(0, 1, 0)},
-                    {Direction.JK_AXES_DIGIT, new H3Lib.CoordIjk(0, 1, 1)},
-                    {Direction.I_AXES_DIGIT, new H3Lib.CoordIjk(1, 0, 0)},
-                    {Direction.IK_AXES_DIGIT, new H3Lib.CoordIjk(1, 0, 1)},
-                    {Direction.IJ_AXES_DIGIT, new H3Lib.CoordIjk(1, 1, 0)},
+                    {Direction.CenterDigit, new H3Lib.CoordIjk(0, 0, 0)},
+                    {Direction.KAxesDigit, new H3Lib.CoordIjk(0, 0, 1)},
+                    {Direction.JAxesDigit, new H3Lib.CoordIjk(0, 1, 0)},
+                    {Direction.JKAxesDigit, new H3Lib.CoordIjk(0, 1, 1)},
+                    {Direction.IAxesDigit, new H3Lib.CoordIjk(1, 0, 0)},
+                    {Direction.IKAxesDigit, new H3Lib.CoordIjk(1, 0, 1)},
+                    {Direction.IJAxesDigit, new H3Lib.CoordIjk(1, 1, 0)},
                 };
 
         }
@@ -1353,7 +1333,7 @@ namespace H3Lib
             /// <summary>
             /// Invalid face index
             /// </summary>
-            internal static readonly int InvalidFace = -1;
+            internal const int InvalidFace = -1;
 
             /// <summary>
             /// IJ quadrant faceNeighbors table direction
@@ -1373,7 +1353,7 @@ namespace H3Lib
             /// <summary>
             /// Square root of 7
             /// </summary>
-            internal static readonly decimal MSqrt7 = 2.6457513110645905905016157536392604257102m;
+            internal const decimal Sqrt7 = 2.6457513110645905905016157536392604257102m;
 
             /// <summary>
             /// icosahedron face centers in lat/lon radians
@@ -1781,113 +1761,108 @@ namespace H3Lib
             /// <summary>
             /// Invalid index used to indicate an error from geoToH3 and related functions.
             /// </summary>
-            internal static readonly ulong H3_INVALID_INDEX = 0;
+            internal static readonly ulong InvalidIndex = 0;
 
             /// <summary>
             /// Invalid index used to indicate an error from geoToH3 and related functions
             /// or missing data in arrays of h3 indices. Analogous to NaN in floating point.
             /// </summary>
-            internal static readonly ulong H3_NULL = 0;
-
-            /// <summary>
-            /// The number of bits in an H3 index.
-            /// </summary>
-            internal static readonly int H3_NUM_BITS = 64;
+            internal static readonly ulong Null = 0;
 
             /// <summary>
             /// The bit offset of the max resolution digit in an H3 index.
             /// </summary>
-            internal static readonly int H3_MAX_OFFSET = 63;
+            internal const int MaxOffset = 63;
 
             /// <summary>
             /// The bit offset of the mode in an H3 index.
             /// </summary>
-            internal static readonly int H3_MODE_OFFSET = 59;
+            internal const int ModeOffset = 59;
 
             /// <summary>
             /// The bit offset of the base cell in an H3 index.
             /// </summary>
-            internal static readonly int H3_BC_OFFSET = 45;
+            internal const int BaseCellOffset = 45;
 
             /// <summary>
             /// The bit offset of the resolution in an H3 index.
             /// </summary>
-            internal static readonly int H3_RES_OFFSET = 52;
+            internal const int ResolutionOffset = 52;
 
             /// <summary>
             /// The bit offset of the reserved bits in an H3 index.
             /// </summary>
-            internal static readonly int H3_RESERVED_OFFSET = 56;
+            internal const int ReservedOffset = 56;
 
             /// <summary>
             /// The number of bits in a single H3 resolution digit.
             /// </summary>
-            internal static readonly int H3_PER_DIGIT_OFFSET = 3;
+            internal static readonly int PerDigitOffset = 3;
 
             /// <summary>
             /// 1 in the highest bit, 0's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_HIGH_BIT_MASK = (ulong) 1 << H3_MAX_OFFSET;
+            internal const ulong HighBitMask = (ulong) 1 << MaxOffset;
 
             /// <summary>
             /// 0 in the highest bit, 1's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_HIGH_BIT_MASK_NEGATIVE = ~H3_HIGH_BIT_MASK;
+            internal static readonly ulong HighBitMaskNegative = ~HighBitMask;
 
             /// <summary>
             /// 1's in the 4 mode bits, 0's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_MODE_MASK = (ulong) 15 << H3_MODE_OFFSET;
+            internal static readonly ulong ModeMask = (ulong) 15 << ModeOffset;
 
             /// <summary>
             /// 0's in the 4 mode bits, 1's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_MODE_MASK_NEGATIVE = ~H3_MODE_MASK;
+            internal static readonly ulong ModeMaskNegative = ~ModeMask;
 
             /// <summary>
             /// 1's in the 7 base cell bits, 0's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_BC_MASK = (ulong) 127 << H3_BC_OFFSET;
+            internal static readonly ulong BaseCellMask = (ulong) 127 << BaseCellOffset;
 
             /// <summary>
             /// 0's in the 7 base cell bits, 1's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_BC_MASK_NEGATIVE = ~H3_BC_MASK;
+            internal static readonly ulong BaseCellMaskNegative = ~BaseCellMask;
 
             ///H3 index with mode 0, res 0, base cell 0, and 7 for all index digits.
             ///Typically used to initialize the creation of an H3 cell index, which
             ///expects all direction digits to be 7 beyond the cell's resolution.
-            internal static readonly ulong H3_INIT = 35184372088831;
+            internal static readonly ulong Init = 35184372088831;
 
             /// <summary>
             /// 1's in the 4 resolution bits, 0's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_RES_MASK = (ulong) 15 << H3_RES_OFFSET;
+            internal static readonly ulong ResolutionMask = (ulong) 15 << ResolutionOffset;
 
             /// <summary>
             /// 0's in the 4 resolution bits, 1's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_RES_MASK_NEGATIVE = ~H3_RES_MASK;
+            internal static readonly ulong ResolutionMaskNegative = ~ResolutionMask;
 
             /// <summary>
             /// 1's in the 3 reserved bits, 0's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_RESERVED_MASK = (ulong) 7 << H3_RESERVED_OFFSET;
+            internal static readonly ulong ReservedMask = (ulong) 7 << ReservedOffset;
 
             /// <summary>
             /// 0's in the 3 reserved bits, 1's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_RESERVED_MASK_NEGATIVE = ~H3_RESERVED_MASK;
+            internal static readonly ulong ReservedMaskNegative = ~ReservedMask;
 
             /// <summary>
             /// 1's in the 3 bits of res 15 digit bits, 0's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_DIGIT_MASK = 7;
+            internal static readonly ulong DigitMask = 7;
 
             /// <summary>
             /// 0's in the 7 base cell bits, 1's everywhere else.
             /// </summary>
-            internal static readonly ulong H3_DIGIT_MASK_NEGATIVE = ~H3_DIGIT_MASK;
+            internal static readonly ulong DigitMaskNegative = ~DigitMask;
 
             /*
              * Return codes for compact
@@ -2005,12 +1980,7 @@ namespace H3Lib
             /// </summary>
             internal const int INVALID_VERTEX_NUM = -1;
 
-            /// <summary>
-            /// Max number of faces a base cell's descendants may appear on
-            /// </summary>
-            internal const int MAX_BASE_CELL_FACES = 5;
-
-            internal const int DIRECTION_INDEX_OFFSET = 2;
+            internal const int DirectionIndexOffset = 2;
 
             /// <summary>
             /// Table of direction-to-face mapping for each pentagon
@@ -2045,15 +2015,15 @@ namespace H3Lib
             ///
             /// Note that we don't use direction 0 (center).
             /// </summary>
-            internal static int[] DirectionToVertexNumHex =
-                {(int) Direction.INVALID_DIGIT, 3, 1, 2, 5, 4, 0};
+            internal static readonly int[] DirectionToVertexNumHex =
+                {(int) Direction.InvalidDigit, 3, 1, 2, 5, 4, 0};
 
             /// <summary>
             /// Pentagon direction to vertex number relationships (same face).
             /// Note that we don't use directions 0 (center) or 1 (deleted K axis).
             /// </summary>
-            internal static int[] DirectionToVertexNumPent =
-                {(int) Direction.INVALID_DIGIT, (int) Direction.INVALID_DIGIT, 1, 2, 4, 3, 0};
+            internal static readonly int[] DirectionToVertexNumPent =
+                {(int) Direction.InvalidDigit, (int) Direction.InvalidDigit, 1, 2, 4, 3, 0};
 
         }
 

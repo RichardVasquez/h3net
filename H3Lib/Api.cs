@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using H3Lib.Extensions;
 
@@ -11,7 +10,7 @@ namespace H3Lib
     public static class Api
     {
         /// <summary>
-        /// find the H3 index of the resolution res cell containing the lat/lng
+        /// Find the H3 index of the resolution res cell containing the lat/lng
         /// </summary>
         public static H3Index GeoToH3(GeoCoord g, int r)
         {
@@ -19,7 +18,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// find the lat/lon center point g of the cell h3
+        /// Find the lat/lon center point g of the cell h3
         /// </summary>
         public static void H3ToGeo(H3Index h3, out GeoCoord g)
         {
@@ -27,7 +26,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// give the cell boundary in lat/lon coordinates for the cell h3
+        /// Give the cell boundary in lat/lon coordinates for the cell h3
         /// </summary>
         public static void H3ToGeoBoundary(H3Index h3, out GeoBoundary gb)
         {
@@ -35,7 +34,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// maximum number of hexagons in k-ring
+        /// Maximum number of hexagons in k-ring
         /// </summary>
         public static int MaxKringSize(int k)
         {
@@ -43,7 +42,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// hexagons neighbors in all directions, assuming no pentagons
+        /// Hexagons neighbors in all directions, assuming no pentagons
         /// </summary>
         public static int HexRange(H3Index origin, int k, out List<H3Index> outHex)
         {
@@ -53,7 +52,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// hexagons neighbors in all directions, assuming no pentagons,
+        /// Hexagons neighbors in all directions, assuming no pentagons,
         /// reporting distance from origin
         /// </summary>
         public static int HexRangeDistances(H3Index origin, int k, out List<H3Index> outCells, out List<int> distances)
@@ -72,7 +71,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// collection of hex rings sorted by ring for all given hexagons
+        /// Collection of hex rings sorted by ring for all given hexagons
         /// </summary>
         public static int HexRanges(List<H3Index> h3Set, int length, int k, out List<H3Index> outCells)
         {
@@ -82,7 +81,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// hexagon neighbors in all directions
+        /// Hexagon neighbors in all directions
         /// </summary>
         public static void KRing(H3Index origin, int k, out List<H3Index> outCells)
         {
@@ -90,7 +89,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// hexagon neighbors in all directions, reporting distance from origin
+        /// Hexagon neighbors in all directions, reporting distance from origin
         /// </summary>
         public static void KRingDistances(H3Index origin, int k, out List<H3Index> outCells, out List<int> distances)
         {
@@ -100,7 +99,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// hollow hexagon ring at some origin
+        /// Hollow hexagon ring at some origin
         /// </summary>
         /// <param name="origin"></param>
         /// <param name="k"></param>
@@ -114,7 +113,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// maximum number of hexagons in the geofence
+        /// Maximum number of hexagons in the geofence
         /// </summary>
         /// <param name="polygon"></param>
         /// <param name="r"></param>
@@ -125,7 +124,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// hexagons within the given geofence
+        /// Hexagons within the given geofence
         /// </summary>
         /// <param name="polygon"></param>
         /// <param name="r"></param>
@@ -146,7 +145,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// converts degrees to radians
+        /// Converts degrees to radians
         /// </summary>
         /// <param name="degrees"></param>
         /// <returns></returns>
@@ -157,7 +156,7 @@ namespace H3Lib
 
 
         /// <summary>
-        /// converts radians to degrees
+        /// Vonverts radians to degrees
         /// </summary>
         /// <returns></returns>
         public static decimal RadiansToDegrees(decimal radians)
@@ -166,7 +165,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// "great circle distance" between pairs of GeoCoord points in radians*/
+        /// "Great circle distance" between pairs of GeoCoord points in radians
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
@@ -177,7 +176,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// "great circle distance" between pairs of GeoCoord points in kilometers
+        /// "Great circle distance" between pairs of GeoCoord points in kilometers
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
@@ -188,7 +187,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// "great circle distance" between pairs of GeoCoord points in meters*/
+        /// "Great circle distance" between pairs of GeoCoord points in meters
         /// </summary>
         public static decimal PointDistM(GeoCoord a, GeoCoord b)
         {
@@ -196,7 +195,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// average hexagon area in square kilometers (excludes pentagons)
+        /// Average hexagon area in square kilometers (excludes pentagons)
         /// </summary>
         public static decimal HexAreaKm2(int r)
         {
@@ -204,7 +203,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// average hexagon area in square meters (excludes pentagons)
+        /// Average hexagon area in square meters (excludes pentagons)
         /// </summary>
         public static decimal HexAreaM2(int r)
         {
@@ -213,7 +212,7 @@ namespace H3Lib
 
 
         /// <summary>
-        /// exact area for a specific cell (hexagon or pentagon) in radians^2
+        /// Exact area for a specific cell (hexagon or pentagon) in radians^2
         /// </summary>
         public static decimal CellAreaRads2(H3Index h)
         {
@@ -221,7 +220,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// exact area for a specific cell (hexagon or pentagon) in kilometers^2
+        /// Exact area for a specific cell (hexagon or pentagon) in kilometers^2
         /// </summary>
         public static decimal CellAreaKm2(H3Index h)
         {
@@ -229,7 +228,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// exact area for a specific cell (hexagon or pentagon) in meters^2
+        /// Exact area for a specific cell (hexagon or pentagon) in meters^2
         /// </summary>
         public static decimal CellAreaM2(H3Index h)
         {
@@ -237,7 +236,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// average hexagon edge length in kilometers (excludes pentagons)
+        /// Average hexagon edge length in kilometers (excludes pentagons)
         /// </summary>
         public static decimal EdgeLengthKm(int r)
         {
@@ -245,7 +244,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// average hexagon edge length in meters (excludes pentagons)
+        /// Average hexagon edge length in meters (excludes pentagons)
         /// </summary>
         public static decimal EdgeLengthM(int r)
         {
@@ -253,7 +252,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// exact length for a specific unidirectional edge in radians*/
+        /// Exact length for a specific unidirectional edge in radians*/
         /// </summary>
         public static decimal ExactEdgeLengthRads(H3Index edge)
         {
@@ -261,7 +260,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// exact length for a specific unidirectional edge in kilometers*/
+        /// Exact length for a specific unidirectional edge in kilometers*/
         /// </summary>
         public static decimal ExactEdgeLengthKm(H3Index edge)
         {
@@ -269,7 +268,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// exact length for a specific unidirectional edge in meters*/
+        /// Exact length for a specific unidirectional edge in meters*/
         /// </summary>
         public static decimal ExactEdgeLengthM(H3Index edge)
         {
@@ -277,7 +276,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// number of cells (hexagons and pentagons) for a given resolution
+        /// Number of cells (hexagons and pentagons) for a given resolution
         /// </summary>
         public static long NumHexagons(int r)
         {
@@ -285,15 +284,15 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns the number of resolution 0 cells (hexagons and pentagons)
+        /// Returns the number of resolution 0 cells (hexagons and pentagons)
         /// </summary>
         public static int Res0IndexCount()
         {
-            return Constants.H3.NUM_BASE_CELLS;
+            return Constants.H3.BaseCellsCount;
         }
 
         /// <summary>
-        /// provides all base cells in H3Index format*/
+        /// Provides all base cells in H3Index format*/
         /// </summary>
         public static void GetRes0Indexes(out List<H3Index> outCells)
         {
@@ -301,7 +300,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns the number of pentagons per resolution
+        /// Returns the number of pentagons per resolution
         /// </summary>
         public static int PentagonIndexCount()
         {
@@ -309,7 +308,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// generates all pentagons at the specified resolution
+        /// Generates all pentagons at the specified resolution
         /// </summary>
         public static void GetPentagonIndexes(int r, out List<H3Index> outCells)
         {
@@ -317,7 +316,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns the resolution of the provided H3 index
+        /// Returns the resolution of the provided H3 index
         /// Works on both cells and unidirectional edges.
         /// </summary>
         public static int H3GetResolution(H3Index h)
@@ -326,7 +325,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns the base cell "number" (0 to 121) of the provided H3 cell
+        /// Returns the base cell "number" (0 to 121) of the provided H3 cell
         /// </summary>
         public static int H3GetBaseCell(H3Index h)
         {
@@ -334,27 +333,15 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// converts the canonical string format to H3Index format
+        /// Converts the canonical string format to H3Index format
         /// </summary>
         public static H3Index StringToH3(string s)
         {
-            if (s.StartsWith("0x") || s.StartsWith("0X"))
-            {
-                s = s.Substring(2);
-            }
-
-            if (s.StartsWith("x") || s.StartsWith("X"))
-            {
-                s = s.Substring(1);
-            }
-
-            return ulong.TryParse(s, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong h3)
-                       ? new H3Index(h3)
-                       : new H3Index(Constants.H3Index.H3_NULL);
+            return new H3Index(s);
         }
 
         /// <summary>
-        /// converts an H3Index to a canonical string
+        /// Converts an H3Index to a canonical string
         /// </summary>
         public static void H3ToString(H3Index h, out string str)
         {
@@ -362,7 +349,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// confirms if an H3Index is a valid cell (hexagon or pentagon)
+        /// Confirms if an H3Index is a valid cell (hexagon or pentagon)
         /// </summary>
         public static int H3IsValid(H3Index h)
         {
@@ -372,7 +359,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns the parent (or grandparent, etc) hexagon of the given hexagon
+        /// Returns the parent (or grandparent, etc) hexagon of the given hexagon
         /// </summary>
         public static H3Index H3ToParent(H3Index h, int parentRes)
         {
@@ -380,7 +367,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// determines the maximum number of children (or grandchildren, etc)
+        /// Determines the maximum number of children (or grandchildren, etc)
         /// </summary>
         public static long MaxH3ToChildrenSize(H3Index h, int childRes)
         {
@@ -388,7 +375,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// provides the children (or grandchildren, etc) of the given hexagon
+        /// Provides the children (or grandchildren, etc) of the given hexagon
         /// </summary>
         public static void H3ToChildren(H3Index h, int childRes, out List<H3Index> outChildren)
         {
@@ -396,7 +383,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns the center child of the given hexagon at the specified resolution
+        /// Returns the center child of the given hexagon at the specified resolution
         /// </summary>
         public static H3Index H3ToCenterChild(H3Index h, int childRes)
         {
@@ -404,7 +391,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// compacts the given set of hexagons as best as possible
+        /// Compacts the given set of hexagons as best as possible
         /// </summary>
         public static int Compact(List<H3Index> h3Set, out List<H3Index> outCompacted)
         {
@@ -414,7 +401,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// determines the maximum number of hexagons that could be uncompacted
+        /// Determines the maximum number of hexagons that could be uncompacted
         /// from the compacted set
         /// </summary>
         public static long MaxUncompactSize(List<H3Index> compacted, int r)
@@ -423,7 +410,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// uncompacts the compacted hexagon set
+        /// Uncompacts the compacted hexagon set
         /// </summary>
         public static int Uncompact(List<H3Index> compactedSet, out List<H3Index> outCells, int res)
         {
@@ -433,7 +420,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// determines if a hexagon is Class III (or Class II)
+        /// Determines if a hexagon is Class III (or Class II)
         /// </summary>
         public static int H3IsResClassIii(H3Index h)
         {
@@ -443,11 +430,11 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// determines if an H3 cell is a pentagon
+        /// Determines if an H3 cell is a pentagon
         /// </summary>
         public static int H3IsPentagon(H3Index h)
         {
-            return h.IsPentagon()
+            return h.IsPentagon
                        ? 1
                        : 0;
         }
@@ -469,7 +456,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns whether or not the provided hexagons border
+        /// Returns whether or not the provided hexagons border
         /// </summary>
         public static int H3IndexesAreNeighbors(H3Index origin, H3Index destination)
         {
@@ -479,7 +466,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns the unidirectional edge H3Index for the specified origin and
+        /// Returns the unidirectional edge H3Index for the specified origin and
         /// destination
         /// </summary>
         public static H3Index GetH3UnidirectionalEdge(H3Index origin, H3Index destination)
@@ -488,7 +475,7 @@ namespace H3Lib
         }
 
         /// <summary>
-        /// returns whether the H3Index is a valid unidirectional edge
+        /// Returns whether the H3Index is a valid unidirectional edge
         /// </summary>
         public static int H3UnidirectionalEdgeIsValid(H3Index edge)
         {
@@ -622,6 +609,5 @@ namespace H3Lib
         {
             return radians.RadiansToDegrees();
         }
-        
     }
 }

@@ -30,10 +30,11 @@ namespace H3Lib
         /// <summary>
         /// Whether the given bounding box crosses the antimeridian
         /// </summary>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// bbox.c
         /// bboxIsTransmeridian
-        /// -->
+        /// </remarks>
         public bool IsTransmeridian => East < West;
 
         /// <summary>
@@ -53,10 +54,10 @@ namespace H3Lib
         public bool Equals(BBox other)
         {
             return
-                Math.Abs(North - other.North) < Constants.H3.EPSILON_RAD &&
-                Math.Abs(South - other.South) < Constants.H3.EPSILON_RAD &&
-                Math.Abs(East - other.East) < Constants.H3.EPSILON_RAD &&
-                Math.Abs(West - other.West) < Constants.H3.EPSILON_RAD;
+                Math.Abs(North - other.North) < Constants.H3.EpsilonRadian &&
+                Math.Abs(South - other.South) < Constants.H3.EpsilonRadian &&
+                Math.Abs(East - other.East) < Constants.H3.EpsilonRadian &&
+                Math.Abs(West - other.West) < Constants.H3.EpsilonRadian;
         }
 
         /// <summary>

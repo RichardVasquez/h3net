@@ -12,8 +12,8 @@ namespace TestSuite
         public void GeoToH3Res()
         {
             GeoCoord anywhere = default;
-            Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(anywhere, -1));
-            Assert.AreEqual(Constants.H3Index.H3_NULL, Api.GeoToH3(anywhere, 16));
+            Assert.AreEqual(Constants.H3Index.Null, Api.GeoToH3(anywhere, -1));
+            Assert.AreEqual(Constants.H3Index.Null, Api.GeoToH3(anywhere, 16));
         }
 
         [Test]
@@ -100,9 +100,9 @@ namespace TestSuite
         [Test]
         public void Version()
         {
-            Assert.GreaterOrEqual(Constants.H3_VERSION_MAJOR, 0);
-            Assert.GreaterOrEqual(Constants.H3_VERSION_MINOR, 0);
-            Assert.GreaterOrEqual(Constants.H3_VERSION_PATCH, 0);
+            Assert.GreaterOrEqual(Constants.VersionMajor, 0);
+            Assert.GreaterOrEqual(Constants.VersionMinor, 0);
+            Assert.GreaterOrEqual(Constants.VersionPatch, 0);
         }
 
     }        

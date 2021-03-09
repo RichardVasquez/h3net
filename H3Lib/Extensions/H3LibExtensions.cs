@@ -25,11 +25,11 @@ namespace H3Lib.Extensions
         /// It's used multiple times in faceijk.c, _geoToHex2d and _hex2dToGeo
         /// 
         /// For now, let's isolate it and see if it needs to be folded in later.
-        /// </remarks>
-        /// <!--
+        ///
+        /// 3.7.1
         /// geoCoord.c
         /// double _posAngleRads
-        /// -->
+        /// </remarks>
         internal static decimal NormalizeRadians(this decimal rads, decimal limit = Constants.H3.M_2PI)
         {
             decimal tmp = rads < 0.0m
@@ -48,10 +48,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="latitude">The original lat value</param>
         /// <returns>The corrected lat value</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double constrainLat
-        /// -->
+        /// </remarks>
         public static decimal ConstrainLatitude(this decimal latitude)
         {
             while (latitude > Constants.H3.M_PI_2)
@@ -93,10 +94,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="longitude">The origin lng value</param>
         /// <returns>The corrected lng value</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double constrainLng
-        /// -->
+        /// </remarks>
         public static decimal ConstrainLongitude(this decimal longitude)
         {
             longitude = longitude.ConstrainToPiAccuracy();
@@ -139,10 +141,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="degrees">The decimal degrees</param>
         /// <returns>The corresponding radians</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double H3_EXPORT(degsToRads)
-        /// -->
+        /// </remarks>
         public static decimal DegreesToRadians(this decimal degrees)
         {
             return degrees * Constants.H3.M_PI_180;
@@ -152,7 +155,6 @@ namespace H3Lib.Extensions
         /// Convert decimal degrees to radians
         /// </summary>
         /// <param name="degrees"></param>
-        /// <returns></returns>
         public static decimal DegreesToRadians(this int degrees)
         {
             return degrees * Constants.H3.M_PI_180;
@@ -163,10 +165,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="radians">The radians</param>
         /// <returns>The corresponding decimal degrees</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// double H3_EXPORT(radsToDegs)
-        /// -->
+        /// </remarks>
         public static decimal RadiansToDegrees(this decimal radians)
         {
             return radians * Constants.H3.M_180_PI;
@@ -181,10 +184,11 @@ namespace H3Lib.Extensions
         /// <param name="baseValue">the integer base (can be positive or negative)</param>
         /// <param name="power">the integer exponent (should be nonnegative)</param>
         /// <returns>the exponentiated value</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// mathExtensions.c
         /// int64_t _ipow
-        /// -->
+        /// </remarks>
         internal static long Power(this long baseValue, long power)
         {
             long result = 1;
@@ -206,10 +210,11 @@ namespace H3Lib.Extensions
         /// Number of unique valid H3Indexes at given resolution.
         /// </summary>
         /// <param name="res">Resolution to get count of cells</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// geoCoord.c
         /// int64_t H3_EXPORT(numHexagons)
-        /// -->
+        /// </remarks>
         public static long NumHexagons(this int res)
         {
             return 2 + 120 * 7L.Power(res);
@@ -221,10 +226,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="res">The H3 resolution</param>
         /// <returns>Returns true if the resolution is class III grid, otherwise false.</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// h3Index.c
         /// int H3_EXPORT(h3IsResClassIII)
-        /// -->
+        /// </remarks>
         public static bool IsResClassIii(this int res) => res % 2 == 1;
 
 
@@ -233,10 +239,10 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="x">The input number</param>
         /// <returns>The square of the input number</returns>
-        /// <!--
+        /// <remarks>
         /// vec3d.c
         /// double _square
-        /// -->
+        /// </remarks>
         internal static decimal Square(this decimal x)
         {
             return x * x;
@@ -249,10 +255,11 @@ namespace H3Lib.Extensions
         /// <returns>
         /// The H3 index corresponding to the string argument, or 0 if invalid.
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// h3Index.c
         /// H3Index H3_EXPORT(stringToH3)
-        /// -->
+        /// </remarks>
         public static H3Index ToH3Index(this string s)
         {
             // A small risk, but for the most part, we're dealing with hex
@@ -274,34 +281,37 @@ namespace H3Lib.Extensions
         /// <param name="parentRes">int resolution of the parent</param>
         /// <param name="childRes">int resolution of the child</param>
         /// <returns>The validity of the child resolution</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// h3Index.c
         /// static bool _isValidChildRes
-        /// -->
+        /// </remarks>
         internal static bool IsValidChildRes(this int parentRes, int childRes)
         {
             return childRes >= parentRes &&
-                   childRes <= Constants.H3.MAX_H3_RES;
+                   childRes <= Constants.H3.MaxH3Resolution;
         }
 
         /// Generates all pentagons at the specified resolution
         ///
         /// <param name="res">The resolution to produce pentagons at.</param>
         /// <returns>Output List.</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// h3Index.c
         /// void H3_EXPORT(getPentagonIndexes)
-        /// -->
+        /// </remarks>
         public static List<H3Index> GetPentagonIndexes(this int res)
         {
             var results = new List<H3Index>();
-            for (int bc = 0; bc < Constants.H3.NUM_BASE_CELLS; bc++)
+            for (var bc = 0; bc < Constants.H3.BaseCellsCount; bc++)
             {
-                if (bc.IsBaseCellPentagon())
+                if (!bc.IsBaseCellPentagon())
                 {
-                    H3Index pentagon = new H3Index().SetIndex(res, bc, 0);
-                    results.Add(pentagon);
+                    continue;
                 }
+                var pentagon = new H3Index(res, bc, 0);
+                results.Add(pentagon);
             }
 
             return results;
@@ -319,11 +329,11 @@ namespace H3Lib.Extensions
         /// Gonna do this a bit differently, allowing for varying
         /// resolutions in input data.  Also, this is a front for <see cref="FlexiCompact"/>
         /// that tries to maintain the same restrictions the original H3 compact enforces.
-        /// </remarks>
-        /// <!--
+        ///
+        /// 3.7.1
         /// h3index.c
         /// int H3_EXPORT(compact)
-        /// -->
+        /// </remarks>
         public static (int, List<H3Index>) Compact(this List<H3Index> h3Set)
         {
             if (h3Set == null || h3Set.Count == 0)
@@ -338,18 +348,15 @@ namespace H3Lib.Extensions
             }
 
             //  Compact assumes that all cells are the same resolution and uses first cell
-            var testResolution = h3Set[0].Resolution;
+            int testResolution = h3Set[0].Resolution;
             if (h3Set.Any(h => h.Resolution != testResolution))
             {
                 return (Constants.H3Index.COMPACT_BAD_DATA, h3Set);
             }
 
-            if (h3Set.Distinct().Count() != h3Set.Count)
-            {
-                return (Constants.H3Index.COMPACT_DUPLICATE, h3Set);
-            }
-
-            return h3Set.FlexiCompact();
+            return h3Set.Distinct().Count() != h3Set.Count
+                       ? (Constants.H3Index.COMPACT_DUPLICATE, h3Set)
+                       : h3Set.FlexiCompact();
         }
 
         /// A slightly different approach to the problem of compacting with some
@@ -412,7 +419,7 @@ namespace H3Lib.Extensions
                         return (Constants.H3Index.COMPACT_BAD_DATA, new List<H3Index>());
                     }
 
-                    var neededChildren = key.IsPentagon()
+                    var neededChildren = key.IsPentagon
                                              ? 6
                                              : 7;
 
@@ -449,10 +456,11 @@ namespace H3Lib.Extensions
         /// k. Formula source and proof: https://oeis.org/A003215
         /// </summary>
         /// <param name="k">k value, k &gt;= 0.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// algos.c
         /// int H3_EXPORT(maxKringSize)
-        /// -->
+        /// </remarks>
         public static int MaxKringSize(this int k)
         {
             return 3 * k * (k + 1) + 1;
@@ -461,10 +469,11 @@ namespace H3Lib.Extensions
         /// <summary>
         /// Normalize longitude, dealing with transmeridian arcs
         /// </summary>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// polygonAlgos.h
         /// #define NORMALIZE_LON
-        /// -->
+        /// </remarks>
         public static decimal NormalizeLongitude(this decimal longitude, bool isTransmeridian)
         {
             return isTransmeridian && longitude < 0

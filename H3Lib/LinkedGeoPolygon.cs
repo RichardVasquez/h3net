@@ -63,8 +63,7 @@ namespace H3Lib
         /// </summary>
         private ReadOnlyCollection<LinkedGeoPolygon> GetPolygons()
         {
-            List<LinkedGeoPolygon> temp = new List<LinkedGeoPolygon>();
-            temp.Add(this);
+            var temp = new List<LinkedGeoPolygon> {this};
             var next = Next;
             while (next != null)
             {

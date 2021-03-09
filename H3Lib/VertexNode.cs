@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace H3Lib
 {
     /// <summary>
-    /// A single node in a vertex graph, part of a linked list
+    /// A single node in a vertex graph, stored in a linked list
     /// </summary>
     [DebuggerDisplay("From: {From} => To: {To}")]
     public readonly struct VertexNode : IEquatable<VertexNode>

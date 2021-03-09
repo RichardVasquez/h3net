@@ -43,15 +43,17 @@ namespace H3Lib.Extensions
         /// Item1: <see cref="Overage"/>
         /// Item2: Adjusted <see cref="FaceIjk"/>
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceijk.c
         /// Overage _adjustOverageClassII
+        /// </remarks>
         /// -->
         public static (Overage, FaceIjk) AdjustOverageClassIi(
                 this FaceIjk fijk, int res, int pentLeading4, int substrate
             )
         {
-            Overage overage = Overage.NO_OVERAGE;
+            Overage overage = Overage.NoOverage;
 
             var ijk = fijk.Coord;
 
@@ -65,11 +67,11 @@ namespace H3Lib.Extensions
             // check for overage
             if (substrate != 0 && ijk.Sum() == maxDim) // on edge
             {
-                overage = Overage.FACE_EDGE;
+                overage = Overage.FaceEdge;
             }
             else if (ijk.Sum() > maxDim)  // overage
             {
-                overage = Overage.NEW_FACE;
+                overage = Overage.NewFace;
 
                 FaceOrientIjk fijkOrient;
                 if (ijk.K > 0)
@@ -121,7 +123,7 @@ namespace H3Lib.Extensions
                 // overage points on pentagon boundaries can end up on edges
                 if (substrate != 0 && ijk.Sum() == maxDim) // on edge
                 {
-                    overage = Overage.FACE_EDGE;
+                    overage = Overage.FaceEdge;
                 }
             }
 
@@ -136,10 +138,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="fijk">The FaceIJK address of the cell.</param>
         /// <param name="res">The H3 resolution of the cell.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceIjk.c
         /// Overage _adjustPentVertOverage
-        /// -->
+        /// </remarks>
         public static (Overage, FaceIjk) AdjustPentOverage(this FaceIjk fijk, int res)
         {
             const int pentLeading4 = 0;
@@ -148,7 +151,7 @@ namespace H3Lib.Extensions
             {
                 (overage, fijk) = fijk.AdjustOverageClassIi(res, pentLeading4, 1);
 
-            } while (overage == Overage.NEW_FACE);
+            } while (overage == Overage.NewFace);
 
             return (overage, fijk);
         }
@@ -168,10 +171,11 @@ namespace H3Lib.Extensions
         /// Item2 Possibly modified res
         /// Item3 Array for vertices
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceijk.c
         /// void _faceIjkPentToVerts
-        /// -->
+        /// </remarks>
         public static (FaceIjk, int, IList<FaceIjk>) PentToVerts(this FaceIjk fijk, int res, IList<FaceIjk> fijkVerts)
         {
             // the vertexes of an origin-centered pentagon in a Class II resolution on a
@@ -223,7 +227,7 @@ namespace H3Lib.Extensions
             // The center point is now in the same substrate grid as the origin
             // cell vertices. Add the center point substrate coordinates
             // to each vertex to translate the vertices to that cell.
-            for (var v = 0; v < Constants.H3.NUM_PENT_VERTS; v++)
+            for (var v = 0; v < Constants.H3.PentagonVertices; v++)
             {
                 int newFace = fijk.Face;
                 var newCoord = (fijk.Coord + verts[v]).Normalized();
@@ -248,10 +252,11 @@ namespace H3Lib.Extensions
         /// Item2 Possibly modified res
         /// Item3 Array for vertices
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceijk.c
         /// void _faceIjkToVerts
-        /// -->
+        /// </remarks>
         public static (FaceIjk, int, IList<FaceIjk>) ToVerts(this FaceIjk fijk, int res, IList<FaceIjk> fijkVerts)
         {
             // the vertexes of an origin-centered cell in a Class II resolution on a
@@ -302,7 +307,7 @@ namespace H3Lib.Extensions
             // The center point is now in the same substrate grid as the origin
             // cell vertices. Add the center point substrate coordinates
             // to each vertex to translate the vertices to that cell.
-            for (int v = 0; v < Constants.H3.NUM_HEX_VERTS; v++)
+            for (int v = 0; v < Constants.H3.HexVertices; v++)
             {
                 fijkVerts[v] = fijkVerts[v]
                               .ReplaceFace(fijk.Face)
@@ -318,14 +323,15 @@ namespace H3Lib.Extensions
         /// <param name="fijk">The FaceIJK address.</param>
         /// <param name="res">The cell resolution.</param>
         /// <returns>The encoded H3Index (or H3_NULL on failure).</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// h3index.c
         /// H3Index _faceIjkToH3
-        /// -->
+        /// </remarks>
         public static H3Index ToH3(this FaceIjk fijk, int res)
         {
             // initialize the index
-            H3Index h = Constants.H3Index.H3_INIT;
+            H3Index h = Constants.H3Index.Init;
             h = h.SetMode(H3Mode.Hexagon).SetResolution(res);
 
             // check for res 0/base cell
@@ -336,7 +342,7 @@ namespace H3Lib.Extensions
                     fijk.Coord.K > Constants.BaseCells.MaxFaceCoord)
                 {
                     // out of range input
-                    return Constants.H3Index.H3_INVALID_INDEX;
+                    return Constants.H3Index.InvalidIndex;
                 }
 
                 return h.SetBaseCell(fijk.ToBaseCell());
@@ -369,7 +375,7 @@ namespace H3Lib.Extensions
                 }
 
                 var diff = (lastIjk - lastCenter).Normalized();
-                h = h.SetIndexDigit(r + 1, (ulong) diff.ToDirection());
+                h = h.SetIndexDigit(r + 1, diff.ToDirection());
             }
 
             fijkBc = fijkBc.ReplaceCoord(ijk);
@@ -381,7 +387,7 @@ namespace H3Lib.Extensions
                 fijkBc.Coord.K > Constants.BaseCells.MaxFaceCoord)
             {
                 // out of range input
-                return Constants.H3Index.H3_INVALID_INDEX;
+                return Constants.H3Index.InvalidIndex;
             }
 
             // lookup the correct base cell
@@ -394,7 +400,7 @@ namespace H3Lib.Extensions
             if (baseCell.IsBaseCellPentagon())
             {
                 // force rotation out of missing k-axes sub-sequence
-                if (h.LeadingNonZeroDigit == Direction.K_AXES_DIGIT)
+                if (h.LeadingNonZeroDigit == Direction.KAxesDigit)
                 {
                     // check for a cw/ccw offset face; default is ccw
                     h = baseCell.IsClockwiseOffset(fijkBc.Face)
@@ -427,10 +433,11 @@ namespace H3Lib.Extensions
         ///
         /// Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
         /// </summary>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// baseCells.c
         /// int _faceIjkToBaseCell
-        /// -->
+        /// </remarks>
         private static int ToBaseCell(this FaceIjk h)
         {
             return Constants.BaseCells
@@ -447,10 +454,11 @@ namespace H3Lib.Extensions
         ///
         /// Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
         /// </summary>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// baseCells.c
         /// int _faceIjkToBaseCellCCWrot60
-        /// -->
+        /// </remarks>
         private static int ToBaseCellCounterClockwiseRotate60(this FaceIjk h)
         {
             return Constants.BaseCells
@@ -464,10 +472,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="h">The FaceIJK address of the cell.</param>
         /// <param name="res">The H3 resolution of the cell.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceijk.c
         /// void _faceIjkToGeo
-        /// -->
+        /// </remarks>
         public static GeoCoord ToGeoCoord(this FaceIjk h, int res)
         {
             //var v = new Vec2d();
@@ -485,21 +494,22 @@ namespace H3Lib.Extensions
         /// <param name="start">The first topological vertex to return</param>
         /// <param name="length">The number of topological vertexes to return</param>
         /// <returns>The spherical coordinates of the cell boundary</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceijk.c
         /// void _faceIjkToGeoBoundary
-        /// -->
+        /// </remarks>
         public static GeoBoundary ToGeoBoundary(this FaceIjk h, int res, int start, int length)
         {
             int adjRes = res;
             var centerIjk = h;
-            IList<FaceIjk> fijkVerts = new FaceIjk[Constants.H3.NUM_HEX_VERTS];
+            IList<FaceIjk> fijkVerts = new FaceIjk[Constants.H3.HexVertices];
 
             (centerIjk, adjRes, fijkVerts) = centerIjk.ToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
             // of a distortion vertex on the last edge
-            int additionalIteration = length == Constants.H3.NUM_HEX_VERTS
+            int additionalIteration = length == Constants.H3.HexVertices
                                           ? 1
                                           : 0;
 
@@ -508,11 +518,11 @@ namespace H3Lib.Extensions
             // adjust the face of each vertex as appropriate and introduce
             // edge-crossing vertices as needed
             int lastFace = -1;
-            var lastOverage = Overage.NO_OVERAGE;
+            var lastOverage = Overage.NoOverage;
 
             for (int vert = start; vert < start + length + additionalIteration; vert++)
             {
-                int v = vert % Constants.H3.NUM_HEX_VERTS;
+                int v = vert % Constants.H3.HexVertices;
                 var fijk = fijkVerts[v];
                 const int pentLeading4 = 0;
 
@@ -529,10 +539,10 @@ namespace H3Lib.Extensions
                 edge, with no edge line intersections.
                 */
 
-                if (res.IsResClassIii() && vert > start && fijk.Face != lastFace && lastOverage != Overage.FACE_EDGE)
+                if (res.IsResClassIii() && vert > start && fijk.Face != lastFace && lastOverage != Overage.FaceEdge)
                 {
                     // find hex2d of the two vertexes on original face
-                    int lastV = (v + 5) % Constants.H3.NUM_HEX_VERTS;
+                    int lastV = (v + 5) % Constants.H3.HexVertices;
                     var orig2d0 = fijkVerts[lastV].Coord.ToHex2d();
                     var orig2d1 = fijkVerts[v].Coord.ToHex2d();
 
@@ -584,9 +594,9 @@ namespace H3Lib.Extensions
                 }
 
                 // convert vertex to lat/lon and add to the result
-                // vert == start + NUM_HEX_VERTS is only used to test for possible
+                // vert == start + HexVertices is only used to test for possible
                 // intersection on last edge
-                if (vert < start + Constants.H3.NUM_HEX_VERTS)
+                if (vert < start + Constants.H3.HexVertices)
                 {
                     var vec = fijk.Coord.ToHex2d();
                     g.Verts[g.NumVerts] = vec.ToGeoCoord(fijk.Face, adjRes, 1);
@@ -609,22 +619,23 @@ namespace H3Lib.Extensions
         /// <param name="start">The first topological vertex to return.</param>
         /// <param name="length">The number of topological vertexes to return.</param>
         /// <returns>The spherical coordinates of the cell boundary.</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// faceijk.c
         /// void _faceIjkPentToGeoBoundary
-        /// -->
+        /// </remarks>
         public static GeoBoundary PentToGeoBoundary(this FaceIjk h, int res, int start, int length)
         {
             var gb = new GeoBoundary();
             int adjRes = res;
             var centerIjk = h;
 
-            IList<FaceIjk> fijkVerts = new FaceIjk[Constants.H3.NUM_PENT_VERTS];
+            IList<FaceIjk> fijkVerts = new FaceIjk[Constants.H3.PentagonVertices];
             (_, adjRes, fijkVerts) = centerIjk.PentToVerts(adjRes, fijkVerts);
 
             // If we're returning the entire loop, we need one more iteration in case
             // of a distortion vertex on the last edge
-            int additionalIteration = length == Constants.H3.NUM_PENT_VERTS
+            int additionalIteration = length == Constants.H3.PentagonVertices
                                           ? 1
                                           : 0;
 
@@ -636,7 +647,7 @@ namespace H3Lib.Extensions
 
             for (int vert = start; vert < start + length + additionalIteration; vert++)
             {
-                int v = vert % Constants.H3.NUM_PENT_VERTS;
+                int v = vert % Constants.H3.PentagonVertices;
                 var fijk = fijkVerts[v];
                 (_, fijk) = fijk.AdjustPentOverage(adjRes); 
                 
@@ -710,7 +721,7 @@ namespace H3Lib.Extensions
                 // convert vertex to lat/lon and add to the result
                 // vert == start + NUM_PENT_VERTS is only used to test for possible
                 // intersection on last edge
-                if (vert < start + Constants.H3.NUM_PENT_VERTS)
+                if (vert < start + Constants.H3.PentagonVertices)
                 {
                     gb.Verts[gb.NumVerts] = fijk.Coord
                                                 .ToHex2d()

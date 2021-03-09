@@ -88,9 +88,9 @@ namespace TestSuite
 
             var originIjk = origin.ToIjk();
 
-            for (var d = Direction.K_AXES_DIGIT; d < Direction.INVALID_DIGIT; d++)
+            for (var d = Direction.KAxesDigit; d < Direction.InvalidDigit; d++)
             {
-                if (d == Direction.K_AXES_DIGIT && h3.IsPentagon())
+                if (d == Direction.KAxesDigit && h3.IsPentagon)
                 {
                     continue;
                 }

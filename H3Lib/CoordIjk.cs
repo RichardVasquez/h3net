@@ -70,10 +70,11 @@ namespace H3Lib
         /// <param name="j">Floating-point J coord</param>
         /// <param name="k">Floating-point K coord</param>
         /// <returns>IJK coord struct</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// localij.c
         /// static void cubeRound
-        /// -->
+        /// </remarks>
         public static CoordIjk CubeRound(double i, double j, double k)
         {
             var ri = (int) Math.Round(i, MidpointRounding.AwayFromZero);

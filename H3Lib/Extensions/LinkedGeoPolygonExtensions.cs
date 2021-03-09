@@ -25,10 +25,11 @@ namespace H3Lib.Extensions
         /// Item1 - 0 on success, or an error code > 0 for invalid input
         /// Item2 - Normalized LinkedGeoPolygon
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// linkedGeo.c
         /// int normalizeMultiPolygon
-        /// -->
+        /// </remarks>
         public static (int, LinkedGeoPolygon) NormalizeMultiPolygon(this LinkedGeoPolygon root)
         {
             // We assume that the input is a single polygon with loops;
@@ -116,10 +117,11 @@ namespace H3Lib.Extensions
         /// <param name="boxes">Bounding boxes for polygons, used in point-in-poly check</param>
         /// <param name="polygonCount">Number of polygons to check</param>
         /// <returns>Pointer to parent polygon, or null if not found</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// linkedGeo.c
         /// static const LinkedGeoPolygon* findPolygonForHole
-        /// -->
+        /// </remarks>
         private static LinkedGeoPolygon FindPolygonForHole(
                 this LinkedGeoLoop loop, LinkedGeoPolygon polygon, List<BBox> boxes,
                 int polygonCount

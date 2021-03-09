@@ -12,14 +12,14 @@ namespace TestSuite
     {
         private static void H3UniEdgeCorrectnessAssertions(H3Index h3)
         {
-            bool isPentagon = h3.IsPentagon();
+            bool isPentagon = h3.IsPentagon;
             var edges = h3.GetUniEdgesFromCell();
             
             for (var i = 0; i < 6; i++)
             {
                 if (isPentagon && i == 0)
                 {
-                    Assert.AreEqual(Constants.H3Index.H3_NULL, edges[i]);
+                    Assert.AreEqual(Constants.H3Index.Null, edges[i]);
                     continue;
                 }
                 
@@ -36,7 +36,7 @@ namespace TestSuite
 
             for (var i = 0; i < 6; i++)
             {
-                if (edges[i] == Constants.H3Index.H3_NULL)
+                if (edges[i] == Constants.H3Index.Null)
                 {
                     continue;
                 }

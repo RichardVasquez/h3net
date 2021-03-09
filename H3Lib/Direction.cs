@@ -9,46 +9,47 @@ namespace H3Lib
         /// <summary>
         /// H3 digit in center
         /// </summary>
-        CENTER_DIGIT = 0,
+        CenterDigit = 0,
 
         /// <summary>
         /// H3 digit in k-axes direction
         /// </summary>
-        K_AXES_DIGIT = 1,
+        KAxesDigit = 1,
 
         /// <summary>
         /// H3 digit in j-axes direction
         /// </summary>
-        J_AXES_DIGIT = 2,
+        JAxesDigit = 2,
 
         /// <summary>
         /// H3 digit in j==k direction
         /// </summary>
-        JK_AXES_DIGIT = J_AXES_DIGIT | K_AXES_DIGIT,
+        JKAxesDigit = JAxesDigit | KAxesDigit,
 
         /// <summary>
         /// H3 digit in i-axes direction
         /// </summary>
-        I_AXES_DIGIT = 4,
+        // ReSharper disable once InconsistentNaming
+        IAxesDigit = 4,
 
         /// <summary>
         /// H3 digit in i==k direction
         /// </summary>
-        IK_AXES_DIGIT = I_AXES_DIGIT | K_AXES_DIGIT,
+        IKAxesDigit = IAxesDigit | KAxesDigit,
 
         /// <summary>
         /// H3 digit in i==j direction
         /// </summary>
-        IJ_AXES_DIGIT = I_AXES_DIGIT | J_AXES_DIGIT,
+        IJAxesDigit = IAxesDigit | JAxesDigit,
 
         /// <summary>
         /// H3 digit in the invalid direction
         /// </summary>
-        INVALID_DIGIT = 7,
+        InvalidDigit = 7,
 
         /// <summary>
-        /// Valid digits will be less than this value. Same value as <see cref="INVALID_DIGIT"/>
+        /// Valid digits will be less than this value. Same value as <see cref="InvalidDigit"/>
         /// </summary>
-        NUM_DIGITS = INVALID_DIGIT
+        NumDigits = InvalidDigit
     }
 }

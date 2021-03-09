@@ -11,10 +11,11 @@ namespace H3Lib.Extensions
         /// <param name="v1">The first 3D coordinate.</param>
         /// <param name="v2">The second 3D coordinate.</param>
         /// <returns>The square of the distance between the given points.</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// vec3d.c
         /// double _pointSquareDist
-        /// -->
+        /// </remarks>
         internal static decimal PointSquareDistance(this Vec3d v1, Vec3d v2)
         {
             return (v1.X - v2.X).Square() + (v1.Y - v2.Y).Square() + (v1.Z - v2.Z).Square();

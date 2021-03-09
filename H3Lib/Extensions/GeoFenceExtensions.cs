@@ -66,9 +66,9 @@ namespace H3Lib.Extensions
 
                 // Rays are cast in the longitudinal direction, in case a point
                 // exactly matches, to decide tiebreakers, bias westerly
-                if (Math.Abs(aLng - lng) < Constants.H3.DBL_EPSILON || Math.Abs(bLng - lng) < Constants.H3.DBL_EPSILON)
+                if (Math.Abs(aLng - lng) < Constants.H3.DoubleEpsilon || Math.Abs(bLng - lng) < Constants.H3.DoubleEpsilon)
                 {
-                    lng -= Constants.H3.DBL_EPSILON;
+                    lng -= Constants.H3.DoubleEpsilon;
                 }
 
                 // For the latitude of the point, compute the longitude of the
@@ -289,10 +289,11 @@ namespace H3Lib.Extensions
         /// <returns>
         ///An error code if the hash function cannot insert a found hexagon into the found array.
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// algos.c
         /// int _getEdgeHexagons
-        /// -->
+        /// </remarks>
         public static int GetEdgeHexagons2(this GeoFence geofence, int numHexagons, int res,
                                                     ref int numSearchHexagons, ref List<H3Index> search,
                                                     ref List<H3Index> found)

@@ -75,10 +75,11 @@ namespace H3Lib.Extensions
         /// Find the center point in 2D cartesian coordinates of a hex.
         /// </summary>
         /// <param name="h">The ijk coordinates of the hex.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk,c
         /// void _ijkToHex2d
-        /// -->
+        /// </remarks>
         internal static Vec2d ToHex2d(this CoordIjk h)
         {
             int i = h.I - h.K;
@@ -92,10 +93,11 @@ namespace H3Lib.Extensions
         /// values. Works in place.
         /// </summary>
         /// <param name="coord">The ijk coordinates to normalize.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _ijkNormalize
-        /// -->
+        /// </remarks>
         internal static CoordIjk Normalized(this CoordIjk coord)
         {
             (int i, int j, int k) = (coord.I, coord.J, coord.K);
@@ -133,12 +135,13 @@ namespace H3Lib.Extensions
         /// <param name="ijk">The ijk coordinates; must be a unit vector.</param>
         /// <returns>
         /// The H3 digit (0-6) corresponding to the ijk unit vector, or
-        /// <see cref="Direction.INVALID_DIGIT"/> INVALID_DIGIT on failure
+        /// <see cref="Direction.InvalidDigit"/> INVALID_DIGIT on failure
         /// </returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// Direction _unitIjkToDigit
-        /// -->
+        /// </remarks>
         internal static Direction ToDirection(this CoordIjk ijk)
         {
             var c = ijk.Normalized();
@@ -146,7 +149,7 @@ namespace H3Lib.Extensions
 
             return test.Any()
                        ? test.First().Key
-                       : Direction.INVALID_DIGIT;
+                       : Direction.InvalidDigit;
         }
 
         /// <summary>
@@ -154,10 +157,11 @@ namespace H3Lib.Extensions
         /// counter-clockwise aperture 7 grid. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _upAp7
-        /// -->
+        /// </remarks>
         internal static CoordIjk UpAp7(this CoordIjk ijk)
         {
             // convert to CoordIJ
@@ -178,10 +182,11 @@ namespace H3Lib.Extensions
         /// clockwise aperture 7 grid. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _upAp7r
-        /// -->
+        /// </remarks>
         internal static CoordIjk UpAp7R(this CoordIjk ijk)
         {
             // convert to CoordIJ
@@ -200,10 +205,11 @@ namespace H3Lib.Extensions
         /// place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _downAp7
-        /// -->
+        /// </remarks>
         internal static CoordIjk DownAp7(this CoordIjk ijk)
         {
             var iVec = new CoordIjk(3, 0, 1) * ijk.I;
@@ -218,10 +224,11 @@ namespace H3Lib.Extensions
         /// hex at the next finer aperture 7 clockwise resolution. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _downAp7r
-        /// -->
+        /// </remarks>
         internal static CoordIjk DownAp7R(this CoordIjk ijk)
         {
             var iVec = new CoordIjk(3, 1, 0) * ijk.I;
@@ -237,13 +244,14 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
         /// <param name="digit">The digit direction from the original ijk coordinates.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _neighbor
-        /// -->
+        /// </remarks>
         internal static CoordIjk Neighbor(this CoordIjk ijk, Direction digit)
         {
-            if (digit <= Direction.CENTER_DIGIT || digit >= Direction.NUM_DIGITS)
+            if (digit <= Direction.CenterDigit || digit >= Direction.NumDigits)
             {
                 return ijk;
             }
@@ -255,10 +263,11 @@ namespace H3Lib.Extensions
         /// Rotates ijk coordinates 60 degrees counter-clockwise. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _ijkRotate60ccw
-        /// -->
+        /// </remarks>
         internal static CoordIjk Rotate60CounterClockwise(this CoordIjk ijk)
         {
             // unit vector rotations
@@ -273,10 +282,11 @@ namespace H3Lib.Extensions
         /// Rotates ijk coordinates 60 degrees clockwise. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _ijkRotate60cw
-        /// -->
+        /// </remarks>
         internal static CoordIjk Rotate60Clockwise(this CoordIjk ijk)
         {
             // unit vector rotations
@@ -293,10 +303,11 @@ namespace H3Lib.Extensions
         /// place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _downAp3
-        /// -->
+        /// </remarks>
         internal static CoordIjk DownAp3(this CoordIjk ijk)
         {
             // res r unit vectors in res r+1
@@ -312,10 +323,11 @@ namespace H3Lib.Extensions
         /// hex at the next finer aperture 3 clockwise resolution. Works in place.
         /// </summary>
         /// <param name="ijk">The ijk coordinates.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void _downAp3r
-        /// -->
+        /// </remarks>
         internal static CoordIjk DownAp3R(this CoordIjk ijk)
         {
             // res r unit vectors in res r+1
@@ -331,10 +343,11 @@ namespace H3Lib.Extensions
         /// </summary>
         /// <param name="start">The first set of ijk coordinates.</param>
         /// <param name="end">The second set of ijk coordinates.</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// int ijkDistance
-        /// -->
+        /// </remarks>
         public static int DistanceTo(this CoordIjk start, CoordIjk end)
         {
             var diff = (start - end).Normalized();
@@ -346,10 +359,11 @@ namespace H3Lib.Extensions
         /// Transforms coordinates from the IJK+ coordinate system to the IJ coordinate system
         /// </summary>
         /// <param name="ijk">The input IJK+ coordinates</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void ijkToIj
-        /// -->
+        /// </remarks>
         public static CoordIj ToIj(this CoordIjk ijk)
         {
             return new CoordIj(ijk.I - ijk.K, ijk.J - ijk.K);
@@ -359,10 +373,11 @@ namespace H3Lib.Extensions
         /// Convert IJK coordinates to cube coordinates, in place
         /// </summary>
         /// <param name="ijk">Coordinate to convert</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void ijkToCube
-        /// -->
+        /// </remarks>
         public static CoordIjk ToCube(this CoordIjk ijk)
         {
             (int i, int j, int k) = (ijk.I, ijk.J, ijk.K);
@@ -377,10 +392,11 @@ namespace H3Lib.Extensions
         /// Convert cube coordinates to IJK coordinates, in place
         /// </summary>
         /// <param name="ijk">Coordinate to convert</param>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// coordijk.c
         /// void cubeToIjk
-        /// -->
+        /// </remarks>
         public static CoordIjk FromCube(this CoordIjk ijk)
         {
             return new CoordIjk(-ijk.I, ijk.J, 0).Normalized();
@@ -398,10 +414,11 @@ namespace H3Lib.Extensions
         /// <param name="origin">An anchoring index for the ijk+ coordinate system.</param>
         /// <param name="ijk">IJK+ Coordinates to find the index of</param>
         /// <returns>0 on success, or another value on failure</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// localij.c
         /// int localIjkToH3
-        /// -->
+        /// </remarks>
         public static (int, H3Index) LocalIjkToH3(this CoordIjk ijk, H3Index origin)
         {
             int res = origin.Resolution;
@@ -411,7 +428,7 @@ namespace H3Lib.Extensions
             // This logic is very similar to faceIjkToH3
             // initialize the index
 
-            var outH3 = new H3Index(Constants.H3Index.H3_INIT);
+            var outH3 = new H3Index(Constants.H3Index.Init);
             outH3 = outH3.SetMode(H3Mode.Hexagon).SetResolution(res);
 
             // check for res 0/base cell
@@ -422,16 +439,12 @@ namespace H3Lib.Extensions
                     return (1, outH3);
                 }
 
-                Direction dir = ijk.ToDirection();
+                var dir = ijk.ToDirection();
                 int newBaseCell = originBaseCell.GetNeighbor(dir);
             
-                if (newBaseCell == Constants.BaseCells.InvalidBaseCell)
-                {
-                    // Moving in an invalid direction off a pentagon.
-                    return (1, new H3Index());
-                }
-
-                return (0, outH3.SetBaseCell(newBaseCell));
+                return newBaseCell == Constants.BaseCells.InvalidBaseCell
+                           ? (1, new H3Index()) // Moving in an invalid direction off a pentagon.
+                           : (0, outH3.SetBaseCell(newBaseCell));
             }
 
             // we need to find the correct base cell offset (if any) for this H3 index;
@@ -462,7 +475,7 @@ namespace H3Lib.Extensions
                 }
 
                 var diff = (lastIJK - lastCenter).Normalized();
-                outH3 = outH3.SetIndexDigit(r + 1, (ulong) diff.ToDirection());
+                outH3 = outH3.SetIndexDigit(r + 1, diff.ToDirection());
             }
 
             // ijkCopy should now hold the IJK of the base cell in the
@@ -487,7 +500,7 @@ namespace H3Lib.Extensions
                         : 0;
             
 
-            if (dir2 != Direction.CENTER_DIGIT)
+            if (dir2 != Direction.CenterDigit)
             {
                 // If the index is in a warped direction, we need to un-warp the base
                 // cell direction. There may be further need to rotate the index digits.
@@ -505,7 +518,7 @@ namespace H3Lib.Extensions
                     // The pentagon rotations are being chosen so that dir is not the
                     // deleted direction. If it still happens, it means we're moving
                     // into a deleted subsequence, so there is no index here.
-                    if (dir2 == Direction.K_AXES_DIGIT)
+                    if (dir2 == Direction.KAxesDigit)
                     {
                         return(3, new H3Index());
                     }
@@ -540,7 +553,7 @@ namespace H3Lib.Extensions
                 if (indexOnPent !=0)
                 {
                     var revDir = baseCell.GetBaseCellDirection(originBaseCell);
-                    if (revDir == Direction.INVALID_DIGIT)
+                    if (revDir == Direction.InvalidDigit)
                     {
                         throw new Exception("assert(revDir != INVALID_DIGIT)");
                     }
@@ -615,7 +628,7 @@ namespace H3Lib.Extensions
             // TODO: There are cases in h3ToLocalIjk which are failed but not
             // accounted for here - instead just fail if the recovered index is
             // invalid.
-            return outH3.LeadingNonZeroDigit == Direction.K_AXES_DIGIT
+            return outH3.LeadingNonZeroDigit == Direction.KAxesDigit
                        ? (4, new H3Index())
                        : (0, outH3.SetBaseCell(baseCell));
         }

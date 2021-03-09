@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using H3Lib.Extensions;
 
 namespace H3Lib
 {
@@ -13,7 +11,7 @@ namespace H3Lib
         /// <summary>
         /// Linked list that stores the vertices 
         /// </summary>
-        private LinkedList<LinkedGeoCoord> Loop;
+        private readonly LinkedList<LinkedGeoCoord> Loop;
         
         /// <summary>
         /// Counts how many vetices in this loop
@@ -67,10 +65,11 @@ namespace H3Lib
         /// </summary>
         /// <param name="vertex">Coordinate to add</param>
         /// <returns>Reference to the coordinate</returns>
-        /// <!--
+        /// <remarks>
+        /// 3.7.1
         /// linkedGeo.c
         /// LinkedGeoCoord* addLinkedCoord
-        /// -->
+        /// </remarks>
         public LinkedGeoCoord AddLinkedCoord(GeoCoord vertex)
         {
             var coord = new LinkedGeoCoord(vertex);

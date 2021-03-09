@@ -23,7 +23,7 @@ namespace H3Lib
         /// </summary>
         public GeoBoundary()
         {
-            for (var i = 0; i < Constants.H3.MAX_CELL_BNDRY_VERTS; i++)
+            for (var i = 0; i < Constants.H3.MaxCellBoundaryVertices; i++)
             {
                 Verts.Add(new GeoCoord());
             }
