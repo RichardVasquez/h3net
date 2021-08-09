@@ -186,11 +186,11 @@ namespace H3Lib.Extensions
                 preSearch.AddRange(innerHex);
             }
 
-            search = new HashSet<H3Index>(numHexagons);
+            search = new HashSet<H3Index>();
             search.UnionWith(preSearch);
             
             var found = new HashSet<H3Index>();
-            var results = new HashSet<H3Index>(numHexagons);
+            var results = new HashSet<H3Index>();
             int numSearchHexes = search.Count;
             var numFoundHexes = 0;
 
