@@ -176,8 +176,6 @@ namespace H3Lib.Extensions
             var search = geofence.GetEdgeHexagons(res);
             preSearch.AddRange(search);
 
-            int numHexagons = polygon.MaxPolyFillSize(res);
-
             //  Check inner holes
             for (var i = 0; i < polygon.NumHoles; i++)
             {
