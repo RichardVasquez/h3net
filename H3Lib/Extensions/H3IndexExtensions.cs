@@ -1154,16 +1154,15 @@ namespace H3Lib.Extensions
                 ccwRot60 = (ccwRot60 + 1) % 6;
             }
 
-            ccwRot60 = cellLeadingDigit switch
+            switch (cellLeadingDigit)
             {
                 // Check whether the cell crosses a deleted pentagon subsequence
-                (int) Direction.JK_AXES_DIGIT when
-                    fijk.Face == dirFaces[(int) Direction.IK_AXES_DIGIT - Constants.Vertex.DIRECTION_INDEX_OFFSET]
-                    => (ccwRot60 + 5) % 6,
-                (int) Direction.IK_AXES_DIGIT when
-                    fijk.Face == dirFaces[(int) Direction.JK_AXES_DIGIT - Constants.Vertex.DIRECTION_INDEX_OFFSET]
-                    => (ccwRot60 + 1) % 6,
-                _ => ccwRot60
+                case (int)Direction.JK_AXES_DIGIT when fijk.Face == dirFaces[(int)Direction.IK_AXES_DIGIT - Constants.Vertex.DIRECTION_INDEX_OFFSET]:
+                    ccwRot60 = (ccwRot60 + 5) % 6;
+                    break;
+                case (int)Direction.IK_AXES_DIGIT when fijk.Face == dirFaces[(int)Direction.JK_AXES_DIGIT - Constants.Vertex.DIRECTION_INDEX_OFFSET]:
+                    ccwRot60 = (ccwRot60 + 1) % 6;
+                    break;
             };
             return ccwRot60;
         }
@@ -1622,7 +1621,9 @@ namespace H3Lib.Extensions
                 return null;
             }
 
-            outData ??= new Dictionary<H3Index, int>();
+            if (outData == null)
+                outData = new Dictionary<H3Index, int>();
+
             var results = new Dictionary<H3Index, int>(outData);
 
             // If we already have the origin h3index in the dictionary, and
@@ -1652,9 +1653,9 @@ namespace H3Lib.Extensions
                 {
                     continue;
                 }
-                foreach ((var key, int value) in recurseResults)
+                foreach (var result in recurseResults)
                 {
-                    results[key] = value;
+                    results[result.Key] = result.Value;
                 }
             }
 

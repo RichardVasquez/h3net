@@ -15,15 +15,15 @@ namespace H3Lib.Extensions
         /// -->
         internal static Direction Rotate60CounterClockwise(this Direction digit)
         {
-            return digit switch
+            switch (digit)
             {
-                Direction.K_AXES_DIGIT => Direction.IK_AXES_DIGIT,
-                Direction.IK_AXES_DIGIT => Direction.I_AXES_DIGIT,
-                Direction.I_AXES_DIGIT => Direction.IJ_AXES_DIGIT,
-                Direction.IJ_AXES_DIGIT => Direction.J_AXES_DIGIT,
-                Direction.J_AXES_DIGIT => Direction.JK_AXES_DIGIT,
-                Direction.JK_AXES_DIGIT => Direction.K_AXES_DIGIT,
-                _ => digit
+                case Direction.K_AXES_DIGIT: return Direction.IK_AXES_DIGIT;
+                case Direction.IK_AXES_DIGIT: return Direction.I_AXES_DIGIT;
+                case Direction.I_AXES_DIGIT: return Direction.IJ_AXES_DIGIT;
+                case Direction.IJ_AXES_DIGIT: return Direction.J_AXES_DIGIT;
+                case Direction.J_AXES_DIGIT: return Direction.JK_AXES_DIGIT;
+                case Direction.JK_AXES_DIGIT: return Direction.K_AXES_DIGIT;
+                default: return digit;
             };
         }
 
@@ -37,15 +37,15 @@ namespace H3Lib.Extensions
         /// -->
         internal static Direction Rotate60Clockwise(this Direction digit)
         {
-            return digit switch
+            switch(digit)
             {
-                Direction.K_AXES_DIGIT => Direction.JK_AXES_DIGIT,
-                Direction.JK_AXES_DIGIT => Direction.J_AXES_DIGIT,
-                Direction.J_AXES_DIGIT => Direction.IJ_AXES_DIGIT,
-                Direction.IJ_AXES_DIGIT => Direction.I_AXES_DIGIT,
-                Direction.I_AXES_DIGIT => Direction.IK_AXES_DIGIT,
-                Direction.IK_AXES_DIGIT => Direction.K_AXES_DIGIT,
-                _ => digit
+                case Direction.K_AXES_DIGIT: return Direction.JK_AXES_DIGIT;
+                case Direction.JK_AXES_DIGIT: return Direction.J_AXES_DIGIT;
+                case Direction.J_AXES_DIGIT: return Direction.IJ_AXES_DIGIT;
+                case Direction.IJ_AXES_DIGIT: return Direction.I_AXES_DIGIT;
+                case Direction.I_AXES_DIGIT: return Direction.IK_AXES_DIGIT;
+                case Direction.IK_AXES_DIGIT: return Direction.K_AXES_DIGIT;
+                default: return digit;
             };
         }
     }
