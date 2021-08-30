@@ -1732,7 +1732,13 @@ namespace H3Lib.Extensions
 
                 Direction oldDigit = outHex.GetIndexDigit(r + 1);
                 Direction nextDir;
-                    
+
+                if (oldDigit == Direction.INVALID_DIGIT)
+                {
+                    // only possible on invalid input
+                    return (Constants.H3Index.H3_NULL, outRotations);
+                }
+
                 if((r+1).IsResClassIii())
                 {
                     outHex = outHex.SetIndexDigit

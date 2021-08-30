@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace H3Lib.Extensions
@@ -16,6 +17,10 @@ namespace H3Lib.Extensions
         /// -->
         public static bool IsBaseCellPentagon(this int baseCell)
         {
+            if (baseCell < 0 || baseCell >= Constants.H3.NUM_BASE_CELLS)
+            {
+                return false;
+            }
             return Constants.BaseCells.BaseCellData[baseCell].IsPentagon == 1;
         }
 

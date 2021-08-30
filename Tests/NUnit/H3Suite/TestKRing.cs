@@ -244,7 +244,25 @@ namespace TestSuite
                                   );
                 }
             }
+        }
 
+        [Test]
+        public void KRingInvalid()
+        {
+            var badCell = new H3Index(0x7fffffffffffffff);
+            var k = 1000;
+
+            badCell.KRing(k);
+            // Assertion is should not crash - should return an error in the future
+        }
+
+        [Test]
+        public void KRingInvalidDigit()
+        {
+            var k = 2;
+            var badCell = new H3Index(0x4d4b00fe5c5c3030);
+            badCell.KRing(k);
+            // Assertion is should not crash - should return an error in the future
         }
         
     }
