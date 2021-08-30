@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net50</TargetFrameworks>
     <PackageVersion>3.7.1</PackageVersion>
+	<LangVersion>8.0</LangVersion>
     <Title>H3 Library</Title>
     <Authors>Richard Vasquez</Authors>
     <Description>H3 Api Library </Description>
