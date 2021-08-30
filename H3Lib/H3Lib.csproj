@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net50</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net50</TargetFrameworks>
     <PackageVersion>3.7.1</PackageVersion>
     <Title>H3 Library</Title>
     <Authors>Richard Vasquez</Authors>
