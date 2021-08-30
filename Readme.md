@@ -20,7 +20,7 @@ H3 link I placed before, if you want to know what's involved here.
 
 ## History
 * Current (3rd round) - Currently has the same capability as
-  3.7.1, if not exactly the same syntax.
+  3.7.2, if not exactly the same syntax.
 * Version 2 - A horrible attempt to implement H3 v3.2.1, and
   I've removed the branch for it.
 * Version 1 - According to my Git repository, I pushed it on
@@ -75,9 +75,9 @@ file.
 I will be keeping the version number the same as the functionality of
 H3 that I'm matching.
 
-Currently: **3.7.1**
+Currently: **3.7.2**
 
-Previous: **3.1.1**
+Previous: **3.7.1**
 
 ## Badges
 ![.NET](https://github.com/RichardVasquez/h3net/workflows/.NET/badge.svg)
