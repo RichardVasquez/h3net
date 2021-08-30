@@ -19,6 +19,7 @@
 
     <ItemGroup>
         <PackageReference Include="DecimalMath.DecimalEx" Version="1.0.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
         <PackageReference Include="nunit" Version="3.13.2" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
         <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
